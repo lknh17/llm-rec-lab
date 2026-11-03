@@ -1,0 +1,14 @@
+[worker] 等待设备锁 local-0
+[worker] 环境：<redacted> Darwin 24.6.0 device=mps torch=2.15.0
+[worker] 从快照加载 <data>/batch/mac-m4pro/L1/base_model/s0-3f30e8/code/adextract/experiment.py
+[13:51:21] ===== 阶段：prepare =====
+[13:51:22] 训练样本 400 条（丢弃 0，截断 0），总 token 123018，监督 token 12849，prompt 长度 274
+W1103 13:51:23.494000 67442 .venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 290/290 [00:00<00:00, 3803.22it/s]
+[13:51:23] ===== 阶段：evaluate =====
+[13:51:30] [dev] 格式合法 1.0 品类 0.1 卖点F1 0.9153 条件保留 0.5714 无依据 0.237 全对 0.0333 （6.5s）
+[13:51:42] [synth_valid] 格式合法 0.9833 品类 0.2 卖点F1 0.8359 条件保留 0.4054 无依据 0.2182 全对 0.0333 （12.5s）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

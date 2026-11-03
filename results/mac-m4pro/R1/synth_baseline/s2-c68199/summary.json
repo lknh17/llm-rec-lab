@@ -1,0 +1,155 @@
+{
+  "valid": {
+    "auc": 0.7201,
+    "logloss": 0.5893,
+    "calibration": {
+      "ece": 0.0409,
+      "pred_over_actual": 0.9352,
+      "bins": [
+        {
+          "bin": "0.1-0.2",
+          "n": 215,
+          "mean_pred": 0.1839,
+          "actual": 0.1814
+        },
+        {
+          "bin": "0.2-0.3",
+          "n": 3158,
+          "mean_pred": 0.261,
+          "actual": 0.2907
+        },
+        {
+          "bin": "0.3-0.4",
+          "n": 5893,
+          "mean_pred": 0.3519,
+          "actual": 0.4032
+        },
+        {
+          "bin": "0.4-0.5",
+          "n": 7498,
+          "mean_pred": 0.4512,
+          "actual": 0.5165
+        },
+        {
+          "bin": "0.5-0.6",
+          "n": 8548,
+          "mean_pred": 0.5505,
+          "actual": 0.5909
+        },
+        {
+          "bin": "0.6-0.7",
+          "n": 8641,
+          "mean_pred": 0.6501,
+          "actual": 0.6923
+        },
+        {
+          "bin": "0.7-0.8",
+          "n": 8263,
+          "mean_pred": 0.7487,
+          "actual": 0.7845
+        },
+        {
+          "bin": "0.8-0.9",
+          "n": 5959,
+          "mean_pred": 0.8452,
+          "actual": 0.8699
+        },
+        {
+          "bin": "0.9-1.0",
+          "n": 1787,
+          "mean_pred": 0.9294,
+          "actual": 0.9334
+        }
+      ]
+    },
+    "n": 49962,
+    "label_rate": 0.6319
+  },
+  "reference_baselines_valid": {
+    "constant": {
+      "auc": 0.5,
+      "logloss": 0.6607
+    },
+    "item_mean": {
+      "auc": 0.6313,
+      "logloss": 0.6334
+    }
+  },
+  "groups_valid": [
+    {
+      "group": "用户历史评分数",
+      "value": "21-100",
+      "n": 25043,
+      "label_rate": 0.6556,
+      "auc": 0.7228,
+      "logloss": 0.5764
+    },
+    {
+      "group": "用户历史评分数",
+      "value": "101-400",
+      "n": 22165,
+      "label_rate": 0.6035,
+      "auc": 0.7131,
+      "logloss": 0.605
+    },
+    {
+      "group": "用户历史评分数",
+      "value": "1-20",
+      "n": 1677,
+      "label_rate": 0.6893,
+      "auc": 0.7178,
+      "logloss": 0.5571
+    },
+    {
+      "group": "用户历史评分数",
+      "value": ">400",
+      "n": 1077,
+      "label_rate": 0.5794,
+      "auc": 0.7106,
+      "logloss": 0.6164
+    },
+    {
+      "group": "电影历史评分数",
+      "value": ">500",
+      "n": 18605,
+      "label_rate": 0.76,
+      "auc": 0.708,
+      "logloss": 0.5055
+    },
+    {
+      "group": "电影历史评分数",
+      "value": "51-500",
+      "n": 21286,
+      "label_rate": 0.5969,
+      "auc": 0.6826,
+      "logloss": 0.6287
+    },
+    {
+      "group": "电影历史评分数",
+      "value": "1-50",
+      "n": 10071,
+      "label_rate": 0.4696,
+      "auc": 0.6443,
+      "logloss": 0.6607
+    },
+    {
+      "group": "用户在训练集出现",
+      "value": "出现过",
+      "n": 49962,
+      "label_rate": 0.6319,
+      "auc": 0.7201,
+      "logloss": 0.5893
+    }
+  ],
+  "steps": 782,
+  "best_epoch": {
+    "epoch": 2,
+    "valid_auc": 0.7200709515175923
+  },
+  "headline": {
+    "valid_auc": 0.7201,
+    "valid_logloss": 0.5893,
+    "valid_ece": 0.0409,
+    "steps": 782
+  }
+}

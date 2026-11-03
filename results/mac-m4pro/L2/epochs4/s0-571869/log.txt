@@ -1,0 +1,50 @@
+[worker] 等待设备锁 local-0
+[worker] 环境：<redacted> Darwin 24.6.0 device=mps torch=2.15.0
+[worker] 从快照加载 <data>/batch/mac-m4pro/L2/epochs4/s0-571869/code/adextract/experiment.py
+[14:30:34] ===== 阶段：prepare =====
+[14:30:35] 训练样本 400 条（丢弃 0，截断 0），总 token 123018，监督 token 12849，prompt 长度 274
+W1103 14:30:36.386000 11992 .venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 290/290 [00:00<00:00, 3848.59it/s]
+[14:30:36] ===== 阶段：train =====
+[14:30:37] 可训练参数 8,798,208 / 502,830,976（1.75%）
+[14:30:38] step 1/200 loss=0.4727 监督token=268 lr=4.00e-05 grad_norm=8.069
+[14:30:51] step 10/200 loss=0.0809 监督token=234 lr=2.00e-04 grad_norm=2.440
+[14:31:05] step 20/200 loss=0.0775 监督token=245 lr=1.89e-04 grad_norm=3.057
+[14:31:19] step 30/200 loss=0.0356 监督token=256 lr=1.79e-04 grad_norm=1.602
+[14:31:32] step 40/200 loss=0.0093 监督token=256 lr=1.68e-04 grad_norm=0.500
+[14:31:46] step 50/200 loss=0.0037 监督token=270 lr=1.58e-04 grad_norm=0.643
+[14:31:48] epoch 1: dev_loss=0.3105
+[14:31:54] epoch 1 dev：全对率 0.5667 条件保留 0.5238
+[14:32:07] step 60/200 loss=0.0012 监督token=222 lr=1.47e-04 grad_norm=0.088
+[14:32:21] step 70/200 loss=0.0299 监督token=284 lr=1.37e-04 grad_norm=0.461
+[14:32:35] step 80/200 loss=0.0031 监督token=221 lr=1.26e-04 grad_norm=0.397
+[14:32:49] step 90/200 loss=0.0214 监督token=282 lr=1.16e-04 grad_norm=1.950
+[14:33:03] step 100/200 loss=0.0008 监督token=279 lr=1.05e-04 grad_norm=0.032
+[14:33:05] epoch 2: dev_loss=0.3008
+[14:33:11] epoch 2 dev：全对率 0.7333 条件保留 0.7143
+[14:33:25] step 110/200 loss=0.0002 监督token=218 lr=9.47e-05 grad_norm=0.014
+[14:33:39] step 120/200 loss=0.0002 监督token=256 lr=8.42e-05 grad_norm=0.007
+[14:33:53] step 130/200 loss=0.0003 监督token=246 lr=7.37e-05 grad_norm=0.009
+[14:34:07] step 140/200 loss=0.0001 监督token=227 lr=6.32e-05 grad_norm=0.004
+[14:34:21] step 150/200 loss=0.0001 监督token=244 lr=5.26e-05 grad_norm=0.002
+[14:34:23] epoch 3: dev_loss=0.3059
+[14:34:28] epoch 3 dev：全对率 0.7 条件保留 0.8095
+[14:34:42] step 160/200 loss=0.0001 监督token=243 lr=4.21e-05 grad_norm=0.003
+[14:34:56] step 170/200 loss=0.0002 监督token=250 lr=3.16e-05 grad_norm=0.004
+[14:35:10] step 180/200 loss=0.0001 监督token=249 lr=2.11e-05 grad_norm=0.002
+[14:35:24] step 190/200 loss=0.0002 监督token=245 lr=1.05e-05 grad_norm=0.006
+[14:35:38] step 200/200 loss=0.0001 监督token=260 lr=0.00e+00 grad_norm=0.002
+[14:35:40] epoch 4: dev_loss=0.3091
+[14:35:45] epoch 4 dev：全对率 0.7 条件保留 0.8095
+[14:35:45] ===== 阶段：evaluate =====
+[14:35:51] [dev] 格式合法 1.0 品类 1.0 卖点F1 0.9828 条件保留 0.8095 无依据 0.0373 全对 0.7 （5.6s）
+[14:36:03] [synth_valid] 格式合法 1.0 品类 0.9833 卖点F1 0.996 条件保留 0.973 无依据 0.0 全对 0.95 （12.3s）
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/290 [00:00<01:14,  3.87it/s]
+Loading weights: 100%|██████████| 290/290 [00:00<00:00, 900.36it/s]
+[14:36:07] 重新加载核对：4/4 条输出与内存中的模型完全一致
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

@@ -1,0 +1,21 @@
+name: redact-guard
+
+# 服务端复检：结果和作业单推上来之后再扫一遍。推送后内容已经公开，这一步只能"事后发现"，
+# 主防线是本地的 pre-push 钩子（scripts/pre-push）。这里失败时要立即处理：删除并改写历史，轮换泄露的凭证。
+on:
+  push:
+    paths: ["results/**", "jobs/**"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 脱敏检查（只依赖 pyyaml）
+        run: |
+          pip install pyyaml
+          python -m labkit redact --check

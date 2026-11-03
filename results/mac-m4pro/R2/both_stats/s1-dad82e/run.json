@@ -1,0 +1,233 @@
+{
+  "run_id": "mac-m4pro.R2.both_stats.s1-dad82e",
+  "course_id": "R2",
+  "project": "rec",
+  "entry": "rec.experiment",
+  "profile": "mac-m4pro",
+  "scenario": "both_stats",
+  "role": "fix",
+  "title": "用户 + 电影统计特征（时点正确口径），也是泄漏故障的修复版",
+  "seed": 1,
+  "variant": "both_stats",
+  "config_hash": "dad82e88fc59",
+  "code_hash": "2abe02e9909e",
+  "git": {
+    "commit": "HEAD",
+    "dirty": true
+  },
+  "changed_from_baseline": {
+    "feature_groups": [
+      "ids",
+      "user_profile",
+      "item_attr",
+      "user_stats",
+      "item_stats"
+    ]
+  },
+  "param_affects": {
+    "dataset": "data",
+    "synth_users": "data",
+    "synth_items": "data",
+    "synth_rows": "data",
+    "synth_alpha": "data",
+    "synth_seed": "data",
+    "label_threshold": "data",
+    "split": "data",
+    "stats_mode": "data",
+    "feature_groups": "model",
+    "embedding_dim": "model",
+    "hidden": "model",
+    "dropout": "model",
+    "lr": "train",
+    "weight_decay": "train",
+    "batch_size": "train",
+    "epochs": "train",
+    "max_steps": "train",
+    "seed": "train",
+    "final_test": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime",
+    "resume_from": "runtime"
+  },
+  "env_id": "mac-m4pro",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1793682593.5061078,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1793682593.535742,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1793682594.2486222,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1793682594.340703,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1793682600.479198,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1793682600.674592,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1793682593.5061078,
+  "budget": {
+    "max_minutes": 20.0
+  },
+  "expect": [
+    "meta.checks.data.user_stats_rows_at_or_after_sample_share == 0",
+    "summary.valid.auc > base.summary.valid.auc"
+  ],
+  "slot": "local-0",
+  "started_at": 1793682593.535743,
+  "cache": [
+    {
+      "stage": "rec_data",
+      "key_hash": "630f9676fc49",
+      "key": {
+        "dataset": "movielens-1m",
+        "fingerprint": "a89aa3591bc9",
+        "prep_version": 5,
+        "split": "time",
+        "stats_mode": "point_in_time",
+        "label_threshold": 4
+      },
+      "hit": true,
+      "source_run": "s0-ceadd6"
+    }
+  ],
+  "data": {
+    "kind": "真实公开数据",
+    "source": "MovieLens-1M（GroupLens）",
+    "dataset": "ml-1m",
+    "version": "a89aa3591bc9",
+    "task": "已知用户给电影打了分，预测评分是否 >= 4。负样本 = 看过但打低分，不是曝光未点击",
+    "split_rule": "全局时间 80/10/10",
+    "stats_mode": "point_in_time",
+    "seed": 1,
+    "prep_version": 5,
+    "rows": 1000209,
+    "split_rows": {
+      "train": 800164,
+      "valid": 100024,
+      "test": 100021
+    },
+    "label_rate": {
+      "train": 0.5786526262116266,
+      "valid": 0.577981284491722,
+      "test": 0.5444056748082903
+    },
+    "data_key": {
+      "dataset": "movielens-1m",
+      "fingerprint": "a89aa3591bc9",
+      "prep_version": 5,
+      "split": "time",
+      "stats_mode": "point_in_time",
+      "label_threshold": 4
+    }
+  },
+  "checks": {
+    "data": {
+      "time_range_train": [
+        "2000-04-25",
+        "2000-12-02"
+      ],
+      "time_range_valid": [
+        "2000-12-02",
+        "2000-12-29"
+      ],
+      "time_range_test": [
+        "2000-12-29",
+        "2003-02-28"
+      ],
+      "train_has_future": false,
+      "pair_overlap_train_valid": 0,
+      "cold_user_share_valid": 0.7616,
+      "cold_movie_share_valid": 0.0002,
+      "cold_user_share_test": 0.1932,
+      "cold_movie_share_test": 0.001,
+      "user_stats_rows_at_or_after_sample_share": 0.0,
+      "item_stats_rows_at_or_after_sample_share": 0.0,
+      "single_feature_auc_user_like_rate_train": 0.68,
+      "single_feature_auc_user_like_rate_valid": 0.6882,
+      "single_feature_auc_item_like_rate_train": 0.7254,
+      "single_feature_auc_item_like_rate_valid": 0.7345
+    },
+    "reload_max_abs_diff": 0.0
+  },
+  "model": {
+    "arch": "Embedding + MLP",
+    "feature_groups": [
+      "ids",
+      "user_profile",
+      "item_attr",
+      "user_stats",
+      "item_stats"
+    ],
+    "sparse_fields": [
+      "user_id",
+      "movie_id",
+      "gender",
+      "age",
+      "occupation",
+      "zip1",
+      "year_bucket",
+      "user_cnt_bucket",
+      "item_cnt_bucket"
+    ],
+    "dense_fields": [
+      "user_like_rate",
+      "item_like_rate"
+    ],
+    "genre_bag": true,
+    "mlp_input_dim": 162,
+    "params": 175841,
+    "device": "cpu"
+  },
+  "train": {
+    "train_samples": 800164,
+    "steps_per_epoch": 782,
+    "planned_steps": 1564,
+    "trainable_params": 175841
+  },
+  "artifacts": {
+    "checkpoint_last.pt": {
+      "kind": "checkpoint",
+      "bytes": 2135000,
+      "note": "epoch=2 step=1564，可续训"
+    },
+    "model.pt": {
+      "kind": "model",
+      "bytes": 709255,
+      "note": "仅权重 + 配置，用于推理；续训请用 checkpoint_last.pt"
+    }
+  },
+  "ended_at": 1793682600.674593,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "meta.checks.data.user_stats_rows_at_or_after_sample_share == 0",
+      "ok": true
+    },
+    {
+      "expr": "summary.valid.auc > base.summary.valid.auc",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

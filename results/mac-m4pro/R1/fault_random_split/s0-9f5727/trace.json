@@ -1,0 +1,396 @@
+{
+  "sample": {
+    "raw": {
+      "row": 353435,
+      "split": "train",
+      "user_id": 3652,
+      "movie_id": 1265,
+      "title": "Groundhog Day (1993)",
+      "genres": "Comedy|Romance",
+      "gender": "M",
+      "age": 25,
+      "occupation": 12,
+      "zip": "94608",
+      "rating": 4,
+      "label": 1,
+      "time": "2000-08-16 21:16:15",
+      "user_history_cnt": 188,
+      "item_history_cnt": 842
+    },
+    "encoded": {
+      "user_id": 3652,
+      "movie_id": 1161,
+      "gender": 2,
+      "age": 3,
+      "occupation": 13,
+      "zip1": 10,
+      "year_bucket": 9,
+      "genres": [
+        5,
+        14,
+        0,
+        0,
+        0,
+        0
+      ],
+      "user_cnt_bucket": 8,
+      "item_cnt_bucket": 10,
+      "user_like_rate": 0.5120623111724854,
+      "item_like_rate": 0.7163677215576172
+    },
+    "note": "被追踪样本 = 训练第 1 个 batch 的第 1 条（真实打乱结果，不是挑出来的）"
+  },
+  "batch": {
+    "batch_size": 1024,
+    "tensors": {
+      "user_id": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          3652.0,
+          1922.0,
+          2212.0,
+          2581.0,
+          6006.0,
+          1912.0
+        ]
+      },
+      "movie_id": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          1161.0,
+          1046.0,
+          2937.0,
+          1692.0,
+          2295.0,
+          1109.0
+        ]
+      },
+      "gender": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          2.0,
+          1.0,
+          2.0,
+          2.0,
+          1.0,
+          2.0
+        ]
+      },
+      "age": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          3.0,
+          3.0,
+          2.0,
+          3.0,
+          1.0,
+          3.0
+        ]
+      },
+      "occupation": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          13.0,
+          8.0,
+          5.0,
+          12.0,
+          1.0,
+          5.0
+        ]
+      },
+      "zip1": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          10.0,
+          10.0,
+          9.0,
+          7.0,
+          1.0,
+          10.0
+        ]
+      },
+      "year_bucket": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          9.0,
+          8.0,
+          9.0,
+          9.0,
+          9.0,
+          8.0
+        ]
+      },
+      "genres": {
+        "shape": [
+          1024,
+          6
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          5.0,
+          14.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "user_cnt_bucket": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          8.0,
+          9.0,
+          6.0,
+          9.0,
+          5.0,
+          10.0
+        ]
+      },
+      "item_cnt_bucket": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          10.0,
+          9.0,
+          9.0,
+          8.0,
+          0.0,
+          8.0
+        ]
+      },
+      "user_like_rate": {
+        "shape": [
+          1024
+        ],
+        "dtype": "float32",
+        "device": "cpu",
+        "head": [
+          0.51206,
+          0.49749,
+          0.47429,
+          0.7706,
+          0.50018,
+          0.18487
+        ],
+        "mean": 0.58467,
+        "std": 0.14118
+      },
+      "item_like_rate": {
+        "shape": [
+          1024
+        ],
+        "dtype": "float32",
+        "device": "cpu",
+        "head": [
+          0.71637,
+          0.38404,
+          0.52487,
+          0.36502,
+          0.57545,
+          0.74905
+        ],
+        "mean": 0.57784,
+        "std": 0.17121
+      },
+      "label": {
+        "shape": [
+          1024
+        ],
+        "dtype": "float32",
+        "device": "cpu",
+        "head": [
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "mean": 0.57129,
+        "std": 0.49513
+      }
+    },
+    "mlp_input": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "float32",
+      "device": "cpu",
+      "head": [
+        -0.02739,
+        0.03716,
+        0.0444,
+        -0.03848,
+        0.01446,
+        -0.08199,
+        -0.0123,
+        0.05224
+      ],
+      "mean": -0.01299,
+      "std": 0.26838
+    },
+    "in_dim": 128,
+    "positives": 585,
+    "supervised_samples": 1024
+  },
+  "forward": {
+    "field_embedding_head": {
+      "user_id": [
+        -0.0274,
+        0.0372,
+        0.0444,
+        -0.0385
+      ],
+      "movie_id": [
+        -0.1197,
+        -0.0561,
+        0.081,
+        -0.0111
+      ],
+      "gender": [
+        -0.0154,
+        -0.0852,
+        -0.0283,
+        -0.0372
+      ],
+      "age": [
+        -0.0747,
+        -0.0769,
+        -0.0163,
+        0.0339
+      ],
+      "occupation": [
+        0.0189,
+        -0.0924,
+        -0.0719,
+        -0.0105
+      ],
+      "zip1": [
+        0.0064,
+        -0.0829,
+        -0.0513,
+        -0.0737
+      ],
+      "year_bucket": [
+        0.0424,
+        0.0666,
+        0.0198,
+        0.0081
+      ]
+    },
+    "logit": -0.08345,
+    "prob": 0.47915,
+    "label": 1,
+    "sample_loss": 0.73574,
+    "batch_loss_mean": 0.70014,
+    "formula": "loss_i = -[y·log σ(z) + (1-y)·log(1-σ(z))]，batch loss = 1/B Σ loss_i"
+  },
+  "update": {
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "user_embedding_row": 3652,
+    "row_before_head4": [
+      -0.027392,
+      0.037156,
+      0.044399,
+      -0.038475
+    ],
+    "row_grad_head4": [
+      2e-06,
+      -2e-06,
+      1e-06,
+      4e-06
+    ],
+    "row_after_head4": [
+      -0.028387,
+      0.038152,
+      0.043414,
+      -0.039473
+    ],
+    "user_rows_with_grad": 868,
+    "user_rows_total": 6041,
+    "grad_norm_by_param": {
+      "emb.user_id.weight": 0.000651,
+      "emb.movie_id.weight": 0.000631,
+      "emb.gender.weight": 0.002293,
+      "emb.age.weight": 0.001171,
+      "emb.occupation.weight": 0.000718,
+      "emb.zip1.weight": 0.001313,
+      "emb.year_bucket.weight": 0.001269,
+      "genre_bag.weight": 0.000987,
+      "mlp.0.weight": 0.025248,
+      "mlp.0.bias": 0.012262,
+      "mlp.3.weight": 0.039061,
+      "mlp.3.bias": 0.035057,
+      "mlp.6.weight": 0.035909,
+      "mlp.6.bias": 0.091303
+    },
+    "logit_before": -0.08345,
+    "logit_after": -0.04796,
+    "batch_loss_before": 0.70014,
+    "batch_loss_after": 0.69676,
+    "note": "Adam 第一步的更新量约等于 lr x sign(grad)，与梯度大小基本无关"
+  },
+  "reload": {
+    "artifact": "artifacts/model.pt",
+    "checked_rows": 5000,
+    "max_abs_diff": 0.0,
+    "ok": true,
+    "probe": {
+      "row": 4,
+      "split": "valid",
+      "user_id": 6040,
+      "movie_id": 2019,
+      "title": "Seven Samurai (The Magnificent Seven) (Shichinin no samurai) (1954)",
+      "genres": "Action|Drama",
+      "gender": "M",
+      "age": 25,
+      "occupation": 6,
+      "zip": "11106",
+      "rating": 5,
+      "label": 1,
+      "time": "2000-04-25 23:06:17",
+      "user_history_cnt": 3,
+      "item_history_cnt": 0,
+      "prob_in_memory": 0.913546,
+      "prob_reloaded": 0.913546
+    }
+  }
+}

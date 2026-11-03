@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# git pre-push 钩子：推送前对 results/ 和 jobs/ 跑脱敏检查，不通过就拒绝推送。
+# 由 scripts/setup_h20.sh 安装到 .git/hooks/pre-push。不要用 --no-verify 绕过。
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+if command -v uv >/dev/null; then
+  uv run --quiet python -m labkit redact --check
+else
+  python -m labkit redact --check
+fi

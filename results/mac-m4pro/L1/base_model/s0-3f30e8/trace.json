@@ -1,0 +1,43 @@
+{
+  "sample": {
+    "note": "训练集第 1 条样本（教学合成；本次未训练，只展示模板与监督位置）",
+    "raw": {
+      "text": "【阿尔法】面霜，淡化细纹，温和无刺激，限时8折",
+      "gold": {
+        "category": "面霜",
+        "selling_points": [
+          "淡化细纹",
+          "温和无刺激"
+        ],
+        "promotions": [
+          {
+            "offer": "限时8折",
+            "condition": null
+          }
+        ]
+      },
+      "kind": "no_condition",
+      "id": "syn-0-0"
+    },
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是广告文案结构化抽取器。从用户给出的广告文案中抽取商业元素，只输出一个 JSON 对象，不要输出任何其他文字。\n字段：\n- category：商品品类，用原文中的词；原文没有写明品类时为 null。\n- selling_points：商品卖点（商品本身的属性或功效）列表，用原文中的词；没有则为 []。优惠信息不是卖点。\n- promotions：优惠列表，每项为 {\"offer\": 优惠内容, \"condition\": 适用条件或限制}；没有条件时 condition 为 null；没有优惠则为 []。\n规则：\n1. 所有值必须摘自原文，不得编造或改写。\n2. 满减、买赠的门槛（如“满300减50”“买一送一”）属于优惠内容本身；condition 只写额外的适用范围或限制，例如指定款、会员、新用户、时间、名额、渠道、排除范围。\n3. 有条件的优惠必须保留条件，不能写成对所有商品、所有人都有效的优惠。\n4. “不参与满减”这类否定说明不是优惠。"
+      },
+      {
+        "role": "user",
+        "content": "【阿尔法】面霜，淡化细纹，温和无刺激，限时8折"
+      },
+      {
+        "role": "assistant",
+        "content": "{\"category\":\"面霜\",\"selling_points\":[\"淡化细纹\",\"温和无刺激\"],\"promotions\":[{\"offer\":\"限时8折\",\"condition\":null}]}"
+      }
+    ],
+    "template_text": "<|im_start|>system\n你是广告文案结构化抽取器。从用户给出的广告文案中抽取商业元素，只输出一个 JSON 对象，不要输出任何其他文字。\n字段：\n- category：商品品类，用原文中的词；原文没有写明品类时为 null。\n- selling_points：商品卖点（商品本身的属性或功效）列表，用原文中的词；没有则为 []。优惠信息不是卖点。\n- promotions：优惠列表，每项为 {\"offer\": 优惠内容, \"condition\": 适用条件或限制}；没有条件时 condition 为 null；没有优惠则为 []。\n规则：\n1. 所有值必须摘自原文，不得编造或改写。\n2. 满减、买赠的门槛（如“满300减50”“买一送一”）属于优惠内容本身；condition 只写额外的适用范围或限制，例如指定款、会员、新用户、时间、名额、渠道、排除范围。\n3. 有条件的优惠必须保留条件，不能写成对所有商品、所有人都有效的优惠。\n4. “不参与满减”这类否定说明不是优惠。<|im_end|>\n<|im_start|>user\n【阿尔法】面霜，淡化细纹，温和无刺激，限时8折<|im_end|>\n<|im_start|>assistant\n{\"category\":\"面霜\",\"selling_points\":[\"淡化细纹\",\"温和无刺激\"],\"promotions\":[{\"offer\":\"限时8折\",\"condition\":null}]}<|im_end|>\n",
+    "prompt_text_len_chars": 532,
+    "n_prompt": 274,
+    "n_total": 307,
+    "n_supervised": 33,
+    "truncated": false
+  }
+}

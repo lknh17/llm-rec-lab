@@ -1,0 +1,396 @@
+{
+  "sample": {
+    "raw": {
+      "row": 71512,
+      "split": "train",
+      "user_id": 2015,
+      "movie_id": 1840,
+      "title": "item 1840",
+      "genres": "g6",
+      "gender": "F",
+      "age": 3,
+      "occupation": 4,
+      "zip": "5",
+      "rating": 1,
+      "label": 1,
+      "time": "1970-11-26 22:36:37",
+      "user_history_cnt": 16,
+      "item_history_cnt": 8
+    },
+    "encoded": {
+      "user_id": 2015,
+      "movie_id": 1840,
+      "gender": 1,
+      "age": 4,
+      "occupation": 5,
+      "zip1": 6,
+      "year_bucket": 6,
+      "genres": [
+        7,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "user_cnt_bucket": 5,
+      "item_cnt_bucket": 4,
+      "user_like_rate": 0.7318206429481506,
+      "item_like_rate": 0.548055112361908
+    },
+    "note": "被追踪样本 = 训练第 1 个 batch 的第 1 条（真实打乱结果，不是挑出来的）"
+  },
+  "batch": {
+    "batch_size": 1024,
+    "tensors": {
+      "user_id": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          2015.0,
+          2806.0,
+          1872.0,
+          4690.0,
+          1687.0,
+          5765.0
+        ]
+      },
+      "movie_id": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          1840.0,
+          1445.0,
+          3147.0,
+          2314.0,
+          1087.0,
+          1357.0
+        ]
+      },
+      "gender": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          1.0,
+          2.0,
+          2.0,
+          1.0,
+          2.0,
+          1.0
+        ]
+      },
+      "age": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          4.0,
+          6.0,
+          1.0,
+          5.0,
+          5.0,
+          7.0
+        ]
+      },
+      "occupation": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          5.0,
+          10.0,
+          16.0,
+          10.0,
+          13.0,
+          11.0
+        ]
+      },
+      "zip1": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          6.0,
+          3.0,
+          5.0,
+          10.0,
+          2.0,
+          2.0
+        ]
+      },
+      "year_bucket": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          6.0,
+          9.0,
+          10.0,
+          5.0,
+          8.0,
+          7.0
+        ]
+      },
+      "genres": {
+        "shape": [
+          1024,
+          6
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          7.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "user_cnt_bucket": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          5.0,
+          5.0,
+          6.0,
+          2.0,
+          7.0,
+          8.0
+        ]
+      },
+      "item_cnt_bucket": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          4.0,
+          11.0,
+          8.0,
+          1.0,
+          4.0,
+          10.0
+        ]
+      },
+      "user_like_rate": {
+        "shape": [
+          1024
+        ],
+        "dtype": "float32",
+        "device": "cpu",
+        "head": [
+          0.73182,
+          0.7661,
+          0.69719,
+          0.65207,
+          0.68574,
+          0.64636
+        ],
+        "mean": 0.6755,
+        "std": 0.05458
+      },
+      "item_like_rate": {
+        "shape": [
+          1024
+        ],
+        "dtype": "float32",
+        "device": "cpu",
+        "head": [
+          0.54806,
+          0.77235,
+          0.65384,
+          0.68312,
+          0.52728,
+          0.72375
+        ],
+        "mean": 0.69473,
+        "std": 0.10201
+      },
+      "label": {
+        "shape": [
+          1024
+        ],
+        "dtype": "float32",
+        "device": "cpu",
+        "head": [
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "mean": 0.68164,
+        "std": 0.46607
+      }
+    },
+    "mlp_input": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "float32",
+      "device": "cpu",
+      "head": [
+        0.09248,
+        0.05109,
+        0.05195,
+        -0.00829,
+        -0.06033,
+        -0.00265,
+        -0.03478,
+        -0.10322
+      ],
+      "mean": -0.00381,
+      "std": 0.25867
+    },
+    "in_dim": 128,
+    "positives": 698,
+    "supervised_samples": 1024
+  },
+  "forward": {
+    "field_embedding_head": {
+      "user_id": [
+        0.0925,
+        0.0511,
+        0.0519,
+        -0.0083
+      ],
+      "movie_id": [
+        -0.0384,
+        -0.0009,
+        -0.002,
+        0.0489
+      ],
+      "gender": [
+        -0.0692,
+        0.0422,
+        -0.0051,
+        -0.029
+      ],
+      "age": [
+        -0.0166,
+        0.0142,
+        -0.0472,
+        -0.0673
+      ],
+      "occupation": [
+        0.0167,
+        -0.0775,
+        -0.055,
+        -0.0475
+      ],
+      "zip1": [
+        -0.0119,
+        -0.0302,
+        0.0211,
+        0.0009
+      ],
+      "year_bucket": [
+        -0.0596,
+        -0.0087,
+        -0.0817,
+        -0.0772
+      ]
+    },
+    "logit": 0.01053,
+    "prob": 0.50263,
+    "label": 1,
+    "sample_loss": 0.6879,
+    "batch_loss_mean": 0.69024,
+    "formula": "loss_i = -[y·log σ(z) + (1-y)·log(1-σ(z))]，batch loss = 1/B Σ loss_i"
+  },
+  "update": {
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "user_embedding_row": 2015,
+    "row_before_head4": [
+      0.09248,
+      0.051095,
+      0.051948,
+      -0.008294
+    ],
+    "row_grad_head4": [
+      -1e-06,
+      3e-06,
+      -4e-06,
+      2e-06
+    ],
+    "row_after_head4": [
+      0.093466,
+      0.050098,
+      0.052945,
+      -0.009289
+    ],
+    "user_rows_with_grad": 891,
+    "user_rows_total": 6001,
+    "grad_norm_by_param": {
+      "emb.user_id.weight": 0.000514,
+      "emb.movie_id.weight": 0.000654,
+      "emb.gender.weight": 0.002314,
+      "emb.age.weight": 0.001827,
+      "emb.occupation.weight": 0.001211,
+      "emb.zip1.weight": 0.001387,
+      "emb.year_bucket.weight": 0.002064,
+      "genre_bag.weight": 0.001795,
+      "mlp.0.weight": 0.037047,
+      "mlp.0.bias": 0.019636,
+      "mlp.3.weight": 0.052417,
+      "mlp.3.bias": 0.054271,
+      "mlp.6.weight": 0.056434,
+      "mlp.6.bias": 0.177794
+    },
+    "logit_before": 0.01053,
+    "logit_after": 0.03316,
+    "batch_loss_before": 0.69024,
+    "batch_loss_after": 0.68557,
+    "note": "Adam 第一步的更新量约等于 lr x sign(grad)，与梯度大小基本无关"
+  },
+  "reload": {
+    "artifact": "artifacts/model.pt",
+    "checked_rows": 5000,
+    "max_abs_diff": 0.0,
+    "ok": true,
+    "probe": {
+      "row": 399693,
+      "split": "valid",
+      "user_id": 3583,
+      "movie_id": 3284,
+      "title": "item 3284",
+      "genres": "g6|g0",
+      "gender": "F",
+      "age": 0,
+      "occupation": 6,
+      "zip": "3",
+      "rating": 0,
+      "label": 0,
+      "time": "1972-06-18 03:07:50",
+      "user_history_cnt": 86,
+      "item_history_cnt": 569,
+      "prob_in_memory": 0.653842,
+      "prob_reloaded": 0.653842
+    }
+  }
+}

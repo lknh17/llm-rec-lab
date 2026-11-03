@@ -1,0 +1,203 @@
+{
+  "run_id": "mac-m4pro.L2.exclusion.s1-fbb629",
+  "course_id": "L2",
+  "project": "adextract",
+  "entry": "adextract.experiment",
+  "profile": "mac-m4pro",
+  "scenario": "exclusion",
+  "role": "variant",
+  "title": "针对\"排除型条件\"补 15% 训练样本",
+  "seed": 1,
+  "variant": "exclusion",
+  "config_hash": "fbb629a8262a",
+  "code_hash": "84b1089298d8",
+  "git": {
+    "commit": "HEAD",
+    "dirty": true
+  },
+  "changed_from_baseline": {
+    "exclusion_ratio": 0.15
+  },
+  "param_affects": {
+    "train_size": "data",
+    "hard_ratio": "data",
+    "exclusion_ratio": "data",
+    "data_seed": "data",
+    "prompt_mode": "data",
+    "supervision": "data",
+    "max_len": "data",
+    "truncation": "data",
+    "infer_template": "infer",
+    "model": "model",
+    "train_mode": "model",
+    "lora_r": "model",
+    "lora_alpha": "model",
+    "lora_targets": "model",
+    "lr": "train",
+    "epochs": "train",
+    "batch_size": "train",
+    "max_steps": "train",
+    "seed": "train",
+    "eval_each_epoch": "eval",
+    "max_new_tokens": "infer",
+    "final_test": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime",
+    "grad_checkpointing": "runtime"
+  },
+  "env_id": "mac-m4pro",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1793688106.1446989,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1793688106.192527,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1793688106.8334122,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1793688109.155186,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1793688252.099496,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1793688274.175352,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1793688106.1446989,
+  "budget": {
+    "max_minutes": 30.0
+  },
+  "expect": [],
+  "slot": "local-0",
+  "started_at": 1793688106.1925278,
+  "data": {
+    "kind": "教学合成训练数据 + 人工标注评估集",
+    "train": {
+      "source": "模板生成器 v2",
+      "size": 400,
+      "seed": 0,
+      "hard_ratio": 0.15,
+      "exclusion_ratio": 0.15,
+      "kinds": {
+        "no_condition": 112,
+        "no_promo": 94,
+        "single_promo": 76,
+        "far_condition": 11,
+        "negation": 15,
+        "no_category": 16,
+        "multi_promo": 16,
+        "exclusion": 60
+      },
+      "hash": "e5fda614095c"
+    },
+    "eval": {
+      "dev": {
+        "n": 30,
+        "hash": "24cb27f1fdca",
+        "source": "人工撰写并核对，迭代用"
+      },
+      "synth_valid": {
+        "n": 60,
+        "source": "同一生成器、不同种子，分布内参照"
+      },
+      "test": {
+        "n": 30,
+        "hash": "aa0beebe008a",
+        "source": "人工撰写并核对，保留测试",
+        "used": false
+      }
+    },
+    "prompt_version": 2,
+    "prompt_mode": "zero_shot",
+    "infer_template": "chat",
+    "leak_check": {
+      "train_texts_in_eval": 0
+    },
+    "tokenized": {
+      "examples": 400,
+      "dropped_too_long": 0,
+      "truncated": 0,
+      "zero_supervision_examples": 0,
+      "tokens_total": 123428,
+      "supervised_tokens_total": 13084,
+      "len_min_mean_max": [
+        281,
+        308.6,
+        343
+      ],
+      "prompt_tokens": 274
+    }
+  },
+  "model": {
+    "base": "Qwen/Qwen2.5-0.5B-Instruct",
+    "path": "<redacted>/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775",
+    "dtype": "torch.float32",
+    "device": "mps",
+    "train_mode": "lora",
+    "lora": {
+      "r": 16,
+      "alpha": 32,
+      "targets": "attn_mlp"
+    },
+    "params": {
+      "trainable": 8798208,
+      "total": 502830976,
+      "trainable_pct": 1.75,
+      "trainable_tensors": 336,
+      "examples": [
+        "base_model.model.model.layers.0.self_attn.q_proj.lora_A.default.weight",
+        "base_model.model.model.layers.0.self_attn.q_proj.lora_B.default.weight",
+        "base_model.model.model.layers.0.self_attn.k_proj.lora_A.default.weight",
+        "base_model.model.model.layers.0.self_attn.k_proj.lora_B.default.weight",
+        "base_model.model.model.layers.0.self_attn.v_proj.lora_A.default.weight",
+        "base_model.model.model.layers.0.self_attn.v_proj.lora_B.default.weight"
+      ]
+    }
+  },
+  "train": {
+    "examples": 400,
+    "steps_per_epoch": 50,
+    "planned_steps": 100,
+    "warmup_steps": 5,
+    "steps": 100,
+    "train_tokens": 246856,
+    "supervised_tokens": 26168,
+    "seconds": 142.6,
+    "lora_B_norm_before": 0.0,
+    "lora_B_norm_after": 2.663781771436559,
+    "base_weight_probe_before": -13.570786476135254,
+    "base_weight_probe_after": -13.570786476135254
+  },
+  "artifacts": {
+    "adapter": {
+      "kind": "lora_adapter",
+      "bytes": 35243786,
+      "note": "LoRA 适配器，基础模型 Qwen/Qwen2.5-0.5B-Instruct"
+    }
+  },
+  "checks": {
+    "reload_identical": "4/4"
+  },
+  "ended_at": 1793688274.175355,
+  "end_reason": "完成",
+  "expect_results": [],
+  "expect_ok": true,
+  "exported": true
+}

@@ -1,0 +1,36 @@
+[worker] 等待设备锁 local-0
+[worker] 环境：<redacted> Darwin 24.6.0 device=mps torch=2.15.0
+[worker] 从快照加载 <data>/batch/mac-m4pro/L1/all_tokens/s0-033332/code/adextract/experiment.py
+[14:00:13] ===== 阶段：prepare =====
+[14:00:15] 训练样本 400 条（丢弃 0，截断 0），总 token 123018，监督 token 122618，prompt 长度 274
+W1103 14:00:15.813000 76582 .venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 290/290 [00:00<00:00, 3907.88it/s]
+[14:00:16] ===== 阶段：train =====
+[14:00:16] 可训练参数 8,798,208 / 502,830,976（1.75%）
+[14:00:18] step 1/100 loss=3.7632 监督token=2464 lr=8.00e-05 grad_norm=25.244
+[14:00:47] step 10/100 loss=0.7748 监督token=2422 lr=1.89e-04 grad_norm=6.563
+[14:01:05] step 20/100 loss=0.2031 监督token=2444 lr=1.68e-04 grad_norm=0.615
+[14:01:23] step 30/100 loss=0.1379 监督token=2447 lr=1.47e-04 grad_norm=0.643
+[14:02:23] step 40/100 loss=0.1160 监督token=2448 lr=1.26e-04 grad_norm=0.460
+[14:02:49] step 50/100 loss=0.0976 监督token=2474 lr=1.05e-04 grad_norm=0.419
+[14:02:51] epoch 1: dev_loss=0.2405
+[14:03:08] step 60/100 loss=0.0713 监督token=2392 lr=8.42e-05 grad_norm=0.376
+[14:07:05] step 70/100 loss=0.0860 监督token=2493 lr=6.32e-05 grad_norm=0.390
+[14:07:36] step 80/100 loss=0.0666 监督token=2401 lr=4.21e-05 grad_norm=0.366
+[14:10:27] step 90/100 loss=0.0692 监督token=2483 lr=2.11e-05 grad_norm=0.396
+[14:15:02] step 100/100 loss=0.0802 监督token=2499 lr=0.00e+00 grad_norm=0.448
+[14:15:06] epoch 2: dev_loss=0.2589
+[14:15:06] ===== 阶段：evaluate =====
+[14:15:12] [dev] 格式合法 1.0 品类 0.9667 卖点F1 0.8696 条件保留 0.5238 无依据 0.0606 全对 0.3 （5.7s）
+[14:15:25] [synth_valid] 格式合法 0.9833 品类 0.85 卖点F1 0.9839 条件保留 0.8649 无依据 0.0075 全对 0.7667 （12.8s）
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/290 [00:00<00:55,  5.22it/s]
+Loading weights:  51%|█████     | 147/290 [00:00<00:00, 609.91it/s]
+Loading weights:  79%|███████▊  | 228/290 [00:00<00:00, 636.75it/s]
+Loading weights: 100%|██████████| 290/290 [00:00<00:00, 608.45it/s]
+[14:15:29] 重新加载核对：4/4 条输出与内存中的模型完全一致
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

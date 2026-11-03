@@ -1,0 +1,235 @@
+{
+  "run_id": "mac-m4pro.R1.synth_baseline.s2-c68199",
+  "course_id": "R1",
+  "project": "rec",
+  "entry": "rec.experiment",
+  "profile": "mac-m4pro",
+  "scenario": "synth_baseline",
+  "role": "variant",
+  "title": "合成数据：已知真实概率，模型 AUC 和理论上限差多少",
+  "seed": 2,
+  "variant": "synth_baseline",
+  "config_hash": "c68199f3dd80",
+  "code_hash": "2abe02e9909e",
+  "git": {
+    "commit": "HEAD",
+    "dirty": true
+  },
+  "changed_from_baseline": {
+    "dataset": "synth"
+  },
+  "param_affects": {
+    "dataset": "data",
+    "synth_users": "data",
+    "synth_items": "data",
+    "synth_rows": "data",
+    "synth_alpha": "data",
+    "synth_seed": "data",
+    "label_threshold": "data",
+    "split": "data",
+    "stats_mode": "data",
+    "feature_groups": "model",
+    "embedding_dim": "model",
+    "hidden": "model",
+    "dropout": "model",
+    "lr": "train",
+    "weight_decay": "train",
+    "batch_size": "train",
+    "epochs": "train",
+    "max_steps": "train",
+    "seed": "train",
+    "final_test": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime",
+    "resume_from": "runtime"
+  },
+  "env_id": "mac-m4pro",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1793682674.052293,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1793682674.08018,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1793682674.725618,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1793682674.7532349,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1793682677.486224,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1793682677.5732841,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1793682674.052293,
+  "budget": {
+    "max_minutes": 20.0
+  },
+  "expect": [
+    "summary.valid.auc < meta.checks.data.oracle_auc_valid",
+    "summary.valid.auc > 0.6"
+  ],
+  "slot": "local-0",
+  "started_at": 1793682674.080181,
+  "cache": [
+    {
+      "stage": "rec_data",
+      "key_hash": "0723b0b554b2",
+      "key": {
+        "dataset": "synth",
+        "fingerprint": "439e72ba8f9d",
+        "prep_version": 5,
+        "split": "time",
+        "stats_mode": "point_in_time",
+        "synth": {
+          "synth_users": 6000,
+          "synth_items": 4000,
+          "synth_rows": 1000000,
+          "synth_alpha": 2.0,
+          "synth_seed": 0
+        }
+      },
+      "hit": true,
+      "source_run": "s0-178dca"
+    }
+  ],
+  "data": {
+    "kind": "合成数据",
+    "source": "合成数据（潜在因子 + 已知真实概率）",
+    "dataset": "synth",
+    "version": "439e72ba8f9d",
+    "task": "按已知概率抽样的点击；AUC(label, 真实概率) 是理论上限",
+    "split_rule": "全局时间 80/10/10",
+    "stats_mode": "point_in_time",
+    "seed": 2,
+    "prep_version": 5,
+    "rows": 499617,
+    "split_rows": {
+      "train": 399693,
+      "valid": 49962,
+      "test": 49962
+    },
+    "label_rate": {
+      "train": 0.667277135201267,
+      "valid": 0.6319402746087026,
+      "test": 0.624974980985549
+    },
+    "data_key": {
+      "dataset": "synth",
+      "fingerprint": "439e72ba8f9d",
+      "prep_version": 5,
+      "split": "time",
+      "stats_mode": "point_in_time",
+      "synth": {
+        "synth_users": 6000,
+        "synth_items": 4000,
+        "synth_rows": 1000000,
+        "synth_alpha": 2.0,
+        "synth_seed": 0
+      }
+    }
+  },
+  "checks": {
+    "data": {
+      "time_range_train": [
+        "1970-01-03",
+        "1972-06-18"
+      ],
+      "time_range_valid": [
+        "1972-06-18",
+        "1972-09-22"
+      ],
+      "time_range_test": [
+        "1972-09-22",
+        "1972-12-30"
+      ],
+      "train_has_future": false,
+      "pair_overlap_train_valid": 0,
+      "cold_user_share_valid": 0.0,
+      "cold_movie_share_valid": 0.0,
+      "cold_user_share_test": 0.0,
+      "cold_movie_share_test": 0.0,
+      "user_stats_rows_at_or_after_sample_share": 0.0,
+      "item_stats_rows_at_or_after_sample_share": 0.0,
+      "single_feature_auc_user_like_rate_train": 0.5374,
+      "single_feature_auc_user_like_rate_valid": 0.5488,
+      "single_feature_auc_item_like_rate_train": 0.6515,
+      "single_feature_auc_item_like_rate_valid": 0.6319,
+      "oracle_auc_train": 0.8777,
+      "oracle_auc_valid": 0.8709,
+      "oracle_auc_test": 0.8703
+    },
+    "reload_max_abs_diff": 0.0
+  },
+  "model": {
+    "arch": "Embedding + MLP",
+    "feature_groups": [
+      "ids",
+      "user_profile",
+      "item_attr"
+    ],
+    "sparse_fields": [
+      "user_id",
+      "movie_id",
+      "gender",
+      "age",
+      "occupation",
+      "zip1",
+      "year_bucket"
+    ],
+    "dense_fields": [],
+    "genre_bag": true,
+    "mlp_input_dim": 128,
+    "params": 185889,
+    "device": "cpu"
+  },
+  "train": {
+    "train_samples": 399693,
+    "steps_per_epoch": 391,
+    "planned_steps": 782,
+    "trainable_params": 185889
+  },
+  "artifacts": {
+    "checkpoint_last.pt": {
+      "kind": "checkpoint",
+      "bytes": 2253232,
+      "note": "epoch=2 step=782，可续训"
+    },
+    "model.pt": {
+      "kind": "model",
+      "bytes": 748945,
+      "note": "仅权重 + 配置，用于推理；续训请用 checkpoint_last.pt"
+    }
+  },
+  "ended_at": 1793682677.5732841,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.valid.auc < meta.checks.data.oracle_auc_valid",
+      "ok": true
+    },
+    {
+      "expr": "summary.valid.auc > 0.6",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

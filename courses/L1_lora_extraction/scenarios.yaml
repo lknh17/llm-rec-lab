@@ -1,0 +1,68 @@
+course: L1
+title: 广告元素抽取微调：LoRA、assistant-only 监督与截断
+project: adextract
+entry: adextract.experiment
+
+profiles:
+  mac-m4pro:
+    note: Apple M4 Pro（MPS），Qwen2.5-0.5B-Instruct，400 条合成训练样本。课程原始数字的来源
+    base: {}
+    seeds: [0]
+    assets: [qwen2.5-0.5b]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+  h20x8:
+    note: 8 × NVIDIA H20，Qwen2.5-7B-Instruct（bf16），4000 条合成训练样本，每个场景 3 个种子
+    base: {model: Qwen/Qwen2.5-7B-Instruct, train_size: 4000, device: cuda, max_minutes: 180}
+    seeds: [0, 1, 2]
+    assets: [qwen2.5-7b]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+
+scenarios:
+  - id: base_model
+    role: reference
+    title: 不训练，直接评估基础模型（零样本）
+    params: {train_mode: none}
+    seeds: [0]
+  - id: baseline
+    role: baseline
+    title: 基线：LoRA r=16 挂注意力 + MLP，assistant-only 监督，2 轮
+    params: {}
+    expect:
+      - "meta.data.tokenized.zero_supervision_examples == 0"
+      - "summary.dev.exact_all_ok > 0.3"
+
+  - id: hard04
+    role: variant
+    title: 训练集难例比例 0.15 → 0.4
+    params: {hard_ratio: 0.4}
+  - id: few_shot
+    role: variant
+    title: 提示词加 2 个示例（few-shot），训练和推理都带
+    params: {prompt_mode: few_shot}
+  - id: all_tokens
+    role: variant
+    title: 整段都算 loss（系统提示和用户文案也监督）
+    params: {supervision: all_tokens}
+  - id: epochs4
+    role: variant
+    title: 训练 2 轮 → 4 轮
+    params: {epochs: 4}
+  - id: lora_r4
+    role: variant
+    title: LoRA 秩 16 → 4（alpha 同比缩小，缩放系数不变）
+    params: {lora_r: 4, lora_alpha: 8}
+
+  - id: fault_truncation
+    role: fault
+    title: 教学故障：max_len=256 + 右截断，回答被整段截掉
+    params: {max_len: 256, truncation: right}
+    expect:
+      - "meta.data.tokenized.supervised_tokens_total == 0"
+      - "summary.train.lora_B_norm_after == 0"
+  - id: fix_truncation
+    role: fix
+    title: 修复：max_len=512（保留右截断，确认已不再截到回答）
+    params: {max_len: 512, truncation: right}
+    expect:
+      - "meta.data.tokenized.zero_supervision_examples == 0"
+      - "summary.dev.exact_all_ok > 0.3"

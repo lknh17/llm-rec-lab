@@ -1,0 +1,91 @@
+course: R2
+title: 特征改进与评估诊断：统计特征的收益和泄漏
+project: rec
+entry: rec.experiment
+prepare_first: true
+
+profiles:
+  mac-m4pro:
+    note: Apple M4 Pro，CPU 训练。课程原始数字的来源
+    base: {}
+    seeds: [0]
+    assets: [ml-1m]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+  h20x8:
+    note: 8 × NVIDIA H20。ML-1M 场景每个 5 个种子，另在 KuaiRand 和 ML-20M 上复现统计特征收益和泄漏
+    base: {device: cuda, max_minutes: 60}
+    seeds: [0, 1, 2, 3, 4]
+    assets: [ml-1m, ml-20m, kuairand-pure]
+    slots: {gpus_per_job: 1, jobs_per_device: 4}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：ID + 画像 + 电影属性（与 R1 基线同配置）
+    params: {}
+    seeds_by_profile: {mac-m4pro: [0, 1, 2]}   # both_stats 有 3 个种子，断言要和同种子的基线比
+    expect: ["summary.valid.auc > 0.72"]
+
+  - id: user_stats
+    role: variant
+    title: 加用户统计特征（历史评分数分桶 + 平滑喜欢率，时点正确）
+    params: {feature_groups: [ids, user_profile, item_attr, user_stats]}
+  - id: item_stats
+    role: variant
+    title: 加电影统计特征
+    params: {feature_groups: [ids, user_profile, item_attr, item_stats]}
+  - id: both_stats
+    role: fix
+    title: 用户 + 电影统计特征（时点正确口径），也是泄漏故障的修复版
+    params: {feature_groups: [ids, user_profile, item_attr, user_stats, item_stats]}
+    seeds_by_profile: {mac-m4pro: [0, 1, 2]}
+    expect:
+      - "meta.checks.data.user_stats_rows_at_or_after_sample_share == 0"
+      - "summary.valid.auc > base.summary.valid.auc"
+  - id: no_ids
+    role: variant
+    title: 去掉 ID embedding，只用画像和属性
+    params: {feature_groups: [user_profile, item_attr]}
+
+  - id: fault_stats_leak
+    role: fault
+    title: 教学故障：统计特征用全量数据计算（含样本自己的标签和未来行为）
+    params: {feature_groups: [ids, user_profile, item_attr, user_stats, item_stats], stats_mode: full_data}
+    expect:
+      - "meta.checks.data.user_stats_rows_at_or_after_sample_share > 0.5"
+      - "summary.valid.auc > base.summary.valid.auc + 0.03"
+
+  # ---------------- 放大场景（只在 H20 档位） ----------------
+  - id: kuairand_ids_only
+    role: variant
+    title: KuaiRand 曝光日志：只用 ID + 画像 + 视频属性
+    profiles: [h20x8]
+    params: {dataset: kuairand-pure}
+    seeds: [0, 1, 2]
+  - id: kuairand_both_stats
+    role: variant
+    title: KuaiRand：加用户/视频统计特征（时点正确）
+    profiles: [h20x8]
+    params: {dataset: kuairand-pure, feature_groups: [ids, user_profile, item_attr, user_stats, item_stats]}
+    seeds: [0, 1, 2]
+  - id: kuairand_stats_leak
+    role: fault
+    title: KuaiRand：统计特征泄漏故障在真实曝光日志上是否同样虚高
+    profiles: [h20x8]
+    params: {dataset: kuairand-pure, feature_groups: [ids, user_profile, item_attr, user_stats, item_stats],
+             stats_mode: full_data}
+    seeds: [0, 1, 2]
+    expect: ["meta.checks.data.user_stats_rows_at_or_after_sample_share > 0.5"]
+  - id: ml20m_both_stats
+    role: variant
+    title: ML-20M：统计特征（无画像）
+    profiles: [h20x8]
+    params: {dataset: ml-20m, feature_groups: [ids, item_attr, user_stats, item_stats]}
+    seeds: [0, 1, 2]
+  - id: ml20m_stats_leak
+    role: fault
+    title: ML-20M：统计特征泄漏
+    profiles: [h20x8]
+    params: {dataset: ml-20m, feature_groups: [ids, item_attr, user_stats, item_stats], stats_mode: full_data}
+    seeds: [0, 1, 2]
+    expect: ["meta.checks.data.user_stats_rows_at_or_after_sample_share > 0.5"]

@@ -1,0 +1,129 @@
+"""课程 README 的自动生成部分：代码链接表和场景结果表。
+
+README 里手写的讲解保持不动，只替换两个标记区之间的内容：
+
+    <!-- labkit:code -->     ……     <!-- /labkit:code -->
+    <!-- labkit:results -->  ……     <!-- /labkit:results -->
+
+代码表：扫描项目里的 `# --8<-- [start:name]` 锚点，生成"锚点 → 文件#行号"的 GitHub 相对链接。
+结果表：每个档位一张表，行是场景，列是该课程的关键指标（多种子时给 均值 ± 标准差 和种子数）。
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import statistics
+from pathlib import Path
+
+from . import paths, scenarios
+
+ANCHOR = re.compile(r"#\s*--8<--\s*\[start:([\w-]+)\]")
+HEADLINE = {
+    "rec": [("valid.auc", "验证 AUC"), ("valid.logloss", "验证 LogLoss")],
+    "adextract": [("dev.exact_all_ok", "dev 全对率"), ("dev.format_ok", "dev 格式合法率"),
+                  ("synth_valid.exact_all_ok", "合成验证全对率"), ("test.exact_all_ok", "test 全对率")],
+}
+ROLE_NAMES = {"reference": "参照", "baseline": "基线", "variant": "候选改动", "fault": "教学故障", "fix": "修复",
+              "final": "最终测试"}
+
+
+def code_table(project: str, course_dir: Path) -> str:
+    proj = paths.PROJECTS_DIR / project
+    rows = ["| 代码段 | 位置 |", "| - | - |"]
+    for f in sorted(proj.rglob("*.py")):
+        if "__pycache__" in f.parts:
+            continue
+        for i, line in enumerate(f.read_text().splitlines(), 1):
+            m = ANCHOR.search(line)
+            if m:
+                rel = Path("..") / ".." / f.relative_to(paths.ROOT)
+                rows.append(f"| `{m.group(1)}` | [{f.relative_to(paths.ROOT)}#L{i}]({rel.as_posix()}#L{i}) |")
+    return "\n".join(rows)
+
+
+def _get(d: dict, dotted: str):
+    for k in dotted.split("."):
+        if not isinstance(d, dict) or k not in d:
+            return None
+        d = d[k]
+    return d if isinstance(d, (int, float)) else None
+
+
+def collect(course_id: str, profile: str) -> dict[str, list[dict]]:
+    """场景 → 该档位下每个种子的 {seed, summary, meta}（只取 results/ 里已发布、成功的运行）。"""
+    out: dict[str, list[dict]] = {}
+    base = paths.RESULTS_DIR / profile / course_id
+    if not base.exists():
+        return out
+    for run_json in sorted(base.glob("*/*/run.json")):
+        meta = json.loads(run_json.read_text())
+        if meta.get("status") != "succeeded":
+            continue
+        summ = json.loads((run_json.parent / "summary.json").read_text()) if (run_json.parent / "summary.json").exists() else {}
+        out.setdefault(meta.get("scenario") or run_json.parent.parent.name, []).append(
+            {"seed": meta.get("seed"), "summary": summ, "meta": meta, "dir": run_json.parent})
+    return out
+
+
+def fmt_values(vals: list[float]) -> str:
+    if not vals:
+        return "—"
+    if len(vals) == 1:
+        return f"{vals[0]:.4f}"
+    return f"{statistics.mean(vals):.4f} ± {statistics.stdev(vals):.4f} (n={len(vals)})"
+
+
+def results_table(course: dict) -> str:
+    cols = HEADLINE[course["project"]]
+    parts = []
+    for profile, prof in course["profiles"].items():
+        got = collect(course["course"], profile)
+        n_runs = sum(len(v) for v in got.values())
+        expected = len(scenarios.expand(course["course"], profile))
+        parts.append(f"**{profile}**：{prof.get('note', '')}（已有 {n_runs} / {expected} 个运行）\n")
+        if not got:
+            parts.append("_还没有结果：等待批量运行。_\n")
+            continue
+        used = [(k, n) for k, n in cols if any(_get(r["summary"], k) is not None for rs in got.values() for r in rs)]
+        parts.append("| 场景 | 类型 | " + " | ".join(n for _, n in used) + " | 断言 |")
+        parts.append("| - | - | " + " | ".join("-" for _ in used) + " | - |")
+        for s in course["scenarios"]:
+            runs = got.get(s["id"])
+            if not runs:
+                if not s.get("profiles") or profile in s["profiles"]:
+                    parts.append(f"| `{s['id']}` | {ROLE_NAMES[s['role']]} | " + " | ".join("待生成" for _ in used) + " | |")
+                continue
+            vals = [fmt_values([v for r in runs if (v := _get(r["summary"], k)) is not None]) for k, _ in used]
+            oks = [r["meta"].get("expect_ok") for r in runs if s.get("expect")]
+            mark = "" if not oks else ("通过" if all(o is True for o in oks) else ("未通过" if any(o is False for o in oks) else "待定"))
+            parts.append(f"| `{s['id']}` | {ROLE_NAMES[s['role']]} | " + " | ".join(vals) + f" | {mark} |")
+        parts.append("")
+    return "\n".join(parts)
+
+
+def _replace(text: str, tag: str, body: str) -> str:
+    start, end = f"<!-- labkit:{tag} -->", f"<!-- /labkit:{tag} -->"
+    if start not in text:
+        return text
+    a = text.index(start) + len(start)
+    b = text.index(end)
+    return text[:a] + "\n" + body.strip() + "\n" + text[b:]
+
+
+def build_all(check: bool = False) -> list[str]:
+    changed = []
+    for cid, path in scenarios.course_files().items():
+        course = scenarios.load_course(cid)
+        readme = path.parent / "README.md"
+        if not readme.exists():
+            continue
+        old = readme.read_text()
+        new = _replace(old, "code", code_table(course["project"], path.parent))
+        details = "<details><summary>展开结果（先自己预测，再看）</summary>\n\n" + results_table(course) + "\n</details>"
+        new = _replace(new, "results", details)
+        if new != old:
+            changed.append(str(readme.relative_to(paths.ROOT)))
+            if not check:
+                readme.write_text(new)
+    return changed

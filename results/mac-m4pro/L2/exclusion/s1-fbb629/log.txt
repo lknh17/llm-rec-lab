@@ -1,0 +1,34 @@
+[worker] 等待设备锁 local-0
+[worker] 环境：<redacted> Darwin 24.6.0 device=mps torch=2.15.0
+[worker] 从快照加载 <data>/batch/mac-m4pro/L2/exclusion/s1-fbb629/code/adextract/experiment.py
+[14:41:46] ===== 阶段：prepare =====
+[14:41:48] 训练样本 400 条（丢弃 0，截断 0），总 token 123428，监督 token 13084，prompt 长度 274
+W1103 14:41:48.745000 21006 .venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 290/290 [00:00<00:00, 4198.29it/s]
+[14:41:49] ===== 阶段：train =====
+[14:41:49] 可训练参数 8,798,208 / 502,830,976（1.75%）
+[14:41:50] step 1/100 loss=0.4519 监督token=285 lr=8.00e-05 grad_norm=7.911
+[14:42:03] step 10/100 loss=0.0537 监督token=261 lr=1.89e-04 grad_norm=2.259
+[14:42:17] step 20/100 loss=0.0210 监督token=248 lr=1.68e-04 grad_norm=0.864
+[14:42:31] step 30/100 loss=0.0308 监督token=243 lr=1.47e-04 grad_norm=0.465
+[14:42:44] step 40/100 loss=0.0203 监督token=265 lr=1.26e-04 grad_norm=0.807
+[14:42:58] step 50/100 loss=0.0105 监督token=234 lr=1.05e-04 grad_norm=0.301
+[14:43:00] epoch 1: dev_loss=0.2247
+[14:43:14] step 60/100 loss=0.0043 监督token=269 lr=8.42e-05 grad_norm=0.189
+[14:43:27] step 70/100 loss=0.0012 监督token=277 lr=6.32e-05 grad_norm=0.032
+[14:43:41] step 80/100 loss=0.0016 监督token=274 lr=4.21e-05 grad_norm=0.072
+[14:43:55] step 90/100 loss=0.0005 监督token=269 lr=2.11e-05 grad_norm=0.011
+[14:44:09] step 100/100 loss=0.0276 监督token=308 lr=0.00e+00 grad_norm=1.065
+[14:44:12] epoch 2: dev_loss=0.2007
+[14:44:12] ===== 阶段：evaluate =====
+[14:44:17] [dev] 格式合法 1.0 品类 1.0 卖点F1 0.9739 条件保留 0.8571 无依据 0.0074 全对 0.7333 （5.9s）
+[14:44:30] [synth_valid] 格式合法 1.0 品类 0.9833 卖点F1 0.996 条件保留 0.8378 无依据 0.0 全对 0.8833 （12.5s）
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/290 [00:00<01:16,  3.77it/s]
+Loading weights: 100%|██████████| 290/290 [00:00<00:00, 882.67it/s]
+[14:44:34] 重新加载核对：4/4 条输出与内存中的模型完全一致
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

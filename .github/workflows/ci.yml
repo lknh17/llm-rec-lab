@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  push:
+    paths-ignore: ["results/**", "jobs/**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: 安装依赖（CPU 版 torch）
+        run: |
+          uv venv --python 3.12
+          uv pip install --index-url https://download.pytorch.org/whl/cpu torch
+          uv pip install -e . pytest
+      - name: 测试（不需要数据集和模型：用合成数据和小 tokenizer 冒烟）
+        run: uv run --no-sync pytest -q -p no:warnings
+      - name: 课程 README 自动生成部分是最新的
+        run: uv run --no-sync python -m labkit docs --check

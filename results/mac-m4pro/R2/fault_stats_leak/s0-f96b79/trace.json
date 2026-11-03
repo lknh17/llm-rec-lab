@@ -1,0 +1,410 @@
+{
+  "sample": {
+    "raw": {
+      "row": 653064,
+      "split": "train",
+      "user_id": 1793,
+      "movie_id": 508,
+      "title": "Philadelphia (1993)",
+      "genres": "Drama",
+      "gender": "M",
+      "age": 25,
+      "occupation": 4,
+      "zip": "20008",
+      "rating": 5,
+      "label": 1,
+      "time": "2000-11-20 22:02:15",
+      "user_history_cnt": 171,
+      "item_history_cnt": 361
+    },
+    "encoded": {
+      "user_id": 1157,
+      "movie_id": 492,
+      "gender": 2,
+      "age": 3,
+      "occupation": 5,
+      "zip1": 3,
+      "year_bucket": 9,
+      "genres": [
+        8,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "user_cnt_bucket": 9,
+      "item_cnt_bucket": 10,
+      "user_like_rate": 0.5784138441085815,
+      "item_like_rate": 0.7032238245010376
+    },
+    "note": "被追踪样本 = 训练第 1 个 batch 的第 1 条（真实打乱结果，不是挑出来的）"
+  },
+  "batch": {
+    "batch_size": 1024,
+    "tensors": {
+      "user_id": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          1157.0,
+          4467.0,
+          1110.0,
+          1591.0,
+          3121.0,
+          5249.0
+        ]
+      },
+      "movie_id": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          492.0,
+          1288.0,
+          1653.0,
+          140.0,
+          1094.0,
+          3152.0
+        ]
+      },
+      "gender": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          2.0,
+          1.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "age": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          3.0,
+          5.0,
+          3.0,
+          3.0,
+          3.0,
+          6.0
+        ]
+      },
+      "occupation": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          5.0,
+          1.0,
+          5.0,
+          13.0,
+          18.0,
+          21.0
+        ]
+      },
+      "zip1": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          3.0,
+          1.0,
+          4.0,
+          7.0,
+          3.0,
+          1.0
+        ]
+      },
+      "year_bucket": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          9.0,
+          9.0,
+          9.0,
+          9.0,
+          8.0,
+          7.0
+        ]
+      },
+      "genres": {
+        "shape": [
+          1024,
+          6
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          8.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "user_cnt_bucket": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          9.0,
+          10.0,
+          9.0,
+          6.0,
+          8.0,
+          8.0
+        ]
+      },
+      "item_cnt_bucket": {
+        "shape": [
+          1024
+        ],
+        "dtype": "int64",
+        "device": "cpu",
+        "head": [
+          10.0,
+          10.0,
+          7.0,
+          9.0,
+          11.0,
+          11.0
+        ]
+      },
+      "user_like_rate": {
+        "shape": [
+          1024
+        ],
+        "dtype": "float32",
+        "device": "cpu",
+        "head": [
+          0.57841,
+          0.43223,
+          0.77911,
+          0.69843,
+          0.82499,
+          0.67715
+        ],
+        "mean": 0.56555,
+        "std": 0.15551
+      },
+      "item_like_rate": {
+        "shape": [
+          1024
+        ],
+        "dtype": "float32",
+        "device": "cpu",
+        "head": [
+          0.70322,
+          0.65987,
+          0.43014,
+          0.46485,
+          0.77857,
+          0.75352
+        ],
+        "mean": 0.56965,
+        "std": 0.19174
+      },
+      "label": {
+        "shape": [
+          1024
+        ],
+        "dtype": "float32",
+        "device": "cpu",
+        "head": [
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          0.0
+        ],
+        "mean": 0.55566,
+        "std": 0.49713
+      }
+    },
+    "mlp_input": {
+      "shape": [
+        1024,
+        162
+      ],
+      "dtype": "float32",
+      "device": "cpu",
+      "head": [
+        0.02155,
+        -0.03909,
+        -0.02787,
+        0.00094,
+        -0.03604,
+        -0.04883,
+        -0.04545,
+        -0.01528
+      ],
+      "mean": 0.01012,
+      "std": 0.24313
+    },
+    "in_dim": 162,
+    "positives": 569,
+    "supervised_samples": 1024
+  },
+  "forward": {
+    "field_embedding_head": {
+      "user_id": [
+        0.0216,
+        -0.0391,
+        -0.0279,
+        0.0009
+      ],
+      "movie_id": [
+        0.0507,
+        0.0018,
+        -0.0413,
+        -0.012
+      ],
+      "gender": [
+        0.0917,
+        -0.0489,
+        -0.0324,
+        -0.0803
+      ],
+      "age": [
+        -0.0268,
+        -0.0572,
+        0.0234,
+        0.064
+      ],
+      "occupation": [
+        0.0229,
+        0.0406,
+        0.0068,
+        -0.0109
+      ],
+      "zip1": [
+        0.0565,
+        0.0629,
+        -0.0642,
+        -0.0497
+      ],
+      "year_bucket": [
+        0.0311,
+        -0.0636,
+        0.0373,
+        -0.0353
+      ],
+      "user_cnt_bucket": [
+        -0.001,
+        -0.0329,
+        -0.095,
+        -0.022
+      ],
+      "item_cnt_bucket": [
+        -0.0683,
+        0.0508,
+        -0.014,
+        -0.0026
+      ]
+    },
+    "logit": 0.06297,
+    "prob": 0.51574,
+    "label": 1,
+    "sample_loss": 0.66216,
+    "batch_loss_mean": 0.69078,
+    "formula": "loss_i = -[y·log σ(z) + (1-y)·log(1-σ(z))]，batch loss = 1/B Σ loss_i"
+  },
+  "update": {
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "user_embedding_row": 1157,
+    "row_before_head4": [
+      0.021552,
+      -0.039087,
+      -0.027866,
+      0.000937
+    ],
+    "row_grad_head4": [
+      -4e-06,
+      0.0,
+      -1.1e-05,
+      4e-06
+    ],
+    "row_after_head4": [
+      0.022549,
+      -0.040015,
+      -0.026867,
+      -6.1e-05
+    ],
+    "user_rows_with_grad": 848,
+    "user_rows_total": 5401,
+    "grad_norm_by_param": {
+      "emb.user_id.weight": 0.000532,
+      "emb.movie_id.weight": 0.000563,
+      "emb.gender.weight": 0.001126,
+      "emb.age.weight": 0.000783,
+      "emb.occupation.weight": 0.000632,
+      "emb.zip1.weight": 0.000623,
+      "emb.year_bucket.weight": 0.00071,
+      "emb.user_cnt_bucket.weight": 0.000947,
+      "emb.item_cnt_bucket.weight": 0.001267,
+      "genre_bag.weight": 0.0008,
+      "mlp.0.weight": 0.020996,
+      "mlp.0.bias": 0.007209,
+      "mlp.3.weight": 0.020272,
+      "mlp.3.bias": 0.01996,
+      "mlp.6.weight": 0.026019,
+      "mlp.6.bias": 0.047224
+    },
+    "logit_before": 0.06297,
+    "logit_after": 0.10317,
+    "batch_loss_before": 0.69078,
+    "batch_loss_after": 0.6887,
+    "note": "Adam 第一步的更新量约等于 lr x sign(grad)，与梯度大小基本无关"
+  },
+  "reload": {
+    "artifact": "artifacts/model.pt",
+    "checked_rows": 5000,
+    "max_abs_diff": 0.0,
+    "ok": true,
+    "probe": {
+      "row": 800164,
+      "split": "valid",
+      "user_id": 1875,
+      "movie_id": 440,
+      "title": "Dave (1993)",
+      "genres": "Comedy|Romance",
+      "gender": "M",
+      "age": 35,
+      "occupation": 12,
+      "zip": "94107",
+      "rating": 4,
+      "label": 1,
+      "time": "2000-12-02 14:52:18",
+      "user_history_cnt": 239,
+      "item_history_cnt": 758,
+      "prob_in_memory": 0.673036,
+      "prob_reloaded": 0.673036
+    }
+  }
+}
