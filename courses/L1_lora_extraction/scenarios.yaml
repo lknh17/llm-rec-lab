@@ -16,6 +16,13 @@ profiles:
     seeds: [0, 1, 2]
     assets: [qwen2.5-7b]
     slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：0.5B、16 条训练样本、2 步，只验证流程能跑通（结果没有教学意义，不检查断言）
+    base: {train_size: 16, epochs: 1, max_steps: 2, max_new_tokens: 64, max_minutes: 15}
+    seeds: [0]
+    skip_expect: true
+    assets: [qwen2.5-0.5b]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
 
 scenarios:
   - id: base_model
@@ -51,6 +58,46 @@ scenarios:
     role: variant
     title: LoRA 秩 16 → 4（alpha 同比缩小，缩放系数不变）
     params: {lora_r: 4, lora_alpha: 8}
+
+  # ---------- L05 SFT 与 LoRA：rank、挂载层、学习率（只在 H20 档和冒烟档跑；alpha/r 固定为 2）----------
+  - id: lora_r8
+    role: variant
+    title: LoRA 秩 16 → 8（alpha 16，缩放系数不变）
+    params: {lora_r: 8, lora_alpha: 16}
+    profiles: [h20x8, mac-smoke]
+    expect:
+      - "meta.model.params.trainable * 2 == base.meta.model.params.trainable"
+  - id: lora_r64
+    role: variant
+    title: LoRA 秩 16 → 64（alpha 128，缩放系数不变）
+    params: {lora_r: 64, lora_alpha: 128}
+    profiles: [h20x8, mac-smoke]
+    expect:
+      - "meta.model.params.trainable == base.meta.model.params.trainable * 4"
+  - id: lora_qv
+    role: variant
+    title: LoRA 只挂 q_proj / v_proj（r=16）
+    params: {lora_targets: qv}
+    profiles: [h20x8, mac-smoke]
+    expect:
+      - "meta.model.params.trainable * 6 < base.meta.model.params.trainable"
+  - id: lora_attn
+    role: variant
+    title: LoRA 挂注意力 q/k/v/o（不挂 MLP，r=16）
+    params: {lora_targets: attn}
+    profiles: [h20x8, mac-smoke]
+    expect:
+      - "meta.model.params.trainable * 3 < base.meta.model.params.trainable"
+  - id: lr_5e-5
+    role: variant
+    title: 学习率 2e-4 → 5e-5
+    params: {lr: 5.0e-5}
+    profiles: [h20x8, mac-smoke]
+  - id: lr_1e-3
+    role: variant
+    title: 学习率 2e-4 → 1e-3
+    params: {lr: 1.0e-3}
+    profiles: [h20x8, mac-smoke]
 
   - id: fault_truncation
     role: fault

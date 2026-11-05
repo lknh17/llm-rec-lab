@@ -2,9 +2,9 @@
 
 推荐模型与 LLM 微调的循序渐进实践课。每门课都是"一个真实可跑的小项目 + 一组预先定义好的场景（基线、候选改动、教学故障、修复、多种子）+ 已经跑好的结果"。
 
-- 只看 GitHub 也能学：按课程 README 的 9 步走，代码链接直达锚点，结果表默认折叠——**先写下自己的预测，再展开**。
+- 只看 GitHub 也能学：按课程 README 的步骤走，代码链接直达锚点，结果表和证据图（`figures/*.svg`）默认折叠——**先想好自己的预测，再展开**。
 - 所有数据和模型都是公开的（MovieLens、KuaiRand、Qwen2.5、合成数据），不含任何业务数据。
-- 结果分两个档位：`mac-m4pro`（笔记本小规模，可在 CPU/MPS 复现）和 `h20x8`（8 卡 H20 放大：更大的数据、7B 模型、3 个种子）。
+- 结果档位：`h20x8`（8 卡 H20：7B 模型、更大的数据、3 个种子，L1 的默认档位）、`mac-m4pro`（Mac 小规模（历史），可在 CPU/MPS 复现）、`mac-smoke`（Mac 冒烟，只验证流程，不进结果表）。
 
 ## 课程
 
@@ -20,12 +20,14 @@
 ## 仓库分层
 
 ```
-courses/<课程>/          每门课的入口：README（9 步路径、代码表、结果表）+ scenarios.yaml（全部场景定义）
+courses/<课程>/          每门课的入口：README（步骤、代码表、结果表、证据图）+ scenarios.yaml（全部场景定义）+ figures/（labkit docs 生成的 SVG）
 projects/rec/           推荐项目：data（加载/切分/特征）→ model（Embedding+MLP）→ train → evaluate；synth 合成数据
 projects/adextract/     LLM 项目：schema/prompts/data（样本与模板）→ modeling（模型加载/LoRA）→ train → infer（生成式评估）
-labkit/                 执行内核：场景展开、单作业 worker、多卡批量调度、脱敏导出、作业单、发布
+labkit/                 执行内核：场景展开、单作业 worker、多卡批量调度、证据摘要、SVG 图、脱敏导出、作业单、常驻 agent、发布
 results/<档位>/<课程>/<场景>/s<种子>-<配置哈希>/   已跑好的结果（脱敏后），每个目录是一次运行
-jobs/{pending,running,done}/   作业单：要在 H20 上跑什么、跑得怎么样
+jobs/{pending,running,done,cancelled}/   作业单：要在 H20 上跑什么、跑得怎么样；作废的放在 cancelled/
+status/h20x8.json       H20 agent 心跳（在线状态、当前作业、队列长度；只含白名单字段）
+deploy/                 H20 agent 的 systemd 用户服务模板
 AGENT_RUNBOOK.md        H20 端 AI agent 的执行手册
 ```
 
@@ -37,6 +39,7 @@ AGENT_RUNBOOK.md        H20 端 AI agent 的执行手册
 | `config.json` | 完整参数（场景参数 = 档位基础参数 + 场景改动） |
 | `summary.json` | 最终指标，含分组指标 |
 | `trace.json` | 追踪样本：一条输入经过每一层的张量形状和数值 |
+| `evidence.json` | 证据摘要（≤200KB）：可训练参数量、显存构成、吞吐、loss 曲线摘要 |
 | `metrics.jsonl` | 训练曲线 |
 | `predictions.jsonl` | 评估集逐样本预测（截断到前 200 条） |
 | `log.txt` | 运行日志 |
@@ -50,8 +53,12 @@ uv run python -m labkit assets ml-1m                         # 下载公开数�
 uv run python -m labkit scenarios R1                         # 看 R1 有哪些场景
 uv run python -m labkit run R1 baseline --profile mac-m4pro  # 前台跑一个场景
 uv run python -m labkit batch R1 --profile mac-m4pro         # 跑完整门课（已有结果会跳过）
+uv run python -m labkit run L1 baseline --profile mac-smoke  # 冒烟：只验证 L1 流程能跑通
 uv run pytest -q                                             # 测试
+uv run python -m labkit docs --check                         # 课程 README 结果表和证据图是否最新
 ```
+
+H20 端：`uv run python -m labkit agent` 常驻领取 `jobs/pending/`（见 `AGENT_RUNBOOK.md` 和 `deploy/labkit-agent.service`）；作废作业单用 `uv run python -m labkit jobs cancel <id> --note 原因`。
 
 自己跑出的结果在 `.work/data/batch/` 下，不会覆盖 `results/`。同一配置、同一代码得到的运行目录名相同，可以直接和 `results/` 里的对应目录对照。
 
@@ -73,4 +80,4 @@ uv run pytest -q                                             # 测试
 
 ## 脱敏
 
-`results/` 和 `jobs/` 只允许文本文件，推送前由 `scripts/pre-push` 运行 `labkit redact --check`：主机名、用户名、家目录、IP、MAC、邮箱、令牌、`LABKIT_REDACT_EXTRA` 登记的字符串、模型权重和超大文件都会被拦下。GitHub Actions 再复检一次。
+`results/`、`jobs/`、`status/` 和课程 `figures/` 只允许文本文件，推送前由 `scripts/pre-push` 运行 `labkit redact --check`：主机名、用户名、家目录、IP、MAC、邮箱、令牌、`LABKIT_REDACT_EXTRA` 登记的字符串、模型权重和超大文件都会被拦下。GitHub Actions 再复检一次。

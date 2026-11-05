@@ -1,0 +1,33 @@
+# labkit H20 常驻 agent（systemd 用户服务模板）
+#
+# 安装（不需要 root）：
+#   mkdir -p ~/.config/systemd/user
+#   cp deploy/labkit-agent.service ~/.config/systemd/user/
+#   编辑下面的 WorkingDirectory 和 Environment（换成数据盘路径、登记不能公开的字符串）
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now labkit-agent
+#   loginctl enable-linger $USER          # 退出 SSH 后继续运行
+# 查看：systemctl --user status labkit-agent；日志：$LAB_DATA_DIR/agent/agent.log
+# 停止：systemctl --user stop labkit-agent（正在跑的批次会被中断，下次启动时同一作业单自动续跑）
+
+[Unit]
+Description=llm-rec-lab H20 agent（GitHub 作业单 → 执行 → 推回结果）
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/llm-rec-lab
+Environment=LAB_DATA_DIR=/data/llm-rec-lab-data
+Environment=LAB_ASSETS_DIR=/data/llm-rec-lab-assets
+Environment=HF_HOME=/data/hf
+Environment=HF_HUB_OFFLINE=1
+# 不能公开的路径前缀、集群名，逗号分隔（脱敏检查会替换并拦截）
+Environment=LABKIT_REDACT_EXTRA=/data
+ExecStart=%h/.local/bin/uv run python -m labkit agent --profile h20x8 --interval 60
+Restart=always
+RestartSec=60
+KillSignal=SIGTERM
+TimeoutStopSec=120
+
+[Install]
+WantedBy=default.target

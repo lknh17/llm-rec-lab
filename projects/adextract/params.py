@@ -39,7 +39,12 @@ PARAMS = ParamSpace([
     Param("lora_r", "int", 16, "LoRA 秩", affects="model", min=1, max=256,
           cost_note="可训练参数约与 r 成正比"),
     Param("lora_alpha", "int", 32, "LoRA 缩放 alpha（实际缩放 = alpha / r）", affects="model", min=1),
-    Param("lora_targets", "choice", "attn_mlp", "LoRA 挂在哪些线性层", affects="model", choices=("attn", "attn_mlp")),
+    Param("lora_targets", "choice", "attn_mlp", "LoRA 挂在哪些线性层", affects="model", choices=("qv", "attn", "attn_mlp"),
+          choice_notes={"qv": "只挂 q_proj、v_proj（LoRA 论文的原始做法），可训练参数最少",
+                        "attn": "注意力的 q/k/v/o 四个投影",
+                        "attn_mlp": "注意力 4 个 + MLP 的 gate/up/down 3 个，共 7 类线性层（QLoRA 之后的常见默认）"},
+          cost_note="可训练参数 = r × Σ(in + out)：7B 上 r=16 时 qv 约 0.5 千万、attn 约 1 千万、attn_mlp 约 4 千万；"
+                    "AdamW 状态按 fp32 是可训练参数的 8 字节/个，三档都远小于 15 GB 的冻结权重"),
     Param("lr", "float", 2e-4, "学习率（峰值）", affects="train", min=1e-7, max=1e-1),
     Param("epochs", "int", 2, "训练轮数", affects="train", min=1, max=50),
     Param("batch_size", "int", 8, "每步样本数", affects="train", min=1, max=256),

@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    paths-ignore: ["results/**", "jobs/**"]
+    paths-ignore: ["results/**", "jobs/**", "status/**"]
   pull_request:
 
 jobs:

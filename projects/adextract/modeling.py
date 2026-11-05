@@ -47,6 +47,7 @@ def load_model(name: str, device: torch.device):
 
 
 LORA_TARGETS = {
+    "qv": ["q_proj", "v_proj"],
     "attn": ["q_proj", "k_proj", "v_proj", "o_proj"],
     "attn_mlp": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
 }

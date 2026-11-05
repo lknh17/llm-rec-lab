@@ -7,7 +7,9 @@
     python -m labkit batch R1 L1 --profile h20x8 [--only ..] [--seeds ..] [--dry-run] [--max-slots N]
     python -m labkit export [--profile P]                    batch/ → results/（脱敏白名单）
     python -m labkit redact --check [路径 ...]                推送前的脱敏检查
-    python -m labkit jobs list | new R1 L1 --profile h20x8 | run <job_id> | show <job_id>
+    python -m labkit jobs list | new R1 L1 --profile h20x8 | run <job_id> | show <job_id> | cancel <job_id> --note 原因
+    python -m labkit agent --profile h20x8 [--once]          H20 常驻 agent：领取作业 → 执行 → 推回结果和心跳
+    python -m labkit evidence [results/] [--check]           给已有结果补 evidence.json（网页和 README 的证据图）
     python -m labkit publish -m "说明"                        检查 + 提交 results/ jobs/ + 推送
     python -m labkit docs [--check]                          重新生成课程 README 里的代码链接和结果表
 """
@@ -129,7 +131,7 @@ def cmd_jobs(a) -> None:
 
     if a.action == "list":
         for j in jobs.list_jobs():
-            print(f"{j['_state']:<8} {j['job_id']:<40} {j.get('profile')} {j.get('courses')} {j.get('status', '')}")
+            print(f"{j['_state']:<10} {j['job_id']:<40} {j.get('profile')} {j.get('courses')} {j.get('status', '')}")
     elif a.action == "show":
         print(json.dumps(jobs.load(a.args[0]), ensure_ascii=False, indent=2, default=str))
     elif a.action == "new":
@@ -138,6 +140,11 @@ def cmd_jobs(a) -> None:
         p = jobs.new_job(_courses(a.args), a.profile, a.only or None, a.seeds or None, a.note,
                          requested_commit=git_commit()["commit"])
         print(f"已写入 {p.relative_to(paths.ROOT)}。提交并推送后，H20 端执行 python -m labkit jobs run {p.stem}")
+    elif a.action == "cancel":
+        if not a.args:
+            sys.exit("cancel 需要作业编号")
+        p = jobs.cancel(a.args[0], a.note or "Mac 端作废")
+        print(f"已作废：{p.relative_to(paths.ROOT)}。提交推送后 H20 端不会再领取")
     elif a.action == "run":
         from .publish import publish
 
@@ -150,6 +157,28 @@ def cmd_jobs(a) -> None:
             publish(f"results: {job_id} {res['status']}")
     else:
         sys.exit(f"未知动作 {a.action}")
+
+
+def cmd_agent(a) -> None:
+    from . import agent
+
+    agent.run(a.profile, once=a.once, interval=a.interval, max_slots=a.max_slots, push=not a.no_push)
+
+
+def cmd_evidence(a) -> None:
+    from pathlib import Path
+
+    from . import evidence
+
+    root = Path(a.root or paths.RESULTS_DIR).resolve()
+    if a.check:
+        problems = evidence.check_all(root)
+        if problems:
+            sys.exit("\n".join(problems[:30]))
+        print("evidence.json 检查通过")
+        return
+    out = evidence.rebuild_all(root)
+    print(f"已写 {len(out)} 个 evidence.json")
 
 
 def cmd_publish(a) -> None:
@@ -216,7 +245,7 @@ def main() -> None:
     p.set_defaults(fn=cmd_redact)
 
     p = sub.add_parser("jobs")
-    p.add_argument("action", choices=("list", "show", "new", "run"))
+    p.add_argument("action", choices=("list", "show", "new", "run", "cancel"))
     p.add_argument("args", nargs="*")
     p.add_argument("--profile", default="h20x8")
     p.add_argument("--only", nargs="*")
@@ -225,6 +254,19 @@ def main() -> None:
     p.add_argument("--max-slots", type=int)
     p.add_argument("--no-publish", action="store_true")
     p.set_defaults(fn=cmd_jobs)
+
+    p = sub.add_parser("agent")
+    p.add_argument("--profile", default="h20x8")
+    p.add_argument("--once", action="store_true", help="只处理一轮")
+    p.add_argument("--interval", type=int, default=60, help="两轮之间的秒数")
+    p.add_argument("--max-slots", type=int)
+    p.add_argument("--no-push", action="store_true", help="调试：不推送（只在本地改作业单和心跳）")
+    p.set_defaults(fn=cmd_agent)
+
+    p = sub.add_parser("evidence")
+    p.add_argument("root", nargs="?")
+    p.add_argument("--check", action="store_true")
+    p.set_defaults(fn=cmd_evidence)
 
     p = sub.add_parser("publish")
     p.add_argument("-m", "--message", required=True)

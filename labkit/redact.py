@@ -23,7 +23,10 @@ from pathlib import Path
 from . import paths
 
 EXPORT_FILES = {"run.json", "config.json", "env.json", "summary.json", "trace.json", "log.txt", "metrics.jsonl",
-                "predictions.jsonl"}
+                "predictions.jsonl", "resources.json"}
+EVIDENCE_FILE = "evidence.json"  # 导出时由 labkit.evidence 从原始目录推导（≤ 200 KB），不从原始目录复制
+RESOURCES_KEEP = {"wall_seconds", "device", "gpu_name", "peak_allocated_bytes", "peak_reserved_bytes",
+                  "device_total_bytes", "current_allocated_bytes", "driver_allocated_bytes", "error"}
 EXPORT_CODE = True               # code/ 快照：只含项目源码（.py/.json/.yaml/.md），公开仓库里本来就有
 CODE_SUFFIXES = {".py", ".json", ".yaml", ".yml", ".md", ".txt"}
 ENV_KEEP = {"device", "os", "python", "packages", "cuda", "gpus", "gpu_name", "gpu_count", "torch_cuda", "cpu_count",
@@ -142,11 +145,18 @@ def export_run(src: Path, dst: Path, extra: list[str] | None = None) -> dict:
             text = "\n".join(_downsample(text.splitlines(), MAX_METRIC_LINES)) + "\n"
         elif f.name == "predictions.jsonl":
             text = "\n".join(text.splitlines()[:MAX_PRED_LINES]) + "\n"
+        elif f.name == "resources.json":
+            text = json.dumps({k: v for k, v in json.loads(text).items() if k in RESOURCES_KEEP}, ensure_ascii=False, indent=2)
         elif f.name == "log.txt" and len(text) > MAX_FILE // 2:
             half = MAX_FILE // 4
             text = text[:half] + "\n……（日志过长，中间已省略）……\n" + text[-half:]
         (dst / f.name).write_text(redact_text(text, extra))
         written.append(f.name)
+    from . import evidence as _evidence
+
+    ev_path = _evidence.write(dst)  # 从已脱敏的导出文件推导，不会带出原始目录里的东西
+    ev_path.write_text(redact_text(ev_path.read_text(), extra))
+    written.append(EVIDENCE_FILE)
     size = sum(p.stat().st_size for p in dst.rglob("*") if p.is_file())
     return {"written": written, "skipped": skipped, "bytes": size}
 
@@ -201,7 +211,7 @@ def _scan_text(text: str, extra: list[str]) -> list[str]:
 def check(targets: list[Path] | None = None, extra: list[str] | None = None) -> list[dict]:
     """返回问题列表 [{path, problem}]；空列表表示通过。"""
     extra = sensitive_strings() if extra is None else extra
-    targets = targets or [paths.RESULTS_DIR, paths.JOBS_DIR]
+    targets = targets or [paths.RESULTS_DIR, paths.JOBS_DIR, paths.ROOT / "status"]
     problems = []
     run_sizes: dict[Path, int] = {}
     for t in targets:

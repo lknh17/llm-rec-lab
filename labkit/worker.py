@@ -32,6 +32,25 @@ def _heartbeat(run_dir: Path, stop: threading.Event) -> None:
         stop.wait(3)
 
 
+def _record_resources(run_dir: Path, wall_s: float) -> None:
+    """显存峰值（只有项目代码已经导入 torch 时才记；CUDA 记峰值，MPS 只有当前分配量）→ resources.json。"""
+    out: dict = {"wall_seconds": round(wall_s, 1)}
+    torch = sys.modules.get("torch")
+    try:
+        if torch is not None and torch.cuda.is_available() and torch.cuda.is_initialized():
+            dev = torch.cuda.current_device()
+            out.update(device="cuda", gpu_name=torch.cuda.get_device_name(dev),
+                       peak_allocated_bytes=int(torch.cuda.max_memory_allocated(dev)),
+                       peak_reserved_bytes=int(torch.cuda.max_memory_reserved(dev)),
+                       device_total_bytes=int(torch.cuda.get_device_properties(dev).total_memory))
+        elif torch is not None and getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
+            out.update(device="mps", current_allocated_bytes=int(torch.mps.current_allocated_memory()),
+                       driver_allocated_bytes=int(torch.mps.driver_allocated_memory()))
+    except Exception as e:  # noqa: BLE001  记录资源失败不影响运行结果
+        out["error"] = f"{type(e).__name__}: {e}"
+    write_json(run_dir / "resources.json", out)
+
+
 def execute(run_dir: Path) -> str:
     run = Run(run_dir)
     meta = run.meta()
@@ -88,6 +107,7 @@ def execute(run_dir: Path) -> str:
         status, reason = "failed", f"{type(e).__name__}: {e}"
     finally:
         stop.set()
+        _record_resources(run_dir, time.time() - (run.meta().get("pid_started") or time.time()))
         (run_dir / "heartbeat").write_text(str(time.time()))
         run.set_status(status, reason)
         fcntl.flock(lock_file, fcntl.LOCK_UN)

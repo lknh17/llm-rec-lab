@@ -1,4 +1,4 @@
-"""把 results/ 和 jobs/ 推回 GitHub。推送前一定先跑脱敏检查。
+"""把 results/、jobs/、status/ 和课程 README（结果表、证据图）推回 GitHub。推送前一定先跑脱敏检查。
 
     python -m labkit publish -m "results: L1 h20x8"
 
@@ -14,14 +14,22 @@ from . import paths, redact
 
 
 def _git(*args: str, check: bool = True) -> subprocess.CompletedProcess:
-    r = subprocess.run(["git", *args], cwd=paths.ROOT, capture_output=True, text=True)
+    # 关掉目录重命名检测：作业单在 pending/ running/ done/ 之间移动时，它会把对方新加的作业单也挪走造成假冲突
+    r = subprocess.run(["git", "-c", "merge.directoryRenames=false", *args], cwd=paths.ROOT, capture_output=True, text=True)
     if check and r.returncode != 0:
         raise RuntimeError(f"git {' '.join(args)} 失败：{r.stderr.strip() or r.stdout.strip()}")
     return r
 
 
 def publish(message: str, paths_to_add: list[str] | None = None, push: bool = True) -> dict:
-    add = paths_to_add or ["results", "jobs"]
+    if paths_to_add is None:
+        from . import docs
+
+        paths_to_add = ["results", "jobs", "status"] + docs.outputs()
+    add = [p for p in paths_to_add if (paths.ROOT / p).exists()]
+    if not add:
+        print("没有需要提交的路径")
+        return {"committed": False}
     problems = redact.check([paths.ROOT / p for p in add])
     if problems:
         for p in problems[:30]:

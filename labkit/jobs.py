@@ -5,7 +5,10 @@
     jobs/done/<job_id>.yaml      H20 端跑完后移到这里，附每个运行的状态、耗时、断言结果和硬件摘要
 
 为什么用文件而不是 GitHub Issues：AI agent 读写文件最稳，能 diff、能审计，不需要额外的 API 权限。
-状态只能往前走：pending → running → done；失败的作业也是 done（status: failed/partial），附原因。
+    jobs/cancelled/<job_id>.yaml Mac 端作废的作业（cancel），附原因；H20 端看到就跳过
+
+状态只能往前走：pending → running → done；失败的作业也是 done（status: failed/partial/rejected），附原因。
+pending / running 都可以作废成 cancelled（running 的作废只是标记：agent 在下一次 pull 时停止领取，已在跑的批次跑完为止）。
 """
 
 from __future__ import annotations
@@ -19,7 +22,9 @@ import yaml
 
 from . import paths
 
-STATES = ("pending", "running", "done")
+STATES = ("pending", "running", "done", "cancelled")
+_NEXT = {"pending": {"pending", "running", "done", "cancelled"}, "running": {"running", "done", "cancelled"},
+         "done": {"done"}, "cancelled": {"cancelled"}}
 
 
 def _dir(state: str) -> Path:
@@ -78,7 +83,7 @@ def move(job_id: str, to: str, **updates) -> Path:
     state, path = find(job_id) or (None, None)
     if state is None:
         raise KeyError(f"找不到作业 {job_id}")
-    if STATES.index(to) < STATES.index(state):
+    if to not in _NEXT[state]:
         raise ValueError(f"作业状态只能往前走：{state} → {to} 不允许")
     data = yaml.safe_load(path.read_text())
     data.update(updates)
@@ -87,6 +92,11 @@ def move(job_id: str, to: str, **updates) -> Path:
     if dst != path:
         path.unlink()
     return dst
+
+
+def cancel(job_id: str, reason: str) -> Path:
+    """作废一张作业单（pending / running → cancelled）。"""
+    return move(job_id, "cancelled", cancelled_at=_now(), cancel_reason=reason)
 
 
 def host_summary() -> dict:
@@ -117,8 +127,8 @@ def run_job(job_id: str, max_slots: int | None = None, publish_each: bool = True
     from . import batch, redact
 
     job = load(job_id)
-    if job["_state"] == "done":
-        raise ValueError(f"作业 {job_id} 已完成")
+    if job["_state"] in ("done", "cancelled"):
+        raise ValueError(f"作业 {job_id} 已{'完成' if job['_state'] == 'done' else '作废'}")
     commit = batch.git_commit()
     if job.get("requested_commit") and not commit["commit"].startswith(job["requested_commit"][:7]):
         print(f"[注意] 作业要求代码 {job['requested_commit'][:8]}，当前是 {commit['commit'][:8]}。"
@@ -132,11 +142,16 @@ def run_job(job_id: str, max_slots: int | None = None, publish_each: bool = True
     report = batch.run_batch(job["courses"], job["profile"], job.get("only") or None, job.get("seeds") or None,
                              max_slots=max_slots)
     exported = redact.export_all(job["profile"], job["courses"])
+    from . import docs
+
+    docs.build_all()  # README 结果表和证据图跟着结果一起更新（GitHub 页面上直接能看）
     bad = [r for r in report if r["status"] not in ("succeeded", "skipped")]
     expect_bad = [r for r in report if r.get("expect_ok") is False]
     status = "done" if not bad and not expect_bad else ("failed" if len(bad) == len(report) else "partial")
     runs = [{k: r.get(k) for k in ("course", "scenario", "seed", "dir", "status", "minutes", "expect_ok", "note",
                                    "end_reason") if r.get(k) is not None} for r in report]
+    if (find(job_id) or ("",))[0] == "cancelled":  # 跑的过程中被 Mac 端作废：结果照常导出，作业单保持作废
+        return {"status": "cancelled", "job_file": str(find(job_id)[1]), "runs": len(report), "problems": 0}
     dst = move(job_id, "done", status=status, finished_at=_now(), hours=round((time.time() - t0) / 3600, 2),
                runs=runs, n_exported=len(exported),
                problems=[f"{r['course']}/{r['scenario']} s{r['seed']}: {r['status']} expect_ok={r.get('expect_ok')} "

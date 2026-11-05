@@ -8,6 +8,7 @@ courses/<课程目录>/scenarios.yaml 的结构：
     profiles:                      # 档位：同一批场景在不同硬件规模下的基础参数
       mac-m4pro: {base: {...}, seeds: [0], assets: [...], slots: {gpus_per_job: 0, jobs_per_device: 1}}
       h20x8:     {base: {...}, seeds: [0, 1, 2], assets: [...], slots: {gpus_per_job: 1, jobs_per_device: 1}}
+      mac-smoke: {base: {...}, seeds: [0], skip_expect: true}   # 冒烟：极小规模，只验证流程，不检查教学断言
     scenarios:
       - id: baseline
         role: baseline             # reference | baseline | variant | fault | fix | final
@@ -135,7 +136,9 @@ def expand(course_id: str, profile: str, only: list[str] | None = None, seeds: l
             group = config_hash({k: cfg[k] for k in data_params} | {"_project": course["project"]})
             out.append(RunSpec(course=course_id, project=course["project"], entry=course["entry"], profile=profile,
                                scenario=s["id"], role=s["role"], title=s.get("title", ""), seed=seed, cfg=cfg,
-                               config_hash=config_hash(cfg), expect=list(s.get("expect", [])), data_group=group))
+                               config_hash=config_hash(cfg), data_group=group,
+                               # 冒烟档（skip_expect: true）只验证流程能跑通，规模太小，教学断言不适用
+                               expect=[] if prof.get("skip_expect") else list(s.get("expect", []))))
     return out
 
 

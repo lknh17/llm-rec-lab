@@ -14,12 +14,12 @@
 
 | 允许 | 禁止 |
 | - | - |
-| 修改 `results/h20x8/**`、`jobs/**` | 修改 `labkit/`、`projects/`、`courses/`、`scripts/`、`tests/` 或任何其他文件 |
+| 修改 `results/h20x8/**`、`jobs/**`、`status/**` | 修改 `labkit/`、`projects/`、`courses/`、`scripts/`、`tests/` 或任何其他文件 |
 | 运行本手册列出的 `python -m labkit ...` 命令 | 用 `git push --force`、`--no-verify`、改写历史 |
 | 下载本手册列出的公开数据集和模型 | 上传模型权重、检查点、`.npy/.npz/.pt/.safetensors` 等二进制文件 |
 | 在作业单 `notes` 里写你的观察和建议 | 把主机名、IP、用户名、内部路径、令牌写进任何会推送的文件 |
 
-`python -m labkit publish` 会拒绝暂存区里 `results/`、`jobs/` 以外的文件，pre-push 钩子会拒绝没通过脱敏检查的推送。**这两道检查失败时，修复问题，不要绕过。**
+`python -m labkit publish` 会拒绝暂存区里 `results/`、`jobs/`、`status/` 以外的文件，pre-push 钩子会拒绝没通过脱敏检查的推送。**这两道检查失败时，修复问题，不要绕过。**
 
 ---
 
@@ -86,7 +86,35 @@ uv run python -m labkit assets                   # 查看是否齐全（每项 o
 
 ---
 
-## 4. 执行作业（每次的标准流程）
+## 4. 常驻 agent（推荐：装好以后不需要人值守）
+
+环境和资产都就绪后，装成 systemd 用户服务，之后 **Mac 端推一张作业单，这台机器就会自动执行并推回结果**：
+
+```bash
+mkdir -p ~/.config/systemd/user && cp deploy/labkit-agent.service ~/.config/systemd/user/
+# 编辑 WorkingDirectory、LAB_DATA_DIR、LAB_ASSETS_DIR、LABKIT_REDACT_EXTRA
+systemctl --user daemon-reload && systemctl --user enable --now labkit-agent
+loginctl enable-linger $USER
+uv run python -m labkit agent --profile h20x8 --once --no-push   # 可选：先空跑一轮看日志
+```
+
+agent 每 60 秒做一轮（实现见 `labkit/agent.py`）：
+
+1. `git pull --rebase`；
+2. **抢占**：最早的 `jobs/pending/*.yaml`（档位 h20x8）移到 `jobs/running/`，写 `claimed_by`（随机 agent 编号，不是主机名），只提交这一张作业单并推送。推送冲突说明别的 agent 先领了，放弃；
+3. **校验**：作业单只允许 `courses / profile / only / seeds / requested_commit / note` 这些字段，场景编号必须在 `courses/*/scenarios.yaml` 里，`requested_commit` 必须是当前 HEAD 的祖先。不通过就移到 `jobs/done/`（`status: rejected`，附原因），**不执行**；
+4. 执行 `jobs run` 的同一套流程（批量运行 → 断言 → 导出脱敏结果 → 写回报）；
+5. `publish`：脱敏检查后只提交 `results/ jobs/ status/` 并推送；
+6. **心跳** `status/h20x8.json`：状态（idle / running / publishing / error）、作业编号、进度、GPU 型号与数量、更新时间。状态变化或距上次超过 15 分钟才推送。Mac 端网页据此显示"H20 在线 / 上次心跳"；
+7. 日志 `$LAB_DATA_DIR/agent/agent.log`（5 MB × 5 份轮转）。
+
+Mac 端作废作业：`python -m labkit jobs cancel <job_id> --note 原因` 后推送，作业单移到 `jobs/cancelled/`，agent 不再领取。agent 重启后，自己领过但没跑完的作业会自动续跑（已成功的运行跳过）。
+
+手动执行（下一节）和 agent 不要同时进行：先 `systemctl --user stop labkit-agent`。
+
+---
+
+## 5. 手动执行作业（agent 不可用时）
 
 ```bash
 git pull --rebase
@@ -115,7 +143,7 @@ tmux new -s lab 'uv run python -m labkit jobs run <job_id> 2>&1 | tee -a $LAB_DA
 
 ---
 
-## 5. 验收清单（推送前自查，结果写进作业单）
+## 6. 验收清单（推送前自查，结果写进作业单）
 
 `jobs/done/<job_id>.yaml` 里：
 
@@ -127,7 +155,7 @@ tmux new -s lab 'uv run python -m labkit jobs run <job_id> 2>&1 | tee -a $LAB_DA
 
 ---
 
-## 6. 故障处理
+## 7. 故障处理
 
 | 现象 | 处理 |
 | - | - |
@@ -143,7 +171,7 @@ tmux new -s lab 'uv run python -m labkit jobs run <job_id> 2>&1 | tee -a $LAB_DA
 
 ---
 
-## 7. 回报格式
+## 8. 回报格式
 
 作业单（`jobs/done/<job_id>.yaml`）由 `jobs run` 自动填写，字段含义：
 
@@ -156,7 +184,7 @@ ran_commit: <实际运行的代码版本>
 started_at / finished_at: UTC 时间
 hours: 6.8
 host_summary: {gpu: NVIDIA H20, gpu_count: 8, gpu_mem_gb: 95.6, driver: "...", cuda: "...", torch: "..."}
-status: done | partial | failed
+status: done | partial | failed | rejected
 runs:                       # 每个运行一行
   - {course: L1, scenario: baseline, seed: 0, dir: h20x8/L1/baseline/s0-xxxxxx, status: succeeded, minutes: 44.2, expect_ok: true}
 problems: []                # 失败或断言不通过的运行，一行一条
@@ -167,13 +195,15 @@ notes: ""                   # 你的观察：异常、建议（例如"7B 上截�
 
 ---
 
-## 8. 命令速查
+## 9. 命令速查
 
 ```bash
 uv run python -m labkit probe --compute                       # 环境预检
 uv run python -m labkit assets [--profile h20x8]              # 资产下载/检查
 uv run python -m labkit scenarios L1 --profile h20x8          # 列出场景与运行
 uv run python -m labkit jobs list | show <id> | run <id>      # 作业
+uv run python -m labkit agent --profile h20x8 [--once]        # 常驻 agent（见第 4 节）
+uv run python -m labkit evidence --check                      # 证据摘要 evidence.json 检查
 uv run python -m labkit batch R1 --profile h20x8 --only baseline --seeds 0   # 手动跑一部分（调试用）
 uv run python -m labkit export --profile h20x8                # 重新导出脱敏结果
 uv run python -m labkit redact --check                        # 脱敏检查

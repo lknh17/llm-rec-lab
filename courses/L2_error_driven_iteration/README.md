@@ -42,7 +42,7 @@ L1 的微调基线在 dev 上的错误高度集中：
 | `encode` | [projects/adextract/data.py#L57](../../projects/adextract/data.py#L57) |
 | `collate` | [projects/adextract/data.py#L88](../../projects/adextract/data.py#L88) |
 | `generate` | [projects/adextract/infer.py#L13](../../projects/adextract/infer.py#L13) |
-| `lora` | [projects/adextract/modeling.py#L55](../../projects/adextract/modeling.py#L55) |
+| `lora` | [projects/adextract/modeling.py#L56](../../projects/adextract/modeling.py#L56) |
 | `messages` | [projects/adextract/prompts.py#L29](../../projects/adextract/prompts.py#L29) |
 | `score_one` | [projects/adextract/schema.py#L82](../../projects/adextract/schema.py#L82) |
 | `aggregate` | [projects/adextract/schema.py#L137](../../projects/adextract/schema.py#L137) |

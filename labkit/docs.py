@@ -4,6 +4,10 @@ README 里手写的讲解保持不动，只替换两个标记区之间的内容�
 
     <!-- labkit:code -->     ……     <!-- /labkit:code -->
     <!-- labkit:results -->  ……     <!-- /labkit:results -->
+    <!-- labkit:figures -->  ……     <!-- /labkit:figures -->
+
+图：figures/<档位>-<图名>.svg（labkit.figures 纯 Python 生成），README 的 figures 区引用它们。
+冒烟档（skip_expect）不进表也不画图：规模太小，数字没有教学意义。
 
 代码表：扫描项目里的 `# --8<-- [start:name]` 锚点，生成"锚点 → 文件#行号"的 GitHub 相对链接。
 结果表：每个档位一张表，行是场景，列是该课程的关键指标（多种子时给 均值 ± 标准差 和种子数）。
@@ -78,6 +82,8 @@ def results_table(course: dict) -> str:
     cols = HEADLINE[course["project"]]
     parts = []
     for profile, prof in course["profiles"].items():
+        if prof.get("skip_expect"):
+            continue
         got = collect(course["course"], profile)
         n_runs = sum(len(v) for v in got.values())
         expected = len(scenarios.expand(course["course"], profile))
@@ -111,8 +117,48 @@ def _replace(text: str, tag: str, body: str) -> str:
     return text[:a] + "\n" + body.strip() + "\n" + text[b:]
 
 
+FIG_TITLES = {"metrics": "主指标", "loss": "train loss 曲线", "memory": "峰值显存构成", "params": "可训练参数量"}
+
+
+def figures_md(course: dict, course_dir: Path, check: bool, changed: list[str]) -> str:
+    """生成（或检查）figures/*.svg，返回 README figures 区的 Markdown。"""
+    from . import figures
+
+    fig_dir = course_dir / "figures"
+    want: dict[Path, str] = {}
+    parts = []
+    for profile, prof in course["profiles"].items():
+        if prof.get("skip_expect"):
+            continue
+        got = collect(course["course"], profile)
+        if not got:
+            parts.append(f"- **{profile}**：还没有结果，图在结果推回后自动生成。")
+            continue
+        figs = figures.course_figures(course, got, profile)
+        links = []
+        for name, svg in figs.items():
+            p = fig_dir / f"{profile}-{name}.svg"
+            want[p] = svg
+            links.append(f"[{FIG_TITLES.get(name, name)}](figures/{p.name})")
+        parts.append(f"- **{profile}**：" + "、".join(links))
+        for name in figs:
+            parts.append(f"\n  ![{profile} {FIG_TITLES.get(name, name)}](figures/{profile}-{name}.svg)")
+    stale = [p for p in fig_dir.glob("*.svg") if p not in want] if fig_dir.exists() else []
+    for p, svg in want.items():
+        if not p.exists() or p.read_text() != svg:
+            changed.append(str(p.relative_to(paths.ROOT)))
+            if not check:
+                fig_dir.mkdir(exist_ok=True)
+                p.write_text(svg)
+    for p in stale:
+        changed.append(str(p.relative_to(paths.ROOT)))
+        if not check:
+            p.unlink()
+    return "\n".join(parts)
+
+
 def build_all(check: bool = False) -> list[str]:
-    changed = []
+    changed: list[str] = []
     for cid, path in scenarios.course_files().items():
         course = scenarios.load_course(cid)
         readme = path.parent / "README.md"
@@ -122,8 +168,22 @@ def build_all(check: bool = False) -> list[str]:
         new = _replace(old, "code", code_table(course["project"], path.parent))
         details = "<details><summary>展开结果（先自己预测，再看）</summary>\n\n" + results_table(course) + "\n</details>"
         new = _replace(new, "results", details)
+        if "<!-- labkit:figures -->" in new:
+            figs = figures_md(course, path.parent, check, changed)
+            new = _replace(new, "figures", "<details><summary>展开证据图（先自己预测，再看）</summary>\n\n" + figs
+                           + "\n\n</details>")
         if new != old:
             changed.append(str(readme.relative_to(paths.ROOT)))
             if not check:
                 readme.write_text(new)
     return changed
+
+
+def outputs() -> list[str]:
+    """docs 会改动的路径（相对仓库根）：H20 端 publish 时一并提交。"""
+    out = []
+    for path in scenarios.course_files().values():
+        for p in (path.parent / "README.md", path.parent / "figures"):
+            if p.exists():
+                out.append(str(p.relative_to(paths.ROOT)))
+    return out
