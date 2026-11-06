@@ -1,0 +1,439 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: L06
+profiles:
+  h20x8: H20 · Qwen2.5-7B · 基线和主改动 5 种子，其余 3 种子
+metric:
+  path: summary.dev.exact_all_ok
+  label: dev 全对率
+  pct: true
+table:
+- path: summary.dev.exact_all_ok
+  label: dev 全对率
+- path: summary.dev.by_tag.排除型条件.all_ok
+  label: dev 排除型条件
+- path: summary.dev.condition_keep
+  label: dev 条件保留率
+- path: summary.test.exact_all_ok
+  label: test 全对率
+figures:
+  loss:
+  - baseline
+  - excl_10
+  - epochs_4
+noise_note: 差异小于 6.7 个点（dev 两条样本）或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: noise
+  title: 先量噪声
+- id: fix
+  title: 只改一个变量
+- id: signals
+  title: loss 与指标
+- id: fault
+  title: 诊断故障
+- id: final
+  title: 保留集检验
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 离线指标涨了，怎么知道不是噪声、也不是背了评估集？
+  body: 'L05 的 7B SFT 基线还有几条错例，最危险的一类是**排除型条件**：原文"满 399 减 40，特价商品除外"，模型输出的优惠条件里把"特价商品除外"丢了，等于告诉下游"全店满减"。
+
+
+    业务上常见的迭代方式是"看到错例 → 补点数据 → 重训 → 指标涨了就上线"。这一课要回答这条路上的三个坑：
+
+
+    1. **噪声**：同一配置换个种子，dev 全对率自己就会抖几个点。涨的那几个点是不是噪声？
+
+    2. **归因**：补数据之后整体变好，是目标错误被修好了，还是别处随机变好了？有没有弄坏别的？
+
+    3. **上线**：离线 dev 上的提升，换一份没见过的 test 还在吗？推理链路和训练链路一致吗？
+
+
+    每个场景都已在 H20 上跑好（基线和主改动 5 个种子）。依次点选预测、揭晓、看证据。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 迭代闭环
+  body: '一次"围绕错误"的迭代分 6 个环节。点击每个环节看它的输入输出，以及对应的代码。
+
+    '
+  nodes:
+  - id: score
+    title: 逐条评分与错误归类
+    shape: '预测 JSON + 标注 → errors: [漏条件, 多卖点, …]'
+    detail: 每条样本按字段判对错并给出错误类型；按样本标签（排除型条件、多优惠……）分组统计。
+    code:
+      file: adextract/schema.py
+      region: score_one
+  - id: hypo
+    title: 假设
+    shape: 一类错误 → 一个原因
+    detail: 排除型条件全错，而训练集里没有这种句式：数据覆盖问题。
+  - id: change
+    title: 只改一个变量
+    shape: exclusion_ratio：替换 round(n × ratio) 条
+    detail: 用独立的随机数流挑位置替换，其余样本和基线逐条相同；词表避开 dev/test 原句。
+    code:
+      file: adextract/synth.py
+      region: generate
+  - id: seeds
+    title: 多种子训练
+    shape: 同一配置 × 5 个训练种子
+    detail: 种子影响 LoRA 初始化和打乱顺序；看均值和种子间波动。
+    code:
+      file: adextract/train.py
+      region: train_loop
+  - id: compare
+    title: 分组 + 逐样本对照
+    shape: 同种子配对：修好 / 弄坏 / 都对 / 都错
+    detail: 整体均值之外，看目标类别是否变好、被修好的是不是同一批样本、有没有弄坏别的。
+    code:
+      file: adextract/schema.py
+      region: aggregate
+  - id: holdout
+    title: 保留集检验
+    shape: test 30 条，只看一次
+    detail: 迭代时只看 dev；决定方案之后才看 test，回答提升能否泛化。推理必须和训练共用同一个模板函数。
+    code:
+      file: adextract/infer.py
+      region: generate
+- id: estimate
+  file: 03-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先估三个数。dev 30 条，其中排除型条件 3 条；L05 的基线 3 个种子，dev 全对率的种子标准差约 5 个点。
+
+    '
+  questions:
+  - text: 排除型条件在 dev 里只有 3 条。就算把这 3 条全修好、别的都不变，dev 全对率最多能涨多少？
+    options:
+    - 约 3 个点
+    - 约 10 个点
+    - 约 30 个点
+  - text: 种子标准差约 5 个点。两个配置各跑 n 个种子，均值之差的标准误约为 5 × √(2/n)。要让 7 个点的差异超过 2 倍标准误，每边大约要几个种子？
+    options:
+    - 1 个就够
+    - 约 3 个
+    - 约 5-8 个
+    - 20 个以上
+  - text: 4000 条训练样本里替换 10% 为排除型条件。和基线比，训练 token 总数大约变化多少？
+    options:
+    - 基本不变（±5% 以内）
+    - 多 10%
+    - 多一倍
+  check:
+  - label: 基线训练 token 总数
+    value: '{{v:baseline:meta.data.tokenized.tokens_total:,.0f}}'
+  - label: 替换 10% 后训练 token 总数
+    value: '{{v:excl_10:meta.data.tokenized.tokens_total:,.0f}}'
+- id: p_noise
+  file: 04-noise
+  stage: noise
+  title: 同一配置，5 个种子
+  body: '基线和 L05 的 SFT 基线配置完全相同，只是跑了 5 个训练种子（种子影响 LoRA A 的初始化和数据打乱顺序，训练数据逐条相同）。
+
+    '
+  scenarios:
+  - baseline
+  question:
+    text: 5 个种子之间，dev 全对率的"最高 − 最低"大约多少？
+    options:
+    - 不到 4 个点（最多差 1 条样本）
+    - 4 - 12 个点（差 2-3 条样本）
+    - 12 个点以上（差 4 条样本以上）
+  columns:
+  - path: summary.dev.exact_all_ok
+    label: dev 全对率
+    pct: true
+  - path: summary.dev.condition_keep
+    label: 条件保留率
+    pct: true
+  - path: summary.dev.by_tag.排除型条件.all_ok
+    label: 排除型条件（3 条）
+    pct: true
+  - path: summary.synth_valid.exact_all_ok
+    label: 合成验证全对率
+    pct: true
+  charts:
+  - metrics
+  - loss
+  look: 看"各种子"一列：5 个种子里，最高和最低差几条样本？合成验证集（分布内）的种子波动和 dev 比，哪个大？为什么？
+- id: p_dataseed
+  file: 05-dataseed
+  stage: noise
+  title: 换一份同分布的训练数据
+  body: '训练种子不变，只换数据采样种子（data_seed 0 → 1）：生成器、比例、条数都一样，但抽到的是另一批 4000 条。
+
+    '
+  scenarios:
+  - data_seed1
+  compare_to: baseline
+  question:
+    text: 和基线（5 种子均值）比，dev 全对率（3 种子均值）差多少？
+    options:
+    - 差不多（±6.7 个点以内）
+    - 明显更好（> +6.7 个点）
+    - 明显更差（< −6.7 个点）
+  columns:
+  - path: summary.dev.exact_all_ok
+    label: dev 全对率
+    pct: true
+  - path: summary.synth_valid.exact_all_ok
+    label: 合成验证全对率
+    pct: true
+  charts:
+  - metrics
+  look: 训练数据换了一份，差值有没有超过上一步量出的种子波动？
+- id: p_excl
+  file: 06-excl
+  stage: fix
+  title: 针对错例补数据：替换 10%
+  body: '把 10%（400 条）训练样本替换成排除型条件样本（"活动款除外""联名款不参与"……，词表避开 dev/test 原句）。其余 3600 条和基线逐条相同，训练种子同样跑 5 个。
+
+    '
+  scenarios:
+  - excl_10
+  compare_to: baseline
+  question:
+    text: dev 里 3 条排除型条件样本，全对率（5 种子均值）会怎样？
+    options:
+    - 基本没变（±15 个点以内，不到半条样本）
+    - 明显变好（+15 个点以上）
+    - 反而变差
+  columns:
+  - path: summary.dev.by_tag.排除型条件.all_ok
+    label: 排除型条件（3 条）
+    pct: true
+    delta: true
+  - path: summary.dev.exact_all_ok
+    label: dev 全对率
+    pct: true
+  - path: summary.dev.condition_keep
+    label: 条件保留率
+    pct: true
+  - path: summary.synth_valid.exact_all_ok
+    label: 合成验证全对率
+    pct: true
+  charts:
+  - metrics
+  - loss
+  blocks:
+  - errors
+  - flips
+  look: 逐样本表里，被修好的样本是不是排除型条件那几条？有没有被弄坏的？整体全对率的差值超过种子波动了吗？
+- id: p_dose
+  file: 07-dose
+  stage: fix
+  title: 剂量加到 30%
+  body: '同样的做法，替换比例从 10% 加到 30%（1200 条）。排除型条件之外的句式相应少了 20%。
+
+    '
+  scenarios:
+  - excl_30
+  compare_to: excl_10
+  also:
+  - baseline
+  question:
+    text: 和替换 10% 比，dev 全对率（整体）会怎样？
+    options:
+    - 差不多（±6.7 个点以内）
+    - 继续明显变好（> +6.7 个点）
+    - 明显变差（< −6.7 个点）
+  columns:
+  - path: summary.dev.exact_all_ok
+    label: dev 全对率
+    pct: true
+    delta: true
+  - path: summary.dev.by_tag.排除型条件.all_ok
+    label: 排除型条件（3 条）
+    pct: true
+  - path: summary.dev.by_tag.买赠门槛.all_ok
+    label: 买赠门槛（4 条）
+    pct: true
+  - path: summary.synth_valid.exact_all_ok
+    label: 合成验证全对率
+    pct: true
+  charts:
+  - metrics
+  look: 排除型条件还有没有继续变好？其他类别（买赠门槛、多优惠）和合成验证集有没有往下掉？
+- id: p_generic
+  file: 08-generic
+  stage: fix
+  title: 不针对错例：泛泛加难样本
+  body: '另一种常见做法：不分析错例，把"困难样本"（多优惠、远距离条件、无品类、否定句）的比例从 15% 提到 30%。生成器里的困难样本**不包含**排除型条件。
+
+    '
+  scenarios:
+  - hard_30
+  compare_to: baseline
+  also:
+  - excl_10
+  question:
+    text: 排除型条件（3 条）的全对率，和基线比会怎样？
+    options:
+    - 基本没变（±15 个点以内）
+    - 明显变好（+15 个点以上）
+    - 明显变差
+  columns:
+  - path: summary.dev.by_tag.排除型条件.all_ok
+    label: 排除型条件（3 条）
+    pct: true
+    delta: true
+  - path: summary.dev.exact_all_ok
+    label: dev 全对率
+    pct: true
+  - path: summary.dev.by_tag.多优惠.all_ok
+    label: 多优惠（2 条）
+    pct: true
+  charts:
+  - metrics
+  look: 泛泛加难样本，目标类别动了吗？它变好的是哪几类？
+- id: p_epochs
+  file: 09-epochs
+  stage: signals
+  title: 多训两轮：loss 和指标同步吗
+  body: '训练 4 轮（基线 2 轮），每轮结束都在 dev 上算一次 loss，并做一次生成评估。
+
+    '
+  scenarios:
+  - epochs_4
+  compare_to: baseline
+  question:
+    text: 第 2 轮到第 4 轮，dev loss 和 dev 全对率分别怎么走？
+    options:
+    - dev loss 继续降，全对率继续升（同步）
+    - dev loss 上升，全对率基本不变或略降（不同步）
+    - 两者都明显变差
+  columns:
+  - path: summary.dev.exact_all_ok
+    label: dev 全对率（最后一轮）
+    pct: true
+  - path: evidence.curves.dev_loss.last
+    label: dev loss（最后一轮）
+    fmt: .3f
+  - path: evidence.curves.train_loss.last
+    label: train loss（最后）
+    fmt: .4f
+  charts:
+  - metrics
+  - loss
+  look: loss 曲线最后两轮 train loss 几乎为 0，dev loss 往哪走？逐轮全对率在运行目录的 metrics.jsonl（dev_exact_all_ok）里。
+- id: p_fault
+  file: 10-fault
+  stage: fault
+  title: 离线好好的，上线全错
+  body: '同一个训练好的适配器交给服务端同事接入。离线评估是在训练脚本里跑的，没有问题；线上服务自己拼了输入：`广告：{文案}\n输出：`，然后调用 generate。
+
+    '
+  scenarios:
+  - fault_plain
+  compare_to: baseline
+  question:
+    text: 线上这种调用方式，dev 全对率会接近多少？
+    options:
+    - 和离线差不多
+    - 掉 10-30 个点
+    - 接近 0
+  columns:
+  - path: summary.dev.exact_all_ok
+    label: dev 全对率
+    pct: true
+  - path: summary.dev.format_ok
+    label: 格式合法率
+    pct: true
+  - path: summary.dev.category_acc
+    label: 品类准确率
+    pct: true
+  charts:
+  - metrics
+- id: diagnose
+  file: 11-diagnose
+  stage: fault
+  title: 诊断：训练推理不一致
+  body: '权重、适配器、解码参数都一样，只有"怎么把文案变成模型输入"不同。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - baseline
+  compare_to: fault_plain
+  question:
+    text: 根因是什么？
+    options:
+    - 线上 generate 的解码参数（温度、top_p）和离线不同
+    - 线上输入没走聊天模板：没有系统提示（字段定义在里面）、没有 <|im_start|>assistant，和训练分布不一致
+    - 适配器在服务端没有加载上
+    - 线上流量的文案分布和 dev 不一样
+  clues:
+  - 看格式合法率：线上方式 {{v:fault_plain:summary.dev.format_ok:.0%}}，离线 {{v:baseline:summary.dev.format_ok:.0%}}。输出连 JSON 都不是，说明模型根本不知道要做什么任务。
+  - 看合成验证集（和训练集同一个生成器）：线上方式全对率 {{v:fault_plain:summary.synth_valid.exact_all_ok:.0%}}。如果是线上文案分布不同，分布内的合成数据应该不受影响。
+  - 对照训练样本的 token 序列（L05 追踪一步）：训练输入以 <|im_start|>system 开头，字段定义写在系统提示里，回复前是 <|im_start|>assistant。线上输入里有这些吗？
+  columns:
+  - path: summary.dev.exact_all_ok
+    label: dev 全对率
+    pct: true
+  - path: summary.dev.format_ok
+    label: 格式合法率
+    pct: true
+  - path: summary.synth_valid.exact_all_ok
+    label: 合成验证全对率
+    pct: true
+  charts:
+  - metrics
+- id: p_test
+  file: 12-test
+  stage: final
+  title: 保留 test 集：提升还在吗
+  body: '迭代结束，决定采用"替换 10% 排除型条件"。现在第一次打开保留的 test 集（30 条，其中排除型条件 3 条，写法和 dev 不同，也没出现在训练词表里）。
+
+    '
+  scenarios:
+  - excl_10
+  compare_to: baseline
+  question:
+    text: test 集上，替换 10% 相对基线的全对率（5 种子均值）差多少？
+    options:
+    - 明显更好（> +6.7 个点）
+    - 差不多（±6.7 个点以内）
+    - 明显更差（< −6.7 个点）
+  columns:
+  - path: summary.test.exact_all_ok
+    label: test 全对率
+    pct: true
+    delta: true
+  - path: summary.test.by_tag.排除型条件.all_ok
+    label: test 排除型条件（3 条）
+    pct: true
+  - path: summary.dev.exact_all_ok
+    label: dev 全对率
+    pct: true
+  - path: summary.test.condition_keep
+    label: test 条件保留率
+    pct: true
+  charts:
+  - metrics
+  look: test 上的差值和 dev 上的差值比，哪个大？test 的排除型条件有没有变好？
+- id: keycard
+  file: 13-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 同一配置换训练种子，dev 全对率会抖多少？为什么 30 条 dev 上抖得这么厉害？
+  - 比较两个数据方案时，为什么要"替换而不是追加"、并固定 data_seed？
+  - 判断"真修好"要同时看哪三样证据？
+  - 为什么不能用 dev loss 给结构化抽取任务早停？
+  - 训练推理模板不一致时，哪些现象能把它和"线上分布不同"区分开？
+  - 保留集为什么只看一次？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。

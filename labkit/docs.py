@@ -80,8 +80,35 @@ def fmt_values(vals: list[float]) -> str:
     return f"{statistics.mean(vals):.4f} ± {statistics.stdev(vals):.4f} (n={len(vals)})"
 
 
+def lesson_of(course: dict) -> dict:
+    """课程目录里的 lesson.yaml（没有时返回空 dict）。README 结果表的列、图里画哪些场景都可以在这里声明：
+
+        table:   [{path: summary.valid.ndcg10, label: NDCG@10}, ...]       # 不写时用 HEADLINE[项目]
+        figures: {metric: {path, label, pct}, loss: [场景...], memory: [...], params: [...]}
+    """
+    import yaml
+
+    p = scenarios.course_files().get(course["course"])
+    lf = p.parent / "lesson.yaml" if p else None
+    return yaml.safe_load(lf.read_text()) if lf and lf.exists() else {}
+
+
+def _summary_path(path: str) -> str:
+    return path[len("summary."):] if path.startswith("summary.") else path
+
+
+def table_columns(course: dict) -> list[tuple[str, str]]:
+    lesson = lesson_of(course)
+    if lesson.get("table"):
+        return [(_summary_path(c["path"]), c["label"]) for c in lesson["table"]]
+    if course["project"] in HEADLINE:
+        return HEADLINE[course["project"]]
+    m = lesson.get("metric")
+    return [(_summary_path(m["path"]), m["label"])] if m else []
+
+
 def results_table(course: dict) -> str:
-    cols = HEADLINE[course["project"]]
+    cols = table_columns(course)
     parts = []
     for profile, prof in course["profiles"].items():
         if prof.get("skip_expect"):

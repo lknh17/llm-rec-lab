@@ -27,6 +27,7 @@ PENDING = "〔待 H20 生成〕"
 PLACEHOLDER = re.compile(r"\{\{v:([\w.-]+):([^:}]+)(?::([^}]+))?\}\}")
 OPTION_KEYS = "ABCDEFGH"
 STATE_NAMES = {"pending": "排队中", "running": "运行中", "done": "已完成", "cancelled": "已作废"}
+NOISE_NOTE = "差异小于 3.3 个点（dev 一条样本）或小于种子间波动，都按“差不多”算。"
 JOB_STATUS = {"done": "全部成功", "partial": "部分成功", "failed": "失败", "rejected": "被拒绝（校验不通过）"}
 
 
@@ -398,7 +399,7 @@ def _results_section(book: Book, step: dict, want: dict[Path, str]) -> list[str]
         if profile != book.primary and not have:
             continue
         label = book.labels.get(profile, profile)
-        note = "" if profile == book.primary else "，只作对照，不能推断 7B 上的结论"
+        note = "" if profile == book.primary else book.lesson.get("compare_note", "，只作对照，不能推断 7B 上的结论")
         out.append(f"<details><summary>展开实测：{label}（已有 {have} / {exp} 个运行{note}）</summary>")
         out.append("")
         if not have:
@@ -577,7 +578,7 @@ def step_page(book: Book, i: int, want: dict[Path, str]) -> str:
             out += [f"<details><summary>线索 {k}</summary>", "", book.render(c), "", "</details>", ""]
     if step.get("question"):
         out += ["## 先预测", "", f"**{step['question']['text']}**", ""] + _options(step["question"]) + \
-            ["", "> 先选定一个（记下来），再展开下面的实测。差异小于 3.3 个点（dev 一条样本）或小于种子间波动，都按“差不多”算。", ""]
+            ["", "> 先选定一个（记下来），再展开下面的实测。" + book.lesson.get("noise_note", NOISE_NOTE), ""]
     if step.get("scenarios"):
         out += _results_section(book, step, want)
     if step.get("look"):

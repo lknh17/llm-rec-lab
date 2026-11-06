@@ -5,13 +5,13 @@ import pytest
 from labkit import scenarios
 from labkit.params import config_hash
 
-COURSES = ["L1"]
+COURSES = list(scenarios.course_files())
 
 
 @pytest.mark.parametrize("course", COURSES)
 def test_course_loads_and_expands(course):
     c = scenarios.load_course(course)
-    assert set(c["profiles"]) >= {"mac-m4pro", "h20x8", "mac-smoke"}
+    assert set(c["profiles"]) >= {"h20x8", "mac-smoke"}
     for prof in c["profiles"]:
         specs = scenarios.expand(course, prof)
         assert specs, f"{course}/{prof} 没有运行"
@@ -22,9 +22,12 @@ def test_course_loads_and_expands(course):
             assert s.rel_dir.parts[:3] == (prof, course, s.scenario)
 
 
-def test_only_l05_course_is_published():
-    """仓库当前只有一门课（L05 SFT 与 LoRA，课程编号 L1）。"""
-    assert list(scenarios.course_files()) == ["L1"]
+def test_published_courses_have_lessons():
+    """每门公开课都有场景清单和公开讲义（lesson.yaml），L05（课程编号 L1）一定在。"""
+    files = scenarios.course_files()
+    assert "L1" in files
+    for course, path in files.items():
+        assert (path.parent / "lesson.yaml").exists(), f"{course} 缺 lesson.yaml"
 
 
 def test_expand_is_stable():

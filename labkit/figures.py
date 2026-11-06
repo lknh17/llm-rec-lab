@@ -195,26 +195,37 @@ def _evidence(run_dir: Path) -> dict:
 
 def course_figures(course: dict, got: dict[str, list[dict]], profile: str) -> dict[str, str]:
     """图名 → SVG 文本。got 来自 docs.collect（场景 → 各种子 {seed, summary, meta, dir}）。"""
+    from .docs import _summary_path, lesson_of
+
     project = course["project"]
+    lesson = lesson_of(course)
+    spec = lesson.get("figures") or {}
     by_id = {s["id"]: s for s in course["scenarios"]}
     n_seeds = max((len(v) for v in got.values()), default=0)
     sub = f"{profile} · 每个场景最多 {n_seeds} 个种子"
     figs: dict[str, str] = {}
-    key, name = METRIC[project]
+    m = spec.get("metric") or lesson.get("metric")
+    if m:
+        key, name, pct = _summary_path(m["path"]), m["label"], bool(m.get("pct"))
+    else:
+        (key, name), pct = METRIC[project], project == "adextract"
+    loss_scenes = spec.get("loss", LOSS_SCENES.get(project, []) if not lesson.get("figures") else [])
+    mem_scenes = spec.get("memory", MEMORY_SCENES.get(project, []) if not lesson.get("figures") else [])
+    param_scenes = spec.get("params", PARAM_SCENES.get(project, []) if not lesson.get("figures") else [])
     rows = []
     for s in course["scenarios"]:
         runs = got.get(s["id"]) or []
         vals = [v for r in runs if (v := _get(r["summary"], key)) is not None]
         rows.append({"label": s["id"], "values": vals, "color": ROLE_COLOR.get(s["role"], C["primary"])})
-    figs["metrics"] = bars(rows, f"{name}（各场景）", sub, pct=project == "adextract")
+    figs["metrics"] = bars(rows, f"{name}（各场景）", sub, pct=pct)
     loss = []
-    for i, sid in enumerate(LOSS_SCENES.get(project, [])):
+    for i, sid in enumerate(loss_scenes):
         runs = [_evidence(r["dir"]).get("curves", {}).get("train_loss") or [] for r in got.get(sid) or []]
         if runs:
             loss.append({"label": sid, "color": PALETTE[i % len(PALETTE)], "runs": runs})
     figs["loss"] = lines(loss, "train loss（均值，阴影为种子间范围）", sub)
     mem = []
-    for sid in MEMORY_SCENES.get(project, []):
+    for sid in mem_scenes:
         evs = [_evidence(r["dir"]).get("memory") or {} for r in got.get(sid) or []]
         evs = [e for e in evs if e.get("breakdown") and e.get("peak_allocated_gb") is not None]
         if evs:
@@ -222,9 +233,9 @@ def course_figures(course: dict, got: dict[str, list[dict]], profile: str) -> di
             mem.append({"label": sid, "parts": {k: statistics.fmean(e["breakdown"].get(k) or 0 for e in evs) for k in keys}})
     figs["memory"] = stacked(mem, MEM_PARTS, "峰值显存构成（实测峰值，分项为估算）", sub)
     prm = []
-    for sid in PARAM_SCENES.get(project, []):
+    for sid in param_scenes:
         vals = [v for r in got.get(sid) or [] if (v := _get(r["meta"], "model.params.trainable")) is not None]
         if vals:
             prm.append({"label": f"{sid}", "values": vals[:1], "color": ROLE_COLOR.get(by_id.get(sid, {}).get("role"), C["blue"])})
-    figs["params"] = bars(prm, "可训练参数量（rank × 挂载层）", sub) if len(prm) > 1 else ""
+    figs["params"] = bars(prm, spec.get("params_title", "可训练参数量（rank × 挂载层）"), sub) if len(prm) > 1 else ""
     return {k: v for k, v in figs.items() if v}

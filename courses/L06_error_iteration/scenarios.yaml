@@ -1,0 +1,69 @@
+course: L06
+title: L06 围绕错误迭代：错例归类 → 只改一个变量 → 多种子 + 逐样本判断 → 保留集检验
+project: adextract
+entry: adextract.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，Qwen2.5-7B-Instruct（bf16），4000 条合成训练样本；每轮结束在 dev 上做一次生成评估，最后在保留 test 集上评估一次
+    base: {model: Qwen/Qwen2.5-7B-Instruct, train_size: 4000, device: cuda, max_minutes: 180, eval_each_epoch: true, final_test: true}
+    seeds: [0, 1, 2]
+    assets: [qwen2.5-7b]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：0.5B、16 条训练样本、2 步，只验证流程能跑通（结果没有教学意义，不检查断言）
+    base: {train_size: 16, epochs: 1, max_steps: 2, max_new_tokens: 64, max_minutes: 15, final_test: true}
+    seeds: [0]
+    skip_expect: true
+    assets: [qwen2.5-0.5b]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：和 L05 的 SFT 基线同配置（LoRA r=16 挂 7 类线性层，assistant-only，2 轮），5 个训练种子量噪声
+    params: {}
+    seeds_by_profile: {h20x8: [0, 1, 2, 3, 4]}
+    expect:
+      - "meta.data.tokenized.zero_supervision_examples == 0"
+      - "summary.dev.exact_all_ok > 0.5"
+
+  # ---------- 噪声的另一个来源：换一份同分布的训练数据 ----------
+  - id: data_seed1
+    role: reference
+    title: 训练数据换一个采样种子（data_seed 0 → 1），其余不变：量"数据采样"带来的波动
+    params: {data_seed: 1}
+
+  # ---------- 针对错例补数据：只改 exclusion_ratio ----------
+  - id: excl_10
+    role: variant
+    title: 把 10% 的训练样本替换成排除型条件（"活动款除外""联名款不参与"），样本总数不变
+    params: {exclusion_ratio: 0.1}
+    seeds_by_profile: {h20x8: [0, 1, 2, 3, 4]}
+    expect:
+      - "meta.data.train.kinds.exclusion == 400"
+  - id: excl_30
+    role: variant
+    title: 替换比例加到 30%：剂量加大，会不会挤掉其他句式
+    params: {exclusion_ratio: 0.3}
+    expect:
+      - "meta.data.train.kinds.exclusion == 1200"
+  - id: hard_30
+    role: variant
+    title: 不针对错例、泛泛地把困难样本比例从 15% 提到 30%（对照"针对性补数据"）
+    params: {hard_ratio: 0.3}
+
+  # ---------- loss 与任务指标不同步 ----------
+  - id: epochs_4
+    role: variant
+    title: 训练 4 轮（基线 2 轮），每轮都评估：dev loss 和 dev 全对率是否同步
+    params: {epochs: 4}
+
+  # ---------- 训练推理不一致（教学故障） ----------
+  - id: fault_plain
+    role: fault
+    title: 推理时没走聊天模板（"广告：…\n输出："），训练用的是聊天模板
+    params: {infer_template: plain}
+    expect:
+      - "summary.dev.exact_all_ok < base.summary.dev.exact_all_ok - 0.3"
+      - "summary.synth_valid.exact_all_ok < base.summary.synth_valid.exact_all_ok - 0.3"

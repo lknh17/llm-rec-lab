@@ -12,12 +12,12 @@
 
 | | |
 | - | - |
-| 课程 | 仓库里只有一门课：**L1**（课程地图上的 L05 SFT 与 LoRA），目录 [`courses/L1_lora_extraction/`](courses/L1_lora_extraction/) |
-| 档位 | `h20x8`：Qwen2.5-7B-Instruct（bf16）+ LoRA，4000 条合成训练样本，每张卡跑 1 个运行 |
-| 规模 | 12 个场景：`base_model` 1 个种子，其余 11 个场景各 3 个种子，**共 34 个运行**（`uv run python -m labkit scenarios L1 --profile h20x8` 可以列出全部） |
-| 时间 | 每个训练运行约 40-60 分钟（预算上限 180 分钟），8 卡并行约 **4-5 小时** |
-| 需要的资产 | 只有模型 `qwen2.5-7b`（约 15 GB）。训练数据是仓库里的合成数据和评测集，**不需要下载数据集** |
-| 作业单 | `jobs/pending/` 下的那一张（文件名形如 `<日期>-l1-h20x8.yaml`） |
+| 课程 | 每门课一个目录 `courses/<课程>/`，作业单的 `courses` 字段指明跑哪门课。进度总览见 [`jobs/README.md`](jobs/README.md) |
+| 档位 | `h20x8`：每张卡跑 1 个运行（各课 `scenarios.yaml` 的 `profiles.h20x8` 写明模型、规模和资产） |
+| 规模 | `uv run python -m labkit scenarios <课程> --profile h20x8` 列出全部运行；L1（L05 SFT 与 LoRA）34 个，L06（围绕错误迭代）25 个 |
+| 时间 | adextract 项目（7B LoRA）每个训练运行约 40-60 分钟（预算上限 180 分钟）；8 卡并行，30 个运行约 4-5 小时 |
+| 需要的资产 | 作业单里 `assets` 列出的公开模型（agent 会自动检查）。训练数据是仓库里的合成数据和评测集，**不需要下载数据集** |
+| 作业单 | `jobs/pending/` 下的作业单按文件名顺序逐张执行（文件名形如 `<日期>-<课程>-h20x8.yaml`） |
 
 **第一次**：按第 1-3 节准备环境、下载模型、预检，再按第 4 节装好常驻 agent。之后什么都不用做，agent 会自动领取、执行、推回。
 **agent 已经在跑**：确认 `systemctl --user status labkit-agent` 是 active，`status/h20x8.json` 的更新时间在心跳间隔以内即可（运行中 15 分钟，空闲 3 小时，见文件里的 `beat_every_s`）。

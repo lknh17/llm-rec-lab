@@ -131,6 +131,18 @@ def memory(meta: dict, resources: dict) -> dict:
     return out
 
 
+def _display(summary: dict) -> dict:
+    """项目自报的展示指标：summary.display = {标签: 数值}，summary.display_pct = [按百分比显示的标签]。
+
+    adextract 之外的项目（tinylm / seqrec / kernels）都用这个约定，网页证据面板和揭晓卡片直接按标签画。"""
+    disp = summary.get("display")
+    if not isinstance(disp, dict):
+        return {}
+    keep = {str(k): _round(v) for k, v in disp.items() if isinstance(v, (int, float)) and not isinstance(v, bool)}
+    pct = [k for k in summary.get("display_pct") or [] if k in keep]
+    return {"display": keep, "display_pct": pct}
+
+
 def build(run_dir: Path) -> dict:
     run_dir = Path(run_dir)
     meta = _read_json(run_dir / "run.json")
@@ -153,7 +165,7 @@ def build(run_dir: Path) -> dict:
            "data": {k: ((meta.get("data") or {}).get("tokenized") or {}).get(k)
                     for k in ("tokens_total", "supervised_tokens_total", "zero_supervision_examples", "prompt_tokens")},
            "curves": curves(rows), "throughput": throughput(rows, meta), "memory": memory(meta, resources),
-           "metrics": {"headline": summary.get("headline"), "dev": keep_dev}}
+           "metrics": {"headline": summary.get("headline"), "dev": keep_dev, **_display(summary)}}
     return out
 
 

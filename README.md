@@ -2,11 +2,12 @@
 
 LLM 与推荐的循序渐进实践课。每门课 = 一个真实可跑的小项目 + 一组预先定义好的场景（基线、候选改动、教学故障、修复、多种子）+ 在 8 × H20 上跑好的结果和证据图。
 
-**当前只有一门课**，其余课程在规划中，做好一门再加一门：
+课程按学习路线逐门上线，做好一门再加一门（作业进度见 [`jobs/README.md`](jobs/README.md)）：
 
 | 课程 | 主题 | 项目 | 你会回答的问题 |
 | - | - | - | - |
 | [L05 SFT 与 LoRA](courses/L1_lora_extraction/)（课程编号 `L1`） | 7B 上做结构化抽取的 LoRA SFT | [`projects/adextract`](projects/adextract/) | 一条样本从 messages 到 labels mask 到 loss 怎么走？LoRA 的 rank、挂载层对参数、显存和效果各有多大影响？截断为什么让训练"什么都没学到"？ |
+| [L06 围绕错误迭代](courses/L06_error_iteration/) | 错例归类 → 只改一个变量 → 多种子与逐样本判断 → 保留集检验 | [`projects/adextract`](projects/adextract/) | 5 个种子的波动有多大？针对错例补数据和泛泛加难样本哪个有效？dev loss 和任务指标同步吗？训练推理模板不一致会掉多少？ |
 
 - 只看 GitHub 也能学：按课程 README 的步骤走，代码链接直达锚点，结果表和证据图默认折叠，**先想好自己的预测，再展开**。
 - 所有数据和模型都是公开的（Qwen2.5、合成广告文案、人工撰写的评测集），不含任何业务数据。
@@ -17,10 +18,10 @@ LLM 与推荐的循序渐进实践课。每门课 = 一个真实可跑的小项�
 ## 仓库结构
 
 ```
-courses/L1_lora_extraction/   课程入口：README（步骤、代码表、结果表、证据图）、scenarios.yaml（全部场景）、figures/（labkit docs 生成的 SVG）
+courses/<课程>/               课程入口：README（步骤、代码表、结果表、证据图）、steps/（一步一页）、lesson.yaml（公开讲义）、scenarios.yaml（全部场景）、figures/（labkit docs 生成的 SVG）
 projects/adextract/           项目代码：synth/schema/prompts/data（样本与模板）→ modeling（模型加载/LoRA）→ train → infer → experiment（入口）
 labkit/                       执行内核：场景展开、单作业 worker、多卡批量调度、证据摘要、SVG 图、脱敏导出、作业单、常驻 agent、发布
-results/<档位>/L1/<场景>/s<种子>-<配置哈希>/   跑好的结果（脱敏后），每个目录是一次运行
+results/<档位>/<课程>/<场景>/s<种子>-<配置哈希>/   跑好的结果（脱敏后），每个目录是一次运行
 jobs/{pending,running,done,cancelled}/   作业单：Mac 端下发 → H20 领取执行 → 回报；作废的放 cancelled/
 status/h20x8.json             H20 agent 心跳（在线状态、当前作业、进度；只含白名单字段）
 deploy/                       H20 agent 的 systemd 用户服务模板
