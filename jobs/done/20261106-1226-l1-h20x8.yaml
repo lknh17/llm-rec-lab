@@ -10,3 +10,7 @@ note: L05 SFT 与 LoRA：12 个场景、34 个运行（base_model 1 种子，其
 how_to_run: python -m labkit jobs run 20261106-1226-l1-h20x8
 claimed_by: agent-f80beb
 claimed_at: '2026-11-06T07:13:27Z'
+status: failed
+finished_at: '2026-11-06T07:13:37Z'
+problems:
+- 'RepresenterError: (''cannot represent an object'', ''2.15.0+cu132'')'
