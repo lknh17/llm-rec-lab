@@ -81,7 +81,8 @@ uv run python -m labkit probe --compute           # compute.ok 必须为 true，
 ```bash
 mkdir -p ~/.config/systemd/user && cp deploy/labkit-agent.service ~/.config/systemd/user/
 # 编辑 WorkingDirectory、LAB_DATA_DIR、LAB_ASSETS_DIR、HF_HOME、LABKIT_REDACT_EXTRA
-uv run python -m labkit agent --profile h20x8 --once --no-push   # 可选：先空跑一轮看输出
+uv run python -m labkit agent --profile h20x8 --check           # 只读检查：列出待领取作业、校验、预览运行数；不领取、不执行、不推送
+# 注意：--once 不是空跑，它会真的领取并执行一张作业
 systemctl --user daemon-reload && systemctl --user enable --now labkit-agent
 loginctl enable-linger $USER                                     # 退出 SSH 后继续运行
 ```
@@ -97,6 +98,8 @@ agent 每 60 秒一轮（`labkit/agent.py`）：
 5. **推回**：脱敏检查通过后提交并推送；
 6. **心跳** `status/h20x8.json`：状态（idle / running / publishing / error）、作业编号、进度、GPU 型号与数量、更新时间；状态变化或距上次超过 15 分钟才推送；
 7. 日志 `$LAB_DATA_DIR/agent/agent.log`（5 MB × 5 份轮转）。
+
+**代码更新自动生效**：agent 每次 pull 后比较 `labkit/` 的版本，变了就在两张作业之间自动重启自己（日志里有“labkit 代码已更新…重启”）。Mac 端修好代码后不需要人工重启；但 agent 版本 1（2026-11-06 之前的代码）没有这个功能，从它升级时要手动重启一次。
 
 agent 重启后，自己领过但没跑完的作业会自动续跑（已成功的运行跳过）。Mac 端作废的作业在 `jobs/cancelled/`，agent 不会领取。
 
@@ -130,6 +133,7 @@ tmux new -s lab 'uv run python -m labkit jobs run <job_id> 2>&1 | tee -a $LAB_DA
 
 | 现象 | 处理 |
 | - | - |
+| 驱动太旧（例如 535 只支持到 CUDA 12.2，而锁定的 torch 需要 CUDA 13） | 不改依赖和 `uv.lock`。装 NVIDIA 前向兼容包（例如 `cuda-compat-13-2`），把它的 lib 目录加进 `LD_LIBRARY_PATH`（systemd 服务文件里也要加），`probe --compute` 通过即可 |
 | `probe --compute` 失败 / `torch.cuda.is_available()` 为 False | 检查驱动版本、`CUDA_VISIBLE_DEVICES` 是否被设成空；不要改代码。解决不了就在作业单 `notes` 写明报错（去掉主机信息），推送后停止 |
 | OOM（日志含 `CUDA out of memory`） | 调度器会自动重试一次；仍失败就用 `nvidia-smi` 确认没有别的进程占卡，用 `--max-slots` 减少并发后重跑同一作业 |
 | 某个运行 `expect_ok: false` | **不要重跑碰运气，也不要改断言。**这是有价值的结果（例如放大后故障不再复现）。保留结果，在 `notes` 写一句观察，正常推送 |
@@ -168,7 +172,7 @@ uv run python -m labkit probe --compute                    # 环境预检
 uv run python -m labkit assets [--profile h20x8]           # 模型下载/检查
 uv run python -m labkit scenarios L1 --profile h20x8       # 场景与运行列表
 uv run python -m labkit jobs list | show <id> | run <id>   # 作业
-uv run python -m labkit agent --profile h20x8 [--once]     # 常驻 agent
+uv run python -m labkit agent --profile h20x8              # 常驻 agent（--check 只读检查；--once 真跑一轮）
 uv run python -m labkit batch L1 --profile h20x8 --only baseline --seeds 0   # 调试：只跑一部分
 uv run python -m labkit export --profile h20x8             # 重新导出脱敏结果
 uv run python -m labkit evidence --check                   # 证据摘要检查

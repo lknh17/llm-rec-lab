@@ -169,3 +169,26 @@ def test_docs_outputs_and_smoke_profile_skipped():
     assert "mac-smoke" not in table
     specs = scenarios.expand("L1", "mac-smoke")
     assert specs and all(s.expect == [] for s in specs), "冒烟档不检查教学断言"
+
+
+def test_check_is_read_only(two_clones, monkeypatch, capsys):
+    """agent --check：列出并校验待领取作业、预览运行数，但不领取、不改文件、不提交。"""
+    _bare, (a, _b) = two_clones
+    _use_clone(monkeypatch, a)
+    head = _git(a, "rev-parse", "HEAD")
+    assert agent.check("h20x8") == 0
+    out = capsys.readouterr().out
+    assert "j1：校验通过" in out and "共 1 个运行" in out and "没有领取作业" in out
+    assert (a / "jobs" / "pending" / "j1.yaml").exists()
+    assert _git(a, "rev-parse", "HEAD") == head and _git(a, "status", "--porcelain") == ""
+
+
+def test_restart_when_labkit_code_changes(monkeypatch):
+    """pull 到新的 labkit 代码后，agent 在两张作业之间 execv 重启自己；代码没变就不重启。"""
+    calls = []
+    monkeypatch.setattr(agent.os, "execv", lambda exe, argv: calls.append(argv))
+    monkeypatch.setattr(agent, "code_version", lambda: "tree-new")
+    agent.restart_if_code_changed("tree-new")
+    assert calls == []
+    agent.restart_if_code_changed("tree-old")
+    assert calls and calls[0][1:3] == ["-m", "labkit"]

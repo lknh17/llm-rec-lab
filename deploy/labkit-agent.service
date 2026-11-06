@@ -21,6 +21,8 @@ Environment=LAB_DATA_DIR=/data/llm-rec-lab-data
 Environment=LAB_ASSETS_DIR=/data/llm-rec-lab-assets
 Environment=HF_HOME=/data/hf
 Environment=HF_HUB_OFFLINE=1
+# 驱动比 torch 需要的 CUDA 旧时（例如驱动 535 + CUDA 13 的 torch），指向 cuda-compat 的 lib 目录，例如：
+# Environment=LD_LIBRARY_PATH=/usr/local/cuda-13.2/compat
 # 不能公开的路径前缀、集群名，逗号分隔（脱敏检查会替换并拦截）
 Environment=LABKIT_REDACT_EXTRA=/data
 ExecStart=%h/.local/bin/uv run python -m labkit agent --profile h20x8 --interval 60

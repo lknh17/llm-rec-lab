@@ -1,7 +1,8 @@
 """H20 常驻 agent：盯着 GitHub 上的作业单，自动领取、执行、推回脱敏结果和心跳。
 
     python -m labkit agent --profile h20x8               # 常驻（systemd 见 deploy/labkit-agent.service）
-    python -m labkit agent --profile h20x8 --once        # 只处理一轮（调试、cron）
+    python -m labkit agent --profile h20x8 --once        # 只处理一轮（会真的领取并执行作业！）
+    python -m labkit agent --profile h20x8 --check       # 只读检查：pull、列出待领取作业、校验、预览要跑的运行；不领取、不执行、不推送
 
 每一轮：
 1. git pull --rebase：拿到 Mac 端新下发的作业单和代码；
@@ -14,7 +15,9 @@
 5. 发布：labkit publish（脱敏检查 → 只提交 results/ jobs/ status/ → 推送）；
 6. 心跳：status/<档位>.json，只含白名单字段（状态、作业编号、进度、时间、GPU 型号与数量、agent 版本），
    状态变化或距上次推送超过 15 分钟才推送，避免刷提交历史；
-7. 日志：LAB_DATA_DIR/agent/agent.log，5 MB × 5 份轮转。
+7. 日志：LAB_DATA_DIR/agent/agent.log，5 MB × 5 份轮转；
+8. 代码更新：每次 pull 后比较 labkit/ 的 git 树哈希，和启动时不同就在两张作业之间重启自己（os.execv），
+   保证 Mac 端修好的 labkit 代码不用人工重启就能生效。项目代码 projects/ 每个运行都从快照重新加载，不受影响。
 
 agent 不改代码、不执行作业单里的任意命令：作业单只能指定场景编号和种子，参数全部来自仓库里的场景清单。
 """
@@ -25,15 +28,17 @@ import datetime as dt
 import json
 import logging
 import logging.handlers
+import os
 import secrets
 import subprocess
+import sys
 import threading
 import time
 from pathlib import Path
 
 from . import paths
 
-AGENT_VERSION = 1
+AGENT_VERSION = 2
 HEARTBEAT_EVERY = 15 * 60
 JOB_KEYS = {"job_id", "created_at", "profile", "courses", "only", "seeds", "requested_commit", "note", "how_to_run",
             # agent / run_job 自己写的字段（作业单被重新领取时会带着）
@@ -237,6 +242,57 @@ def _progress(job: dict) -> str:
     return f"{done}/{total}"
 
 
+# ------------------------------------------------------------------ 代码更新后自动重启
+def code_version() -> str | None:
+    """当前检出的 labkit/ 的 git 树哈希。只看 labkit/：它是 agent 进程里已经 import 的代码。"""
+    r = git("rev-parse", "HEAD:labkit", check=False)
+    return r.stdout.strip() if r.returncode == 0 else None
+
+
+def restart_if_code_changed(started_with: str | None) -> None:
+    now = code_version()
+    if started_with and now and now != started_with:
+        log.info("labkit 代码已更新（%s → %s），重启 agent 以加载新代码", started_with[:8], now[:8])
+        for h in log.handlers:
+            h.flush()
+        os.execv(sys.executable, [sys.executable, "-m", "labkit", *sys.argv[1:]])
+
+
+# ------------------------------------------------------------------ 只读检查
+def check(profile: str = "h20x8") -> int:
+    """只读：pull 后列出可领取的作业、逐张校验、预览会跑哪些运行。不领取、不执行、不写作业单、不推送。
+    返回不通过的作业数（命令行据此给退出码）。"""
+    from . import batch, scenarios, snapshot
+
+    print(f"agent 版本 {AGENT_VERSION}，labkit 树 {(code_version() or '?')[:8]}，档位 {profile}")
+    print("git pull：" + ("成功" if pull() else "失败（看 git 输出）"))
+    todo = pending_jobs(profile)
+    if not todo:
+        print("没有待领取的作业单（jobs/pending/ 里没有这个档位的作业）")
+        return 0
+    bad = 0
+    for job in todo:
+        errs = validate_job(job)
+        print(f"\n== {job['job_id']}：{'校验通过' if not errs else '校验不通过'}")
+        for e in errs:
+            print(f"   ✗ {e}")
+        if errs:
+            bad += 1
+            continue
+        specs = []
+        for c in job["courses"]:
+            specs += scenarios.expand(c, profile, job.get("only") or None, job.get("seeds") or None)
+        code = {pr: snapshot.tree_manifest(snapshot.project_dir(pr))["code_hash"] for pr in {s.project for s in specs}}
+        done = sum(1 for s in specs if batch.existing_status(s, code[s.project]))
+        by: dict[str, int] = {}
+        for s in specs:
+            by[s.scenario] = by.get(s.scenario, 0) + 1
+        print(f"   共 {len(specs)} 个运行，已有同代码成功结果、会跳过 {done} 个")
+        print("   " + "  ".join(f"{k}×{v}" for k, v in by.items()))
+    print("\n只读检查结束：没有领取作业、没有执行、没有推送。")
+    return bad
+
+
 # ------------------------------------------------------------------ 主循环
 def process_one(profile: str, me: str, hb: Heartbeat, max_slots: int | None = None, push: bool = True) -> str | None:
     """处理一张作业单。返回作业编号（没有可领取的作业时返回 None）。"""
@@ -301,10 +357,13 @@ def run(profile: str = "h20x8", once: bool = False, interval: int = 60, max_slot
     setup_logging()
     me = agent_id()
     hb = Heartbeat(profile, me, push=push)
-    log.info("agent %s 启动（档位 %s，仓库 %s）", me, profile, paths.ROOT.name)
+    started_with = code_version()
+    log.info("agent %s 启动（版本 %s，档位 %s，labkit 树 %s）", me, AGENT_VERSION, profile, (started_with or "?")[:8])
     while True:
         ok = pull()
         hb.state["last_pull_at"] = time.time()
+        if ok:
+            restart_if_code_changed(started_with)  # 只在两张作业之间发生，不会打断正在跑的作业
         if not ok:
             hb.update(state="error", last_error="git pull 失败，下一轮重试")
         else:

@@ -8,7 +8,7 @@
     python -m labkit export [--profile P]                    batch/ → results/（脱敏白名单）
     python -m labkit redact --check [路径 ...]                推送前的脱敏检查
     python -m labkit jobs list | new L1 --profile h20x8 | run <job_id> | show <job_id> | cancel <job_id> --note 原因
-    python -m labkit agent --profile h20x8 [--once]          H20 常驻 agent：领取作业 → 执行 → 推回结果和心跳
+    python -m labkit agent --profile h20x8 [--once]          H20 常驻 agent：领取作业 → 执行 → 推回结果和心跳（--check 只读检查）
     python -m labkit evidence [results/] [--check]           给已有结果补 evidence.json（网页和 README 的证据图）
     python -m labkit publish -m "说明"                        检查 + 提交 results/ jobs/ status/ 和课程 README/图 + 推送
     python -m labkit docs [--check]                          重新生成课程 README 里的代码链接、结果表和 SVG 证据图
@@ -162,6 +162,8 @@ def cmd_jobs(a) -> None:
 def cmd_agent(a) -> None:
     from . import agent
 
+    if a.check:
+        sys.exit(1 if agent.check(a.profile) else 0)
     agent.run(a.profile, once=a.once, interval=a.interval, max_slots=a.max_slots, push=not a.no_push)
 
 
@@ -257,7 +259,8 @@ def main() -> None:
 
     p = sub.add_parser("agent")
     p.add_argument("--profile", default="h20x8")
-    p.add_argument("--once", action="store_true", help="只处理一轮")
+    p.add_argument("--once", action="store_true", help="只处理一轮（会真的领取并执行作业）")
+    p.add_argument("--check", action="store_true", help="只读检查：列出待领取作业、校验、预览运行；不领取、不执行、不推送")
     p.add_argument("--interval", type=int, default=60, help="两轮之间的秒数")
     p.add_argument("--max-slots", type=int)
     p.add_argument("--no-push", action="store_true", help="调试：不推送（只在本地改作业单和心跳）")

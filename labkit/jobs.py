@@ -37,6 +37,30 @@ def _now() -> str:
     return dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def _plain(x):
+    """转成 yaml.safe_dump 能写的纯 Python 类型。torch.__version__ 是 str 的子类 TorchVersion、numpy 标量、Path 等
+    safe_dump 都会拒绝（RepresenterError），作业单里只允许 str / int / float / bool / None / list / dict。"""
+    if x is None or type(x) in (str, int, float, bool):
+        return x
+    if isinstance(x, dict):
+        return {str(k): _plain(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple, set)):
+        return [_plain(v) for v in x]
+    if isinstance(x, str):
+        return str(x)
+    if isinstance(x, int):
+        return int(x)
+    if isinstance(x, float):
+        return float(x)
+    if hasattr(x, "item"):  # numpy / torch 标量
+        return _plain(x.item())
+    return str(x)
+
+
+def _dump(data: dict) -> str:
+    return yaml.safe_dump(_plain(data), allow_unicode=True, sort_keys=False)
+
+
 def new_job(courses: list[str], profile: str, only: list[str] | None = None, seeds: list[int] | None = None,
             note: str = "", requested_commit: str = "", job_id: str | None = None) -> Path:
     job_id = job_id or f"{time.strftime('%Y%m%d-%H%M')}-{'-'.join(c.lower() for c in courses)}-{profile}"
@@ -48,7 +72,7 @@ def new_job(courses: list[str], profile: str, only: list[str] | None = None, see
     path = _dir("pending") / f"{job_id}.yaml"
     if any((_dir(s) / f"{job_id}.yaml").exists() for s in STATES):
         raise FileExistsError(f"作业 {job_id} 已存在")
-    path.write_text(yaml.safe_dump(job, allow_unicode=True, sort_keys=False))
+    path.write_text(_dump(job))
     return path
 
 
@@ -88,7 +112,7 @@ def move(job_id: str, to: str, **updates) -> Path:
     data = yaml.safe_load(path.read_text())
     data.update(updates)
     dst = _dir(to) / path.name
-    dst.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False))
+    dst.write_text(_dump(data))
     if dst != path:
         path.unlink()
     return dst
@@ -105,12 +129,12 @@ def host_summary() -> dict:
     try:
         import torch
 
-        out["torch"] = torch.__version__
-        out["cuda"] = torch.version.cuda
+        out["torch"] = str(torch.__version__)  # TorchVersion 是 str 子类，yaml.safe_dump 不认
+        out["cuda"] = str(torch.version.cuda) if torch.version.cuda else None
         if torch.cuda.is_available():
-            out["gpu"] = torch.cuda.get_device_name(0)
-            out["gpu_count"] = torch.cuda.device_count()
-            out["gpu_mem_gb"] = round(torch.cuda.get_device_properties(0).total_memory / 2**30, 1)
+            out["gpu"] = str(torch.cuda.get_device_name(0))
+            out["gpu_count"] = int(torch.cuda.device_count())
+            out["gpu_mem_gb"] = round(float(torch.cuda.get_device_properties(0).total_memory) / 2**30, 1)
     except ImportError:
         pass
     smi = shutil.which("nvidia-smi")

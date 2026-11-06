@@ -76,3 +76,33 @@ def test_batch_end_to_end(smoke_course):
     # 续跑：第二次全部跳过
     again = batch.run_batch(["ZT"], "cpu")
     assert all(r["status"] == "skipped" for r in again)
+
+
+def test_run_job_end_to_end_writes_valid_yaml(smoke_course, jobs_dir):
+    """作业单完整走一遍 run_job：领取 → 批量运行 → 导出 → 回报。
+    回归：host_summary 里的 torch.__version__ 是 TorchVersion（str 子类），曾让 yaml.safe_dump 报 RepresenterError，
+    H20 上 34 个运行一个都没跑。CI 和 Mac 都装了 torch，这条测试会走到同一段代码。"""
+    jobs.new_job(["ZT"], "cpu", job_id="e2e")
+    res = jobs.run_job("e2e", publish_each=False)
+    assert res["status"] == "partial" and res["runs"] == 3 and res["problems"] == 1  # impossible 的断言故意不通过
+    d = yaml.safe_load((jobs_dir / "done" / "e2e.yaml").read_text())
+    assert d["status"] == "partial" and len(d["runs"]) == 3
+    hs = d["host_summary"]
+    assert type(hs.get("torch", "")) is str and "hostname" not in hs
+    assert {r["scenario"]: r["expect_ok"] for r in d["runs"]} == {"baseline": True, "leak": True, "impossible": False}
+
+
+def test_job_yaml_accepts_str_subclasses_and_numpy(jobs_dir):
+    """写作业单前统一转成纯 Python 类型：str 子类、numpy 标量、Path、tuple 都不能让 safe_dump 失败。"""
+    import numpy as np
+
+    class FakeVersion(str):  # 和 torch.torch_version.TorchVersion 一样是 str 的子类
+        pass
+
+    jobs.new_job(["L1"], "h20x8", job_id="t2")
+    jobs.move("t2", "running", host_summary={"torch": FakeVersion("2.15.0+cu132"), "gpu_count": np.int64(8),
+                                            "gpu_mem_gb": np.float32(95.6)},
+              runs=[{"dir": Path("h20x8/L1/x"), "seeds": (0, 1)}])
+    d = yaml.safe_load((jobs_dir / "running" / "t2.yaml").read_text())
+    assert d["host_summary"] == {"torch": "2.15.0+cu132", "gpu_count": 8, "gpu_mem_gb": pytest.approx(95.6, rel=1e-6)}
+    assert d["runs"] == [{"dir": "h20x8/L1/x", "seeds": [0, 1]}]
