@@ -20,7 +20,7 @@
 | 作业单 | `jobs/pending/` 下的那一张（文件名形如 `<日期>-l1-h20x8.yaml`） |
 
 **第一次**：按第 1-3 节准备环境、下载模型、预检，再按第 4 节装好常驻 agent。之后什么都不用做，agent 会自动领取、执行、推回。
-**agent 已经在跑**：确认 `systemctl --user status labkit-agent` 是 active，`status/h20x8.json` 每 15 分钟内有更新即可。
+**agent 已经在跑**：确认 `systemctl --user status labkit-agent` 是 active，`status/h20x8.json` 的更新时间在心跳间隔以内即可（运行中 15 分钟，空闲 3 小时，见文件里的 `beat_every_s`）。
 
 ---
 
@@ -96,7 +96,7 @@ agent 每 60 秒一轮（`labkit/agent.py`）：
 3. **校验**：只允许 `courses / profile / only / seeds / requested_commit / note` 字段，场景编号必须在场景清单里，`requested_commit` 必须是当前 HEAD 的祖先；不通过就移到 `jobs/done/`（`status: rejected`，附原因），不执行；
 4. **执行**：批量运行 → expect 断言 → 导出脱敏结果到 `results/h20x8/` → 更新课程 README 的结果表和证据图；
 5. **推回**：脱敏检查通过后提交并推送；
-6. **心跳** `status/h20x8.json`：状态（idle / running / publishing / error）、作业编号、进度、GPU 型号与数量、更新时间；状态变化或距上次超过 15 分钟才推送；
+6. **心跳** `status/h20x8.json`：状态（idle / running / publishing / error）、作业编号、进度、GPU 型号与数量、更新时间；状态变化时立即推送，状态不变时运行中每 15 分钟、空闲每 3 小时推一次（`beat_every_s`），避免空闲时刷提交历史；
 7. 日志 `$LAB_DATA_DIR/agent/agent.log`（5 MB × 5 份轮转）。
 
 **代码更新自动生效**：agent 每次 pull 后比较 `labkit/` 的版本，变了就在两张作业之间自动重启自己（日志里有“labkit 代码已更新…重启”）。Mac 端修好代码后不需要人工重启；但 agent 版本 1（2026-11-06 之前的代码）没有这个功能，从它升级时要手动重启一次。

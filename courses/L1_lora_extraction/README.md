@@ -22,7 +22,7 @@
 | 7 | 逐个揭晓 | [LoRA SFT 基线](steps/07-sft.md) | 和基础模型相比，SFT 后 dev 全对率（3 种子均值）提升多少？ | `baseline` | 3 / 3 |
 | 8 | 逐个揭晓 | [LoRA rank：4 / 8 / 16 / 64](steps/08-rank.md) | r 从 16 提到 64（可训练参数 ×4），dev 全对率（3 种子均值）会怎样？ | `lora_r4` `lora_r8` `lora_r64` | 9 / 9 |
 | 9 | 逐个揭晓 | [挂载层：q,v / 注意力 / 注意力 + MLP](steps/09-target.md) | 只挂 q,v（可训练参数约为基线的 1/8），dev 全对率（3 种子均值）相比 7 类全挂会怎样？ | `lora_qv` `lora_attn` | 6 / 6 |
-| 10 | 逐个揭晓 | [成本：显存与吞吐](steps/10-cost.md) | r=64（可训练参数从约 4000 万到约 1.6 亿）比 r=16 峰值显存多多少？ | `lora_r64` `lora_qv` | 6 / 6 |
+| 10 | 逐个揭晓 | [成本：显存与吞吐](steps/10-cost.md) | r=64（可训练参数从约 4000 万到约 1.6 亿）比 r=16 峰值显存多多少？ | `lora_r64` `lora_qv` `lora_attn` | 9 / 9 |
 | 11 | 逐个揭晓 | [学习率：5e-5 / 2e-4 / 1e-3](steps/11-lr.md) | 学习率 2e-4 → 1e-3（5 倍），dev 全对率（3 种子均值）会怎样？ | `lr_5e-5` `lr_1e-3` | 6 / 6 |
 | 12 | 逐个揭晓 | [监督口径：整段都算 loss](steps/12-supervision.md) | 整段对话都算 loss，dev 全对率（3 种子均值）会怎样？ | `all_tokens` | 3 / 3 |
 | 13 | 逐个揭晓 | [截断故障：max_len=256](steps/13-fault.md) | 这个配置下，dev 全对率会接近谁？ | `fault_truncation` | 3 / 3 |

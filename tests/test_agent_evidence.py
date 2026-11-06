@@ -3,6 +3,7 @@
 
 import json
 import subprocess
+import time
 from pathlib import Path
 
 import pytest
@@ -115,7 +116,19 @@ def test_heartbeat_whitelist_and_throttle(tmp_path, monkeypatch):
     hb.update(state="idle")  # 状态没变、没到 15 分钟：不重写
     assert json.loads((tmp_path / "status" / "h20x8.json").read_text())["updated_at"] == first
     hb.update(state="running", job_id="j1")
-    assert json.loads((tmp_path / "status" / "h20x8.json").read_text())["state"] == "running"
+    data = json.loads((tmp_path / "status" / "h20x8.json").read_text())
+    assert data["state"] == "running" and data["beat_every_s"] == agent.HEARTBEAT_EVERY
+    # 空闲：间隔是 3 小时，16 分钟后不推；运行中 16 分钟后要推
+    clock = [time.time()]
+    monkeypatch.setattr(agent.time, "time", lambda: clock[0])
+    hb.update(state="idle", job_id=None)
+    assert json.loads((tmp_path / "status" / "h20x8.json").read_text())["beat_every_s"] == agent.HEARTBEAT_IDLE_EVERY
+    clock[0] += 16 * 60
+    assert hb.update(state="idle") is False and json.loads((tmp_path / "status" / "h20x8.json").read_text())["updated_at"] != clock[0]
+    hb.update(state="running", job_id="j2")
+    clock[0] += 16 * 60
+    hb.update(state="running", progress="3/34")
+    assert json.loads((tmp_path / "status" / "h20x8.json").read_text())["progress"] == "3/34"
 
 
 def test_evidence_from_existing_result():

@@ -1,17 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 176" width="760" height="176" font-family="-apple-system,'PingFang SC','Noto Sans CJK SC',sans-serif">
-<rect width="760" height="176" rx="12" fill="#FFFFFF" stroke="#E3E6EC"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 208" width="760" height="208" font-family="-apple-system,'PingFang SC','Noto Sans CJK SC',sans-serif">
+<rect width="760" height="208" rx="12" fill="#FFFFFF" stroke="#E3E6EC"/>
 <text x="20" y="28" font-size="15" font-weight="600" fill="#1D2330">训练吞吐（tokens/s，中位数）</text>
 <text x="740" y="28" font-size="11" fill="#6B7385" text-anchor="end">h20x8 · 成本：显存与吞吐</text>
-<line x1="190.0" y1="40" x2="190.0" y2="148" stroke="#E3E6EC"/>
-<text x="190.0" y="164" font-size="10" fill="#6B7385" text-anchor="middle">0</text>
-<line x1="310.0" y1="40" x2="310.0" y2="148" stroke="#E3E6EC"/>
-<text x="310.0" y="164" font-size="10" fill="#6B7385" text-anchor="middle">1,250</text>
-<line x1="430.0" y1="40" x2="430.0" y2="148" stroke="#E3E6EC"/>
-<text x="430.0" y="164" font-size="10" fill="#6B7385" text-anchor="middle">2,500</text>
-<line x1="550.0" y1="40" x2="550.0" y2="148" stroke="#E3E6EC"/>
-<text x="550.0" y="164" font-size="10" fill="#6B7385" text-anchor="middle">3,750</text>
-<line x1="670.0" y1="40" x2="670.0" y2="148" stroke="#E3E6EC"/>
-<text x="670.0" y="164" font-size="10" fill="#6B7385" text-anchor="middle">5,000</text>
+<line x1="190.0" y1="40" x2="190.0" y2="180" stroke="#E3E6EC"/>
+<text x="190.0" y="196" font-size="10" fill="#6B7385" text-anchor="middle">0</text>
+<line x1="310.0" y1="40" x2="310.0" y2="180" stroke="#E3E6EC"/>
+<text x="310.0" y="196" font-size="10" fill="#6B7385" text-anchor="middle">1,250</text>
+<line x1="430.0" y1="40" x2="430.0" y2="180" stroke="#E3E6EC"/>
+<text x="430.0" y="196" font-size="10" fill="#6B7385" text-anchor="middle">2,500</text>
+<line x1="550.0" y1="40" x2="550.0" y2="180" stroke="#E3E6EC"/>
+<text x="550.0" y="196" font-size="10" fill="#6B7385" text-anchor="middle">3,750</text>
+<line x1="670.0" y1="40" x2="670.0" y2="180" stroke="#E3E6EC"/>
+<text x="670.0" y="196" font-size="10" fill="#6B7385" text-anchor="middle">5,000</text>
 <text x="180" y="61.0" font-size="12" fill="#1D2330" text-anchor="end">baseline</text>
 <rect x="190" y="46" width="258.6" height="22" rx="4" fill="#3B5BDB" fill-opacity="0.82"><title>baseline：2,693 tok/s（3 个种子）</title></rect>
 <line x1="447.7" y1="57.0" x2="449.6" y2="57.0" stroke="#1D2330" stroke-width="1.4"/>
@@ -33,4 +33,11 @@
 <circle cx="510.0" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
 <circle cx="512.0" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
 <text x="520.0" y="125.0" font-size="11" fill="#6B7385">3,335 tok/s ±18.1</text>
+<text x="180" y="157.0" font-size="12" fill="#1D2330" text-anchor="end">lora_attn</text>
+<rect x="190" y="142" width="307.6" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>lora_attn：3,204 tok/s（3 个种子）</title></rect>
+<line x1="496.4" y1="153.0" x2="498.6" y2="153.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="496.4" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="497.8" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="498.6" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="506.6" y="157.0" font-size="11" fill="#6B7385">3,204 tok/s ±11.6</text>
 </svg>

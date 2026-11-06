@@ -180,13 +180,14 @@ steps:
     body: 只改 rank，α 同比例改（α/r 固定为 2，缩放系数不变）。可训练参数和 r 成正比：r=4 约 1000 万，r=64 约 1.6 亿。
     question:
       text: r 从 16 提到 64（可训练参数 ×4），dev 全对率（3 种子均值）会怎样？
-      options: ["明显更好（多对 1 条样本以上，> +3.3 个点）", "差不多（±3.3 个点以内）", "明显更差（< −3.3 个点）"]
+      options: ["明显更好（> +6.7 个点，多对 2 条样本以上）", "差不多（±6.7 个点以内，和种子间波动同一量级）", "明显更差（< −6.7 个点）"]
     columns:
       - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
       - {path: meta.model.params.trainable, label: 可训练参数, fmt: params}
       - {path: summary.synth_valid.exact_all_ok, label: 合成验证全对率, pct: true}
-    charts: [metrics, params]
-    look: 把"与对照差"和"各种子"两列放在一起看：差值有没有超过种子间的波动和 3.3 个点？
+      - {path: evidence.curves.dev_loss_by_epoch.last, label: dev loss（第 2 轮）, fmt: ".3f"}
+    charts: [metrics, params, loss]
+    look: 把"与对照差"和"各种子"两列放在一起看：差值有没有超过种子间的波动（约 5 个点）和 2 条样本？全对率分不出高下时，dev loss 有没有三个种子一致的差别？
 
   - id: p_target
     file: 09-target
@@ -197,20 +198,22 @@ steps:
     body: rank 固定 16，只改挂在哪些线性层：只挂 q_proj、v_proj（LoRA 论文的做法）、挂注意力 4 个投影、挂注意力 + MLP 共 7 个（基线，QLoRA 之后的常见默认）。
     question:
       text: 只挂 q,v（可训练参数约为基线的 1/8），dev 全对率（3 种子均值）相比 7 类全挂会怎样？
-      options: ["明显更好（> +3.3 个点）", "差不多（±3.3 个点以内）", "明显更差（< −3.3 个点）"]
+      options: ["明显更好（> +6.7 个点，多对 2 条样本以上）", "差不多（±6.7 个点以内，和种子间波动同一量级）", "明显更差（< −6.7 个点）"]
     columns:
       - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
       - {path: meta.model.params.trainable, label: 可训练参数, fmt: params}
       - {path: summary.dev.condition_keep, label: 条件保留率, pct: true}
+      - {path: evidence.memory.peak_allocated_gb, label: 峰值显存 GB, fmt: ".1f"}
     charts: [metrics, params]
+    look: 可训练参数差 8 倍，全对率的差值超过种子波动了吗？峰值显存差了多少（下一步"成本"细看）？
 
   - id: p_cost
     file: 10-cost
     stage: reveal
     title: 成本：显存与吞吐
-    scenarios: [lora_r64, lora_qv]
+    scenarios: [lora_r64, lora_qv, lora_attn]
     compare_to: baseline
-    body: 同一张 H20、同样的 batch 和序列长度，比较 r=16 基线、r=64、只挂 q,v 的峰值显存和训练吞吐。
+    body: 同一张 H20、同样的 batch 和序列长度，比较 r=16 基线、r=64、只挂 q,v、只挂注意力的峰值显存和训练吞吐。
     question:
       text: r=64（可训练参数从约 4000 万到约 1.6 亿）比 r=16 峰值显存多多少？
       options: [不到 1 GB, 1 - 5 GB, 5 GB 以上]
@@ -220,7 +223,7 @@ steps:
       - {path: evidence.throughput.tokens_per_s_median, label: "tokens/s（中位数）", fmt: ",.0f"}
       - {path: evidence.throughput.train_minutes, label: 训练分钟, fmt: ".1f"}
     charts: [memory, throughput]
-    look: 显存构成图里，"LoRA 参数+梯度"和"AdamW 状态"两段和"冻结权重""激活"比起来有多大？显存的大头在哪？
+    look: 显存构成图里，"LoRA 参数+梯度"和"AdamW 状态"两段和"冻结权重""激活"比起来有多大？rank ×4 和"去掉 MLP 上的 LoRA"，哪个对显存影响大？为什么变的是"激活"那一段？
 
   - id: p_lr
     file: 11-lr
@@ -231,13 +234,15 @@ steps:
     body: 只改峰值学习率（warmup 和线性衰减不变）。LoRA 常用 1e-4 到 3e-4，比全参微调大一个数量级，因为 B 从 0 开始、α/r 缩放又把更新压小了。
     question:
       text: 学习率 2e-4 → 1e-3（5 倍），dev 全对率（3 种子均值）会怎样？
-      options: ["明显更好（> +3.3 个点）", "差不多（±3.3 个点以内）", "明显更差（< −3.3 个点）"]
+      options: ["明显更好（> +6.7 个点，多对 2 条样本以上）", "差不多（±6.7 个点以内，和种子间波动同一量级）", "明显更差（< −6.7 个点）"]
     columns:
       - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
       - {path: summary.dev.format_ok, label: 格式合法率, pct: true}
       - {path: evidence.curves.train_loss.last, label: 最终 train loss, fmt: ".4f"}
+      - {path: evidence.curves.dev_loss_by_epoch.last, label: dev loss（第 2 轮）, fmt: ".3f"}
+      - {path: summary.synth_valid.exact_all_ok, label: 合成验证全对率, pct: true}
     charts: [metrics, loss]
-    look: loss 曲线里三档学习率的下降速度和最终位置；loss 更低是不是一定全对率更高？
+    look: lr=1e-3 的 loss 曲线中途有没有冲高？它最终的 train loss 也很低，为什么 dev 全对率掉了一半？lr=5e-5 有没有"学不够"？
 
   - id: p_supervision
     file: 12-supervision
@@ -248,13 +253,14 @@ steps:
     body: 把 labels mask 去掉：系统提示、广告原文、回复全部参与 loss。其余配置和基线相同。
     question:
       text: 整段对话都算 loss，dev 全对率（3 种子均值）会怎样？
-      options: [更好：监督信号更多, 差不多, 更差]
+      options: ["更好：监督信号更多（> +6.7 个点）", "差不多（±6.7 个点以内）", "更差（< −6.7 个点）"]
     columns:
       - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
       - {path: meta.data.tokenized.supervised_tokens_total, label: 被监督 token 总数, fmt: ",.0f"}
       - {path: evidence.curves.train_loss.last, label: 最终 train loss, fmt: ".4f"}
+      - {path: evidence.memory.peak_allocated_gb, label: 峰值显存 GB, fmt: ".1f"}
     charts: [metrics, loss]
-    look: 两者的被监督 token 数差多少倍？整段监督的 loss 主要花在学什么上？
+    look: 两者的被监督 token 数差多少倍？回复部分分到的梯度因此变成原来的几分之一，相当于把回复的学习率调小了多少？对照上一步 lr=5e-5 的结果看。
 
   - id: p_fault
     file: 13-fault

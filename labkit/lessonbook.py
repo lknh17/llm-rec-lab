@@ -139,7 +139,7 @@ def fmt_agg(vals: list[float], spec: str | None = None, pct: bool = False) -> st
     if not vals:
         return "—"
     m = statistics.fmean(vals)
-    if len(vals) == 1:
+    if len(vals) == 1 or (spec == "params" and len(set(vals)) == 1):  # 参数量由配置决定，种子间不变，不写 ± 0
         return fmt(m, spec, pct)
     sd = statistics.stdev(vals)
     sd_s = f"{sd * 100:.1f}" if (pct or spec == "pct") else fmt(sd, spec)
@@ -706,7 +706,8 @@ def jobs_board(now: float | None = None) -> str:
             gpu = f"{st.get('gpu_count') or '?'} × {st.get('gpu') or '?'}"
             out.append(f"| {st.get('profile') or f.stem} | {state} | {st.get('job_id') or '—'} | {st.get('progress') or '—'} | "
                        f"{gpu} | {_utc(st.get('updated_at'))} |")
-        out += ["", "> agent 状态变化时立即推送心跳，没有变化时每 15 分钟推送一次；最后心跳超过 30 分钟没更新，说明 agent 可能停了。"
+        out += ["", "> agent 状态变化时立即推送心跳；状态不变时，运行中每 15 分钟、空闲每 3 小时推送一次。"
+                "最后心跳超过两个间隔（运行中 30 分钟、空闲 6 小时）没更新，说明 agent 可能停了。"
                 "进度是已结束的运行数 / 本作业的运行总数；结果在整张作业跑完后一次性推回。", ""]
 
     out += ["## 运行中", ""]

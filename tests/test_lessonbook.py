@@ -77,6 +77,7 @@ def test_jobs_board(tmp_path, monkeypatch):
         (jd / s).mkdir(parents=True)
     monkeypatch.setattr(paths, "JOBS_DIR", jd)
     monkeypatch.setattr(paths, "ROOT", tmp_path)
+    monkeypatch.setattr(docs, "collect", lambda course_id, profile: {})  # 和仓库里真实的 results/ 隔离
     (tmp_path / "status").mkdir()
     (tmp_path / "status" / "h20x8.json").write_text(json.dumps(
         {"profile": "h20x8", "state": "running", "job_id": "j2", "progress": "5/34", "gpu": "NVIDIA H20", "gpu_count": 8,

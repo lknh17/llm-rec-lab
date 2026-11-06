@@ -14,7 +14,8 @@
 4. 执行：jobs.run_job（批量运行 → 导出脱敏结果 → 写回报），期间心跳线程每 15 分钟推一次进度；
 5. 发布：labkit publish（脱敏检查 → 只提交 results/ jobs/ status/ → 推送）；
 6. 心跳：status/<档位>.json，只含白名单字段（状态、作业编号、进度、时间、GPU 型号与数量、agent 版本），
-   状态变化或距上次推送超过 15 分钟才推送，避免刷提交历史；
+   状态变化时立即推送；状态不变时，运行中每 15 分钟、空闲每 3 小时推一次（beat_every_s 写明本次间隔，
+   读心跳的一方按"超过两个间隔没更新"判离线），避免空闲时刷提交历史（每次推送还会触发 pages 工作流再提交一次）；
 7. 日志：LAB_DATA_DIR/agent/agent.log，5 MB × 5 份轮转；
 8. 代码更新：每次 pull 后比较 labkit/ 的 git 树哈希，和启动时不同就在两张作业之间重启自己（os.execv），
    保证 Mac 端修好的 labkit 代码不用人工重启就能生效。项目代码 projects/ 每个运行都从快照重新加载，不受影响。
@@ -38,14 +39,16 @@ from pathlib import Path
 
 from . import paths
 
-AGENT_VERSION = 2
-HEARTBEAT_EVERY = 15 * 60
+AGENT_VERSION = 3
+HEARTBEAT_EVERY = 15 * 60  # 运行中 / 推送中：进度要能看到
+HEARTBEAT_IDLE_EVERY = 3 * 3600  # 空闲 / 出错：只证明 agent 还活着
+BUSY_STATES = {"running", "publishing"}
 JOB_KEYS = {"job_id", "created_at", "profile", "courses", "only", "seeds", "requested_commit", "note", "how_to_run",
             # agent / run_job 自己写的字段（作业单被重新领取时会带着）
             "claimed_by", "claimed_at", "started_at", "ran_commit", "host_summary", "status", "finished_at", "hours",
             "runs", "n_exported", "problems", "cancelled_at", "cancel_reason", "rejected_reason"}
 STATUS_KEYS = {"agent_version", "agent_id", "profile", "state", "job_id", "progress", "updated_at", "last_pull_at",
-               "last_error", "started_at", "gpu", "gpu_count", "gpu_mem_gb", "queue"}
+               "last_error", "started_at", "gpu", "gpu_count", "gpu_mem_gb", "queue", "beat_every_s"}
 _git_lock = threading.Lock()
 log = logging.getLogger("labkit.agent")
 
@@ -191,18 +194,19 @@ class Heartbeat:
         return d / f"{self.profile}.json"
 
     def update(self, force: bool = False, **fields) -> bool:
-        """写心跳文件；状态变化或超过 15 分钟才提交推送。返回是否推送。"""
+        """写心跳文件；状态变化，或超过本状态的心跳间隔（运行中 15 分钟、空闲 3 小时）才提交推送。返回是否推送。"""
         from . import jobs
 
         if not self.host:
             hs = jobs.host_summary()
             self.host = {"gpu": hs.get("gpu"), "gpu_count": hs.get("gpu_count"), "gpu_mem_gb": hs.get("gpu_mem_gb")}
         self.state.update(fields)
+        every = HEARTBEAT_EVERY if self.state.get("state") in BUSY_STATES else HEARTBEAT_IDLE_EVERY
         data = {"agent_version": AGENT_VERSION, "agent_id": self.me, "profile": self.profile, **self.host, **self.state,
-                "updated_at": time.time()}
+                "beat_every_s": every, "updated_at": time.time()}
         data = {k: v for k, v in data.items() if k in STATUS_KEYS}
         key = json.dumps({k: data.get(k) for k in ("state", "job_id", "last_error")}, sort_keys=True)  # 进度变化不单独推
-        due = force or key != self.last_pushed_state or time.time() - self.last_push >= HEARTBEAT_EVERY
+        due = force or key != self.last_pushed_state or time.time() - self.last_push >= every
         if not due:
             return False
         self.path().write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
