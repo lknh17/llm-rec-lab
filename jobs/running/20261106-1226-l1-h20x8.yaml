@@ -8,3 +8,5 @@ seeds: []
 requested_commit: 3276168ae23c668333e9a8fdde3e60d3c45dd18e
 note: L05 SFT 与 LoRA：12 个场景、34 个运行（base_model 1 种子，其余 3 种子），预计 8 卡 4-5 小时
 how_to_run: python -m labkit jobs run 20261106-1226-l1-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-06T07:13:27Z'
