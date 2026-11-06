@@ -6,11 +6,11 @@
   "gpu_count": 8,
   "gpu_mem_gb": 95.0,
   "last_pull_at": 1793949195.5137162,
-  "state": "publishing",
+  "state": "idle",
   "queue": 1,
-  "job_id": "20261106-1226-l1-h20x8",
-  "progress": "0/34",
+  "job_id": null,
+  "progress": null,
   "started_at": 1793949212.170289,
-  "last_error": null,
-  "updated_at": 1793949217.7593336
+  "last_error": "RepresenterError: ('cannot represent an object', '2.15.0+cu132')",
+  "updated_at": 1793949230.5814955
 }
