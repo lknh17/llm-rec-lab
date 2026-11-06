@@ -1,16 +1,12 @@
 {
-  "agent_version": 1,
+  "agent_version": 2,
   "agent_id": "agent-f80beb",
   "profile": "h20x8",
   "gpu": "NVIDIA H20",
   "gpu_count": 8,
   "gpu_mem_gb": 95.0,
-  "last_pull_at": 1793949195.5137162,
+  "last_pull_at": 1793951847.4997816,
   "state": "idle",
   "queue": 1,
-  "job_id": null,
-  "progress": null,
-  "started_at": 1793949212.170289,
-  "last_error": "RepresenterError: ('cannot represent an object', '2.15.0+cu132')",
-  "updated_at": 1793949230.5814955
+  "updated_at": 1793951853.8106685
 }
