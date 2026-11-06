@@ -1,0 +1,128 @@
+[worker] 等待设备锁 gpu1-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L1/lora_attn/s1-fc08ea/code/adextract/experiment.py
+[16:31:07] ===== 阶段：prepare =====
+[16:31:26] 训练样本 4000 条（丢弃 0，截断 0），总 token 1231216，监督 token 128683，prompt 长度 274
+
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]
+Loading weights:  32%|███▏      | 110/339 [00:00<00:00, 1032.81it/s]
+Loading weights:  63%|██████▎   | 214/339 [00:00<00:00, 933.06it/s] 
+Loading weights:  91%|█████████ | 308/339 [00:00<00:00, 891.73it/s]
+Loading weights: 100%|██████████| 339/339 [00:00<00:00, 955.75it/s]
+[16:31:43] ===== 阶段：train =====
+[16:31:45] 可训练参数 10,092,544 / 7,625,709,056（0.132%）
+[16:31:47] step 1/1000 loss=0.9401 监督token=204 lr=8.00e-06 grad_norm=9.149
+[16:31:54] step 10/1000 loss=0.3048 监督token=248 lr=4.40e-05 grad_norm=2.974
+[16:32:02] step 20/1000 loss=0.0943 监督token=277 lr=8.40e-05 grad_norm=0.900
+[16:32:10] step 30/1000 loss=0.0112 监督token=263 lr=1.24e-04 grad_norm=0.305
+[16:32:17] step 40/1000 loss=0.0129 监督token=249 lr=1.64e-04 grad_norm=0.370
+[16:32:25] step 50/1000 loss=0.0046 监督token=282 lr=2.00e-04 grad_norm=0.148
+[16:32:33] step 60/1000 loss=0.0004 监督token=249 lr=1.98e-04 grad_norm=0.009
+[16:32:40] step 70/1000 loss=0.0008 监督token=285 lr=1.96e-04 grad_norm=0.024
+[16:32:48] step 80/1000 loss=0.0008 监督token=241 lr=1.94e-04 grad_norm=0.046
+[16:32:56] step 90/1000 loss=0.0002 监督token=262 lr=1.92e-04 grad_norm=0.006
+[16:33:03] step 100/1000 loss=0.0001 监督token=236 lr=1.89e-04 grad_norm=0.003
+[16:33:11] step 110/1000 loss=0.0002 监督token=243 lr=1.87e-04 grad_norm=0.011
+[16:33:19] step 120/1000 loss=0.0001 监督token=249 lr=1.85e-04 grad_norm=0.002
+[16:33:26] step 130/1000 loss=0.0002 监督token=219 lr=1.83e-04 grad_norm=0.025
+[16:33:34] step 140/1000 loss=0.0001 监督token=252 lr=1.81e-04 grad_norm=0.003
+[16:33:42] step 150/1000 loss=0.0001 监督token=291 lr=1.79e-04 grad_norm=0.001
+[16:33:49] step 160/1000 loss=0.0006 监督token=277 lr=1.77e-04 grad_norm=0.077
+[16:33:57] step 170/1000 loss=0.0002 监督token=269 lr=1.75e-04 grad_norm=0.010
+[16:34:05] step 180/1000 loss=0.0006 监督token=258 lr=1.73e-04 grad_norm=0.086
+[16:34:12] step 190/1000 loss=0.0002 监督token=266 lr=1.71e-04 grad_norm=0.009
+[16:34:20] step 200/1000 loss=0.0001 监督token=270 lr=1.68e-04 grad_norm=0.001
+[16:34:27] step 210/1000 loss=0.0001 监督token=246 lr=1.66e-04 grad_norm=0.003
+[16:34:35] step 220/1000 loss=0.0001 监督token=243 lr=1.64e-04 grad_norm=0.002
+[16:34:43] step 230/1000 loss=0.0002 监督token=251 lr=1.62e-04 grad_norm=0.006
+[16:34:50] step 240/1000 loss=0.0011 监督token=245 lr=1.60e-04 grad_norm=0.136
+[16:34:58] step 250/1000 loss=0.0004 监督token=239 lr=1.58e-04 grad_norm=0.039
+[16:35:05] step 260/1000 loss=0.0001 监督token=250 lr=1.56e-04 grad_norm=0.004
+[16:35:13] step 270/1000 loss=0.0001 监督token=280 lr=1.54e-04 grad_norm=0.001
+[16:35:21] step 280/1000 loss=0.0001 监督token=249 lr=1.52e-04 grad_norm=0.001
+[16:35:28] step 290/1000 loss=0.0001 监督token=281 lr=1.49e-04 grad_norm=0.002
+[16:35:36] step 300/1000 loss=0.0000 监督token=236 lr=1.47e-04 grad_norm=0.001
+[16:35:44] step 310/1000 loss=0.0002 监督token=283 lr=1.45e-04 grad_norm=0.008
+[16:35:51] step 320/1000 loss=0.0001 监督token=221 lr=1.43e-04 grad_norm=0.001
+[16:35:59] step 330/1000 loss=0.0000 监督token=252 lr=1.41e-04 grad_norm=0.001
+[16:36:07] step 340/1000 loss=0.0000 监督token=301 lr=1.39e-04 grad_norm=0.001
+[16:36:14] step 350/1000 loss=0.0001 监督token=250 lr=1.37e-04 grad_norm=0.003
+[16:36:22] step 360/1000 loss=0.0000 监督token=257 lr=1.35e-04 grad_norm=0.002
+[16:36:29] step 370/1000 loss=0.0000 监督token=259 lr=1.33e-04 grad_norm=0.000
+[16:36:37] step 380/1000 loss=0.0001 监督token=260 lr=1.31e-04 grad_norm=0.010
+[16:36:45] step 390/1000 loss=0.0000 监督token=246 lr=1.28e-04 grad_norm=0.001
+[16:36:52] step 400/1000 loss=0.0000 监督token=269 lr=1.26e-04 grad_norm=0.002
+[16:37:00] step 410/1000 loss=0.0000 监督token=218 lr=1.24e-04 grad_norm=0.001
+[16:37:08] step 420/1000 loss=0.0000 监督token=256 lr=1.22e-04 grad_norm=0.000
+[16:37:15] step 430/1000 loss=0.0000 监督token=270 lr=1.20e-04 grad_norm=0.001
+[16:37:23] step 440/1000 loss=0.0000 监督token=231 lr=1.18e-04 grad_norm=0.001
+[16:37:30] step 450/1000 loss=0.0000 监督token=256 lr=1.16e-04 grad_norm=0.000
+[16:37:38] step 460/1000 loss=0.0000 监督token=287 lr=1.14e-04 grad_norm=0.001
+[16:37:46] step 470/1000 loss=0.0000 监督token=264 lr=1.12e-04 grad_norm=0.000
+[16:37:53] step 480/1000 loss=0.0000 监督token=246 lr=1.09e-04 grad_norm=0.000
+[16:38:01] step 490/1000 loss=0.0000 监督token=284 lr=1.07e-04 grad_norm=0.003
+[16:38:08] step 500/1000 loss=0.0000 监督token=220 lr=1.05e-04 grad_norm=0.002
+[16:38:10] epoch 1: dev_loss=0.1040
+[16:38:17] step 510/1000 loss=0.0000 监督token=265 lr=1.03e-04 grad_norm=0.000
+[16:38:25] step 520/1000 loss=0.0000 监督token=282 lr=1.01e-04 grad_norm=0.001
+[16:38:33] step 530/1000 loss=0.0000 监督token=255 lr=9.89e-05 grad_norm=0.000
+[16:38:40] step 540/1000 loss=0.0000 监督token=226 lr=9.68e-05 grad_norm=0.000
+[16:38:48] step 550/1000 loss=0.0000 监督token=237 lr=9.47e-05 grad_norm=0.001
+[16:38:55] step 560/1000 loss=0.0001 监督token=231 lr=9.26e-05 grad_norm=0.005
+[16:39:03] step 570/1000 loss=0.0000 监督token=229 lr=9.05e-05 grad_norm=0.001
+[16:39:11] step 580/1000 loss=0.0000 监督token=261 lr=8.84e-05 grad_norm=0.003
+[16:39:18] step 590/1000 loss=0.0000 监督token=247 lr=8.63e-05 grad_norm=0.001
+[16:39:26] step 600/1000 loss=0.0000 监督token=273 lr=8.42e-05 grad_norm=0.001
+[16:39:33] step 610/1000 loss=0.0000 监督token=248 lr=8.21e-05 grad_norm=0.000
+[16:39:41] step 620/1000 loss=0.0000 监督token=234 lr=8.00e-05 grad_norm=0.000
+[16:39:48] step 630/1000 loss=0.0001 监督token=249 lr=7.79e-05 grad_norm=0.003
+[16:39:56] step 640/1000 loss=0.0000 监督token=240 lr=7.58e-05 grad_norm=0.000
+[16:40:04] step 650/1000 loss=0.0000 监督token=241 lr=7.37e-05 grad_norm=0.000
+[16:40:11] step 660/1000 loss=0.0000 监督token=250 lr=7.16e-05 grad_norm=0.000
+[16:40:19] step 670/1000 loss=0.0000 监督token=260 lr=6.95e-05 grad_norm=0.001
+[16:40:27] step 680/1000 loss=0.0000 监督token=254 lr=6.74e-05 grad_norm=0.001
+[16:40:34] step 690/1000 loss=0.0000 监督token=240 lr=6.53e-05 grad_norm=0.000
+[16:40:42] step 700/1000 loss=0.0000 监督token=243 lr=6.32e-05 grad_norm=0.000
+[16:40:49] step 710/1000 loss=0.0001 监督token=273 lr=6.11e-05 grad_norm=0.002
+[16:40:57] step 720/1000 loss=0.0000 监督token=234 lr=5.89e-05 grad_norm=0.001
+[16:41:04] step 730/1000 loss=0.0000 监督token=229 lr=5.68e-05 grad_norm=0.000
+[16:41:12] step 740/1000 loss=0.0000 监督token=253 lr=5.47e-05 grad_norm=0.000
+[16:41:20] step 750/1000 loss=0.0000 监督token=249 lr=5.26e-05 grad_norm=0.000
+[16:41:27] step 760/1000 loss=0.0000 监督token=233 lr=5.05e-05 grad_norm=0.000
+[16:41:35] step 770/1000 loss=0.0000 监督token=267 lr=4.84e-05 grad_norm=0.000
+[16:41:42] step 780/1000 loss=0.0000 监督token=258 lr=4.63e-05 grad_norm=0.001
+[16:41:50] step 790/1000 loss=0.0000 监督token=256 lr=4.42e-05 grad_norm=0.001
+[16:41:57] step 800/1000 loss=0.0003 监督token=279 lr=4.21e-05 grad_norm=0.045
+[16:42:05] step 810/1000 loss=0.0000 监督token=262 lr=4.00e-05 grad_norm=0.000
+[16:42:13] step 820/1000 loss=0.0000 监督token=243 lr=3.79e-05 grad_norm=0.001
+[16:42:20] step 830/1000 loss=0.0000 监督token=240 lr=3.58e-05 grad_norm=0.000
+[16:42:28] step 840/1000 loss=0.0000 监督token=256 lr=3.37e-05 grad_norm=0.000
+[16:42:36] step 850/1000 loss=0.0000 监督token=275 lr=3.16e-05 grad_norm=0.001
+[16:42:43] step 860/1000 loss=0.0000 监督token=257 lr=2.95e-05 grad_norm=0.000
+[16:42:51] step 870/1000 loss=0.0000 监督token=215 lr=2.74e-05 grad_norm=0.000
+[16:42:58] step 880/1000 loss=0.0000 监督token=282 lr=2.53e-05 grad_norm=0.000
+[16:43:06] step 890/1000 loss=0.0000 监督token=272 lr=2.32e-05 grad_norm=0.000
+[16:43:13] step 900/1000 loss=0.0000 监督token=210 lr=2.11e-05 grad_norm=0.001
+[16:43:21] step 910/1000 loss=0.0000 监督token=270 lr=1.89e-05 grad_norm=0.000
+[16:43:28] step 920/1000 loss=0.0000 监督token=256 lr=1.68e-05 grad_norm=0.001
+[16:43:36] step 930/1000 loss=0.0001 监督token=247 lr=1.47e-05 grad_norm=0.001
+[16:43:44] step 940/1000 loss=0.0001 监督token=226 lr=1.26e-05 grad_norm=0.001
+[16:43:51] step 950/1000 loss=0.0000 监督token=228 lr=1.05e-05 grad_norm=0.000
+[16:43:59] step 960/1000 loss=0.0000 监督token=267 lr=8.42e-06 grad_norm=0.000
+[16:44:07] step 970/1000 loss=0.0000 监督token=261 lr=6.32e-06 grad_norm=0.000
+[16:44:14] step 980/1000 loss=0.0000 监督token=274 lr=4.21e-06 grad_norm=0.000
+[16:44:22] step 990/1000 loss=0.0000 监督token=240 lr=2.11e-06 grad_norm=0.000
+[16:44:30] step 1000/1000 loss=0.0000 监督token=225 lr=0.00e+00 grad_norm=0.000
+[16:44:31] epoch 2: dev_loss=0.1070
+[16:44:31] ===== 阶段：evaluate =====
+[16:44:39] [dev] 格式合法 1.0 品类 1.0 卖点F1 0.9828 条件保留 0.8571 无依据 0.0 全对 0.8333 （7.8s）
+[16:44:51] [synth_valid] 格式合法 1.0 品类 1.0 卖点F1 1.0 条件保留 1.0 无依据 0.0 全对 1.0 （12.4s）
+
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]
+Loading weights:  24%|██▍       | 83/339 [00:00<00:00, 819.59it/s]
+Loading weights:  59%|█████▉    | 201/339 [00:00<00:00, 988.04it/s]
+Loading weights:  88%|████████▊ | 300/339 [00:00<00:00, 863.70it/s]
+Loading weights: 100%|██████████| 339/339 [00:00<00:00, 893.08it/s]
+[16:45:05] 重新加载核对：4/4 条输出与内存中的模型完全一致
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

@@ -18,15 +18,15 @@
 | 3 | 先估算 | [先估算](steps/03-estimate.md) | 可训练参数、全参显存、被监督 token 占比各是多少？ | — | — |
 | 4 | 看清内部 | [追踪一条样本](steps/04-trace.md) | `<\|im_end\|>` 被监督了吗？logits 第二维为什么只有几十？ | — | — |
 | 5 | 看清内部 | [代码导读](steps/05-code.md) | 关键代码在哪几行？ | — | — |
-| 6 | 逐个揭晓 | [基础模型（不训练）](steps/06-base-model.md) | 零样本的 7B Instruct 模型，dev 全对率（所有字段都对）大约多少？ | `base_model` | 0 / 1 |
-| 7 | 逐个揭晓 | [LoRA SFT 基线](steps/07-sft.md) | 和基础模型相比，SFT 后 dev 全对率（3 种子均值）提升多少？ | `baseline` | 0 / 3 |
-| 8 | 逐个揭晓 | [LoRA rank：4 / 8 / 16 / 64](steps/08-rank.md) | r 从 16 提到 64（可训练参数 ×4），dev 全对率（3 种子均值）会怎样？ | `lora_r4` `lora_r8` `lora_r64` | 0 / 9 |
-| 9 | 逐个揭晓 | [挂载层：q,v / 注意力 / 注意力 + MLP](steps/09-target.md) | 只挂 q,v（可训练参数约为基线的 1/8），dev 全对率（3 种子均值）相比 7 类全挂会怎样？ | `lora_qv` `lora_attn` | 0 / 6 |
-| 10 | 逐个揭晓 | [成本：显存与吞吐](steps/10-cost.md) | r=64（可训练参数从约 4000 万到约 1.6 亿）比 r=16 峰值显存多多少？ | `lora_r64` `lora_qv` | 0 / 6 |
-| 11 | 逐个揭晓 | [学习率：5e-5 / 2e-4 / 1e-3](steps/11-lr.md) | 学习率 2e-4 → 1e-3（5 倍），dev 全对率（3 种子均值）会怎样？ | `lr_5e-5` `lr_1e-3` | 0 / 6 |
-| 12 | 逐个揭晓 | [监督口径：整段都算 loss](steps/12-supervision.md) | 整段对话都算 loss，dev 全对率（3 种子均值）会怎样？ | `all_tokens` | 0 / 3 |
-| 13 | 逐个揭晓 | [截断故障：max_len=256](steps/13-fault.md) | 这个配置下，dev 全对率会接近谁？ | `fault_truncation` | 0 / 3 |
-| 14 | 诊断故障 | [诊断故障](steps/14-diagnose.md) | 根因是什么？ | `fix_truncation` | 0 / 3 |
+| 6 | 逐个揭晓 | [基础模型（不训练）](steps/06-base-model.md) | 零样本的 7B Instruct 模型，dev 全对率（所有字段都对）大约多少？ | `base_model` | 1 / 1 |
+| 7 | 逐个揭晓 | [LoRA SFT 基线](steps/07-sft.md) | 和基础模型相比，SFT 后 dev 全对率（3 种子均值）提升多少？ | `baseline` | 3 / 3 |
+| 8 | 逐个揭晓 | [LoRA rank：4 / 8 / 16 / 64](steps/08-rank.md) | r 从 16 提到 64（可训练参数 ×4），dev 全对率（3 种子均值）会怎样？ | `lora_r4` `lora_r8` `lora_r64` | 9 / 9 |
+| 9 | 逐个揭晓 | [挂载层：q,v / 注意力 / 注意力 + MLP](steps/09-target.md) | 只挂 q,v（可训练参数约为基线的 1/8），dev 全对率（3 种子均值）相比 7 类全挂会怎样？ | `lora_qv` `lora_attn` | 6 / 6 |
+| 10 | 逐个揭晓 | [成本：显存与吞吐](steps/10-cost.md) | r=64（可训练参数从约 4000 万到约 1.6 亿）比 r=16 峰值显存多多少？ | `lora_r64` `lora_qv` | 6 / 6 |
+| 11 | 逐个揭晓 | [学习率：5e-5 / 2e-4 / 1e-3](steps/11-lr.md) | 学习率 2e-4 → 1e-3（5 倍），dev 全对率（3 种子均值）会怎样？ | `lr_5e-5` `lr_1e-3` | 6 / 6 |
+| 12 | 逐个揭晓 | [监督口径：整段都算 loss](steps/12-supervision.md) | 整段对话都算 loss，dev 全对率（3 种子均值）会怎样？ | `all_tokens` | 3 / 3 |
+| 13 | 逐个揭晓 | [截断故障：max_len=256](steps/13-fault.md) | 这个配置下，dev 全对率会接近谁？ | `fault_truncation` | 3 / 3 |
+| 14 | 诊断故障 | [诊断故障](steps/14-diagnose.md) | 根因是什么？ | `fix_truncation` | 3 / 3 |
 | 15 | 回顾 | [回顾：全部场景一览](steps/15-review.md) | 全部场景一张表；自查能不能讲清每个结论的"为什么" | — | — |
 <!-- /labkit:path -->
 
@@ -92,9 +92,22 @@ flowchart LR
 | `fault_truncation` | 教学故障 | 0.0333 | 1.0000 | 0.0333 | 通过 |
 | `fix_truncation` | 修复 | 0.6667 | 1.0000 | 0.9500 | 通过 |
 
-**h20x8**：8 × NVIDIA H20，Qwen2.5-7B-Instruct（bf16），4000 条合成训练样本，每个场景 3 个种子（已有 0 / 34 个运行）
+**h20x8**：8 × NVIDIA H20，Qwen2.5-7B-Instruct（bf16），4000 条合成训练样本，每个场景 3 个种子（已有 34 / 34 个运行）
 
-_还没有结果：等待批量运行。_
+| 场景 | 类型 | dev 全对率 | dev 格式合法率 | 合成验证全对率 | 断言 |
+| - | - | - | - | - | - |
+| `base_model` | 参照 | 0.6000 | 1.0000 | 0.6333 |  |
+| `baseline` | 基线 | 0.7778 ± 0.0509 (n=3) | 1.0000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) | 通过 |
+| `all_tokens` | 候选改动 | 0.8333 ± 0.0577 (n=3) | 1.0000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) |  |
+| `lora_r4` | 候选改动 | 0.7778 ± 0.0385 (n=3) | 1.0000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) |  |
+| `lora_r8` | 候选改动 | 0.8111 ± 0.0694 (n=3) | 1.0000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) | 通过 |
+| `lora_r64` | 候选改动 | 0.7222 ± 0.0385 (n=3) | 1.0000 ± 0.0000 (n=3) | 0.9833 ± 0.0289 (n=3) | 通过 |
+| `lora_qv` | 候选改动 | 0.8222 ± 0.0192 (n=3) | 1.0000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) | 通过 |
+| `lora_attn` | 候选改动 | 0.7555 ± 0.0694 (n=3) | 1.0000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) | 通过 |
+| `lr_5e-5` | 候选改动 | 0.8333 ± 0.0334 (n=3) | 1.0000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) |  |
+| `lr_1e-3` | 候选改动 | 0.3222 ± 0.1347 (n=3) | 0.9667 ± 0.0577 (n=3) | 0.9222 ± 0.1058 (n=3) |  |
+| `fault_truncation` | 教学故障 | 0.6000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) | 0.6333 ± 0.0000 (n=3) | 通过 |
+| `fix_truncation` | 修复 | 0.7889 ± 0.0385 (n=3) | 1.0000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) | 通过 |
 
 </details>
 <!-- /labkit:results -->
@@ -111,7 +124,15 @@ _还没有结果：等待批量运行。_
   ![mac-m4pro train loss 曲线](figures/mac-m4pro-loss.svg)
 
   ![mac-m4pro 可训练参数量](figures/mac-m4pro-params.svg)
-- **h20x8**：还没有结果，图在结果推回后自动生成。
+- **h20x8**：[主指标](figures/h20x8-metrics.svg)、[train loss 曲线](figures/h20x8-loss.svg)、[峰值显存构成](figures/h20x8-memory.svg)、[可训练参数量](figures/h20x8-params.svg)
+
+  ![h20x8 主指标](figures/h20x8-metrics.svg)
+
+  ![h20x8 train loss 曲线](figures/h20x8-loss.svg)
+
+  ![h20x8 峰值显存构成](figures/h20x8-memory.svg)
+
+  ![h20x8 可训练参数量](figures/h20x8-params.svg)
 
 </details>
 <!-- /labkit:figures -->

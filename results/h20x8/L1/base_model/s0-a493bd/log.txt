@@ -1,0 +1,16 @@
+[worker] 等待设备锁 gpu3-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L1/base_model/s0-a493bd/code/adextract/experiment.py
+[15:58:03] ===== 阶段：prepare =====
+[15:58:30] 训练样本 4000 条（丢弃 0，截断 0），总 token 1231216，监督 token 128683，prompt 长度 274
+
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]
+Loading weights:  27%|██▋       | 92/339 [00:00<00:00, 914.30it/s]
+Loading weights:  54%|█████▍    | 184/339 [00:00<00:00, 719.30it/s]
+Loading weights:  77%|███████▋  | 262/339 [00:00<00:00, 723.49it/s]
+Loading weights: 100%|██████████| 339/339 [00:00<00:00, 772.50it/s]
+[16:00:14] ===== 阶段：evaluate =====
+[16:00:26] [dev] 格式合法 1.0 品类 0.9667 卖点F1 0.9412 条件保留 0.8095 无依据 0.0072 全对 0.6 （12.3s）
+[16:00:49] [synth_valid] 格式合法 1.0 品类 0.8667 卖点F1 0.9719 条件保留 0.7568 无依据 0.0076 全对 0.6333 （22.5s）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

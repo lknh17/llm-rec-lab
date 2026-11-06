@@ -22,19 +22,19 @@
 
 <details><summary>线索 1</summary>
 
-看 loss：故障运行最终的 train loss 是 0（基线 0.00101）。一个真正在学的模型，loss 会恰好是这个数吗？（数字来自 Mac 历史档）
+看 loss：故障运行最终的 train loss 是 0 ± 0（基线 6.667e-06 ± 5.774e-06）。一个真正在学的模型，loss 会恰好是这个数吗？
 
 </details>
 
 <details><summary>线索 2</summary>
 
-看数据统计：故障运行的被监督 token 总数是 0，零监督样本 400 条。一条样本的 prompt 有 274 个 token，max_len 是 256。（数字来自 Mac 历史档）
+看数据统计：故障运行的被监督 token 总数是 0 ± 0，零监督样本 4,000 ± 0 条。一条样本的 prompt 有 274 ± 0 个 token，max_len 是 256。
 
 </details>
 
 <details><summary>线索 3</summary>
 
-看参数是否更新：LoRA B 初始化为 0，故障运行训练后 B 的范数是 0（基线 2.62）。loss 为 0 时梯度是多少？（数字来自 Mac 历史档）
+看参数是否更新：LoRA B 初始化为 0，故障运行训练后 B 的范数是 0 ± 0（基线 8.07 ± 0.746）。loss 为 0 时梯度是多少？
 
 </details>
 
@@ -51,9 +51,23 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | dev 全对率 | 被监督 token 总数 | 零监督样本 | 训练后 LoRA B 范数 | dev 全对率：与 `baseline` 差 | dev 全对率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 77.8% ± 5.1 | 128,683 ± 0 | 0 ± 0 | 8.07 ± 0.746 | — | s0 76.7% / s1 83.3% / s2 73.3% | 通过 |
+| `fault_truncation` | 教学故障 | 60.0% ± 0.0 | 0 ± 0 | 4,000 ± 0 | 0 ± 0 | -17.8 个点 | s0 60.0% / s1 60.0% / s2 60.0% | 通过 |
+| `fix_truncation` | 修复 | 78.9% ± 3.8 | 128,683 ± 0 | 0 ± 0 | 7.68 ± 1.11 | +1.1 个点 | s0 83.3% / s1 76.7% / s2 76.7% | 通过 |
+
+![dev 全对率（均值，误差线为种子间最小到最大）](figures/h20x8-diagnose-metrics.svg)
+
+![train loss（均值，阴影为种子间范围）](figures/h20x8-diagnose-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L1/baseline/s0-11e3fc/) · [s1](../../../results/h20x8/L1/baseline/s1-a5b97a/) · [s2](../../../results/h20x8/L1/baseline/s2-3083cc/)
+- `fault_truncation` [s0](../../../results/h20x8/L1/fault_truncation/s0-9927ff/) · [s1](../../../results/h20x8/L1/fault_truncation/s1-5751e8/) · [s2](../../../results/h20x8/L1/fault_truncation/s2-e55a67/)
+- `fix_truncation` [s0](../../../results/h20x8/L1/fix_truncation/s0-189f34/) · [s1](../../../results/h20x8/L1/fix_truncation/s1-f846fb/) · [s2](../../../results/h20x8/L1/fix_truncation/s2-20441e/)
 
 </details>
 

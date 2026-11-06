@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 272" width="760" height="272" font-family="-apple-system,'PingFang SC','Noto Sans CJK SC',sans-serif">
+<rect width="760" height="272" rx="12" fill="#FFFFFF" stroke="#E3E6EC"/>
+<text x="20" y="28" font-size="15" font-weight="600" fill="#1D2330">可训练参数量（rank × 挂载层）</text>
+<text x="740" y="28" font-size="11" fill="#6B7385" text-anchor="end">h20x8 · 每个场景最多 3 个种子</text>
+<line x1="190.0" y1="40" x2="190.0" y2="244" stroke="#E3E6EC"/>
+<text x="190.0" y="260" font-size="10" fill="#6B7385" text-anchor="middle">0</text>
+<line x1="310.0" y1="40" x2="310.0" y2="244" stroke="#E3E6EC"/>
+<text x="310.0" y="260" font-size="10" fill="#6B7385" text-anchor="middle">50,000,000</text>
+<line x1="430.0" y1="40" x2="430.0" y2="244" stroke="#E3E6EC"/>
+<text x="430.0" y="260" font-size="10" fill="#6B7385" text-anchor="middle">100,000,000</text>
+<line x1="550.0" y1="40" x2="550.0" y2="244" stroke="#E3E6EC"/>
+<text x="550.0" y="260" font-size="10" fill="#6B7385" text-anchor="middle">150,000,000</text>
+<line x1="670.0" y1="40" x2="670.0" y2="244" stroke="#E3E6EC"/>
+<text x="670.0" y="260" font-size="10" fill="#6B7385" text-anchor="middle">200,000,000</text>
+<text x="180" y="61.0" font-size="12" fill="#1D2330" text-anchor="end">lora_qv</text>
+<rect x="190" y="46" width="12.1" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>lora_qv：5,046,272（1 个种子）</title></rect>
+<text x="210.1" y="61.0" font-size="11" fill="#6B7385">5,046,272</text>
+<text x="180" y="93.0" font-size="12" fill="#1D2330" text-anchor="end">lora_attn</text>
+<rect x="190" y="78" width="24.2" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>lora_attn：10,092,544（1 个种子）</title></rect>
+<text x="222.2" y="93.0" font-size="11" fill="#6B7385">10,092,544</text>
+<text x="180" y="125.0" font-size="12" fill="#1D2330" text-anchor="end">lora_r4</text>
+<rect x="190" y="110" width="24.2" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>lora_r4：10,092,544（1 个种子）</title></rect>
+<text x="222.2" y="125.0" font-size="11" fill="#6B7385">10,092,544</text>
+<text x="180" y="157.0" font-size="12" fill="#1D2330" text-anchor="end">lora_r8</text>
+<rect x="190" y="142" width="48.4" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>lora_r8：20,185,088（1 个种子）</title></rect>
+<text x="246.4" y="157.0" font-size="11" fill="#6B7385">20,185,088</text>
+<text x="180" y="189.0" font-size="12" fill="#1D2330" text-anchor="end">baseline</text>
+<rect x="190" y="174" width="96.9" height="22" rx="4" fill="#3B5BDB" fill-opacity="0.82"><title>baseline：40,370,176（1 个种子）</title></rect>
+<text x="294.9" y="189.0" font-size="11" fill="#6B7385">40,370,176</text>
+<text x="180" y="221.0" font-size="12" fill="#1D2330" text-anchor="end">lora_r64</text>
+<rect x="190" y="206" width="387.6" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>lora_r64：161,480,704（1 个种子）</title></rect>
+<text x="585.6" y="221.0" font-size="11" fill="#6B7385">161,480,704</text>
+</svg>

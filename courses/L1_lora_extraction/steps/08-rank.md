@@ -29,9 +29,25 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · 3 种子（已有 0 / 12 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · 3 种子（已有 12 / 12 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | dev 全对率 | 可训练参数 | 合成验证全对率 | dev 全对率：与 `baseline` 差 | dev 全对率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 77.8% ± 5.1 | 4,037 万 ± 0 | 100.0% ± 0.0 | — | s0 76.7% / s1 83.3% / s2 73.3% | 通过 |
+| `lora_r4` | 候选改动 | 77.8% ± 3.9 | 1,009 万 ± 0 | 100.0% ± 0.0 | +0.0 个点 | s0 73.3% / s1 80.0% / s2 80.0% |  |
+| `lora_r8` | 候选改动 | 81.1% ± 6.9 | 2,019 万 ± 0 | 100.0% ± 0.0 | +3.3 个点 | s0 83.3% / s1 86.7% / s2 73.3% | 通过 |
+| `lora_r64` | 候选改动 | 72.2% ± 3.9 | 1.61 亿 ± 0 | 98.3% ± 2.9 | -5.6 个点 | s0 70.0% / s1 76.7% / s2 70.0% | 通过 |
+
+![dev 全对率（均值，误差线为种子间最小到最大）](figures/h20x8-p_rank-metrics.svg)
+
+![可训练参数量](figures/h20x8-p_rank-params.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L1/baseline/s0-11e3fc/) · [s1](../../../results/h20x8/L1/baseline/s1-a5b97a/) · [s2](../../../results/h20x8/L1/baseline/s2-3083cc/)
+- `lora_r4` [s0](../../../results/h20x8/L1/lora_r4/s0-e2fff5/) · [s1](../../../results/h20x8/L1/lora_r4/s1-0a51f1/) · [s2](../../../results/h20x8/L1/lora_r4/s2-d6dcd6/)
+- `lora_r8` [s0](../../../results/h20x8/L1/lora_r8/s0-6a10cb/) · [s1](../../../results/h20x8/L1/lora_r8/s1-8ac85e/) · [s2](../../../results/h20x8/L1/lora_r8/s2-ff8914/)
+- `lora_r64` [s0](../../../results/h20x8/L1/lora_r64/s0-d386de/) · [s1](../../../results/h20x8/L1/lora_r64/s1-f5cf18/) · [s2](../../../results/h20x8/L1/lora_r64/s2-57dd54/)
 
 </details>
 

@@ -27,9 +27,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | dev 全对率 | 被监督 token 总数 | 最终 train loss | dev 全对率：与 `baseline` 差 | dev 全对率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 77.8% ± 5.1 | 128,683 ± 0 | 0.0000 ± 0.0000 | — | s0 76.7% / s1 83.3% / s2 73.3% | 通过 |
+| `all_tokens` | 候选改动 | 83.3% ± 5.8 | 1,227,216 ± 0 | 0.0503 ± 0.0029 | +5.6 个点 | s0 80.0% / s1 80.0% / s2 90.0% |  |
+
+![dev 全对率（均值，误差线为种子间最小到最大）](figures/h20x8-p_supervision-metrics.svg)
+
+![train loss（均值，阴影为种子间范围）](figures/h20x8-p_supervision-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L1/baseline/s0-11e3fc/) · [s1](../../../results/h20x8/L1/baseline/s1-a5b97a/) · [s2](../../../results/h20x8/L1/baseline/s2-3083cc/)
+- `all_tokens` [s0](../../../results/h20x8/L1/all_tokens/s0-73bf9c/) · [s1](../../../results/h20x8/L1/all_tokens/s1-804039/) · [s2](../../../results/h20x8/L1/all_tokens/s2-647e23/)
 
 </details>
 

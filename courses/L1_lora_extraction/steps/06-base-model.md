@@ -27,9 +27,28 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · 3 种子（已有 0 / 1 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · 3 种子（已有 1 / 1 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | dev 全对率 | 格式合法率 | 条件保留率 | 无依据率 | dev 全对率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `base_model` | 参照 | 60.0% | 100.0% | 81.0% | 0.7% | s0 60.0% |  |
+
+**dev 错误类型分布**（每个运行的错误条数，多种子取均值；dev 共 30 条，一条样本可能有多个错误）
+
+| 错误类型 | `base_model` |
+| - | - |
+| 多卖点 | 4.0 |
+| 漏条件 | 4.0 |
+| 漏卖点 | 3.0 |
+| 多条件 | 1.0 |
+| 无依据内容 | 1.0 |
+| 无品类却编造品类 | 1.0 |
+
+![dev 全对率（均值，误差线为种子间最小到最大）](figures/h20x8-p_base-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `base_model` [s0](../../../results/h20x8/L1/base_model/s0-a493bd/)
 
 </details>
 
