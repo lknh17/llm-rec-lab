@@ -297,3 +297,10 @@ runs:
   end_reason: 完成
 n_exported: 34
 problems: []
+notes: >-
+  34/34 成功，断言全部通过，无 OOM、无超时；每个训练运行 14-19 分钟，作业共 1.31 小时（远低于 4-5 小时预估）。
+  lr_1e-3 loss 发散：三个种子训练中 loss 反复冲高（第 50 步后 >2 的步数 312/20/10，峰值 16.3/7.1/14.3），
+  dev exact_all_ok 0.17/0.40/0.40，baseline 为 0.73-0.83、lr_5e-5 为 0.80-0.87；该场景无断言，所以 expect_ok 仍为 true。
+  7B 上截断故障仍复现：fault_truncation 三个种子 supervised_tokens_total=0、lora_B 未更新，dev 0.60（与 base_model 0.60 持平）；
+  fix_truncation 恢复到 0.77-0.83。其余 LoRA 变体 dev 0.70-0.90，lora_r64 略低（0.70-0.77）。
+  作业结束后 agent 检测到 labkit 代码更新并自动重启；中途有一次心跳推送因远端有新提交被拒，下一轮已正常推送。
