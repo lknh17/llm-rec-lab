@@ -1,13 +1,13 @@
 """批量运行：把一门或几门课某个档位的全部场景跑完。
 
-    python -m labkit batch R1 L1 --profile h20x8              # 跑这两门课在 h20x8 档位的全部场景
+    python -m labkit batch L1 --profile h20x8                 # 跑 L1 在 h20x8 档位的全部场景
     python -m labkit batch L1 --profile h20x8 --only baseline fault_truncation --seeds 0
     python -m labkit batch --all --profile mac-m4pro --dry-run
 
 调度：
 - 每个"槽位"一次跑一个运行。槽位数 = 可用 GPU 数 × jobs_per_device（GPU 档位），或 jobs_per_device（CPU/MPS 档位）；
   每个槽位是一个线程，启动 `python -m labkit.worker <run_dir>` 子进程，设置 CUDA_VISIBLE_DEVICES 和按槽位的设备锁；
-- prepare_first：同一份预处理数据（data_group 相同）的第一个运行先跑完，其余再并行，避免 8 个进程同时重复做 ML-20M 预处理；
+- prepare_first：同一份预处理数据（data_group 相同）的第一个运行先跑完，其余再并行，避免多个进程同时重复做同一份预处理；
 - 续跑：结果目录里已有"同配置 + 同代码哈希 + 成功"的运行就跳过；失败、中断或代码变了的重跑；
 - OOM 自动重试一次；超过时间预算 ×1.3 + 5 分钟强制结束；
 - 每个运行结束后检查场景的 expect 断言，结果写进 run.json（expect_results / expect_ok）。
@@ -200,7 +200,7 @@ def plan(courses: list[str], profile: str, only: list[str] | None = None, seeds:
 
 
 def find_same_config(spec: scenarios.RunSpec, code_hash: str) -> Path | None:
-    """其他课程里同配置、同代码的成功结果（例如 L2 基线和 L1 基线是同一个配置）。"""
+    """同档位里同配置、同代码的成功结果（例如修复场景和基线恰好是同一个配置），找到就复用，不重跑。"""
     for root in (paths.batch_dir(), paths.RESULTS_DIR):
         for d in (root / spec.profile).glob(f"*/*/s{spec.seed}-{spec.config_hash[:6]}"):
             meta = read_json(d / "run.json") or {}
@@ -332,7 +332,7 @@ def run_batch(courses: list[str], profile: str, only: list[str] | None = None, s
 
     old = signal.signal(signal.SIGINT, on_sigint)
     try:
-        # 槽位配置不同的课程（推荐小模型每卡并发 4 个，LLM 每卡 1 个）分组依次跑；推荐课一般更快，排在前面
+        # 槽位配置不同的课程分组依次跑；每卡并发多的（小模型）排在前面
         groups: dict[tuple, list] = {}
         for s in todo:
             groups.setdefault(_slot_key(s.course, profile), []).append(s)

@@ -31,7 +31,7 @@ def _cmd(args: list[str], timeout: float = 10) -> str | None:
 def _pkg_versions() -> dict:
     from importlib import metadata
 
-    names = ["torch", "transformers", "peft", "numpy", "pandas", "safetensors", "accelerate", "fastapi"]
+    names = ["torch", "transformers", "peft", "numpy", "safetensors", "accelerate", "fastapi"]
     out = {}
     for n in names:
         try:

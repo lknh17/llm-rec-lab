@@ -1,4 +1,4 @@
-"""每个测试用独立的 LAB_DATA_DIR；projects/ 作为顶层包可导入（rec、adextract），和 worker 的方式一致。"""
+"""每个测试用独立的 LAB_DATA_DIR；projects/ 作为顶层包可导入（例如 adextract），和 worker 的方式一致。"""
 
 import sys
 from pathlib import Path

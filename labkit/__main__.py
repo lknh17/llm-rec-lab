@@ -1,17 +1,17 @@
 """labkit 命令行。H20 端的 agent 只需要用到这里的命令（见 AGENT_RUNBOOK.md）。
 
-    python -m labkit assets [名称 ...] [--profile h20x8]     下载/检查公开数据集和模型
+    python -m labkit assets [名称 ...] [--profile h20x8]     下载/检查公开模型
     python -m labkit probe [--compute]                       环境预检（--compute 做一次真实前向反向）
     python -m labkit scenarios [课程] [--profile P]           列出场景和每个场景展开后的运行
-    python -m labkit run R1 baseline [--profile P] [--seed 0] 前台跑单个场景（调试用）
-    python -m labkit batch R1 L1 --profile h20x8 [--only ..] [--seeds ..] [--dry-run] [--max-slots N]
+    python -m labkit run L1 baseline [--profile P] [--seed 0] 前台跑单个场景（调试用）
+    python -m labkit batch L1 --profile h20x8 [--only ..] [--seeds ..] [--dry-run] [--max-slots N]
     python -m labkit export [--profile P]                    batch/ → results/（脱敏白名单）
     python -m labkit redact --check [路径 ...]                推送前的脱敏检查
-    python -m labkit jobs list | new R1 L1 --profile h20x8 | run <job_id> | show <job_id> | cancel <job_id> --note 原因
+    python -m labkit jobs list | new L1 --profile h20x8 | run <job_id> | show <job_id> | cancel <job_id> --note 原因
     python -m labkit agent --profile h20x8 [--once]          H20 常驻 agent：领取作业 → 执行 → 推回结果和心跳
     python -m labkit evidence [results/] [--check]           给已有结果补 evidence.json（网页和 README 的证据图）
-    python -m labkit publish -m "说明"                        检查 + 提交 results/ jobs/ + 推送
-    python -m labkit docs [--check]                          重新生成课程 README 里的代码链接和结果表
+    python -m labkit publish -m "说明"                        检查 + 提交 results/ jobs/ status/ 和课程 README/图 + 推送
+    python -m labkit docs [--check]                          重新生成课程 README 里的代码链接、结果表和 SVG 证据图
 """
 
 from __future__ import annotations

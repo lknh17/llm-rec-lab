@@ -26,7 +26,7 @@ C = {"primary": "#3B5BDB", "light": "#EDF1FF", "grid": "#E3E6EC", "text": "#1D23
 ROLE_COLOR = {"reference": C["muted"], "baseline": C["primary"], "variant": C["blue"], "fault": C["red"],
               "fix": C["green"], "final": C["text"]}
 PALETTE = [C["primary"], C["orange"], C["red"], C["green"], C["blue"], "#7048E8", "#0C8599"]
-METRIC = {"adextract": ("dev.exact_all_ok", "dev 全对率"), "rec": ("valid.auc", "验证 AUC")}
+METRIC = {"adextract": ("dev.exact_all_ok", "dev 全对率")}
 LOSS_SCENES = {"adextract": ["baseline", "all_tokens", "fault_truncation", "lr_5e-5", "lr_1e-3"]}
 MEMORY_SCENES = {"adextract": ["base_model", "lora_qv", "lora_attn", "baseline", "lora_r64"]}
 PARAM_SCENES = {"adextract": ["lora_qv", "lora_attn", "lora_r4", "lora_r8", "baseline", "lora_r64"]}

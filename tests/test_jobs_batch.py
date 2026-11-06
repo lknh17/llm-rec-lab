@@ -1,6 +1,7 @@
-"""作业单状态流转；批量调度（CPU 小规模合成数据）的续跑、断言和同配置复用。"""
+"""作业单状态流转；批量调度（测试用玩具项目，CPU 上秒级）的续跑、断言和同配置复用。"""
 
 import json
+from pathlib import Path
 
 import pytest
 import yaml
@@ -15,10 +16,10 @@ def jobs_dir(tmp_path, monkeypatch):
 
 
 def test_job_lifecycle(jobs_dir):
-    p = jobs.new_job(["R1"], "h20x8", only=["baseline"], seeds=[0], job_id="t1")
+    p = jobs.new_job(["L1"], "h20x8", only=["baseline"], seeds=[0], job_id="t1")
     assert p.parent.name == "pending"
     with pytest.raises(FileExistsError):
-        jobs.new_job(["R1"], "h20x8", job_id="t1")
+        jobs.new_job(["L1"], "h20x8", job_id="t1")
     jobs.move("t1", "running", started_at="now")
     assert jobs.load("t1")["_state"] == "running"
     with pytest.raises(ValueError):
@@ -29,22 +30,22 @@ def test_job_lifecycle(jobs_dir):
     assert not (jobs_dir / "running" / "t1.yaml").exists()
 
 
-# ---------------------------------------------------------------- 端到端：小规模合成数据
+# ---------------------------------------------------------------- 端到端：测试用玩具项目（tests/fixtures/projects/toy）
+FIXTURE_PROJECTS = Path(__file__).parent / "fixtures" / "projects"
 SMOKE = {
     "course": "ZT",
     "title": "测试课程",
-    "project": "rec",
-    "entry": "rec.experiment",
+    "project": "toy",
+    "entry": "toy.experiment",
     "prepare_first": True,
-    "profiles": {"cpu": {"base": {"dataset": "synth", "synth_users": 300, "synth_items": 200, "synth_rows": 20000,
-                                  "epochs": 1, "batch_size": 512, "device": "cpu", "hidden": "16"},
-                         "seeds": [0], "slots": {"gpus_per_job": 0, "jobs_per_device": 2}}},
+    "profiles": {"cpu": {"base": {"device": "cpu"}, "seeds": [0],
+                         "slots": {"gpus_per_job": 0, "jobs_per_device": 2}}},
     "scenarios": [
         {"id": "baseline", "role": "baseline", "params": {},
-         "expect": ["summary.valid.auc < meta.checks.data.oracle_auc_valid", "meta.data.rows > 1000"]},
-        {"id": "leak", "role": "fault", "params": {"feature_groups": ["ids", "user_stats"], "stats_mode": "full_data"},
-         "expect": ["meta.checks.data.user_stats_rows_at_or_after_sample_share > 0.5"]},
-        {"id": "impossible", "role": "variant", "params": {"lr": 0.002}, "expect": ["summary.valid.auc > 0.999"]},
+         "expect": ["summary.valid.acc > 0.7", "meta.data.rows > 1000"]},
+        {"id": "leak", "role": "fault", "params": {"leak": True},
+         "expect": ["meta.checks.data.label_in_features == True", "summary.valid.acc > base.summary.valid.acc"]},
+        {"id": "impossible", "role": "variant", "params": {"lr": 0.2}, "expect": ["summary.valid.acc > 0.999"]},
     ],
 }
 
@@ -56,6 +57,8 @@ def smoke_course(tmp_path, monkeypatch):
     (courses / "ZT" / "scenarios.yaml").write_text(yaml.safe_dump(SMOKE, allow_unicode=True))
     monkeypatch.setattr(paths, "COURSES_DIR", courses)
     monkeypatch.setattr(paths, "RESULTS_DIR", tmp_path / "results")
+    monkeypatch.setattr(paths, "PROJECTS_DIR", FIXTURE_PROJECTS)
+    monkeypatch.syspath_prepend(str(FIXTURE_PROJECTS))
     return courses
 
 

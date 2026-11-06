@@ -52,8 +52,8 @@ def _fake_run(d, extra_files=()):
     (d / "artifacts").mkdir()
     (d / "artifacts" / "adapter_model.safetensors").write_bytes(b"\0" * 100)
     (d / "checkpoint_last.pt").write_bytes(b"\0" * 100)
-    (d / "code" / "rec").mkdir(parents=True)
-    (d / "code" / "rec" / "a.py").write_text("x = 1\n")
+    (d / "code" / "adextract").mkdir(parents=True)
+    (d / "code" / "adextract" / "a.py").write_text("x = 1\n")
     for name, content in extra_files:
         (d / name).write_text(content)
 

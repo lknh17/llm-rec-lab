@@ -63,7 +63,7 @@ def load_course(course_id: str) -> dict:
 
 
 def param_space(project: str) -> ParamSpace:
-    """项目的参数定义。项目目录作为顶层包导入（rec、adextract），和 worker 从快照导入的方式一致。"""
+    """项目的参数定义。项目目录作为顶层包导入（例如 adextract），和 worker 从快照导入的方式一致。"""
     if str(paths.PROJECTS_DIR) not in sys.path:
         sys.path.insert(0, str(paths.PROJECTS_DIR))
     return importlib.import_module(f"{project}.params").PARAMS

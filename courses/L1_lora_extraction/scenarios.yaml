@@ -1,5 +1,5 @@
 course: L1
-title: 广告元素抽取微调：LoRA、assistant-only 监督与截断
+title: L05 SFT 与 LoRA：广告元素抽取（assistant-only 监督、rank 与挂载层、截断故障）
 project: adextract
 entry: adextract.experiment
 
@@ -38,28 +38,16 @@ scenarios:
       - "meta.data.tokenized.zero_supervision_examples == 0"
       - "summary.dev.exact_all_ok > 0.3"
 
-  - id: hard04
-    role: variant
-    title: 训练集难例比例 0.15 → 0.4
-    params: {hard_ratio: 0.4}
-  - id: few_shot
-    role: variant
-    title: 提示词加 2 个示例（few-shot），训练和推理都带
-    params: {prompt_mode: few_shot}
   - id: all_tokens
     role: variant
     title: 整段都算 loss（系统提示和用户文案也监督）
     params: {supervision: all_tokens}
-  - id: epochs4
-    role: variant
-    title: 训练 2 轮 → 4 轮
-    params: {epochs: 4}
   - id: lora_r4
     role: variant
     title: LoRA 秩 16 → 4（alpha 同比缩小，缩放系数不变）
     params: {lora_r: 4, lora_alpha: 8}
 
-  # ---------- L05 SFT 与 LoRA：rank、挂载层、学习率（只在 H20 档和冒烟档跑；alpha/r 固定为 2）----------
+  # ---------- rank、挂载层、学习率（只在 H20 档和冒烟档跑；alpha/r 固定为 2）----------
   - id: lora_r8
     role: variant
     title: LoRA 秩 16 → 8（alpha 16，缩放系数不变）

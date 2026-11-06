@@ -5,13 +5,13 @@ import pytest
 from labkit import scenarios
 from labkit.params import config_hash
 
-COURSES = ["R1", "R2", "L1", "L2"]
+COURSES = ["L1"]
 
 
 @pytest.mark.parametrize("course", COURSES)
 def test_course_loads_and_expands(course):
     c = scenarios.load_course(course)
-    assert set(c["profiles"]) >= {"mac-m4pro", "h20x8"}
+    assert set(c["profiles"]) >= {"mac-m4pro", "h20x8", "mac-smoke"}
     for prof in c["profiles"]:
         specs = scenarios.expand(course, prof)
         assert specs, f"{course}/{prof} 没有运行"
@@ -22,9 +22,14 @@ def test_course_loads_and_expands(course):
             assert s.rel_dir.parts[:3] == (prof, course, s.scenario)
 
 
+def test_only_l05_course_is_published():
+    """仓库当前只有一门课（L05 SFT 与 LoRA，课程编号 L1）。"""
+    assert list(scenarios.course_files()) == ["L1"]
+
+
 def test_expand_is_stable():
-    a = scenarios.expand("R1", "mac-m4pro")
-    b = scenarios.expand("R1", "mac-m4pro")
+    a = scenarios.expand("L1", "h20x8")
+    b = scenarios.expand("L1", "h20x8")
     assert [s.run_id for s in a] == [s.run_id for s in b]
 
 
@@ -36,22 +41,22 @@ def test_profile_base_and_scenario_params_merge():
 
 
 def test_profile_only_scenarios_are_filtered():
-    mac = {s.scenario for s in scenarios.expand("R1", "mac-m4pro")}
-    h20 = {s.scenario for s in scenarios.expand("R1", "h20x8")}
-    assert "ml20m_baseline" not in mac and "ml20m_baseline" in h20
+    mac = {s.scenario for s in scenarios.expand("L1", "mac-m4pro")}
+    h20 = {s.scenario for s in scenarios.expand("L1", "h20x8")}
+    assert "lora_r64" not in mac and "lora_r64" in h20
 
 
-def test_same_config_same_hash_across_courses():
-    """L1 和 L2 的基线是同一个配置：批量运行据此只跑一次。"""
-    l1 = next(s for s in scenarios.expand("L1", "mac-m4pro") if s.scenario == "baseline" and s.seed == 0)
-    l2 = next(s for s in scenarios.expand("L2", "mac-m4pro") if s.scenario == "baseline" and s.seed == 0)
-    assert l1.config_hash == l2.config_hash
+def test_h20_job_size():
+    """H20 档：base_model 1 个种子，其余 11 个场景各 3 个种子，共 34 个运行。"""
+    specs = scenarios.expand("L1", "h20x8")
+    assert len(specs) == 34
+    assert {s.seed for s in specs if s.scenario == "baseline"} == {0, 1, 2}
 
 
 def test_data_group_ignores_train_params():
-    specs = {s.scenario: s for s in scenarios.expand("R1", "mac-m4pro") if s.seed == 0}
-    assert specs["baseline"].data_group == specs["lr3e-3"].data_group
-    assert specs["baseline"].data_group != specs["fault_random_split"].data_group
+    specs = {s.scenario: s for s in scenarios.expand("L1", "h20x8") if s.seed == 0}
+    assert specs["baseline"].data_group == specs["lr_1e-3"].data_group == specs["lora_r64"].data_group
+    assert specs["baseline"].data_group != specs["fault_truncation"].data_group
 
 
 @pytest.mark.parametrize("bad", [

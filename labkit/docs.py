@@ -24,7 +24,6 @@ from . import paths, scenarios
 
 ANCHOR = re.compile(r"#\s*--8<--\s*\[start:([\w-]+)\]")
 HEADLINE = {
-    "rec": [("valid.auc", "验证 AUC"), ("valid.logloss", "验证 LogLoss")],
     "adextract": [("dev.exact_all_ok", "dev 全对率"), ("dev.format_ok", "dev 格式合法率"),
                   ("synth_valid.exact_all_ok", "合成验证全对率"), ("test.exact_all_ok", "test 全对率")],
 }
