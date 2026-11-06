@@ -1,0 +1,253 @@
+{
+  "dev": {
+    "n": 30,
+    "format_ok": 1.0,
+    "format_ok_den": 30,
+    "category_acc": 1.0,
+    "category_acc_den": 30,
+    "point_f1": 0.9744,
+    "point_precision": 0.9828,
+    "point_recall": 0.9661,
+    "point_den_gold": 59,
+    "promo_recall": 0.931,
+    "promo_recall_den": 29,
+    "condition_keep": 0.8571,
+    "condition_keep_den": 21,
+    "ungrounded_rate": 0.0217,
+    "ungrounded_den": 138,
+    "exact_all_ok": 0.7,
+    "error_counts": {
+      "无依据内容": 3,
+      "漏条件": 3,
+      "漏卖点": 2,
+      "漏优惠": 2,
+      "多优惠（原文无此优惠或把否定句当优惠）": 2,
+      "多条件": 2,
+      "多卖点": 1
+    },
+    "gen_seconds": 5.4,
+    "gen_tokens": 1099,
+    "by_tag": {
+      "买赠门槛": {
+        "n": 4,
+        "all_ok": 0.5,
+        "condition_keep": 0.5
+      },
+      "否定句": {
+        "n": 2,
+        "all_ok": 1.0,
+        "condition_keep": null
+      },
+      "多优惠": {
+        "n": 2,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      },
+      "干扰词": {
+        "n": 1,
+        "all_ok": 0.0,
+        "condition_keep": null
+      },
+      "排除型条件": {
+        "n": 3,
+        "all_ok": 0.333,
+        "condition_keep": 0.3333
+      },
+      "新品类": {
+        "n": 21,
+        "all_ok": 0.667,
+        "condition_keep": 0.7692
+      },
+      "无优惠": {
+        "n": 2,
+        "all_ok": 0.5,
+        "condition_keep": null
+      },
+      "无品类": {
+        "n": 1,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      },
+      "无条件": {
+        "n": 4,
+        "all_ok": 0.75,
+        "condition_keep": null
+      },
+      "时间条件": {
+        "n": 1,
+        "all_ok": 0.0,
+        "condition_keep": 1.0
+      },
+      "条件": {
+        "n": 20,
+        "all_ok": 0.7,
+        "condition_keep": 0.8571
+      },
+      "需求示例": {
+        "n": 1,
+        "all_ok": 0.0,
+        "condition_keep": 1.0
+      }
+    }
+  },
+  "synth_valid": {
+    "n": 60,
+    "format_ok": 1.0,
+    "format_ok_den": 60,
+    "category_acc": 1.0,
+    "category_acc_den": 60,
+    "point_f1": 1.0,
+    "point_precision": 1.0,
+    "point_recall": 1.0,
+    "point_den_gold": 126,
+    "promo_recall": 1.0,
+    "promo_recall_den": 52,
+    "condition_keep": 1.0,
+    "condition_keep_den": 37,
+    "ungrounded_rate": 0.0,
+    "ungrounded_den": 267,
+    "exact_all_ok": 1.0,
+    "error_counts": {},
+    "gen_seconds": 14.6,
+    "gen_tokens": 2014,
+    "by_tag": {
+      "far_condition": {
+        "n": 1,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      },
+      "multi_promo": {
+        "n": 10,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      },
+      "negation": {
+        "n": 4,
+        "all_ok": 1.0,
+        "condition_keep": null
+      },
+      "no_category": {
+        "n": 8,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      },
+      "no_condition": {
+        "n": 14,
+        "all_ok": 1.0,
+        "condition_keep": null
+      },
+      "no_promo": {
+        "n": 14,
+        "all_ok": 1.0,
+        "condition_keep": null
+      },
+      "single_promo": {
+        "n": 9,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      }
+    }
+  },
+  "test": {
+    "n": 30,
+    "format_ok": 1.0,
+    "format_ok_den": 30,
+    "category_acc": 1.0,
+    "category_acc_den": 30,
+    "point_f1": 0.9919,
+    "point_precision": 1.0,
+    "point_recall": 0.9839,
+    "point_den_gold": 62,
+    "promo_recall": 0.963,
+    "promo_recall_den": 27,
+    "condition_keep": 0.8182,
+    "condition_keep_den": 22,
+    "ungrounded_rate": 0.0288,
+    "ungrounded_den": 139,
+    "exact_all_ok": 0.6667,
+    "error_counts": {
+      "无依据内容": 4,
+      "漏条件": 4,
+      "多条件": 2,
+      "漏卖点": 1,
+      "漏优惠": 1,
+      "多优惠（原文无此优惠或把否定句当优惠）": 1
+    },
+    "gen_seconds": 5.3,
+    "gen_tokens": 1079,
+    "by_tag": {
+      "买赠门槛": {
+        "n": 4,
+        "all_ok": 0.0,
+        "condition_keep": 0.5
+      },
+      "否定句": {
+        "n": 1,
+        "all_ok": 1.0,
+        "condition_keep": null
+      },
+      "多优惠": {
+        "n": 1,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      },
+      "干扰词": {
+        "n": 1,
+        "all_ok": 0.0,
+        "condition_keep": null
+      },
+      "排除型条件": {
+        "n": 3,
+        "all_ok": 0.0,
+        "condition_keep": 0.6667
+      },
+      "新品类": {
+        "n": 27,
+        "all_ok": 0.704,
+        "condition_keep": 0.85
+      },
+      "无优惠": {
+        "n": 3,
+        "all_ok": 0.667,
+        "condition_keep": null
+      },
+      "无品类": {
+        "n": 1,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      },
+      "无条件": {
+        "n": 4,
+        "all_ok": 0.75,
+        "condition_keep": null
+      },
+      "时间条件": {
+        "n": 2,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      },
+      "条件": {
+        "n": 21,
+        "all_ok": 0.667,
+        "condition_keep": 0.8182
+      }
+    }
+  },
+  "train": {
+    "steps": 1000,
+    "train_tokens": 2472540,
+    "supervised_tokens": 260262,
+    "seconds": 932.0,
+    "lora_B_norm_before": 0.0,
+    "lora_B_norm_after": 5.707370081782466,
+    "base_weight_probe_before": 1.0911579132080078,
+    "base_weight_probe_after": 1.0911579132080078
+  },
+  "headline": {
+    "dev_exact_all_ok": 0.7,
+    "dev_format_ok": 1.0,
+    "dev_condition_keep": 0.8571,
+    "dev_ungrounded_rate": 0.0217,
+    "synth_exact_all_ok": 1.0
+  }
+}

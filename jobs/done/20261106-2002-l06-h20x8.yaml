@@ -1,0 +1,227 @@
+job_id: 20261106-2002-l06-h20x8
+created_at: '2026-11-06T12:02:49Z'
+profile: h20x8
+courses:
+- L06
+only: []
+seeds: []
+requested_commit: 0c6ab74822c0882323bcabc437d7f5bb6521f035
+note: L06 围绕错误迭代首跑：25 个运行（baseline/excl_10 各 5 种子，其余 3 种子）
+how_to_run: python -m labkit jobs run 20261106-2002-l06-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-06T12:03:17Z'
+started_at: '2026-11-06T12:03:55Z'
+ran_commit: 0098b306ef3921d3fdfd1a641d96757549b07c70
+host_summary:
+  torch: 2.15.0+cu132
+  cuda: '13.2'
+  gpu: NVIDIA H20
+  gpu_count: 8
+  gpu_mem_gb: 95.0
+  driver: 535.161.08
+status: done
+finished_at: '2026-11-06T13:15:01Z'
+hours: 1.18
+runs:
+- course: L06
+  scenario: baseline
+  seed: 4
+  dir: h20x8/L06/baseline/s4-26b88b
+  status: succeeded
+  minutes: 18.2
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: data_seed1
+  seed: 0
+  dir: h20x8/L06/data_seed1/s0-c13ee3
+  status: succeeded
+  minutes: 18.3
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: data_seed1
+  seed: 2
+  dir: h20x8/L06/data_seed1/s2-a0ef15
+  status: succeeded
+  minutes: 18.3
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: baseline
+  seed: 2
+  dir: h20x8/L06/baseline/s2-f202e6
+  status: succeeded
+  minutes: 18.3
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: baseline
+  seed: 0
+  dir: h20x8/L06/baseline/s0-4c72c9
+  status: succeeded
+  minutes: 18.3
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: data_seed1
+  seed: 1
+  dir: h20x8/L06/data_seed1/s1-c3b12a
+  status: succeeded
+  minutes: 18.3
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: baseline
+  seed: 1
+  dir: h20x8/L06/baseline/s1-1f95b8
+  status: succeeded
+  minutes: 18.3
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: baseline
+  seed: 3
+  dir: h20x8/L06/baseline/s3-788947
+  status: succeeded
+  minutes: 18.3
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: excl_10
+  seed: 0
+  dir: h20x8/L06/excl_10/s0-d31aa6
+  status: succeeded
+  minutes: 17.8
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: hard_30
+  seed: 0
+  dir: h20x8/L06/hard_30/s0-08b103
+  status: succeeded
+  minutes: 17.8
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: excl_30
+  seed: 0
+  dir: h20x8/L06/excl_30/s0-f709b0
+  status: succeeded
+  minutes: 17.8
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: fault_plain
+  seed: 1
+  dir: h20x8/L06/fault_plain/s1-868df1
+  status: succeeded
+  minutes: 19.2
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: fault_plain
+  seed: 2
+  dir: h20x8/L06/fault_plain/s2-0a1cb2
+  status: succeeded
+  minutes: 19.2
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: fault_plain
+  seed: 0
+  dir: h20x8/L06/fault_plain/s0-f5531b
+  status: succeeded
+  minutes: 19.3
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: epochs_4
+  seed: 0
+  dir: h20x8/L06/epochs_4/s0-4218d1
+  status: succeeded
+  minutes: 32.9
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: epochs_4
+  seed: 1
+  dir: h20x8/L06/epochs_4/s1-3f5b22
+  status: succeeded
+  minutes: 33.0
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: excl_10
+  seed: 1
+  dir: h20x8/L06/excl_10/s1-b18c11
+  status: succeeded
+  minutes: 17.6
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: excl_30
+  seed: 1
+  dir: h20x8/L06/excl_30/s1-85bde5
+  status: succeeded
+  minutes: 17.6
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: hard_30
+  seed: 1
+  dir: h20x8/L06/hard_30/s1-337119
+  status: succeeded
+  minutes: 17.7
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: excl_30
+  seed: 2
+  dir: h20x8/L06/excl_30/s2-a71ab2
+  status: succeeded
+  minutes: 17.3
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: excl_10
+  seed: 2
+  dir: h20x8/L06/excl_10/s2-059b9f
+  status: succeeded
+  minutes: 17.4
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: excl_10
+  seed: 3
+  dir: h20x8/L06/excl_10/s3-bedd5e
+  status: succeeded
+  minutes: 17.1
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: hard_30
+  seed: 2
+  dir: h20x8/L06/hard_30/s2-ef9274
+  status: succeeded
+  minutes: 17.2
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: epochs_4
+  seed: 2
+  dir: h20x8/L06/epochs_4/s2-6e5ac3
+  status: succeeded
+  minutes: 32.4
+  expect_ok: true
+  end_reason: 完成
+- course: L06
+  scenario: excl_10
+  seed: 4
+  dir: h20x8/L06/excl_10/s4-f0ec02
+  status: succeeded
+  minutes: 17.0
+  expect_ok: true
+  end_reason: 完成
+n_exported: 25
+problems: []

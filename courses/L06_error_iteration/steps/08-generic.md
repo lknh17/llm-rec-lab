@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · 基线和主改动 5 种子，其余 3 种子（已有 0 / 13 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · 基线和主改动 5 种子，其余 3 种子（已有 13 / 13 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 排除型条件（3 条） | dev 全对率 | 多优惠（2 条） | 排除型条件（3 条）：与 `baseline` 差 | 排除型条件（3 条）：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 33.3% ± 23.6 | 78.0% ± 6.1 | 80.0% ± 44.7 | — | s0 66.7% / s1 33.3% / s2 0.0% / s3 33.3% / s4 33.3% | 通过 |
+| `excl_10` | 候选改动 | 93.3% ± 14.9 | 85.3% ± 9.6 | 90.0% ± 22.4 | +60.0 个点 | s0 100.0% / s1 100.0% / s2 100.0% / s3 100.0% / s4 66.7% | 通过 |
+| `hard_30` | 候选改动 | 55.6% ± 19.3 | 80.0% ± 10.0 | 83.3% ± 28.9 | +22.2 个点 | s0 33.3% / s1 66.7% / s2 66.7% |  |
+
+![排除型条件（3 条）（均值，误差线为种子间最小到最大）](figures/h20x8-p_generic-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L06/baseline/s0-4c72c9/) · [s1](../../../results/h20x8/L06/baseline/s1-1f95b8/) · [s2](../../../results/h20x8/L06/baseline/s2-f202e6/) · [s3](../../../results/h20x8/L06/baseline/s3-788947/) · [s4](../../../results/h20x8/L06/baseline/s4-26b88b/)
+- `excl_10` [s0](../../../results/h20x8/L06/excl_10/s0-d31aa6/) · [s1](../../../results/h20x8/L06/excl_10/s1-b18c11/) · [s2](../../../results/h20x8/L06/excl_10/s2-059b9f/) · [s3](../../../results/h20x8/L06/excl_10/s3-bedd5e/) · [s4](../../../results/h20x8/L06/excl_10/s4-f0ec02/)
+- `hard_30` [s0](../../../results/h20x8/L06/hard_30/s0-08b103/) · [s1](../../../results/h20x8/L06/hard_30/s1-337119/) · [s2](../../../results/h20x8/L06/hard_30/s2-ef9274/)
 
 </details>
 

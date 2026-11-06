@@ -1,0 +1,2421 @@
+{
+  "sample": {
+    "note": "训练第 1 个 batch 的第 1 条样本（打乱后的真实顺序）；下方 token、张量、loss 都是这一条",
+    "raw": {
+      "text": "【阿尔法】儿童书包，反光条又护脊减负。限时8折",
+      "gold": {
+        "category": "儿童书包",
+        "selling_points": [
+          "反光条",
+          "护脊减负"
+        ],
+        "promotions": [
+          {
+            "offer": "限时8折",
+            "condition": null
+          }
+        ]
+      },
+      "kind": "no_condition",
+      "id": "syn-0-3848"
+    },
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是广告文案结构化抽取器。从用户给出的广告文案中抽取商业元素，只输出一个 JSON 对象，不要输出任何其他文字。\n字段：\n- category：商品品类，用原文中的词；原文没有写明品类时为 null。\n- selling_points：商品卖点（商品本身的属性或功效）列表，用原文中的词；没有则为 []。优惠信息不是卖点。\n- promotions：优惠列表，每项为 {\"offer\": 优惠内容, \"condition\": 适用条件或限制}；没有条件时 condition 为 null；没有优惠则为 []。\n规则：\n1. 所有值必须摘自原文，不得编造或改写。\n2. 满减、买赠的门槛（如“满300减50”“买一送一”）属于优惠内容本身；condition 只写额外的适用范围或限制，例如指定款、会员、新用户、时间、名额、渠道、排除范围。\n3. 有条件的优惠必须保留条件，不能写成对所有商品、所有人都有效的优惠。\n4. “不参与满减”这类否定说明不是优惠。"
+      },
+      {
+        "role": "user",
+        "content": "【阿尔法】儿童书包，反光条又护脊减负。限时8折"
+      },
+      {
+        "role": "assistant",
+        "content": "{\"category\":\"儿童书包\",\"selling_points\":[\"反光条\",\"护脊减负\"],\"promotions\":[{\"offer\":\"限时8折\",\"condition\":null}]}"
+      }
+    ],
+    "template_text": "<|im_start|>system\n你是广告文案结构化抽取器。从用户给出的广告文案中抽取商业元素，只输出一个 JSON 对象，不要输出任何其他文字。\n字段：\n- category：商品品类，用原文中的词；原文没有写明品类时为 null。\n- selling_points：商品卖点（商品本身的属性或功效）列表，用原文中的词；没有则为 []。优惠信息不是卖点。\n- promotions：优惠列表，每项为 {\"offer\": 优惠内容, \"condition\": 适用条件或限制}；没有条件时 condition 为 null；没有优惠则为 []。\n规则：\n1. 所有值必须摘自原文，不得编造或改写。\n2. 满减、买赠的门槛（如“满300减50”“买一送一”）属于优惠内容本身；condition 只写额外的适用范围或限制，例如指定款、会员、新用户、时间、名额、渠道、排除范围。\n3. 有条件的优惠必须保留条件，不能写成对所有商品、所有人都有效的优惠。\n4. “不参与满减”这类否定说明不是优惠。<|im_end|>\n<|im_start|>user\n【阿尔法】儿童书包，反光条又护脊减负。限时8折<|im_end|>\n<|im_start|>assistant\n{\"category\":\"儿童书包\",\"selling_points\":[\"反光条\",\"护脊减负\"],\"promotions\":[{\"offer\":\"限时8折\",\"condition\":null}]}<|im_end|>\n",
+    "prompt_text_len_chars": 532,
+    "n_prompt": 276,
+    "n_total": 311,
+    "n_supervised": 35,
+    "truncated": false
+  },
+  "batch": {
+    "input_ids": {
+      "shape": [
+        8,
+        338
+      ],
+      "dtype": "int64",
+      "device": "cuda:0",
+      "head": [
+        151644.0,
+        8948.0,
+        198.0,
+        105043.0,
+        101927.0,
+        116481.0
+      ]
+    },
+    "attention_mask": {
+      "shape": [
+        8,
+        338
+      ],
+      "dtype": "int64",
+      "device": "cuda:0",
+      "head": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "labels": {
+      "shape": [
+        8,
+        338
+      ],
+      "dtype": "int64",
+      "device": "cuda:0",
+      "head": [
+        -100.0,
+        -100.0,
+        -100.0,
+        -100.0,
+        -100.0,
+        -100.0
+      ]
+    },
+    "logits": {
+      "shape": [
+        8,
+        73,
+        152064
+      ],
+      "dtype": "torch.bfloat16",
+      "start_position": 265,
+      "full_shape_if_not_sliced": [
+        8,
+        338,
+        152064
+      ]
+    },
+    "per_sample_len": [
+      311,
+      293,
+      284,
+      294,
+      297,
+      303,
+      338,
+      290
+    ],
+    "per_sample_supervised": [
+      35,
+      21,
+      18,
+      21,
+      28,
+      33,
+      50,
+      22
+    ],
+    "pad_tokens": 294,
+    "batch_loss": 0.94208
+  },
+  "train_tokens": {
+    "note": "训练第 1 个 batch 的第 1 条样本，逐 token 展开（真实 tokenizer 输出）",
+    "n_prompt": 276,
+    "n_total": 311,
+    "n_supervised": 35,
+    "truncated": false,
+    "supervised_text": "{\"category\":\"儿童书包\",\"selling_points\":[\"反光条\",\"护脊减负\"],\"promotions\":[{\"offer\":\"限时8折\",\"condition\":null}]}<|im_end|>\n",
+    "tokens": [
+      {
+        "i": 0,
+        "id": 151644,
+        "text": "<|im_start|>",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 1,
+        "id": 8948,
+        "text": "system",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 2,
+        "id": 198,
+        "text": "\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 3,
+        "id": 105043,
+        "text": "你是",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 4,
+        "id": 101927,
+        "text": "广告",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 5,
+        "id": 116481,
+        "text": "文案",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 6,
+        "id": 100166,
+        "text": "结构",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 7,
+        "id": 32108,
+        "text": "化",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 8,
+        "id": 118797,
+        "text": "抽取",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 9,
+        "id": 31548,
+        "text": "器",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 10,
+        "id": 1773,
+        "text": "。",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 11,
+        "id": 45181,
+        "text": "从",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 12,
+        "id": 20002,
+        "text": "用户",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 13,
+        "id": 107485,
+        "text": "给出",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 14,
+        "id": 9370,
+        "text": "的",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 15,
+        "id": 101927,
+        "text": "广告",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 16,
+        "id": 116481,
+        "text": "文案",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 17,
+        "id": 15946,
+        "text": "中",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 18,
+        "id": 118797,
+        "text": "抽取",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 19,
+        "id": 100386,
+        "text": "商业",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 20,
+        "id": 102268,
+        "text": "元素",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 21,
+        "id": 3837,
+        "text": "，",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 22,
+        "id": 91680,
+        "text": "只",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 23,
+        "id": 66017,
+        "text": "输出",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 24,
+        "id": 46944,
+        "text": "一个",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 25,
+        "id": 4718,
+        "text": " JSON",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 26,
+        "id": 69162,
+        "text": " 对",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 27,
+        "id": 46423,
+        "text": "象",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 28,
+        "id": 3837,
+        "text": "，",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 29,
+        "id": 100148,
+        "text": "不要",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 30,
+        "id": 66017,
+        "text": "输出",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 31,
+        "id": 99885,
+        "text": "任何",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 32,
+        "id": 92894,
+        "text": "其他",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 33,
+        "id": 87335,
+        "text": "文字",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 34,
+        "id": 8997,
+        "text": "。\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 35,
+        "id": 44931,
+        "text": "字段",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 36,
+        "id": 28311,
+        "text": "：\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 37,
+        "id": 12,
+        "text": "-",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 38,
+        "id": 5582,
+        "text": " category",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 39,
+        "id": 5122,
+        "text": "：",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 40,
+        "id": 45943,
+        "text": "商品",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 41,
+        "id": 107888,
+        "text": "品类",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 42,
+        "id": 3837,
+        "text": "，",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 43,
+        "id": 11622,
+        "text": "用",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 44,
+        "id": 103283,
+        "text": "原文",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 45,
+        "id": 101047,
+        "text": "中的",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 46,
+        "id": 99689,
+        "text": "词",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 47,
+        "id": 24968,
+        "text": "；",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 48,
+        "id": 103283,
+        "text": "原文",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 49,
+        "id": 80443,
+        "text": "没有",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 50,
+        "id": 61443,
+        "text": "写",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 51,
+        "id": 30858,
+        "text": "明",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 52,
+        "id": 107888,
+        "text": "品类",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 53,
+        "id": 13343,
+        "text": "时",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 54,
+        "id": 17714,
+        "text": "为",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 55,
+        "id": 845,
+        "text": " null",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 56,
+        "id": 8997,
+        "text": "。\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 57,
+        "id": 12,
+        "text": "-",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 58,
+        "id": 11236,
+        "text": " selling",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 59,
+        "id": 12928,
+        "text": "_points",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 60,
+        "id": 5122,
+        "text": "：",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 61,
+        "id": 45943,
+        "text": "商品",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 62,
+        "id": 99615,
+        "text": "卖",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 63,
+        "id": 27442,
+        "text": "点",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 64,
+        "id": 9909,
+        "text": "（",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 65,
+        "id": 45943,
+        "text": "商品",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 66,
+        "id": 108921,
+        "text": "本身的",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 67,
+        "id": 79256,
+        "text": "属性",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 68,
+        "id": 57191,
+        "text": "或",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 69,
+        "id": 102942,
+        "text": "功效",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 70,
+        "id": 7552,
+        "text": "）",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 71,
+        "id": 44177,
+        "text": "列表",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 72,
+        "id": 3837,
+        "text": "，",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 73,
+        "id": 11622,
+        "text": "用",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 74,
+        "id": 103283,
+        "text": "原文",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 75,
+        "id": 101047,
+        "text": "中的",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 76,
+        "id": 99689,
+        "text": "词",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 77,
+        "id": 24968,
+        "text": "；",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 78,
+        "id": 80443,
+        "text": "没有",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 79,
+        "id": 46448,
+        "text": "则",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 80,
+        "id": 17714,
+        "text": "为",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 81,
+        "id": 3056,
+        "text": " []",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 82,
+        "id": 1773,
+        "text": "。",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 83,
+        "id": 102289,
+        "text": "优惠",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 84,
+        "id": 27369,
+        "text": "信息",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 85,
+        "id": 99520,
+        "text": "不是",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 86,
+        "id": 99615,
+        "text": "卖",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 87,
+        "id": 27442,
+        "text": "点",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 88,
+        "id": 8997,
+        "text": "。\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 89,
+        "id": 12,
+        "text": "-",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 90,
+        "id": 35971,
+        "text": " promotions",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 91,
+        "id": 5122,
+        "text": "：",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 92,
+        "id": 102289,
+        "text": "优惠",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 93,
+        "id": 44177,
+        "text": "列表",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 94,
+        "id": 3837,
+        "text": "，",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 95,
+        "id": 73157,
+        "text": "每",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 96,
+        "id": 47882,
+        "text": "项",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 97,
+        "id": 17714,
+        "text": "为",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 98,
+        "id": 5212,
+        "text": " {\"",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 99,
+        "id": 25077,
+        "text": "offer",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 100,
+        "id": 788,
+        "text": "\":",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 101,
+        "id": 220,
+        "text": " ",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 102,
+        "id": 102289,
+        "text": "优惠",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 103,
+        "id": 43815,
+        "text": "内容",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 104,
+        "id": 11,
+        "text": ",",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 105,
+        "id": 330,
+        "text": " \"",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 106,
+        "id": 9056,
+        "text": "condition",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 107,
+        "id": 788,
+        "text": "\":",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 108,
+        "id": 220,
+        "text": " ",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 109,
+        "id": 105255,
+        "text": "适用",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 110,
+        "id": 76095,
+        "text": "条件",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 111,
+        "id": 57191,
+        "text": "或",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 112,
+        "id": 104108,
+        "text": "限制",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 113,
+        "id": 92,
+        "text": "}",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 114,
+        "id": 24968,
+        "text": "；",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 115,
+        "id": 80443,
+        "text": "没有",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 116,
+        "id": 76095,
+        "text": "条件",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 117,
+        "id": 13343,
+        "text": "时",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 118,
+        "id": 2971,
+        "text": " condition",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 119,
+        "id": 220,
+        "text": " ",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 120,
+        "id": 17714,
+        "text": "为",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 121,
+        "id": 845,
+        "text": " null",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 122,
+        "id": 24968,
+        "text": "；",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 123,
+        "id": 80443,
+        "text": "没有",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 124,
+        "id": 102289,
+        "text": "优惠",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 125,
+        "id": 46448,
+        "text": "则",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 126,
+        "id": 17714,
+        "text": "为",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 127,
+        "id": 3056,
+        "text": " []",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 128,
+        "id": 8997,
+        "text": "。\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 129,
+        "id": 104190,
+        "text": "规则",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 130,
+        "id": 28311,
+        "text": "：\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 131,
+        "id": 16,
+        "text": "1",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 132,
+        "id": 13,
+        "text": ".",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 133,
+        "id": 46750,
+        "text": " �",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 134,
+        "id": 222,
+        "text": "�",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 135,
+        "id": 18830,
+        "text": "有",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 136,
+        "id": 25511,
+        "text": "值",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 137,
+        "id": 100645,
+        "text": "必须",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 138,
+        "id": 100889,
+        "text": "摘",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 139,
+        "id": 35926,
+        "text": "自",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 140,
+        "id": 103283,
+        "text": "原文",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 141,
+        "id": 3837,
+        "text": "，",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 142,
+        "id": 99925,
+        "text": "不得",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 143,
+        "id": 30868,
+        "text": "编",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 144,
+        "id": 66078,
+        "text": "造",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 145,
+        "id": 57191,
+        "text": "或",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 146,
+        "id": 22418,
+        "text": "改",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 147,
+        "id": 61443,
+        "text": "写",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 148,
+        "id": 8997,
+        "text": "。\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 149,
+        "id": 17,
+        "text": "2",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 150,
+        "id": 13,
+        "text": ".",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 151,
+        "id": 6567,
+        "text": " �",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 152,
+        "id": 119,
+        "text": "�",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 153,
+        "id": 94,
+        "text": "�",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 154,
+        "id": 99536,
+        "text": "减",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 155,
+        "id": 5373,
+        "text": "、",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 156,
+        "id": 99565,
+        "text": "买",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 157,
+        "id": 101568,
+        "text": "赠",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 158,
+        "id": 9370,
+        "text": "的",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 159,
+        "id": 106728,
+        "text": "门槛",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 160,
+        "id": 9909,
+        "text": "（",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 161,
+        "id": 29524,
+        "text": "如",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 162,
+        "id": 2073,
+        "text": "“",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 163,
+        "id": 99333,
+        "text": "满",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 164,
+        "id": 18,
+        "text": "3",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 165,
+        "id": 15,
+        "text": "0",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 166,
+        "id": 15,
+        "text": "0",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 167,
+        "id": 99536,
+        "text": "减",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 168,
+        "id": 20,
+        "text": "5",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 169,
+        "id": 15,
+        "text": "0",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 170,
+        "id": 854,
+        "text": "”",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 171,
+        "id": 2073,
+        "text": "“",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 172,
+        "id": 99565,
+        "text": "买",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 173,
+        "id": 14777,
+        "text": "一",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 174,
+        "id": 36605,
+        "text": "送",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 175,
+        "id": 14777,
+        "text": "一",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 176,
+        "id": 854,
+        "text": "”",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 177,
+        "id": 7552,
+        "text": "）",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 178,
+        "id": 100409,
+        "text": "属于",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 179,
+        "id": 102289,
+        "text": "优惠",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 180,
+        "id": 43815,
+        "text": "内容",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 181,
+        "id": 100775,
+        "text": "本身",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 182,
+        "id": 24968,
+        "text": "；",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 183,
+        "id": 9056,
+        "text": "condition",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 184,
+        "id": 26853,
+        "text": " �",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 185,
+        "id": 103,
+        "text": "�",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 186,
+        "id": 61443,
+        "text": "写",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 187,
+        "id": 108593,
+        "text": "额外",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 188,
+        "id": 9370,
+        "text": "的",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 189,
+        "id": 105255,
+        "text": "适用",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 190,
+        "id": 101121,
+        "text": "范围",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 191,
+        "id": 57191,
+        "text": "或",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 192,
+        "id": 104108,
+        "text": "限制",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 193,
+        "id": 3837,
+        "text": "，",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 194,
+        "id": 77557,
+        "text": "例如",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 195,
+        "id": 105146,
+        "text": "指定",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 196,
+        "id": 68153,
+        "text": "款",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 197,
+        "id": 5373,
+        "text": "、",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 198,
+        "id": 102129,
+        "text": "会员",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 199,
+        "id": 5373,
+        "text": "、",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 200,
+        "id": 16628,
+        "text": "新",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 201,
+        "id": 20002,
+        "text": "用户",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 202,
+        "id": 5373,
+        "text": "、",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 203,
+        "id": 20450,
+        "text": "时间",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 204,
+        "id": 5373,
+        "text": "、",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 205,
+        "id": 112220,
+        "text": "名额",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 206,
+        "id": 5373,
+        "text": "、",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 207,
+        "id": 101993,
+        "text": "渠道",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 208,
+        "id": 5373,
+        "text": "、",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 209,
+        "id": 102945,
+        "text": "排除",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 210,
+        "id": 101121,
+        "text": "范围",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 211,
+        "id": 8997,
+        "text": "。\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 212,
+        "id": 18,
+        "text": "3",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 213,
+        "id": 13,
+        "text": ".",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 214,
+        "id": 220,
+        "text": " ",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 215,
+        "id": 118989,
+        "text": "有条件的",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 216,
+        "id": 102289,
+        "text": "优惠",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 217,
+        "id": 100645,
+        "text": "必须",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 218,
+        "id": 104465,
+        "text": "保留",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 219,
+        "id": 76095,
+        "text": "条件",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 220,
+        "id": 3837,
+        "text": "，",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 221,
+        "id": 53153,
+        "text": "不能",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 222,
+        "id": 61443,
+        "text": "写",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 223,
+        "id": 12857,
+        "text": "成",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 224,
+        "id": 32664,
+        "text": "对",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 225,
+        "id": 55338,
+        "text": "所有",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 226,
+        "id": 45943,
+        "text": "商品",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 227,
+        "id": 5373,
+        "text": "、",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 228,
+        "id": 109677,
+        "text": "所有人都",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 229,
+        "id": 104775,
+        "text": "有效的",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 230,
+        "id": 102289,
+        "text": "优惠",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 231,
+        "id": 8997,
+        "text": "。\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 232,
+        "id": 19,
+        "text": "4",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 233,
+        "id": 13,
+        "text": ".",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 234,
+        "id": 1036,
+        "text": " “",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 235,
+        "id": 16530,
+        "text": "不",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 236,
+        "id": 100651,
+        "text": "参与",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 237,
+        "id": 99333,
+        "text": "满",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 238,
+        "id": 99536,
+        "text": "减",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 239,
+        "id": 854,
+        "text": "”",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 240,
+        "id": 105230,
+        "text": "这类",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 241,
+        "id": 110181,
+        "text": "否定",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 242,
+        "id": 66394,
+        "text": "说明",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 243,
+        "id": 99520,
+        "text": "不是",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 244,
+        "id": 102289,
+        "text": "优惠",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 245,
+        "id": 1773,
+        "text": "。",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 246,
+        "id": 151645,
+        "text": "<|im_end|>",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 247,
+        "id": 198,
+        "text": "\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 248,
+        "id": 151644,
+        "text": "<|im_start|>",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 249,
+        "id": 872,
+        "text": "user",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 250,
+        "id": 198,
+        "text": "\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 251,
+        "id": 10904,
+        "text": "【",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 252,
+        "id": 107440,
+        "text": "阿尔",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 253,
+        "id": 24339,
+        "text": "法",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 254,
+        "id": 10958,
+        "text": "】",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 255,
+        "id": 101939,
+        "text": "儿童",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 256,
+        "id": 90286,
+        "text": "书",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 257,
+        "id": 67279,
+        "text": "包",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 258,
+        "id": 3837,
+        "text": "，",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 259,
+        "id": 94443,
+        "text": "反",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 260,
+        "id": 99225,
+        "text": "光",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 261,
+        "id": 38989,
+        "text": "条",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 262,
+        "id": 99518,
+        "text": "又",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 263,
+        "id": 99280,
+        "text": "护",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 264,
+        "id": 109257,
+        "text": "脊",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 265,
+        "id": 99536,
+        "text": "减",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 266,
+        "id": 99393,
+        "text": "负",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 267,
+        "id": 1773,
+        "text": "。",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 268,
+        "id": 118167,
+        "text": "限时",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 269,
+        "id": 23,
+        "text": "8",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 270,
+        "id": 99699,
+        "text": "折",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 271,
+        "id": 151645,
+        "text": "<|im_end|>",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 272,
+        "id": 198,
+        "text": "\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 273,
+        "id": 151644,
+        "text": "<|im_start|>",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 274,
+        "id": 77091,
+        "text": "assistant",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 275,
+        "id": 198,
+        "text": "\n",
+        "supervised": false,
+        "region": "prompt"
+      },
+      {
+        "i": 276,
+        "id": 4913,
+        "text": "{\"",
+        "supervised": true,
+        "region": "answer",
+        "loss": 11.625,
+        "model_pred": "{\n"
+      },
+      {
+        "i": 277,
+        "id": 5471,
+        "text": "category",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "category"
+      },
+      {
+        "i": 278,
+        "id": 3252,
+        "text": "\":\"",
+        "supervised": true,
+        "region": "answer",
+        "loss": 8.5,
+        "model_pred": "\":"
+      },
+      {
+        "i": 279,
+        "id": 101939,
+        "text": "儿童",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.693,
+        "model_pred": "书"
+      },
+      {
+        "i": 280,
+        "id": 90286,
+        "text": "书",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "书"
+      },
+      {
+        "i": 281,
+        "id": 67279,
+        "text": "包",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "包"
+      },
+      {
+        "i": 282,
+        "id": 2198,
+        "text": "\",\"",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.252,
+        "model_pred": "\",\""
+      },
+      {
+        "i": 283,
+        "id": 37737,
+        "text": "selling",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "selling"
+      },
+      {
+        "i": 284,
+        "id": 12928,
+        "text": "_points",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "_points"
+      },
+      {
+        "i": 285,
+        "id": 36799,
+        "text": "\":[\"",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.001,
+        "model_pred": "\":[\""
+      },
+      {
+        "i": 286,
+        "id": 94443,
+        "text": "反",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "反"
+      },
+      {
+        "i": 287,
+        "id": 99225,
+        "text": "光",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "光"
+      },
+      {
+        "i": 288,
+        "id": 38989,
+        "text": "条",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "条"
+      },
+      {
+        "i": 289,
+        "id": 2198,
+        "text": "\",\"",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.001,
+        "model_pred": "\",\""
+      },
+      {
+        "i": 290,
+        "id": 99280,
+        "text": "护",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "护"
+      },
+      {
+        "i": 291,
+        "id": 109257,
+        "text": "脊",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "脊"
+      },
+      {
+        "i": 292,
+        "id": 99536,
+        "text": "减",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.003,
+        "model_pred": "减"
+      },
+      {
+        "i": 293,
+        "id": 99393,
+        "text": "负",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "负"
+      },
+      {
+        "i": 294,
+        "id": 68882,
+        "text": "\"],\"",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.008,
+        "model_pred": "\"],\""
+      },
+      {
+        "i": 295,
+        "id": 24468,
+        "text": "prom",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.002,
+        "model_pred": "prom"
+      },
+      {
+        "i": 296,
+        "id": 40256,
+        "text": "otions",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "otions"
+      },
+      {
+        "i": 297,
+        "id": 66582,
+        "text": "\":[{\"",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.007,
+        "model_pred": "\":[{\""
+      },
+      {
+        "i": 298,
+        "id": 25077,
+        "text": "offer",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "offer"
+      },
+      {
+        "i": 299,
+        "id": 3252,
+        "text": "\":\"",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "\":\""
+      },
+      {
+        "i": 300,
+        "id": 118167,
+        "text": "限时",
+        "supervised": true,
+        "region": "answer",
+        "loss": 8.375,
+        "model_pred": "8"
+      },
+      {
+        "i": 301,
+        "id": 23,
+        "text": "8",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "8"
+      },
+      {
+        "i": 302,
+        "id": 99699,
+        "text": "折",
+        "supervised": true,
+        "region": "answer",
+        "loss": -0.0,
+        "model_pred": "折"
+      },
+      {
+        "i": 303,
+        "id": 2198,
+        "text": "\",\"",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.388,
+        "model_pred": "\",\""
+      },
+      {
+        "i": 304,
+        "id": 9056,
+        "text": "condition",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "condition"
+      },
+      {
+        "i": 305,
+        "id": 788,
+        "text": "\":",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "\":"
+      },
+      {
+        "i": 306,
+        "id": 2921,
+        "text": "null",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "null"
+      },
+      {
+        "i": 307,
+        "id": 92,
+        "text": "}",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "}"
+      },
+      {
+        "i": 308,
+        "id": 13989,
+        "text": "]}",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "]}"
+      },
+      {
+        "i": 309,
+        "id": 151645,
+        "text": "<|im_end|>",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.0,
+        "model_pred": "<|im_end|>"
+      },
+      {
+        "i": 310,
+        "id": 198,
+        "text": "\n",
+        "supervised": true,
+        "region": "answer",
+        "loss": 0.021,
+        "model_pred": "\n"
+      }
+    ]
+  },
+  "update_check": {
+    "lora_B_norm_before": 0.0,
+    "lora_B_norm_after": 6.903516607583984,
+    "base_weight_probe_before": 1.0911579132080078,
+    "base_weight_probe_after": 1.0911579132080078,
+    "note": "LoRA 的 B 初始化为 0：训练后范数 > 0 说明参数确实被更新；基础权重指纹必须不变"
+  },
+  "reload": {
+    "artifact": "artifacts/adapter",
+    "checked": 4,
+    "identical": 4,
+    "ok": true,
+    "samples": [
+      {
+        "id": "dev-01",
+        "in_memory": "{\"category\":\"跑鞋\",\"selling_points\":[\"轻量透气\"],\"promotions\":[{\"offer\":\"第二件半价\",\"condition\":\"指定款\"}]}",
+        "reloaded": "{\"category\":\"跑鞋\",\"selling_points\":[\"轻量透气\"],\"promotions\":[{\"offer\":\"第二件半价\",\"condition\":\"指定款\"}]}"
+      },
+      {
+        "id": "dev-02",
+        "in_memory": "{\"category\":\"防晒霜\",\"selling_points\":[\"清爽不黏腻\",\"SPF50+\"],\"promotions\":[{\"offer\":\"下单立减30元\",\"condition\":\"今日\"}]}",
+        "reloaded": "{\"category\":\"防晒霜\",\"selling_points\":[\"清爽不黏腻\",\"SPF50+\"],\"promotions\":[{\"offer\":\"下单立减30元\",\"condition\":\"今日\"}]}"
+      },
+      {
+        "id": "dev-03",
+        "in_memory": "{\"category\":\"投影仪\",\"selling_points\":[\"1080P高清\",\"自动对焦\"],\"promotions\":[{\"offer\":\"立省200元\",\"condition\":\"会员\"}]}",
+        "reloaded": "{\"category\":\"投影仪\",\"selling_points\":[\"1080P高清\",\"自动对焦\"],\"promotions\":[{\"offer\":\"立省200元\",\"condition\":\"会员\"}]}"
+      },
+      {
+        "id": "dev-04",
+        "in_memory": "{\"category\":\"乳胶枕\",\"selling_points\":[\"天然乳胶\",\"透气护颈\"],\"promotions\":[{\"offer\":\"打85折\",\"condition\":\"2件\"},{\"condition\":\"部分尺寸\"}]}",
+        "reloaded": "{\"category\":\"乳胶枕\",\"selling_points\":[\"天然乳胶\",\"透气护颈\"],\"promotions\":[{\"offer\":\"打85折\",\"condition\":\"2件\"},{\"condition\":\"部分尺寸\"}]}"
+      }
+    ]
+  }
+}

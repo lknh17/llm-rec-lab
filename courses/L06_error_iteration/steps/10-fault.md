@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · 基线和主改动 5 种子，其余 3 种子（已有 0 / 8 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · 基线和主改动 5 种子，其余 3 种子（已有 8 / 8 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | dev 全对率 | 格式合法率 | 品类准确率 | dev 全对率：与 `baseline` 差 | dev 全对率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 78.0% ± 6.1 | 98.7% ± 3.0 | 98.7% ± 3.0 | — | s0 86.7% / s1 70.0% / s2 76.7% / s3 76.7% / s4 80.0% | 通过 |
+| `fault_plain` | 教学故障 | 0.0% ± 0.0 | 0.0% ± 0.0 | 0.0% ± 0.0 | -78.0 个点 | s0 0.0% / s1 0.0% / s2 0.0% | 通过 |
+
+![dev 全对率（均值，误差线为种子间最小到最大）](figures/h20x8-p_fault-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L06/baseline/s0-4c72c9/) · [s1](../../../results/h20x8/L06/baseline/s1-1f95b8/) · [s2](../../../results/h20x8/L06/baseline/s2-f202e6/) · [s3](../../../results/h20x8/L06/baseline/s3-788947/) · [s4](../../../results/h20x8/L06/baseline/s4-26b88b/)
+- `fault_plain` [s0](../../../results/h20x8/L06/fault_plain/s0-f5531b/) · [s1](../../../results/h20x8/L06/fault_plain/s1-868df1/) · [s2](../../../results/h20x8/L06/fault_plain/s2-0a1cb2/)
 
 </details>
 
