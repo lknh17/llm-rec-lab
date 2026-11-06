@@ -14,3 +14,10 @@ status: failed
 finished_at: '2026-11-06T07:13:37Z'
 problems:
 - 'RepresenterError: (''cannot represent an object'', ''2.15.0+cu132'')'
+notes: >-
+  未执行任何运行（0/34）。失败发生在 run_job 开头写 host_summary 时：labkit/jobs.py:108 的
+  torch.__version__ 是 TorchVersion（str 子类），yaml.safe_dump 拒绝序列化，报 RepresenterError。
+  这与机器无关，只要能 import torch 就会触发，需要 Mac 端修代码（例如 str(torch.__version__)）后重新下发作业；
+  H20 端按手册不改代码。环境备注：驱动 535（CUDA 12.2），锁定的 torch 2.15.0+cu132 需要 CUDA 13，
+  本机通过 NVIDIA cuda-compat-13-2 前向兼容库解决，probe --compute 通过（device=cuda，8×H20）。
+  agent 已停止，修复推送后会重新启动 agent（已加载的 labkit 模块不会随 git pull 热更新）。
