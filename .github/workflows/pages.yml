@@ -1,0 +1,62 @@
+name: pages
+
+# 课程页与作业看板：只要有人推了结果、作业单、心跳或讲义，就重新生成并提交
+#   - courses/*/README.md、courses/*/steps/**、courses/*/figures/**（一步一页的讲义、结果表、证据图）
+#   - jobs/README.md（作业看板：运行中 / 排队 / 已完成、H20 心跳、场景 × 种子矩阵）
+# 看板只由这里写：Mac 和 H20 都不碰 jobs/README.md，所以不会和它们的推送冲突。
+# 用 GITHUB_TOKEN 推送的提交不会再触发工作流，不会循环。
+on:
+  push:
+    branches: [main]
+    paths:
+      - "results/**"
+      - "jobs/**"
+      - "status/**"
+      - "courses/**"
+      - "projects/**"
+      - "labkit/docs.py"
+      - "labkit/lessonbook.py"
+      - "labkit/figures.py"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 生成课程页和作业看板（只依赖 pyyaml）
+        run: |
+          pip install pyyaml
+          python -m labkit docs --board
+      - name: 有变化就提交（推送冲突时拉最新重试）
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A courses jobs/README.md
+          if git diff --cached --quiet; then echo "没有变化"; exit 0; fi
+          git commit -q -m "pages: 刷新课程页和作业看板"
+          for i in 1 2 3 4 5; do
+            if git push; then exit 0; fi
+            git reset -q --hard HEAD~1
+            git pull -q --rebase
+            python -m labkit docs --board
+            git add -A courses jobs/README.md
+            if git diff --cached --quiet; then echo "已是最新"; exit 0; fi
+            git commit -q -m "pages: 刷新课程页和作业看板"
+            sleep $((i * 5))
+          done
+          echo "推送失败 5 次" && exit 1

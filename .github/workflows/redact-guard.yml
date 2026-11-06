@@ -4,7 +4,7 @@ name: redact-guard
 # 主防线是本地的 pre-push 钩子（scripts/pre-push）。这里失败时要立即处理：删除并改写历史，轮换泄露的凭证。
 on:
   push:
-    paths: ["results/**", "jobs/**", "status/**", "courses/*/README.md", "courses/*/figures/**"]
+    paths: ["results/**", "jobs/**", "status/**", "courses/*/README.md", "courses/*/steps/**", "courses/*/figures/**"]
 
 jobs:
   check:

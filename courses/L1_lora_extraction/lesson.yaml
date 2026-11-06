@@ -1,0 +1,315 @@
+# GitHub 版讲义：一步一页。`python -m labkit docs` 据此生成 steps/NN-*.md 和 steps/figures/*.svg，不要手改生成的文件。
+#
+# 这里只写问题、选项、要看的证据，不写答案和解析：每页"实测"折叠块里的结果就是揭晓。
+# 正文里的数字写成 {{v:<场景>:<路径>[:格式]}}：
+#   路径以 summary. / meta. / evidence. 开头（对应运行目录里的 summary.json / run.json / evidence.json）；
+#   "a/b" 表示两个路径相除；曲线路径末尾写 .last 取最后一个点；
+#   格式：pct（百分比）、params（万/亿）、Python 格式串（如 ",d"、".3f"、"g"）。
+#   取 h20x8 档的多种子均值；h20x8 还没有结果时退到 Mac 历史档并注明，两档都没有时显示"〔待 H20 生成〕"。
+course: L1
+profiles:            # 展示顺序：第一个是主档位
+  h20x8: H20 · Qwen2.5-7B · 3 种子
+  mac-m4pro: Mac 历史档 · Qwen2.5-0.5B · 单种子
+metric: {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
+
+stages:
+  - {id: understand, title: 理解任务}
+  - {id: estimate, title: 先估算}
+  - {id: inside, title: 看清内部}
+  - {id: reveal, title: 逐个揭晓}
+  - {id: diagnose, title: 诊断故障}
+  - {id: review, title: 回顾}
+
+steps:
+  # ------------------------------------------------------------------ 理解任务
+  - id: pain
+    file: 01-pain
+    stage: understand
+    title: 场景与痛点
+    question_short: 7B 上做结构化抽取，为什么用 LoRA？它带来哪三个问题？
+    body: |
+      内容理解打标要在 **7B** 上做 SFT。直接全参微调：AdamW 混合精度约 16 字节/参数，7B 要约 122 GB 显存，一张 96 GB 的 H20 放不下，还要为每个业务存一份 15 GB 的完整权重。
+
+      LoRA 把要训练的东西缩小到原来的 0.1%-1%，但带来三个必须回答的问题：
+
+      1. **rank 配多大、挂在哪些层**：可训练参数差几十倍，效果差多少？
+      2. **监督哪些 token**：系统提示和广告原文要不要算 loss？
+      3. **数据侧故障**：训练"正常结束"但什么都没学到，怎么在上线前发现？
+
+      本课的任务是**广告元素抽取**：从广告文案里抽出品类、卖点、优惠及其适用条件，输出 JSON；原文没写的必须为空，不能编造。
+
+      | 输入 | 期望输出 |
+      | - | - |
+      | 跑鞋轻量透气，第二件半价，指定款参加 | `{"category":"跑鞋","selling_points":["轻量","透气"],"promotions":[{"offer":"第二件半价","condition":"指定款"}]}` |
+
+      难点在条件：必须保留"指定款"，不能写成所有跑鞋都半价。
+
+      | 集合 | 条数 | 来源 |
+      | - | - | - |
+      | 训练集 | 4000（H20）/ 400（Mac 历史） | 模板生成的教学合成数据（[`synth.py`](../../../projects/adextract/synth.py)），16 个品类、虚构品牌 |
+      | dev | 30 | 人工撰写并逐条核对（[`evalsets/`](../../../projects/adextract/evalsets/)） |
+      | 合成验证集 | 60 | 同一生成器、不同种子 |
+      | test | 30 | 人工撰写，保留到最终检验 |
+
+      **指标**（规则评测，见 `schema.py` 的 `score_one`）：**全对率**（所有字段都对，本课主指标）、格式合法率、品类准确率、卖点 F1、优惠召回、条件保留率、无依据率（编造）。
+
+      **怎么读噪声**：dev 只有 30 条，**一条样本 = 3.3 个百分点**；H20 档每个场景 3 个种子。小于 3.3 个点、或小于种子间波动的差异都当噪声处理。
+
+      **本课的读法**：后面每一步先读问题、自己选一个答案，再展开"实测"。实测都是 H20 上预先跑好的结果（作业进度见 [jobs/](../../../jobs/README.md)）。
+
+  - id: flow
+    file: 02-flow
+    stage: understand
+    title: 流程结构
+    question_short: 一条样本从 messages 到参数更新经过哪几步？每步的张量形状？
+    body: |
+      一条样本从对话到参数更新经过 9 个环节（B = batch 8，T = 样本长度约 330，V = 词表 151936，d = 3584，r = LoRA 秩）。
+
+      ```mermaid
+      flowchart LR
+        A["messages<br/>system / user / assistant"] --> B["聊天模板"] --> C["tokenize<br/>input_ids [T≈330]"]
+        C --> D["labels mask<br/>prompt = -100"] --> E["padding<br/>[B, T]"]
+        E --> F["LoRA 前向<br/>Wx + (α/r)·B(Ax)"] --> G["loss<br/>按被监督 token 平均"]
+        G --> H["只更新 A、B"] --> I["保存 → 加载 → 生成评估"]
+      ```
+    nodes:
+      - {title: messages, shape: "system / user / assistant 三段文本", detail: "训练和推理调用同一个 build_messages，保证 prompt 一致。", code: {file: adextract/prompts.py, region: messages}}
+      - {title: 聊天模板, shape: 一段字符串, detail: "Qwen2.5 模板：`<|im_start|>role\\n内容<|im_end|>\\n`。assistant 的开头 `<|im_start|>assistant\\n` 属于 prompt。", code: {file: adextract/data.py, region: encode}}
+      - {title: tokenize, shape: "input_ids [T]（约 330）", detail: "prompt 约 290 个 token，回复约 40 个。", code: {file: adextract/data.py, region: encode}}
+      - {title: labels mask, shape: "labels [T]，prompt 位置 = -100", detail: "只有回复和 `<|im_end|>` 参与 loss。超长样本按 truncation 规则丢弃或截断。", code: {file: adextract/data.py, region: encode}}
+      - {title: padding, shape: "input_ids / labels / attention_mask [B, T]", detail: "训练右侧补齐、labels 补 -100；推理左侧补齐。", code: {file: adextract/data.py, region: collate}}
+      - {title: LoRA 前向, shape: "y = Wx + (α/r)·B(Ax)；A [r, d_in]，B [d_out, r]", detail: "W 冻结（bf16），只有 A、B 可训练；B 初始化为 0。", code: {file: adextract/modeling.py, region: lora}}
+      - {title: loss, shape: "logits [B, T_keep, V] → 标量", detail: "错一位对齐（位置 t 预测 t+1）；只在被监督位置之后算 lm_head（logits_to_keep），按被监督 token 总数平均。", code: {file: adextract/train.py, region: loss}}
+      - {title: 反向与更新, shape: "只有 A、B 有梯度", detail: "AdamW、warmup + 线性衰减、梯度裁剪 1.0；每轮结束算 dev_loss。", code: {file: adextract/train.py, region: train_loop}}
+      - {title: 保存 → 加载 → 生成评估, shape: 适配器约几十 MB, detail: "释放模型、重新加载基础模型 + 适配器，核对两次输出一致；贪心解码到 `<|im_end|>` 停止，按规则逐字段评分。", code: {file: adextract/infer.py, region: generate}}
+
+  # ------------------------------------------------------------------ 先估算
+  - id: estimate
+    file: 03-estimate
+    stage: estimate
+    title: 先估算
+    question_short: 可训练参数、全参显存、被监督 token 占比各是多少？
+    body: |
+      不看结果，先用公式估三个数。Qwen2.5-7B：28 层，d = 3584，KV 头 4 × 128 = 512，MLP 中间维 18944，总参数约 76 亿。
+    questions:
+      - text: LoRA r=16 挂在每层 7 类线性层（q/k/v/o/gate/up/down）上，可训练参数大约多少？
+        options: [约 400 万（0.05%）, 约 4000 万（0.5%）, 约 4 亿（5%）, 约 40 亿（50%）]
+      - text: 单张 H20（96 GB）能不能对 7B 做全参数 AdamW 混合精度微调？
+        options: [轻松，50 GB 以内, 勉强，50-96 GB, 放不下，光权重、梯度、优化器状态就超过 96 GB]
+      - text: 训练集一条样本约 300 个 token。assistant-only 监督下，参与 loss 的 token 约占多少？
+        options: [接近 100%, 约一半, 约一成, 约 1%]
+    check:
+      - {label: "可训练参数（r=16，7 类线性层）", value: "{{v:baseline:meta.model.params.trainable:params}}，占总参数 {{v:baseline:meta.model.params.trainable_pct:.2f}}%"}
+      - {label: 模型总参数, value: "{{v:baseline:meta.model.params.total:params}}"}
+      - {label: "LoRA 训练实测峰值显存（单卡）", value: "{{v:baseline:evidence.memory.peak_allocated_gb:.1f}} GB，单卡总显存 {{v:baseline:evidence.memory.device_total_gb:.0f}} GB"}
+      - {label: 被监督 token 占全部 token, value: "{{v:baseline:meta.data.tokenized.supervised_tokens_total/meta.data.tokenized.tokens_total:pct}}"}
+
+  # ------------------------------------------------------------------ 看清内部
+  - id: trace
+    file: 04-trace
+    stage: inside
+    title: 追踪一条样本
+    question_short: "`<|im_end|>` 被监督了吗？logits 第二维为什么只有几十？"
+    body: |
+      下面是基线运行第 1 个 batch 的第 1 条样本（真实 tokenizer 输出）。看三件事：
+
+      1. `<|im_start|>assistant\n` 本身被监督了吗？`<|im_end|>` 呢？
+      2. 第 1 个 batch 的 `input_ids` 是 `[8, T]`，为什么 `logits` 的第二维只有几十？
+      3. LoRA B 的范数和基础权重指纹，训练前后各是多少？
+    blocks: [trace]
+
+  - id: code
+    file: 05-code
+    stage: inside
+    title: 代码导读
+    question_short: 关键代码在哪几行？
+    body: |
+      每个环节一段关键代码，取自实际执行的版本（`projects/adextract/`）。读的时候只看三点：这段解决什么问题、关键的是哪几行、张量形状。
+    code:
+      - {file: adextract/prompts.py, region: messages, title: "① 样本：messages", note: 训练和推理调用同一个函数，保证 prompt 一致。}
+      - {file: adextract/data.py, region: encode, title: "② 模板、tokenize、监督 mask", note: "prompt 部分 labels = -100；超长样本按 truncation 规则丢弃或截断。"}
+      - {file: adextract/modeling.py, region: lora, title: "③ LoRA 挂载", note: "LORA_TARGETS 决定挂在哪些线性层；B 初始化为 0。"}
+      - {file: adextract/train.py, region: loss, title: "④ loss 对齐与归一化", note: "错一位对齐；只在被监督位置计算 lm_head；分母是被监督 token 数（clamp 到 1）。"}
+      - {file: adextract/train.py, region: train_loop, title: "⑤ 训练循环", note: "AdamW、warmup + 线性衰减、梯度裁剪 1.0；每步记录 supervised_tokens、grad_norm、tokens/s。"}
+      - {file: adextract/schema.py, region: score_one, title: "⑥ 逐条评分", note: "格式、品类、卖点、优惠、条件、无依据，每项的判定规则都在这里。"}
+
+  # ------------------------------------------------------------------ 逐个揭晓
+  - id: p_base
+    file: 06-base-model
+    stage: reveal
+    title: 基础模型（不训练）
+    scenarios: [base_model]
+    body: 不训练，直接用 Qwen2.5-7B-Instruct 加系统提示（标注规则写在里面）在 dev 上生成并评分。
+    question:
+      text: 零样本的 7B Instruct 模型，dev 全对率（所有字段都对）大约多少？
+      options: [不到 10%, 10% - 30%, 30% - 60%, 60% 以上]
+    columns:
+      - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
+      - {path: summary.dev.format_ok, label: 格式合法率, pct: true}
+      - {path: summary.dev.condition_keep, label: 条件保留率, pct: true}
+      - {path: summary.dev.ungrounded_rate, label: 无依据率, pct: true}
+    charts: [metrics]
+    blocks: [errors]
+    look: "错误类型分布（上表下方）说明零样本模型主要错在哪：是格式、漏条件，还是编造？"
+
+  - id: p_sft
+    file: 07-sft
+    stage: reveal
+    title: LoRA SFT 基线
+    scenarios: [baseline]
+    compare_to: base_model
+    body: 基线配置：4000 条合成样本，assistant-only 监督，LoRA r=16、α=32，挂 7 类线性层，lr 2e-4，batch 8，2 个 epoch。训练后保存适配器、重新加载核对。
+    question:
+      text: 和基础模型相比，SFT 后 dev 全对率（3 种子均值）提升多少？
+      options: [反而下降, 提升不到 15 个点, 提升 15 - 40 个点, 提升 40 个点以上]
+    columns:
+      - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
+      - {path: summary.dev.condition_keep, label: 条件保留率, pct: true}
+      - {path: summary.synth_valid.exact_all_ok, label: 合成验证全对率, pct: true}
+      - {path: evidence.throughput.train_minutes, label: 训练分钟, fmt: ".1f"}
+    charts: [metrics, loss]
+    blocks: [errors, flips]
+    look: 逐样本"修好 / 弄坏"表：哪类样本被 SFT 修好了，有没有被弄坏的？合成验证集和 dev 的差距说明什么？
+
+  - id: p_rank
+    file: 08-rank
+    stage: reveal
+    title: "LoRA rank：4 / 8 / 16 / 64"
+    scenarios: [lora_r4, lora_r8, lora_r64]
+    compare_to: baseline
+    body: 只改 rank，α 同比例改（α/r 固定为 2，缩放系数不变）。可训练参数和 r 成正比：r=4 约 1000 万，r=64 约 1.6 亿。
+    question:
+      text: r 从 16 提到 64（可训练参数 ×4），dev 全对率（3 种子均值）会怎样？
+      options: ["明显更好（多对 1 条样本以上，> +3.3 个点）", "差不多（±3.3 个点以内）", "明显更差（< −3.3 个点）"]
+    columns:
+      - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
+      - {path: meta.model.params.trainable, label: 可训练参数, fmt: params}
+      - {path: summary.synth_valid.exact_all_ok, label: 合成验证全对率, pct: true}
+    charts: [metrics, params]
+    look: 把"与对照差"和"各种子"两列放在一起看：差值有没有超过种子间的波动和 3.3 个点？
+
+  - id: p_target
+    file: 09-target
+    stage: reveal
+    title: 挂载层：q,v / 注意力 / 注意力 + MLP
+    scenarios: [lora_qv, lora_attn]
+    compare_to: baseline
+    body: rank 固定 16，只改挂在哪些线性层：只挂 q_proj、v_proj（LoRA 论文的做法）、挂注意力 4 个投影、挂注意力 + MLP 共 7 个（基线，QLoRA 之后的常见默认）。
+    question:
+      text: 只挂 q,v（可训练参数约为基线的 1/8），dev 全对率（3 种子均值）相比 7 类全挂会怎样？
+      options: ["明显更好（> +3.3 个点）", "差不多（±3.3 个点以内）", "明显更差（< −3.3 个点）"]
+    columns:
+      - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
+      - {path: meta.model.params.trainable, label: 可训练参数, fmt: params}
+      - {path: summary.dev.condition_keep, label: 条件保留率, pct: true}
+    charts: [metrics, params]
+
+  - id: p_cost
+    file: 10-cost
+    stage: reveal
+    title: 成本：显存与吞吐
+    scenarios: [lora_r64, lora_qv]
+    compare_to: baseline
+    body: 同一张 H20、同样的 batch 和序列长度，比较 r=16 基线、r=64、只挂 q,v 的峰值显存和训练吞吐。
+    question:
+      text: r=64（可训练参数从约 4000 万到约 1.6 亿）比 r=16 峰值显存多多少？
+      options: [不到 1 GB, 1 - 5 GB, 5 GB 以上]
+    columns:
+      - {path: evidence.memory.peak_allocated_gb, label: 峰值显存 GB, fmt: ".2f", delta: true}
+      - {path: meta.model.params.trainable, label: 可训练参数, fmt: params}
+      - {path: evidence.throughput.tokens_per_s_median, label: "tokens/s（中位数）", fmt: ",.0f"}
+      - {path: evidence.throughput.train_minutes, label: 训练分钟, fmt: ".1f"}
+    charts: [memory, throughput]
+    look: 显存构成图里，"LoRA 参数+梯度"和"AdamW 状态"两段和"冻结权重""激活"比起来有多大？显存的大头在哪？
+
+  - id: p_lr
+    file: 11-lr
+    stage: reveal
+    title: "学习率：5e-5 / 2e-4 / 1e-3"
+    scenarios: [lr_5e-5, lr_1e-3]
+    compare_to: baseline
+    body: 只改峰值学习率（warmup 和线性衰减不变）。LoRA 常用 1e-4 到 3e-4，比全参微调大一个数量级，因为 B 从 0 开始、α/r 缩放又把更新压小了。
+    question:
+      text: 学习率 2e-4 → 1e-3（5 倍），dev 全对率（3 种子均值）会怎样？
+      options: ["明显更好（> +3.3 个点）", "差不多（±3.3 个点以内）", "明显更差（< −3.3 个点）"]
+    columns:
+      - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
+      - {path: summary.dev.format_ok, label: 格式合法率, pct: true}
+      - {path: evidence.curves.train_loss.last, label: 最终 train loss, fmt: ".4f"}
+    charts: [metrics, loss]
+    look: loss 曲线里三档学习率的下降速度和最终位置；loss 更低是不是一定全对率更高？
+
+  - id: p_supervision
+    file: 12-supervision
+    stage: reveal
+    title: 监督口径：整段都算 loss
+    scenarios: [all_tokens]
+    compare_to: baseline
+    body: 把 labels mask 去掉：系统提示、广告原文、回复全部参与 loss。其余配置和基线相同。
+    question:
+      text: 整段对话都算 loss，dev 全对率（3 种子均值）会怎样？
+      options: [更好：监督信号更多, 差不多, 更差]
+    columns:
+      - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
+      - {path: meta.data.tokenized.supervised_tokens_total, label: 被监督 token 总数, fmt: ",.0f"}
+      - {path: evidence.curves.train_loss.last, label: 最终 train loss, fmt: ".4f"}
+    charts: [metrics, loss]
+    look: 两者的被监督 token 数差多少倍？整段监督的 loss 主要花在学什么上？
+
+  - id: p_fault
+    file: 13-fault
+    stage: reveal
+    title: 截断故障：max_len=256
+    scenarios: [fault_truncation]
+    compare_to: baseline
+    also: [base_model]
+    body: 一位同事为了省显存，把 `max_len` 调到 256，截断方式改成 `right`。训练正常结束，没有任何报错，train loss 非常低，适配器保存、重新加载核对也通过了。
+    question:
+      text: 这个配置下，dev 全对率会接近谁？
+      options: [接近 SFT 基线, 介于基线和基础模型之间, 和基础模型几乎一样]
+    columns:
+      - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
+      - {path: evidence.curves.train_loss.last, label: 最终 train loss, fmt: ".4f"}
+    charts: [metrics, loss]
+    look: 先别急着找原因，下一步"诊断故障"会逐条给线索。
+
+  # ------------------------------------------------------------------ 诊断
+  - id: diagnose
+    file: 14-diagnose
+    stage: diagnose
+    title: 诊断故障
+    scenarios: [fix_truncation]
+    compare_to: baseline
+    also: [fault_truncation]
+    body: |
+      上一步的配置训练"成功"了，效果却等于没训练。按需逐条展开线索（每条线索指向一个证据），然后选你认为的根因，最后展开修复后的结果（`max_len = 512`，保留右截断）。
+    clues:
+      - "看 loss：故障运行最终的 train loss 是 {{v:fault_truncation:evidence.curves.train_loss.last:.4g}}（基线 {{v:baseline:evidence.curves.train_loss.last:.4g}}）。一个真正在学的模型，loss 会恰好是这个数吗？"
+      - "看数据统计：故障运行的被监督 token 总数是 {{v:fault_truncation:meta.data.tokenized.supervised_tokens_total:,.0f}}，零监督样本 {{v:fault_truncation:meta.data.tokenized.zero_supervision_examples:,.0f}} 条。一条样本的 prompt 有 {{v:fault_truncation:meta.data.tokenized.prompt_tokens:,.0f}} 个 token，max_len 是 256。"
+      - "看参数是否更新：LoRA B 初始化为 0，故障运行训练后 B 的范数是 {{v:fault_truncation:meta.train.lora_B_norm_after:g}}（基线 {{v:baseline:meta.train.lora_B_norm_after:.3g}}）。loss 为 0 时梯度是多少？"
+    question:
+      text: 根因是什么？
+      options: ["学习率太小，256 长度下 100 步不够", 适配器没有正确保存或加载, "截断把回答整段截掉了，监督 token 为 0，梯度为 0", dev 和训练集分布差太远]
+    columns:
+      - {path: summary.dev.exact_all_ok, label: dev 全对率, pct: true}
+      - {path: meta.data.tokenized.supervised_tokens_total, label: 被监督 token 总数, fmt: ",.0f"}
+      - {path: meta.data.tokenized.zero_supervision_examples, label: 零监督样本, fmt: ",.0f"}
+      - {path: meta.train.lora_B_norm_after, label: 训练后 LoRA B 范数, fmt: ".3g"}
+    charts: [metrics, loss]
+    look: 这类故障上线前靠什么发现？想想训练日志里应该有哪几个数一出现就报警。
+
+  # ------------------------------------------------------------------ 回顾
+  - id: review
+    file: 15-review
+    stage: review
+    title: 回顾：全部场景一览
+    question_short: 全部场景一张表；自查能不能讲清每个结论的"为什么"
+    body: |
+      全部场景在主档位上的结果一览（对照基线）。逐行回想：你在每一步选的是什么、实测落在哪里、差异是否超过噪声（一条样本 3.3 个点、种子间波动）。
+    blocks: [overview]
+    selfcheck:
+      - 一条样本里参与 loss 的是哪些 token？为什么 `<|im_end|>` 必须监督？
+      - 可训练参数从约 4000 万涨到约 1.6 亿，峰值显存为什么只多一点？显存的大头在哪？
+      - rank、挂载层、学习率、监督口径这几个旋钮，哪个对全对率影响最大？依据是哪几行结果？
+      - 截断故障训练"成功"却什么都没学到：列出 3 个上线前就能发现它的检查项。
+      - 哪些结论能迁移到内容理解 7B 打标，哪些不能（例如 30 条 dev 上不到 1 条样本的差异）？

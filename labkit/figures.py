@@ -30,6 +30,8 @@ METRIC = {"adextract": ("dev.exact_all_ok", "dev 全对率")}
 LOSS_SCENES = {"adextract": ["baseline", "all_tokens", "fault_truncation", "lr_5e-5", "lr_1e-3"]}
 MEMORY_SCENES = {"adextract": ["base_model", "lora_qv", "lora_attn", "baseline", "lora_r64"]}
 PARAM_SCENES = {"adextract": ["lora_qv", "lora_attn", "lora_r4", "lora_r8", "baseline", "lora_r64"]}
+MEM_PARTS = [("weights_gb", "冻结权重", C["muted"]), ("trainable_and_grads_gb", "LoRA 参数+梯度", C["primary"]),
+             ("optimizer_gb", "AdamW 状态", C["blue"]), ("activations_other_gb", "激活与其他", C["orange"])]
 
 
 def _get(d, dotted: str):
@@ -218,9 +220,7 @@ def course_figures(course: dict, got: dict[str, list[dict]], profile: str) -> di
         if evs:
             keys = evs[0]["breakdown"].keys()
             mem.append({"label": sid, "parts": {k: statistics.fmean(e["breakdown"].get(k) or 0 for e in evs) for k in keys}})
-    figs["memory"] = stacked(mem, [("weights_gb", "冻结权重", C["muted"]), ("trainable_and_grads_gb", "LoRA 参数+梯度", C["primary"]),
-                                   ("optimizer_gb", "AdamW 状态", C["blue"]), ("activations_other_gb", "激活与其他", C["orange"])],
-                             "峰值显存构成（实测峰值，分项为估算）", sub)
+    figs["memory"] = stacked(mem, MEM_PARTS, "峰值显存构成（实测峰值，分项为估算）", sub)
     prm = []
     for sid in PARAM_SCENES.get(project, []):
         vals = [v for r in got.get(sid) or [] if (v := _get(r["meta"], "model.params.trainable")) is not None]

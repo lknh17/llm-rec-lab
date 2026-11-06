@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    paths-ignore: ["results/**", "jobs/**", "status/**"]
+    paths-ignore: ["results/**", "jobs/**", "status/**", "courses/*/README.md", "courses/*/steps/**", "courses/*/figures/**"]  # 生成物由 pages 工作流刷新，有时差，不在这里检查
   pull_request:
 
 jobs:

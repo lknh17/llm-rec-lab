@@ -211,7 +211,10 @@ def _scan_text(text: str, extra: list[str]) -> list[str]:
 def check(targets: list[Path] | None = None, extra: list[str] | None = None) -> list[dict]:
     """返回问题列表 [{path, problem}]；空列表表示通过。"""
     extra = sensitive_strings() if extra is None else extra
-    targets = targets or [paths.RESULTS_DIR, paths.JOBS_DIR, paths.ROOT / "status"]
+    # 课程页（README、steps/ 一步一页、figures/）由结果生成，也会公开展示，一并检查
+    course_pages = [p for d in sorted(paths.COURSES_DIR.glob("*")) if d.is_dir()
+                    for p in (d / "README.md", d / "steps", d / "figures") if p.exists()]
+    targets = targets or [paths.RESULTS_DIR, paths.JOBS_DIR, paths.ROOT / "status", *course_pages]
     problems = []
     run_sizes: dict[Path, int] = {}
     for t in targets:

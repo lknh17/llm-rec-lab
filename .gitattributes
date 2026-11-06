@@ -1,0 +1,5 @@
+# 这些文件全是生成的，H20 和 GitHub Actions 都可能写。合并时不报冲突（否则 H20 一轮批次会因为一页讲义中断），
+# 万一合出重复行，下一次 pages 工作流会整页重新生成。
+courses/*/README.md merge=union
+courses/*/steps/** merge=union
+courses/*/figures/** merge=union

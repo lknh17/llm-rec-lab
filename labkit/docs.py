@@ -5,6 +5,9 @@ README 里手写的讲解保持不动，只替换两个标记区之间的内容�
     <!-- labkit:code -->     ……     <!-- /labkit:code -->
     <!-- labkit:results -->  ……     <!-- /labkit:results -->
     <!-- labkit:figures -->  ……     <!-- /labkit:figures -->
+    <!-- labkit:path -->     ……     <!-- /labkit:path -->     步骤目录（来自 lesson.yaml，见 labkit.lessonbook）
+
+有 lesson.yaml 的课程还会生成一步一页的 steps/*.md 和 steps/figures/*.svg（labkit.lessonbook）。
 
 图：figures/<档位>-<图名>.svg（labkit.figures 纯 Python 生成），README 的 figures 区引用它们。
 冒烟档（skip_expect）不进表也不画图：规模太小，数字没有教学意义。
@@ -164,7 +167,12 @@ def build_all(check: bool = False) -> list[str]:
         if not readme.exists():
             continue
         old = readme.read_text()
+        from . import lessonbook
+
+        path_md = lessonbook.build_course(course, path.parent, check, changed)
         new = _replace(old, "code", code_table(course["project"], path.parent))
+        if path_md is not None:
+            new = _replace(new, "path", path_md)
         details = "<details><summary>展开结果（先自己预测，再看）</summary>\n\n" + results_table(course) + "\n</details>"
         new = _replace(new, "results", details)
         if "<!-- labkit:figures -->" in new:
@@ -182,7 +190,7 @@ def outputs() -> list[str]:
     """docs 会改动的路径（相对仓库根）：H20 端 publish 时一并提交。"""
     out = []
     for path in scenarios.course_files().values():
-        for p in (path.parent / "README.md", path.parent / "figures"):
+        for p in (path.parent / "README.md", path.parent / "figures", path.parent / "steps"):
             if p.exists():
                 out.append(str(p.relative_to(paths.ROOT)))
     return out

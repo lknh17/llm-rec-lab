@@ -11,7 +11,7 @@
     python -m labkit agent --profile h20x8 [--once]          H20 常驻 agent：领取作业 → 执行 → 推回结果和心跳（--check 只读检查）
     python -m labkit evidence [results/] [--check]           给已有结果补 evidence.json（网页和 README 的证据图）
     python -m labkit publish -m "说明"                        检查 + 提交 results/ jobs/ status/ 和课程 README/图 + 推送
-    python -m labkit docs [--check]                          重新生成课程 README 里的代码链接、结果表和 SVG 证据图
+    python -m labkit docs [--check]                          重新生成课程 README（代码链接、步骤目录、结果表、证据图）和一步一页的 steps/
 """
 
 from __future__ import annotations
@@ -193,9 +193,14 @@ def cmd_docs(a) -> None:
     from . import docs
 
     changed = docs.build_all(check=a.check)
+    if a.board:
+        from . import lessonbook
+
+        if lessonbook.write_jobs_board():
+            changed.append("jobs/README.md")
     if a.check and changed:
-        sys.exit(f"课程 README 不是最新的：{changed}。运行 python -m labkit docs")
-    print("课程 README 已是最新" if not changed else f"已更新 {changed}")
+        sys.exit(f"课程页不是最新的：{changed}。运行 python -m labkit docs")
+    print("课程页已是最新" if not changed else f"已更新 {len(changed)} 个文件：{changed[:8]}{' …' if len(changed) > 8 else ''}")
 
 
 def main() -> None:
@@ -277,7 +282,8 @@ def main() -> None:
     p.set_defaults(fn=cmd_publish)
 
     p = sub.add_parser("docs")
-    p.add_argument("--check", action="store_true")
+    p.add_argument("--check", action="store_true", help="只检查课程 README、steps/ 和图是否最新")
+    p.add_argument("--board", action="store_true", help="同时生成作业看板 jobs/README.md（由 GitHub Actions 调用）")
     p.set_defaults(fn=cmd_docs)
 
     a = ap.parse_args()
