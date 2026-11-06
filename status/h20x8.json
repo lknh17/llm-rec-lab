@@ -1,12 +1,13 @@
 {
-  "agent_version": 2,
+  "agent_version": 3,
   "agent_id": "agent-f80beb",
   "profile": "h20x8",
   "gpu": "NVIDIA H20",
   "gpu_count": 8,
   "gpu_mem_gb": 95.0,
-  "last_pull_at": 1793962285.7339735,
+  "last_pull_at": 1793962918.7200322,
   "state": "idle",
   "queue": 0,
-  "updated_at": 1793962285.7935903
+  "beat_every_s": 10800,
+  "updated_at": 1793962927.1674001
 }
