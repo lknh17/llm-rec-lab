@@ -1,0 +1,10 @@
+job_id: 20261106-1548-l1-h20x8
+created_at: '2026-11-06T07:48:48Z'
+profile: h20x8
+courses:
+- L1
+only: []
+seeds: []
+requested_commit: 0e116708ce5e7dfc4aee28fe16d989969df1e65f
+note: 重发：修复 host_summary 的 TorchVersion 序列化（上一张 20261106-1226 失败于此）；12 场景 34 运行
+how_to_run: python -m labkit jobs run 20261106-1548-l1-h20x8
