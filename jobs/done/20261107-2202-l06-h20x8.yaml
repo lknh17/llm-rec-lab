@@ -1,0 +1,203 @@
+job_id: 20261107-2202-l06-h20x8
+created_at: '2026-11-07T14:02:09Z'
+profile: h20x8
+courses:
+- L06
+only: []
+seeds: []
+requested_commit: c23279cb2d45b2742310f7e6eb99813e13c6427b
+note: 重新导出：25 个运行都已完成会被跳过，只用新的导出逻辑补回 metrics.jsonl 里的逐轮 dev 评估（epochs_4 的 dev_exact_all_ok
+  第 1-3 轮）
+how_to_run: python -m labkit jobs run 20261107-2202-l06-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-07T15:39:29Z'
+started_at: '2026-11-07T15:40:51Z'
+ran_commit: 47196d0ff08a012a304c5f1bc19833dd7a3415f0
+host_summary:
+  torch: 2.15.0+cu132
+  cuda: '13.2'
+  gpu: NVIDIA H20
+  gpu_count: 8
+  gpu_mem_gb: 95.0
+  driver: 535.161.08
+status: done
+finished_at: '2026-11-07T15:41:15Z'
+hours: 0.01
+runs:
+- course: L06
+  scenario: baseline
+  seed: 0
+  dir: h20x8/L06/baseline/s0-4c72c9
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: baseline
+  seed: 1
+  dir: h20x8/L06/baseline/s1-1f95b8
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: baseline
+  seed: 2
+  dir: h20x8/L06/baseline/s2-f202e6
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: baseline
+  seed: 3
+  dir: h20x8/L06/baseline/s3-788947
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: baseline
+  seed: 4
+  dir: h20x8/L06/baseline/s4-26b88b
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: data_seed1
+  seed: 0
+  dir: h20x8/L06/data_seed1/s0-c13ee3
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: data_seed1
+  seed: 1
+  dir: h20x8/L06/data_seed1/s1-c3b12a
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: data_seed1
+  seed: 2
+  dir: h20x8/L06/data_seed1/s2-a0ef15
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: excl_10
+  seed: 0
+  dir: h20x8/L06/excl_10/s0-d31aa6
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: excl_10
+  seed: 1
+  dir: h20x8/L06/excl_10/s1-b18c11
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: excl_10
+  seed: 2
+  dir: h20x8/L06/excl_10/s2-059b9f
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: excl_10
+  seed: 3
+  dir: h20x8/L06/excl_10/s3-bedd5e
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: excl_10
+  seed: 4
+  dir: h20x8/L06/excl_10/s4-f0ec02
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: excl_30
+  seed: 0
+  dir: h20x8/L06/excl_30/s0-f709b0
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: excl_30
+  seed: 1
+  dir: h20x8/L06/excl_30/s1-85bde5
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: excl_30
+  seed: 2
+  dir: h20x8/L06/excl_30/s2-a71ab2
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: hard_30
+  seed: 0
+  dir: h20x8/L06/hard_30/s0-08b103
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: hard_30
+  seed: 1
+  dir: h20x8/L06/hard_30/s1-337119
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: hard_30
+  seed: 2
+  dir: h20x8/L06/hard_30/s2-ef9274
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: epochs_4
+  seed: 0
+  dir: h20x8/L06/epochs_4/s0-4218d1
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: epochs_4
+  seed: 1
+  dir: h20x8/L06/epochs_4/s1-3f5b22
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: epochs_4
+  seed: 2
+  dir: h20x8/L06/epochs_4/s2-6e5ac3
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: fault_plain
+  seed: 0
+  dir: h20x8/L06/fault_plain/s0-f5531b
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: fault_plain
+  seed: 1
+  dir: h20x8/L06/fault_plain/s1-868df1
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L06
+  scenario: fault_plain
+  seed: 2
+  dir: h20x8/L06/fault_plain/s2-0a1cb2
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+n_exported: 25
+problems: []
