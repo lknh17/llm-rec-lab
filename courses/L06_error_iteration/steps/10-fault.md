@@ -1,6 +1,6 @@
 <!-- 本页由 python -m labkit docs 从 ../lesson.yaml 和 results/ 生成，不要手改 -->
 
-[← 多训两轮：loss 和指标同步吗](09-epochs.md) · [课程首页](../README.md) · [诊断：训练推理不一致 →](11-diagnose.md)
+[← 多训两轮：更好还是更差](09-epochs.md) · [课程首页](../README.md) · [诊断：训练推理不一致 →](11-diagnose.md)
 
 # 第 10 步 / 共 13 步：离线好好的，上线全错
 
@@ -45,4 +45,4 @@
 
 ---
 
-[← 多训两轮：loss 和指标同步吗](09-epochs.md) · [课程首页](../README.md) · [诊断：训练推理不一致 →](11-diagnose.md)
+[← 多训两轮：更好还是更差](09-epochs.md) · [课程首页](../README.md) · [诊断：训练推理不一致 →](11-diagnose.md)

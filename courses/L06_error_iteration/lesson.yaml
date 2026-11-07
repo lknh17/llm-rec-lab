@@ -206,11 +206,11 @@ steps:
   - excl_10
   compare_to: baseline
   question:
-    text: dev 里 3 条排除型条件样本，全对率（5 种子均值）会怎样？
+    text: dev 里 3 条排除型条件样本（1 条 = 33 个点），全对率（5 种子均值）会怎样？
     options:
-    - 基本没变（±15 个点以内，不到半条样本）
-    - 明显变好（+15 个点以上）
-    - 反而变差
+    - 平均差不到 1 条（±33 个点以内）
+    - 平均多对 1 条以上（+33 个点以上）
+    - 平均少对 1 条以上
   columns:
   - path: summary.dev.by_tag.排除型条件.all_ok
     label: 排除型条件（3 条）
@@ -280,11 +280,11 @@ steps:
   also:
   - excl_10
   question:
-    text: 排除型条件（3 条）的全对率，和基线比会怎样？
+    text: 排除型条件（3 条，1 条 = 33 个点）的全对率，和基线比会怎样？
     options:
-    - 基本没变（±15 个点以内）
-    - 明显变好（+15 个点以上）
-    - 明显变差
+    - 平均差不到 1 条（±33 个点以内）
+    - 平均多对 1 条以上（+33 个点以上）
+    - 平均少对 1 条以上
   columns:
   - path: summary.dev.by_tag.排除型条件.all_ok
     label: 排除型条件（3 条）
@@ -302,33 +302,35 @@ steps:
 - id: p_epochs
   file: 09-epochs
   stage: signals
-  title: 多训两轮：loss 和指标同步吗
-  body: '训练 4 轮（基线 2 轮），每轮结束都在 dev 上算一次 loss，并做一次生成评估。
+  title: 多训两轮：更好还是更差
+  body: '训练 4 轮（基线 2 轮；学习率按总步数线性降到 0，所以 4 轮的前 2 轮学习率比基线高），每轮结束都在 dev 上算一次 loss，并做一次生成评估。
 
     '
   scenarios:
   - epochs_4
   compare_to: baseline
   question:
-    text: 第 2 轮到第 4 轮，dev loss 和 dev 全对率分别怎么走？
+    text: 训练完 4 轮，dev 全对率（3 种子均值）和 2 轮的基线（5 种子均值）比会怎样？
     options:
-    - dev loss 继续降，全对率继续升（同步）
-    - dev loss 上升，全对率基本不变或略降（不同步）
-    - 两者都明显变差
+    - 明显更好（> +6.7 个点）
+    - 差不多（±6.7 个点以内）
+    - 明显更差（< −6.7 个点）
   columns:
   - path: summary.dev.exact_all_ok
     label: dev 全对率（最后一轮）
     pct: true
+    delta: true
   - path: evidence.curves.dev_loss.last
     label: dev loss（最后一轮）
     fmt: .3f
   - path: evidence.curves.train_loss.last
     label: train loss（最后）
-    fmt: .4f
+    fmt: .1e
   charts:
   - metrics
   - loss
-  look: loss 曲线最后两轮 train loss 几乎为 0，dev loss 往哪走？逐轮全对率在运行目录的 metrics.jsonl（dev_exact_all_ok）里。
+  curve: dev_loss
+  look: dev loss 曲线各种子在哪一轮跳高？train loss 到了什么量级？逐轮全对率在运行目录的 metrics.jsonl（dev_exact_all_ok）里。
 - id: p_fault
   file: 10-fault
   stage: fault
