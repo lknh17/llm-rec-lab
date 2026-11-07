@@ -104,6 +104,35 @@ def _downsample(lines: list[str], limit: int) -> list[str]:
     return [lines[i] for i in keep]
 
 
+def _downsample_metrics(lines: list[str], limit: int) -> list[str]:
+    """按指标名分组：稀疏的指标（每轮一次的 dev 评估、dev_loss……）全部保留，只对密集的逐步指标等间隔降采样，
+    并保持原来的行序。整体等间隔降采样会把夹在几千行 train_loss 之间的逐轮评估随机丢掉。"""
+    if len(lines) <= limit:
+        return lines
+    names = []
+    for ln in lines:
+        try:
+            names.append(json.loads(ln).get("name"))
+        except ValueError:
+            names.append(None)
+    count: dict = {}
+    for n in names:
+        count[n] = count.get(n, 0) + 1
+    sparse = {n for n, c in count.items() if c <= max(limit // 20, 1)}
+    dense_idx = [i for i, n in enumerate(names) if n not in sparse]
+    budget = max(limit - (len(lines) - len(dense_idx)), limit // 4)
+    keep = {i for i, n in enumerate(names) if n in sparse}
+    if len(dense_idx) <= budget:
+        keep |= set(dense_idx)
+    else:  # 每个密集指标各自等间隔取，首尾都保留
+        for n in {names[i] for i in dense_idx}:
+            idx = [i for i in dense_idx if names[i] == n]
+            share = max(int(budget * len(idx) / len(dense_idx)), 2)
+            step = len(idx) / share
+            keep |= {idx[int(k * step)] for k in range(share)} | {idx[-1]}
+    return [lines[i] for i in sorted(keep)]
+
+
 def _clean_env(env: dict) -> dict:
     out = {k: v for k, v in env.items() if k in ENV_KEEP}
     out["hostname"] = "<redacted>"
@@ -142,7 +171,7 @@ def export_run(src: Path, dst: Path, extra: list[str] | None = None) -> dict:
             meta["exported"] = True
             text = json.dumps(meta, ensure_ascii=False, indent=2)
         elif f.name == "metrics.jsonl":
-            text = "\n".join(_downsample(text.splitlines(), MAX_METRIC_LINES)) + "\n"
+            text = "\n".join(_downsample_metrics(text.splitlines(), MAX_METRIC_LINES)) + "\n"
         elif f.name == "predictions.jsonl":
             text = "\n".join(text.splitlines()[:MAX_PRED_LINES]) + "\n"
         elif f.name == "resources.json":

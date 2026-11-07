@@ -102,3 +102,18 @@ def test_scan_is_linear_on_long_alnum_runs():
     hits = redact._scan_text(text, [])
     assert time.perf_counter() - t0 < 5
     assert any(h.startswith("邮箱") for h in hits)
+
+
+def test_metrics_downsample_keeps_sparse_rows():
+    """逐轮 dev 评估夹在几千行 train_loss 之间：降采样后一行都不能丢，密集指标首尾保留、总行数受控。"""
+    lines = []
+    for ep in range(1, 5):
+        lines += [json.dumps({"name": "train_loss", "value": 1.0, "step": (ep - 1) * 1000 + s}) for s in range(1, 1001)]
+        lines += [json.dumps({"name": "dev_loss", "value": 0.2, "epoch": ep}),
+                  json.dumps({"name": "dev_exact_all_ok", "value": 0.7, "epoch": ep})]
+    out = redact._downsample_metrics(lines, 2000)
+    rows = [json.loads(x) for x in out]
+    assert len(out) <= 2001
+    assert [r["epoch"] for r in rows if r["name"] == "dev_exact_all_ok"] == [1, 2, 3, 4]
+    steps = [r["step"] for r in rows if r["name"] == "train_loss"]
+    assert steps[0] == 1 and steps[-1] == 4000 and steps == sorted(steps)
