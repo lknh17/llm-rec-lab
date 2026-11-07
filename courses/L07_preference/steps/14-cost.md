@@ -27,9 +27,19 @@ GRPO 每步先生成 32 条回答（8 prompt × 4，最长 160 token，逐 token
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 生成耗时占比 | 偏好阶段秒数 | 其中生成秒数 | SFT 秒数 | 生成耗时占比：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `dpo_rule_excl` | 候选改动 | — | 116 ± 0 | — | 907 ± 2 | — |  |
+| `grpo_excl` | 候选改动 | 40.0% ± 0.2 | 528 ± 5 | 210 ± 3 | 908 ± 6 | s0 40.2% / s1 39.8% / s2 40.0% |  |
+
+![生成耗时占比（均值，误差线为种子间最小到最大）](figures/h20x8-p_cost-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `dpo_rule_excl` [s0](../../../results/h20x8/L07/dpo_rule_excl/s0-e37ea1/) · [s1](../../../results/h20x8/L07/dpo_rule_excl/s1-ba5bcc/) · [s2](../../../results/h20x8/L07/dpo_rule_excl/s2-019344/)
+- `grpo_excl` [s0](../../../results/h20x8/L07/grpo_excl/s0-69954e/) · [s1](../../../results/h20x8/L07/grpo_excl/s1-726303/) · [s2](../../../results/h20x8/L07/grpo_excl/s2-215ff4/)
 
 </details>
 

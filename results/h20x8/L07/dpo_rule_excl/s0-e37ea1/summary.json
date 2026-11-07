@@ -1,0 +1,227 @@
+{
+  "dev": {
+    "n": 30,
+    "format_ok": 0.9333,
+    "format_ok_den": 30,
+    "category_acc": 0.9,
+    "category_acc_den": 30,
+    "point_f1": 0.9558,
+    "point_precision": 1.0,
+    "point_recall": 0.9153,
+    "point_den_gold": 59,
+    "promo_recall": 0.931,
+    "promo_recall_den": 29,
+    "condition_keep": 0.9524,
+    "condition_keep_den": 21,
+    "ungrounded_rate": 0.0294,
+    "ungrounded_den": 136,
+    "exact_all_ok": 0.6,
+    "error_counts": {
+      "多条件": 6,
+      "无依据内容": 4,
+      "格式错误": 2,
+      "漏卖点": 1,
+      "漏条件": 1,
+      "无品类却编造品类": 1,
+      "漏优惠": 1
+    },
+    "gen_seconds": 10.1,
+    "gen_tokens": 1158,
+    "by_tag": {
+      "买赠门槛": {
+        "n": 4,
+        "all_ok": 0.5,
+        "condition_keep": 1.0
+      },
+      "否定句": {
+        "n": 2,
+        "all_ok": 0.0,
+        "condition_keep": null
+      },
+      "多优惠": {
+        "n": 2,
+        "all_ok": 0.0,
+        "condition_keep": 0.5
+      },
+      "干扰词": {
+        "n": 1,
+        "all_ok": 0.0,
+        "condition_keep": null
+      },
+      "排除型条件": {
+        "n": 3,
+        "all_ok": 0.667,
+        "condition_keep": 1.0
+      },
+      "新品类": {
+        "n": 21,
+        "all_ok": 0.667,
+        "condition_keep": 1.0
+      },
+      "无优惠": {
+        "n": 2,
+        "all_ok": 1.0,
+        "condition_keep": null
+      },
+      "无品类": {
+        "n": 1,
+        "all_ok": 0.0,
+        "condition_keep": 1.0
+      },
+      "无条件": {
+        "n": 4,
+        "all_ok": 0.0,
+        "condition_keep": null
+      },
+      "时间条件": {
+        "n": 1,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      },
+      "条件": {
+        "n": 20,
+        "all_ok": 0.8,
+        "condition_keep": 0.9524
+      },
+      "需求示例": {
+        "n": 1,
+        "all_ok": 0.0,
+        "condition_keep": 1.0
+      }
+    }
+  },
+  "synth_valid": {
+    "n": 60,
+    "format_ok": 0.8667,
+    "format_ok_den": 60,
+    "category_acc": 0.7333,
+    "category_acc_den": 60,
+    "point_f1": 0.9185,
+    "point_precision": 1.0,
+    "point_recall": 0.8492,
+    "point_den_gold": 126,
+    "promo_recall": 0.9808,
+    "promo_recall_den": 52,
+    "condition_keep": 0.9459,
+    "condition_keep_den": 37,
+    "ungrounded_rate": 0.0383,
+    "ungrounded_den": 261,
+    "exact_all_ok": 0.4167,
+    "error_counts": {
+      "多条件": 15,
+      "无依据内容": 10,
+      "无品类却编造品类": 8,
+      "格式错误": 8,
+      "漏卖点": 3,
+      "漏条件": 1
+    },
+    "gen_seconds": 14.5,
+    "gen_tokens": 2092,
+    "by_tag": {
+      "far_condition": {
+        "n": 1,
+        "all_ok": 1.0,
+        "condition_keep": 1.0
+      },
+      "multi_promo": {
+        "n": 10,
+        "all_ok": 0.7,
+        "condition_keep": 0.9474
+      },
+      "negation": {
+        "n": 4,
+        "all_ok": 0.0,
+        "condition_keep": null
+      },
+      "no_category": {
+        "n": 8,
+        "all_ok": 0.0,
+        "condition_keep": 1.0
+      },
+      "no_condition": {
+        "n": 14,
+        "all_ok": 0.0,
+        "condition_keep": null
+      },
+      "no_promo": {
+        "n": 14,
+        "all_ok": 0.643,
+        "condition_keep": null
+      },
+      "single_promo": {
+        "n": 9,
+        "all_ok": 0.889,
+        "condition_keep": 0.8889
+      }
+    }
+  },
+  "synth_excl": {
+    "n": 60,
+    "format_ok": 0.9833,
+    "format_ok_den": 60,
+    "category_acc": 0.9833,
+    "category_acc_den": 60,
+    "point_f1": 0.9957,
+    "point_precision": 1.0,
+    "point_recall": 0.9915,
+    "point_den_gold": 117,
+    "promo_recall": 0.9833,
+    "promo_recall_den": 60,
+    "condition_keep": 0.9833,
+    "condition_keep_den": 60,
+    "ungrounded_rate": 0.0,
+    "ungrounded_den": 293,
+    "exact_all_ok": 0.9833,
+    "error_counts": {
+      "格式错误": 1
+    },
+    "gen_seconds": 10.3,
+    "gen_tokens": 2201,
+    "by_tag": {
+      "排除型条件": {
+        "n": 60,
+        "all_ok": 0.983,
+        "condition_keep": 0.9833
+      }
+    }
+  },
+  "train": {
+    "steps": 1000,
+    "train_tokens": 2462432,
+    "supervised_tokens": 257366,
+    "seconds": 906.0,
+    "lora_B_norm_before": 0.0,
+    "lora_B_norm_after": 7.467706507566977,
+    "base_weight_probe_before": 1.0911579132080078,
+    "base_weight_probe_after": 1.0911579132080078
+  },
+  "pref": {
+    "result": {
+      "method": "dpo",
+      "steps": 64,
+      "seconds": 115.3,
+      "tokens": 319224,
+      "beta": 0.1
+    },
+    "pairs": {
+      "source": "rule",
+      "prompts": 512,
+      "kinds": {
+        "add_ungrounded": 173,
+        "drop_condition": 339
+      },
+      "gen_seconds": 0.0,
+      "pairs": 512,
+      "pair_yield": 1.0,
+      "flipped": false
+    }
+  },
+  "headline": {
+    "dev_exact_all_ok": 0.6,
+    "dev_condition_keep": 0.9524,
+    "dev_ungrounded_rate": 0.0294,
+    "excl_exact_all_ok": 0.9833,
+    "excl_condition_keep": 0.9833,
+    "synth_exact_all_ok": 0.4167
+  }
+}

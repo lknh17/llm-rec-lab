@@ -28,9 +28,23 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | dev 全对率 | 排除型 条件保留率 | 合成验证全对率 | rejected 的 Δlogπ（末步） | chosen 的 Δlogπ（末步） | dev 全对率：与 `dpo_rule_excl` 差 | dev 全对率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - | - |
+| `dpo_rule_excl` | 候选改动 | 21.1% ± 33.7 | 32.8% ± 56.8 | 17.2% ± 21.8 | -107.7 ± +7.5 | -9.1 ± +6.9 | — | s0 60.0% / s1 3.3% / s2 0.0% |  |
+| `baseline` | 基线 | 78.9% ± 5.1 | 60.6% ± 26.2 | 100.0% ± 0.0 | — | — | +57.8 个点 | s0 83.3% / s1 73.3% / s2 80.0% | 通过 |
+| `dpo_beta_001` | 候选改动 | 0.0% ± 0.0 | 0.0% ± 0.0 | 0.0% ± 0.0 | -654.4 ± +66.3 | -154.8 ± +46.9 | -21.1 个点 | s0 0.0% / s1 0.0% / s2 0.0% |  |
+
+![dev 全对率（均值，误差线为种子间最小到最大）](figures/h20x8-p_beta-metrics.svg)
+
+![rejected 的 log π − log π_ref（均值，阴影为种子间范围）](figures/h20x8-p_beta-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `dpo_rule_excl` [s0](../../../results/h20x8/L07/dpo_rule_excl/s0-e37ea1/) · [s1](../../../results/h20x8/L07/dpo_rule_excl/s1-ba5bcc/) · [s2](../../../results/h20x8/L07/dpo_rule_excl/s2-019344/)
+- `baseline` [s0](../../../results/h20x8/L07/baseline/s0-606cc1/) · [s1](../../../results/h20x8/L07/baseline/s1-4e1f34/) · [s2](../../../results/h20x8/L07/baseline/s2-c2b0c4/)
+- `dpo_beta_001` [s0](../../../results/h20x8/L07/dpo_beta_001/s0-e24144/) · [s1](../../../results/h20x8/L07/dpo_beta_001/s1-d2404f/) · [s2](../../../results/h20x8/L07/dpo_beta_001/s2-833e43/)
 
 </details>
 

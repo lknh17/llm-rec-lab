@@ -27,13 +27,13 @@
 
 <details><summary>线索 2</summary>
 
-看合成验证集的分项：格式合法率 〔待 H20 生成〕、卖点 F1 〔待 H20 生成〕、条件保留率 〔待 H20 生成〕。如果是学习率或 β 把模型弄坏，坏的应该不止一项。
+看合成验证集的分项：格式合法率 2% ± 2%、卖点 F1 3% ± 3%、条件保留率 0% ± 0%。如果是学习率或 β 把模型弄坏，坏的应该不止一项。
 
 </details>
 
 <details><summary>线索 3</summary>
 
-看偏好准确率：末步 〔待 H20 生成〕。模型完全学会了你给它的偏好。那份偏好本身对吗？打开运行目录的 trace.json，看 pairs 里 chosen 的 condition 字段。
+看偏好准确率：末步 1.00 ± 0.00。模型完全学会了你给它的偏好。那份偏好本身对吗？打开运行目录的 trace.json，看 pairs 里 chosen 的 condition 字段。
 
 </details>
 
@@ -50,9 +50,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 合成验证 条件保留率 | 合成验证 卖点 F1 | 合成验证 格式合法率 | dev 条件保留率 | 合成验证 条件保留率：与 `fault_flip` 差 | 合成验证 条件保留率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `fault_flip` | 教学故障 | 0.0% ± 0.0 | 3.0% ± 3.0 | 1.7% ± 1.7 | 0.0% ± 0.0 | — | s0 0.0% / s1 0.0% / s2 0.0% | 通过 |
+| `baseline` | 基线 | 100.0% ± 0.0 | 100.0% ± 0.0 | 100.0% ± 0.0 | 87.3% ± 7.3 | +100.0 个点 | s0 100.0% / s1 100.0% / s2 100.0% | 通过 |
+
+![合成验证 条件保留率（均值，误差线为种子间最小到最大）](figures/h20x8-diagnose-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `fault_flip` [s0](../../../results/h20x8/L07/fault_flip/s0-4190ee/) · [s1](../../../results/h20x8/L07/fault_flip/s1-cbf11d/) · [s2](../../../results/h20x8/L07/fault_flip/s2-1291f3/)
+- `baseline` [s0](../../../results/h20x8/L07/baseline/s0-606cc1/) · [s1](../../../results/h20x8/L07/baseline/s1-4e1f34/) · [s2](../../../results/h20x8/L07/baseline/s2-c2b0c4/)
 
 </details>
 

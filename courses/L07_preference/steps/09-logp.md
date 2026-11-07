@@ -26,9 +26,17 @@ DPO 的目标是"chosen 相对参考模型涨得比 rejected 多"。训练中每
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 0 / 3 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 3 / 3 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | chosen 的 Δlogπ（末步） | rejected 的 Δlogπ（末步） | 偏好准确率（末步） | 排除型 条件保留率 | chosen 的 Δlogπ（末步）：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `dpo_rule_excl` | 候选改动 | -9.06 ± +6.94 | -107.72 ± +7.50 | 1.00 ± 0.00 | 32.8% ± 56.8 | s0 -8.16 / s1 -2.62 / s2 -16.41 |  |
+
+![chosen 的 log π − log π_ref、rejected 的 log π − log π_ref（均值，阴影为种子间范围）](figures/h20x8-p_logp-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `dpo_rule_excl` [s0](../../../results/h20x8/L07/dpo_rule_excl/s0-e37ea1/) · [s1](../../../results/h20x8/L07/dpo_rule_excl/s1-ba5bcc/) · [s2](../../../results/h20x8/L07/dpo_rule_excl/s2-019344/)
 
 </details>
 

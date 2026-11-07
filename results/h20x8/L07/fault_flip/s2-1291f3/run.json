@@ -1,0 +1,253 @@
+{
+  "run_id": "h20x8.L07.fault_flip.s2-1291f3",
+  "course_id": "L07",
+  "project": "adpref",
+  "entry": "adpref.experiment",
+  "profile": "h20x8",
+  "scenario": "fault_flip",
+  "role": "fault",
+  "title": "规则偏好对的 chosen / rejected 对调（\"删掉条件\"成了被偏好的一方）",
+  "seed": 2,
+  "variant": "fault_flip",
+  "config_hash": "1291f3dfa73c",
+  "code_hash": "ea93886d947c",
+  "git": {
+    "commit": "823a2d65c9ec84a3f48f386fd8cd9f5e53768a28",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "pref_method": "dpo",
+    "pref_flip": true
+  },
+  "param_affects": {
+    "train_size": "data",
+    "hard_ratio": "data",
+    "exclusion_ratio": "data",
+    "data_seed": "data",
+    "prompt_mode": "data",
+    "supervision": "data",
+    "max_len": "data",
+    "truncation": "data",
+    "infer_template": "infer",
+    "model": "model",
+    "train_mode": "model",
+    "lora_r": "model",
+    "lora_alpha": "model",
+    "lora_targets": "model",
+    "lr": "train",
+    "epochs": "train",
+    "batch_size": "train",
+    "max_steps": "train",
+    "seed": "train",
+    "eval_each_epoch": "eval",
+    "max_new_tokens": "infer",
+    "final_test": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime",
+    "grad_checkpointing": "runtime",
+    "pref_method": "train",
+    "pref_pairs": "data",
+    "pref_flip": "data",
+    "pref_size": "data",
+    "pref_exclusion_ratio": "data",
+    "pref_group": "train",
+    "pref_temperature": "train",
+    "pref_lr": "train",
+    "pref_batch_size": "train",
+    "pref_epochs": "train",
+    "dpo_beta": "train",
+    "grpo_kl": "train",
+    "reward": "train"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794060068.274809,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794060068.4677546,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794060081.2681966,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794060146.1821592,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794061232.8008642,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794061354.8096395,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794060068.274809,
+  "budget": {
+    "max_minutes": 180.0
+  },
+  "expect": [
+    "summary.synth_valid.condition_keep < base.summary.synth_valid.condition_keep - 0.3"
+  ],
+  "slot": "gpu5-0",
+  "started_at": 1794060068.4677558,
+  "data": {
+    "kind": "教学合成训练数据 + 人工标注评估集",
+    "train": {
+      "source": "模板生成器 v2",
+      "size": 4000,
+      "seed": 0,
+      "kinds": {
+        "no_condition": 1210,
+        "no_promo": 1073,
+        "single_promo": 1094,
+        "far_condition": 182,
+        "negation": 124,
+        "no_category": 156,
+        "multi_promo": 161
+      },
+      "hash": "43c445318a1f"
+    },
+    "pref": {
+      "size": 512,
+      "seed": 7000,
+      "exclusion_ratio": 0.0,
+      "kinds": {
+        "no_condition": 147,
+        "negation": 14,
+        "single_promo": 135,
+        "multi_promo": 16,
+        "no_category": 25,
+        "no_promo": 161,
+        "far_condition": 14
+      }
+    },
+    "eval": {
+      "dev": {
+        "n": 30,
+        "hash": "24cb27f1fdca"
+      },
+      "synth_valid": {
+        "n": 60
+      },
+      "synth_excl": {
+        "n": 60,
+        "seed": 20000,
+        "source": "排除型条件合成样本（SFT 训练集里没有）"
+      }
+    },
+    "prompt_version": 2,
+    "tokenized": {
+      "examples": 4000,
+      "tokens_total": 1231216,
+      "supervised_tokens_total": 128683,
+      "zero_supervision_examples": 0
+    }
+  },
+  "model": {
+    "base": "Qwen/Qwen2.5-7B-Instruct",
+    "path": "<assets>/models/Qwen/Qwen2.5-7B-Instruct",
+    "dtype": "torch.bfloat16",
+    "device": "cuda",
+    "train_mode": "lora",
+    "lora": {
+      "r": 16,
+      "alpha": 32,
+      "targets": "attn_mlp"
+    },
+    "params": {
+      "trainable": 40370176,
+      "total": 7655986688,
+      "trainable_pct": 0.527,
+      "trainable_tensors": 392,
+      "examples": [
+        "base_model.model.model.layers.0.self_attn.q_proj.lora_A.default.weight",
+        "base_model.model.model.layers.0.self_attn.q_proj.lora_B.default.weight",
+        "base_model.model.model.layers.0.self_attn.k_proj.lora_A.default.weight",
+        "base_model.model.model.layers.0.self_attn.k_proj.lora_B.default.weight",
+        "base_model.model.model.layers.0.self_attn.v_proj.lora_A.default.weight",
+        "base_model.model.model.layers.0.self_attn.v_proj.lora_B.default.weight"
+      ]
+    },
+    "pref_lora": {
+      "r": 16,
+      "targets": "attn_mlp"
+    }
+  },
+  "train": {
+    "examples": 4000,
+    "steps_per_epoch": 500,
+    "planned_steps": 1000,
+    "warmup_steps": 50,
+    "sft": {
+      "steps": 1000,
+      "train_tokens": 2462432,
+      "supervised_tokens": 257366,
+      "seconds": 902.8,
+      "lora_B_norm_before": 0.0,
+      "lora_B_norm_after": 6.4100262484973465,
+      "base_weight_probe_before": 1.0911579132080078,
+      "base_weight_probe_after": 1.0911579132080078
+    },
+    "pref": {
+      "method": "dpo",
+      "steps": 64,
+      "seconds": 115.1,
+      "tokens": 315541,
+      "beta": 0.1
+    }
+  },
+  "artifacts": {
+    "sft_adapter": {
+      "kind": "lora_adapter",
+      "bytes": 161539718,
+      "note": "SFT 的 LoRA 适配器，基础模型 Qwen/Qwen2.5-7B-Instruct"
+    },
+    "adapter": {
+      "kind": "lora_adapter",
+      "bytes": 161539718,
+      "note": "偏好阶段的 LoRA，加载前要先合并 sft_adapter"
+    }
+  },
+  "pref": {
+    "pairs": {
+      "source": "rule",
+      "prompts": 512,
+      "kinds": {
+        "add_ungrounded": 328,
+        "drop_condition": 184
+      },
+      "gen_seconds": 0.0,
+      "pairs": 512,
+      "pair_yield": 1.0,
+      "flipped": true
+    },
+    "planned_steps": 64,
+    "n_pairs": 512
+  },
+  "checks": {
+    "reload_identical": "3/4"
+  },
+  "ended_at": 1794061354.809642,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.synth_valid.condition_keep < base.summary.synth_valid.condition_keep - 0.3",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

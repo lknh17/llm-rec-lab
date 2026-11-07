@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 排除型 条件保留率 | dev 无依据率 | 无信号组比例 | dev 全对率 | 排除型 条件保留率：与 `grpo_excl` 差 | 排除型 条件保留率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `grpo_excl` | 候选改动 | 100.0% ± 0.0 | 0.5% ± 0.4 | 98.3% ± 0.8 | 81.1% ± 5.1 | — | s0 100.0% / s1 100.0% / s2 100.0% |  |
+| `baseline` | 基线 | 60.6% ± 26.2 | 1.0% ± 0.4 | — | 78.9% ± 5.1 | -39.4 个点 | s0 90.0% / s1 51.7% / s2 40.0% | 通过 |
+| `grpo_recall_excl` | 候选改动 | 61.1% ± 15.8 | 0.7% ± 0.7 | 99.3% ± 0.6 | 76.7% ± 0.0 | -38.9 个点 | s0 45.0% / s1 61.7% / s2 76.7% |  |
+
+![排除型 条件保留率（均值，误差线为种子间最小到最大）](figures/h20x8-p_reward-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `grpo_excl` [s0](../../../results/h20x8/L07/grpo_excl/s0-69954e/) · [s1](../../../results/h20x8/L07/grpo_excl/s1-726303/) · [s2](../../../results/h20x8/L07/grpo_excl/s2-215ff4/)
+- `baseline` [s0](../../../results/h20x8/L07/baseline/s0-606cc1/) · [s1](../../../results/h20x8/L07/baseline/s1-4e1f34/) · [s2](../../../results/h20x8/L07/baseline/s2-c2b0c4/)
+- `grpo_recall_excl` [s0](../../../results/h20x8/L07/grpo_recall_excl/s0-c7f777/) · [s1](../../../results/h20x8/L07/grpo_recall_excl/s1-5ab1f1/) · [s2](../../../results/h20x8/L07/grpo_recall_excl/s2-b85ca1/)
 
 </details>
 

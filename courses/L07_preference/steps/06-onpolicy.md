@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 偏好对产出率 | 采样平均奖励 | dev 全对率 | 排除型 条件保留率 | dev 全对率：与 `baseline` 差 | dev 全对率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | — | — | 78.9% ± 5.1 | 60.6% ± 26.2 | — | s0 83.3% / s1 73.3% / s2 80.0% | 通过 |
+| `dpo_rule` | 候选改动 | 100.0% ± 0.0 | — | 1.1% ± 1.9 | 2.8% ± 4.8 | -77.8 个点 | s0 0.0% / s1 0.0% / s2 3.3% | 通过 |
+| `dpo_onpolicy` | 候选改动 | 0.1% ± 0.1 | 1.000 ± 0.000 | 74.4% ± 5.1 | 72.2% ± 26.8 | -4.4 个点 | s0 80.0% / s1 70.0% / s2 73.3% |  |
+
+![偏好对产出率（均值，误差线为种子间最小到最大）](figures/h20x8-p_onpolicy-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L07/baseline/s0-606cc1/) · [s1](../../../results/h20x8/L07/baseline/s1-4e1f34/) · [s2](../../../results/h20x8/L07/baseline/s2-c2b0c4/)
+- `dpo_rule` [s0](../../../results/h20x8/L07/dpo_rule/s0-889743/) · [s1](../../../results/h20x8/L07/dpo_rule/s1-2adedb/) · [s2](../../../results/h20x8/L07/dpo_rule/s2-d63825/)
+- `dpo_onpolicy` [s0](../../../results/h20x8/L07/dpo_onpolicy/s0-54bd3f/) · [s1](../../../results/h20x8/L07/dpo_onpolicy/s1-351b2c/) · [s2](../../../results/h20x8/L07/dpo_onpolicy/s2-36ceeb/)
 
 </details>
 

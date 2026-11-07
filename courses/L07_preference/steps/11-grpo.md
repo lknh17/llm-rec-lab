@@ -27,9 +27,21 @@ GRPO：每步 8 个 prompt，每个采样 G = 4 条，用字段奖励打分；�
 
 ## 实测
 
-<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 无信号组比例 | 采样奖励（末步） | dev 全对率 | 排除型 条件保留率 | dev 全对率：与 `baseline` 差 | dev 全对率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | — | — | 78.9% ± 5.1 | 60.6% ± 26.2 | — | s0 83.3% / s1 73.3% / s2 80.0% | 通过 |
+| `grpo` | 候选改动 | 99.9% ± 0.1 | 1.000 ± 0.000 | 77.8% ± 6.9 | 71.1% ± 27.5 | -1.1 个点 | s0 83.3% / s1 80.0% / s2 70.0% |  |
+
+![无信号组比例（均值，误差线为种子间最小到最大）](figures/h20x8-p_grpo-metrics.svg)
+
+![GRPO 无信号组比例（组内奖励全相同）（均值，阴影为种子间范围）](figures/h20x8-p_grpo-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L07/baseline/s0-606cc1/) · [s1](../../../results/h20x8/L07/baseline/s1-4e1f34/) · [s2](../../../results/h20x8/L07/baseline/s2-c2b0c4/)
+- `grpo` [s0](../../../results/h20x8/L07/grpo/s0-946274/) · [s1](../../../results/h20x8/L07/grpo/s1-5e6351/) · [s2](../../../results/h20x8/L07/grpo/s2-26721e/)
 
 </details>
 
