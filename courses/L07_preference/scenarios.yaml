@@ -1,0 +1,75 @@
+course: L07
+title: L07 偏好优化：在 SFT 模型上做 DPO 与 GRPO（偏好对从哪来、参考模型、β、可验证奖励、奖励覆盖不到的维度）
+project: adpref
+entry: adpref.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，Qwen2.5-7B-Instruct（bf16）。先做与 L05 基线同配置的 SFT（4000 条，2 轮），合并后挂新 LoRA 做偏好阶段（512 个新 prompt）
+    base: {model: Qwen/Qwen2.5-7B-Instruct, train_size: 4000, device: cuda, max_minutes: 180}
+    seeds: [0, 1, 2]
+    assets: [qwen2.5-7b]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：0.5B、16 条 SFT 样本 2 步、8 个偏好 prompt，只验证流程能跑通（结果没有教学意义，不检查断言）
+    base: {train_size: 16, epochs: 1, max_steps: 2, max_new_tokens: 64, max_minutes: 15, pref_size: 8, pref_group: 2, pref_batch_size: 4}
+    seeds: [0]
+    skip_expect: true
+    assets: [qwen2.5-0.5b]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 只做 SFT（与 L05 基线同配置），偏好阶段的起点和对照
+    params: {pref_method: none}
+    expect:
+      - "summary.dev.exact_all_ok > 0.5"
+
+  # ---------- DPO：偏好对从哪里来 ----------
+  - id: dpo_rule
+    role: variant
+    title: DPO，规则构造的偏好对（删条件 / 塞无依据卖点），prompt 与 SFT 训练集同分布
+    params: {pref_method: dpo, pref_pairs: rule}
+    expect:
+      - "meta.pref.pairs.pairs == 512"
+  - id: dpo_onpolicy
+    role: variant
+    title: DPO，在线采样的偏好对（标准答案 vs SFT 自己采样出的最差回答），prompt 同分布
+    params: {pref_method: dpo, pref_pairs: onpolicy}
+  - id: dpo_rule_excl
+    role: variant
+    title: DPO，规则偏好对，prompt 里一半是排除型条件（SFT 没见过的句式）
+    params: {pref_method: dpo, pref_pairs: rule, pref_exclusion_ratio: 0.5}
+  - id: dpo_onpolicy_excl
+    role: variant
+    title: DPO，在线采样偏好对，prompt 里一半是排除型条件
+    params: {pref_method: dpo, pref_pairs: onpolicy, pref_exclusion_ratio: 0.5}
+
+  # ---------- β：允许偏离参考模型多远 ----------
+  - id: dpo_beta_001
+    role: variant
+    title: 同 dpo_rule_excl，β 从 0.1 降到 0.01（几乎不约束偏离参考模型）
+    params: {pref_method: dpo, pref_pairs: rule, pref_exclusion_ratio: 0.5, dpo_beta: 0.01}
+
+  # ---------- GRPO：在线采样 + 可验证奖励 ----------
+  - id: grpo
+    role: variant
+    title: GRPO，字段奖励，prompt 同分布（每个 prompt 采样 4 条，组内归一化优势）
+    params: {pref_method: grpo, reward: field}
+  - id: grpo_excl
+    role: variant
+    title: GRPO，字段奖励，prompt 里一半是排除型条件
+    params: {pref_method: grpo, reward: field, pref_exclusion_ratio: 0.5}
+  - id: grpo_recall_excl
+    role: variant
+    title: GRPO，奖励只看召回（不看条件、不罚多写），prompt 里一半是排除型条件
+    params: {pref_method: grpo, reward: recall_only, pref_exclusion_ratio: 0.5}
+
+  # ---------- 教学故障：偏好对方向写反 ----------
+  - id: fault_flip
+    role: fault
+    title: 规则偏好对的 chosen / rejected 对调（"删掉条件"成了被偏好的一方）
+    params: {pref_method: dpo, pref_pairs: rule, pref_flip: true}
+    expect:
+      - "summary.synth_valid.condition_keep < base.summary.synth_valid.condition_keep - 0.3"

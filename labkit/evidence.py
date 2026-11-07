@@ -23,6 +23,7 @@ MAX_POINTS = 200
 MAX_BYTES = 200 * 1024
 VERSION = 1
 CURVES = ("train_loss", "grad_norm", "lr", "tokens_per_s", "dev_loss", "valid_auc", "valid_logloss")
+MAX_CURVES = 24
 GB = 1024 ** 3
 
 
@@ -64,7 +65,9 @@ def curves(rows: list[dict]) -> dict[str, list[list[float]]]:
     for r in rows:
         name, v = r.get("name"), r.get("value")
         x = r.get("step") if r.get("step") is not None else r.get("epoch")
-        if name in CURVES and isinstance(v, (int, float)) and x is not None:
+        # 已知曲线之外，项目自己记的数值指标（dpo_loss、grpo_reward、valid_loss……）也一并收进来
+        if isinstance(name, str) and isinstance(v, (int, float)) and not isinstance(v, bool) and x is not None \
+                and (name in CURVES or len(out) < MAX_CURVES):
             out.setdefault(name, []).append([x, _round(float(v))])
         if name == "train_loss":
             for extra in ("grad_norm", "lr", "tokens_per_s"):
@@ -166,6 +169,25 @@ def build(run_dir: Path) -> dict:
                     for k in ("tokens_total", "supervised_tokens_total", "zero_supervision_examples", "prompt_tokens")},
            "curves": curves(rows), "throughput": throughput(rows, meta), "memory": memory(meta, resources),
            "metrics": {"headline": summary.get("headline"), "dev": keep_dev, **_display(summary)}}
+    pref = _pref(summary)
+    if pref:
+        out["pref"] = pref
+    return out
+
+
+PREF_KEYS = ("method", "steps", "seconds", "gen_seconds", "train_seconds", "gen_share", "zero_adv_frac", "tokens", "beta",
+             "reward", "kl_coef")
+PAIR_KEYS = ("source", "prompts", "pairs", "pair_yield", "group_all_correct_frac", "sample_reward_mean", "gen_seconds",
+             "flipped", "kinds")
+
+
+def _pref(summary: dict) -> dict:
+    """偏好阶段（adpref）：方法、步数、耗时与生成占比、偏好对数量与产出率。"""
+    p = summary.get("pref") if isinstance(summary.get("pref"), dict) else {}
+    res, pairs = p.get("result") or {}, p.get("pairs") or {}
+    out = {k: res[k] for k in PREF_KEYS if k in res}
+    if pairs:
+        out["pairs"] = {k: pairs[k] for k in PAIR_KEYS if k in pairs}
     return out
 
 

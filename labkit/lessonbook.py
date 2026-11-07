@@ -291,12 +291,18 @@ def _step_figures(book: Book, step: dict, profile: str, want: dict[Path, str]) -
             title = f"{c['label']}（均值，误差线为种子间最小到最大）"
             svg = figures.bars(rows, title, sub, pct=bool(c.get("pct")))
         elif chart == "loss":
+            curves = step.get("curve", "train_loss")
+            curves = [curves] if isinstance(curves, str) else list(curves)
             series = []
             for i, sid in enumerate(sids):
-                runs = [book.evidence(r).get("curves", {}).get("train_loss") or [] for r in got.get(sid) or []]
-                if any(runs):
-                    series.append({"label": sid, "color": figures.PALETTE[i % len(figures.PALETTE)], "runs": runs})
-            title = "train loss（均值，阴影为种子间范围）"
+                for j, curve in enumerate(curves):
+                    runs = [book.evidence(r).get("curves", {}).get(curve) or [] for r in got.get(sid) or []]
+                    if any(runs):
+                        label = sid if len(curves) == 1 else f"{sid} · {curve}"
+                        k = i * len(curves) + j  # 颜色按位置固定：某个场景缺结果时，其他场景的颜色不变
+                        series.append({"label": label, "color": figures.PALETTE[k % len(figures.PALETTE)], "runs": runs})
+            names = "、".join(figures.CURVE_TITLES.get(c, c) for c in curves)
+            title = f"{names}（均值，阴影为种子间范围）"
             svg = figures.lines(series, title, sub)
         elif chart == "memory":
             mem = []

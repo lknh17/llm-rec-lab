@@ -33,27 +33,52 @@ def _files(project_dir: Path) -> list[Path]:
     return out
 
 
+def deps_of(project_dir: Path) -> list[str]:
+    """项目依赖的其他项目：projects/<项目>/deps.txt，每行一个项目名（例如 adpref 复用 adextract 的数据和 SFT）。
+    依赖的代码一起计入代码哈希、一起拍快照——依赖改了，结果同样标为过期。"""
+    f = Path(project_dir) / "deps.txt"
+    if not f.exists():
+        return []
+    return [ln.strip() for ln in f.read_text().splitlines() if ln.strip() and not ln.startswith("#")]
+
+
+def _hash_files(project_dir: Path) -> dict[str, str]:
+    return {str(p.relative_to(project_dir)): hashlib.sha256(p.read_bytes()).hexdigest()[:16] for p in _files(project_dir)}
+
+
 def tree_manifest(project_dir: Path) -> dict:
-    files = {}
-    for p in _files(project_dir):
-        files[str(p.relative_to(project_dir))] = hashlib.sha256(p.read_bytes()).hexdigest()[:16]
-    digest = hashlib.sha256("\n".join(f"{k}:{v}" for k, v in sorted(files.items())).encode()).hexdigest()[:12]
-    return {"files": files, "code_hash": digest}
+    files = _hash_files(project_dir)
+    lines = [f"{k}:{v}" for k, v in sorted(files.items())]
+    out: dict = {"files": files}
+    deps = deps_of(project_dir)
+    if deps:  # 没有依赖的项目哈希算法不变，已有结果的代码哈希不受影响
+        out["deps"] = {}
+        for d in deps:
+            dep_files = _hash_files(Path(project_dir).parent / d)
+            out["deps"][d] = hashlib.sha256("\n".join(f"{k}:{v}" for k, v in sorted(dep_files.items())).encode()).hexdigest()[:12]
+            lines += [f"{d}/{k}:{v}" for k, v in sorted(dep_files.items())]
+    out["code_hash"] = hashlib.sha256("\n".join(lines).encode()).hexdigest()[:12]
+    return out
 
 
 def project_dir(project: str) -> Path:
     return paths.PROJECTS_DIR / project
 
 
-def snapshot(project: str, run_dir: Path) -> dict:
-    src = project_dir(project)
-    dest = run_dir / "code" / project
+def _copy_tree(src: Path, dest: Path) -> None:
     if dest.exists():
         shutil.rmtree(dest)
     for p in _files(src):
         target = dest / p.relative_to(src)
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(p, target)
+
+
+def snapshot(project: str, run_dir: Path) -> dict:
+    src = project_dir(project)
+    _copy_tree(src, run_dir / "code" / project)
+    for d in deps_of(src):
+        _copy_tree(project_dir(d), run_dir / "code" / d)
     manifest = tree_manifest(src)
     manifest["project"] = project
     return manifest

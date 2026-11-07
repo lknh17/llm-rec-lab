@@ -1,0 +1,41 @@
+<!-- 本页由 python -m labkit docs 从 ../lesson.yaml 和 results/ 生成，不要手改 -->
+
+[← 在线采样 + 排除型 prompt](08-onpolicy-excl.md) · [课程首页](../README.md) · [β 从 0.1 降到 0.01 →](10-beta.md)
+
+# 第 9 步 / 共 17 步：chosen 的概率涨了吗
+
+> 阶段 4 / 7：**DPO：参考模型与 β** · 场景：`dpo_rule_excl`
+
+DPO 的目标是"chosen 相对参考模型涨得比 rejected 多"。训练中每步记录了 chosen 和 rejected 的 log π − log π_ref（序列对数概率，回答所有 token 求和）。
+
+## 这一步跑了什么
+
+| 场景 | 作用 | 说明 | 相对基线改了什么 | 种子（H20） |
+| - | - | - | - | - |
+| `dpo_rule_excl` | 本步 | DPO，规则偏好对，prompt 里一半是排除型条件（SFT 没见过的句式） | `pref_method=dpo`, `pref_pairs=rule`, `pref_exclusion_ratio=0.5` | 3 |
+
+## 先预测
+
+**训练结束时，chosen 的 log π − log π_ref 大约是？**
+
+- **A.** 明显上升（> +1）
+- **B.** 基本不变（−1 到 +1）
+- **C.** 下降（< −1）
+
+> 先选定一个（记下来），再展开下面的实测。dev 差异小于 6.7 个点（两条样本）、排除型合成集差异小于 5 个点（三条样本）或小于种子间波动，都按“差不多”算。
+
+## 实测
+
+<details><summary>展开实测：H20 · Qwen2.5-7B · SFT + 偏好阶段 · 每个场景 3 种子（已有 0 / 3 个运行）</summary>
+
+_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+
+</details>
+
+## 看完实测再想一步
+
+两条曲线谁动得多？偏好准确率到 1 之后，两条曲线还在往哪走？
+
+---
+
+[← 在线采样 + 排除型 prompt](08-onpolicy-excl.md) · [课程首页](../README.md) · [β 从 0.1 降到 0.01 →](10-beta.md)

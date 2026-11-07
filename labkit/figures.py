@@ -27,6 +27,11 @@ ROLE_COLOR = {"reference": C["muted"], "baseline": C["primary"], "variant": C["b
               "fix": C["green"], "final": C["text"]}
 PALETTE = [C["primary"], C["orange"], C["red"], C["green"], C["blue"], "#7048E8", "#0C8599"]
 METRIC = {"adextract": ("dev.exact_all_ok", "dev 全对率")}
+CURVE_TITLES = {"train_loss": "train loss", "dev_loss": "dev loss", "dpo_loss": "DPO loss",
+                "dpo_reward_acc": "DPO 偏好准确率（隐式奖励 chosen > rejected 的比例）", "dpo_margin": "DPO 隐式奖励差",
+                "chosen_logp_delta": "chosen 的 log π − log π_ref", "rejected_logp_delta": "rejected 的 log π − log π_ref",
+                "grpo_reward": "GRPO 采样奖励均值", "grpo_zero_adv_frac": "GRPO 无信号组比例（组内奖励全相同）",
+                "grpo_kl": "GRPO 相对参考模型的 KL", "grpo_resp_len": "GRPO 回答长度（token）"}
 LOSS_SCENES = {"adextract": ["baseline", "all_tokens", "fault_truncation", "lr_5e-5", "lr_1e-3"]}
 MEMORY_SCENES = {"adextract": ["base_model", "lora_qv", "lora_attn", "baseline", "lora_r64"]}
 PARAM_SCENES = {"adextract": ["lora_qv", "lora_attn", "lora_r4", "lora_r8", "baseline", "lora_r64"]}
@@ -151,6 +156,9 @@ def lines(series: list[dict], title: str, subtitle: str, ylabel: str = "") -> st
     ally = [p[1] for s in series for r in s["runs"] for p in r]
     x0, x1 = min(allx), max(allx) or 1
     y0, y1 = 0.0, _nice(max(ally))
+    if min(ally) < 0:  # 对数概率变化这类曲线有负值：下界取对称的整数刻度
+        y0 = -_nice(-min(ally))
+        y1 = _nice(max(ally)) if max(ally) > 0 else 0.0
     sx = lambda v: 70 + plot_w * (v - x0) / ((x1 - x0) or 1)  # noqa: E731
     sy = lambda v: PAD_T + plot_h * (1 - (v - y0) / ((y1 - y0) or 1))  # noqa: E731
     out = []

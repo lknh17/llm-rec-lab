@@ -14,8 +14,8 @@
 | - | - |
 | 课程 | 每门课一个目录 `courses/<课程>/`，作业单的 `courses` 字段指明跑哪门课。进度总览见 [`jobs/README.md`](jobs/README.md) |
 | 档位 | `h20x8`：每张卡跑 1 个运行（各课 `scenarios.yaml` 的 `profiles.h20x8` 写明模型、规模和资产） |
-| 规模 | `uv run python -m labkit scenarios <课程> --profile h20x8` 列出全部运行；L1（L05 SFT 与 LoRA）34 个，L06（围绕错误迭代）25 个 |
-| 时间 | adextract 项目（7B LoRA）每个训练运行约 40-60 分钟（预算上限 180 分钟）；8 卡并行，30 个运行约 4-5 小时 |
+| 规模 | `uv run python -m labkit scenarios <课程> --profile h20x8` 列出全部运行；L1（L05 SFT 与 LoRA）34 个，L06（围绕错误迭代）25 个，L07（偏好优化）30 个 |
+| 时间 | adextract 项目（7B LoRA）每个训练运行约 15-20 分钟；L07 每个运行 = SFT 约 15 分钟 + 偏好阶段 5-20 分钟（在线采样场景较慢）；预算上限都是 180 分钟 |
 | 需要的资产 | 作业单里 `assets` 列出的公开模型（agent 会自动检查）。训练数据是仓库里的合成数据和评测集，**不需要下载数据集** |
 | 作业单 | `jobs/pending/` 下的作业单按文件名顺序逐张执行（文件名形如 `<日期>-<课程>-h20x8.yaml`） |
 
