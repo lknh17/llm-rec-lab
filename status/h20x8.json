@@ -6,12 +6,12 @@
   "gpu_count": 8,
   "gpu_mem_gb": 95.0,
   "last_pull_at": 1794208221.0863318,
-  "state": "publishing",
+  "state": "idle",
   "queue": 1,
-  "job_id": "20261109-1048-l01-h20x8",
-  "progress": "24/24",
+  "job_id": null,
+  "progress": null,
   "started_at": 1794208259.4012785,
-  "last_error": null,
-  "beat_every_s": 900,
-  "updated_at": 1794209774.9680521
+  "last_error": "ValueError: Invalid format specifier '++.3f' for object of type 'float'",
+  "beat_every_s": 10800,
+  "updated_at": 1794209895.4816208
 }
