@@ -1,0 +1,31 @@
+[worker] 等待设备锁 gpu5-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L04/fault_fp16/s1-faa0ba/code/tinylm/experiment.py
+[15:41:33] ===== 阶段：prepare =====
+[15:41:33] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:41:35] 缓存 tinylm_tokenizer key=8f1c62481401: 命中，复用运行 s2-618736 的产物
+[15:41:35] 缓存 tinylm_streams key=448eb79ffd73: 命中，复用运行 s2-618736 的产物
+[15:41:35] 压缩率：验证集每 token 3.6612 字节 / 1.55 字；广告每条 26.33 个 token
+[15:41:35] 模型：总参数 16,913,280，其中 embedding 6,291,456（37%）；每 token 训练 109 MFLOPs，输出层占 35%；KV cache 每 token 9,216 字节（bf16）
+[15:41:35] ===== 阶段：train =====
+[15:41:42] 训练：832 步 × 64 × 512 = 27,262,976 token（训练流共 27,278,011 token，用前 27,277,824 个 × 1 遍；每 token 3.67 字节）；在第 [104, 208, 312, 416, 520, 624, 728, 832] 步评估
+[15:41:54] step 104/832 train_loss 10.3926 valid loss 10.6071 bpb 4.1798
+[15:42:03] step 208/832 train_loss 11.7395 valid loss 11.7735 bpb 4.6393
+[15:42:13] step 312/832 train_loss 12.9567 valid loss 12.4306 bpb 4.8983
+[15:42:22] step 416/832 train_loss 12.8579 valid loss 12.8624 bpb 5.0685
+[15:42:32] step 520/832 train_loss 13.0101 valid loss 13.1803 bpb 5.1937
+[15:42:41] step 624/832 train_loss 13.8124 valid loss 13.6829 bpb 5.3918
+[15:42:51] step 728/832 train_loss 14.5924 valid loss 14.0090 bpb 5.5202
+[15:43:00] step 832/832 train_loss 14.8335 valid loss 14.5343 bpb 5.7272
+[15:43:00] ===== 阶段：evaluate =====
+[15:43:02] [valid] 9.82 MB  每 token loss 14.53425  bpb 5.72723
+[15:43:04] [test] 10.00 MB  每 token loss 14.67276  bpb 5.73715
+[15:43:04] [ads] 0.00 MB  每 token loss 17.09343  bpb 8.31493
+[15:43:04] [valid_leaked] 0.09 MB  每 token loss 14.29282  bpb 4.26935
+[15:43:04] [valid_leak_few] 0.09 MB  每 token loss 14.1889  bpb 4.26984
+[15:43:04] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:43:05] [valid_dup] 1.89 MB  每 token loss 14.15225  bpb 5.71563
+[15:43:07] [valid_uniq] 7.85 MB  每 token loss 14.62761  bpb 5.74798
+[15:43:13] 重新加载核对：广告 bpb 8.31493 → 8.31493（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

@@ -1,0 +1,31 @@
+[worker] 等待设备锁 gpu3-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L04/fault_fp16/s2-4a817e/code/tinylm/experiment.py
+[15:43:24] ===== 阶段：prepare =====
+[15:43:24] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:43:25] 缓存 tinylm_tokenizer key=8f1c62481401: 命中，复用运行 s2-618736 的产物
+[15:43:25] 缓存 tinylm_streams key=448eb79ffd73: 命中，复用运行 s2-618736 的产物
+[15:43:26] 压缩率：验证集每 token 3.6612 字节 / 1.55 字；广告每条 26.33 个 token
+[15:43:26] 模型：总参数 16,913,280，其中 embedding 6,291,456（37%）；每 token 训练 109 MFLOPs，输出层占 35%；KV cache 每 token 9,216 字节（bf16）
+[15:43:26] ===== 阶段：train =====
+[15:43:32] 训练：832 步 × 64 × 512 = 27,262,976 token（训练流共 27,278,011 token，用前 27,277,824 个 × 1 遍；每 token 3.67 字节）；在第 [104, 208, 312, 416, 520, 624, 728, 832] 步评估
+[15:43:42] step 104/832 train_loss 11.0566 valid loss 10.6387 bpb 4.1922
+[15:43:52] step 208/832 train_loss 12.3272 valid loss 11.9308 bpb 4.7013
+[15:44:01] step 312/832 train_loss 13.4644 valid loss 12.4247 bpb 4.8960
+[15:44:10] step 416/832 train_loss 12.7171 valid loss 12.6568 bpb 4.9874
+[15:44:20] step 520/832 train_loss 13.6225 valid loss 13.2461 bpb 5.2196
+[15:44:29] step 624/832 train_loss 13.5647 valid loss 13.6583 bpb 5.3820
+[15:44:39] step 728/832 train_loss 14.3820 valid loss 14.2517 bpb 5.6159
+[15:44:48] step 832/832 train_loss 15.3725 valid loss 14.9178 bpb 5.8784
+[15:44:48] ===== 阶段：evaluate =====
+[15:44:50] [valid] 9.82 MB  每 token loss 14.91781  bpb 5.87838
+[15:44:52] [test] 10.00 MB  每 token loss 15.04014  bpb 5.8808
+[15:44:53] [ads] 0.00 MB  每 token loss 17.67561  bpb 8.59813
+[15:44:53] [valid_leaked] 0.09 MB  每 token loss 14.56316  bpb 4.3501
+[15:44:53] [valid_leak_few] 0.09 MB  每 token loss 14.4681  bpb 4.35386
+[15:44:53] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:44:53] [valid_dup] 1.89 MB  每 token loss 14.49994  bpb 5.85605
+[15:44:55] [valid_uniq] 7.85 MB  每 token loss 15.02067  bpb 5.90243
+[15:45:01] 重新加载核对：广告 bpb 8.59813 → 8.59813（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

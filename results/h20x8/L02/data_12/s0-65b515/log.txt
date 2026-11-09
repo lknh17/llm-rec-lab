@@ -1,0 +1,31 @@
+[worker] 等待设备锁 gpu7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L02/data_12/s0-65b515/code/tinylm/experiment.py
+[15:44:29] ===== 阶段：prepare =====
+[15:44:29] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:44:30] 缓存 tinylm_tokenizer key=8f1c62481401: 命中，复用运行 s2-618736 的产物
+[15:44:30] 缓存 tinylm_streams key=448eb79ffd73: 命中，复用运行 s2-618736 的产物
+[15:44:30] 压缩率：验证集每 token 3.6612 字节 / 1.55 字；广告每条 26.33 个 token
+[15:44:30] 模型：总参数 16,913,280，其中 embedding 6,291,456（37%）；每 token 训练 109 MFLOPs，输出层占 35%；KV cache 每 token 9,216 字节（bf16）
+[15:44:30] ===== 阶段：train =====
+[15:44:36] 训练：104 步 × 64 × 512 = 3,407,872 token（训练流共 27,278,011 token，用前 3,409,408 个 × 1 遍；每 token 3.67 字节）；在第 [13, 26, 39, 52, 65, 78, 91, 104] 步评估
+[15:44:40] step 13/104 train_loss 7.6753 valid loss 7.5861 bpb 2.9893
+[15:44:43] step 26/104 train_loss 7.1774 valid loss 7.2786 bpb 2.8681
+[15:44:46] step 39/104 train_loss 7.3308 valid loss 7.1740 bpb 2.8269
+[15:44:49] step 52/104 train_loss 7.0180 valid loss 7.0773 bpb 2.7888
+[15:44:52] step 65/104 train_loss 7.1191 valid loss 6.9627 bpb 2.7437
+[15:44:55] step 78/104 train_loss 6.9765 valid loss 6.8778 bpb 2.7102
+[15:44:59] step 91/104 train_loss 7.1316 valid loss 6.8101 bpb 2.6835
+[15:45:02] step 104/104 train_loss 6.6664 valid loss 6.7553 bpb 2.6620
+[15:45:02] ===== 阶段：evaluate =====
+[15:45:04] [valid] 9.82 MB  每 token loss 6.75534  bpb 2.66195
+[15:45:06] [test] 10.00 MB  每 token loss 6.8122  bpb 2.66362
+[15:45:06] [ads] 0.00 MB  每 token loss 8.10715  bpb 3.94364
+[15:45:06] [valid_leaked] 0.09 MB  每 token loss 6.57123  bpb 1.96286
+[15:45:06] [valid_leak_few] 0.09 MB  每 token loss 6.5572  bpb 1.97325
+[15:45:06] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:45:07] [valid_dup] 1.89 MB  每 token loss 6.55807  bpb 2.64859
+[15:45:08] [valid_uniq] 7.85 MB  每 token loss 6.80472  bpb 2.67394
+[15:45:14] 重新加载核对：广告 bpb 3.94364 → 3.94364（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

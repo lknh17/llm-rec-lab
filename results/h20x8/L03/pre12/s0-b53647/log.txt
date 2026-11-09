@@ -1,0 +1,31 @@
+[worker] 等待设备锁 gpu6-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L03/pre12/s0-b53647/code/tinylm/experiment.py
+[15:47:05] ===== 阶段：prepare =====
+[15:47:05] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:47:06] 缓存 tinylm_tokenizer key=8f1c62481401: 命中，复用运行 s2-618736 的产物
+[15:47:07] 缓存 tinylm_streams key=448eb79ffd73: 命中，复用运行 s2-618736 的产物
+[15:47:07] 压缩率：验证集每 token 3.6612 字节 / 1.55 字；广告每条 26.33 个 token
+[15:47:07] 模型：总参数 27,534,720，其中 embedding 6,291,456（23%）；每 token 训练 179 MFLOPs，输出层占 21%；KV cache 每 token 18,432 字节（bf16）
+[15:47:07] ===== 阶段：train =====
+[15:47:12] 训练：832 步 × 64 × 512 = 27,262,976 token（训练流共 27,278,011 token，用前 27,277,824 个 × 1 遍；每 token 3.67 字节）；在第 [104, 208, 312, 416, 520, 624, 728, 832] 步评估
+[15:47:29] step 104/832 train_loss 6.9432 valid loss 6.6844 bpb 2.6340
+[15:47:45] step 208/832 train_loss 6.3569 valid loss 5.9316 bpb 2.3374
+[15:48:01] step 312/832 train_loss 5.2311 valid loss 5.4596 bpb 2.1513
+[15:48:17] step 416/832 train_loss 4.9151 valid loss 5.1549 bpb 2.0313
+[15:48:33] step 520/832 train_loss 5.1721 valid loss 4.9333 bpb 1.9440
+[15:48:49] step 624/832 train_loss 4.8427 valid loss 4.7799 bpb 1.8835
+[15:49:05] step 728/832 train_loss 4.6463 valid loss 4.6740 bpb 1.8418
+[15:49:21] step 832/832 train_loss 4.4943 valid loss 4.6057 bpb 1.8149
+[15:49:21] ===== 阶段：evaluate =====
+[15:49:25] [valid] 9.82 MB  每 token loss 4.6057  bpb 1.81488
+[15:49:28] [test] 10.00 MB  每 token loss 4.67804  bpb 1.82915
+[15:49:28] [ads] 0.00 MB  每 token loss 7.27127  bpb 3.53704
+[15:49:28] [valid_leaked] 0.09 MB  每 token loss 3.641  bpb 1.08759
+[15:49:28] [valid_leak_few] 0.09 MB  每 token loss 3.65481  bpb 1.09984
+[15:49:28] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:49:29] [valid_dup] 1.89 MB  每 token loss 4.40873  bpb 1.78054
+[15:49:32] [valid_uniq] 7.85 MB  每 token loss 4.6614  bpb 1.83171
+[15:49:41] 重新加载核对：广告 bpb 3.53704 → 3.53704（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

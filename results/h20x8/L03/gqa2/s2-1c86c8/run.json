@@ -1,0 +1,319 @@
+{
+  "run_id": "h20x8.L03.gqa2.s2-1c86c8",
+  "course_id": "L03",
+  "project": "tinylm",
+  "entry": "tinylm.experiment",
+  "profile": "h20x8",
+  "scenario": "gqa2",
+  "role": "variant",
+  "title": "GQA：6 个查询头共享 2 组 KV",
+  "seed": 2,
+  "variant": "gqa2",
+  "config_hash": "1c86c8452bd4",
+  "code_hash": "393fb2e82043",
+  "git": {
+    "commit": "f755145ea8052d0782fd12ad153bc1038d322723",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "n_kv_head": 2
+  },
+  "param_affects": {
+    "corpus": "data",
+    "min_chars": "data",
+    "source_dedup": "data",
+    "dup_ratio": "data",
+    "dedup": "data",
+    "train_mb": "data",
+    "valid_mb": "data",
+    "test_mb": "data",
+    "data_seed": "data",
+    "tokenizer": "data",
+    "vocab_size": "data",
+    "tok_train_mb": "data",
+    "tok_ads_ratio": "data",
+    "d_model": "model",
+    "n_layer": "model",
+    "n_head": "model",
+    "d_ff": "model",
+    "seq_len": "model",
+    "n_kv_head": "model",
+    "kv_lora_rank": "model",
+    "mla_rope_dim": "model",
+    "pos_emb": "model",
+    "norm_pos": "model",
+    "ffn": "model",
+    "moe_experts": "model",
+    "moe_top_k": "model",
+    "moe_d_ff": "model",
+    "doc_mask": "model",
+    "batch_size": "train",
+    "lr": "train",
+    "warmup_frac": "train",
+    "weight_decay": "train",
+    "grad_clip": "train",
+    "precision": "train",
+    "max_steps": "train",
+    "data_frac": "train",
+    "epochs": "train",
+    "flops_budget_frac": "train",
+    "lr_schedule": "train",
+    "target_offset": "train",
+    "moe_aux_coef": "train",
+    "grad_accum": "train",
+    "grad_scaler": "train",
+    "eval_points": "eval",
+    "device": "runtime",
+    "seed": "train",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794210968.9499788,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794210969.102904,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794210976.6857092,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794210978.2195723,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794211055.117199,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794211066.9663308,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794210968.9499788,
+  "budget": {
+    "max_minutes": 60.0
+  },
+  "expect": [
+    "summary.kv_cache.elems_per_token_layer == 256"
+  ],
+  "slot": "gpu2-0",
+  "started_at": 1794210969.102905,
+  "cache": [
+    {
+      "stage": "tinylm_corpus",
+      "key_hash": "f9348045de2b",
+      "key": {
+        "v": 4,
+        "corpus": "zhwiki",
+        "min_chars": 50,
+        "source_dedup": "minhash",
+        "dup_ratio": 0.2,
+        "dedup": "minhash",
+        "train_mb": 100.0,
+        "valid_mb": 10.0,
+        "test_mb": 10.0,
+        "data_seed": 0
+      },
+      "hit": true,
+      "source_run": "s0-39279f"
+    },
+    {
+      "stage": "tinylm_tokenizer",
+      "key_hash": "8f1c62481401",
+      "key": {
+        "v": 1,
+        "corpus": {
+          "v": 4,
+          "corpus": "zhwiki",
+          "min_chars": 50,
+          "source_dedup": "minhash",
+          "dup_ratio": 0.2,
+          "dedup": "minhash",
+          "train_mb": 100.0,
+          "valid_mb": 10.0,
+          "test_mb": 10.0,
+          "data_seed": 0
+        },
+        "tokenizer": "bpe",
+        "vocab_size": 16384,
+        "tok_train_mb": 20.0,
+        "tok_ads_ratio": 0.0
+      },
+      "hit": true,
+      "source_run": "s2-618736"
+    },
+    {
+      "stage": "tinylm_streams",
+      "key_hash": "448eb79ffd73",
+      "key": {
+        "v": 2,
+        "tok": {
+          "v": 1,
+          "corpus": {
+            "v": 4,
+            "corpus": "zhwiki",
+            "min_chars": 50,
+            "source_dedup": "minhash",
+            "dup_ratio": 0.2,
+            "dedup": "minhash",
+            "train_mb": 100.0,
+            "valid_mb": 10.0,
+            "test_mb": 10.0,
+            "data_seed": 0
+          },
+          "tokenizer": "bpe",
+          "vocab_size": 16384,
+          "tok_train_mb": 20.0,
+          "tok_ads_ratio": 0.0
+        }
+      },
+      "hit": true,
+      "source_run": "s2-618736"
+    }
+  ],
+  "data": {
+    "kind": "公开语料 + 人工标注广告（只评估）",
+    "corpus": {
+      "source": "wikimedia/wikipedia 20231101.zh 第 3 分片",
+      "license": "CC-BY-SA-4.0",
+      "raw_docs": 230791,
+      "raw_bytes": 223496870,
+      "short_dropped": 17833,
+      "brackets_removed_bytes": 1073720,
+      "source_dedup": {
+        "removed_docs": 35333,
+        "removed_bytes_frac": 0.0853
+      },
+      "injected": {
+        "source_docs": 33671,
+        "copies": 123303,
+        "exact_copies": 61314,
+        "near_copies": 61989,
+        "copy_bytes": 140359892
+      },
+      "dedup": {
+        "method": "minhash",
+        "exact_removed": 67348,
+        "near_removed": 49822,
+        "removed": 117170,
+        "minhash": {
+          "candidate_pairs": 887879,
+          "merged_pairs": 49822,
+          "seconds": 29.0
+        }
+      },
+      "valid_self_dup_frac": 0.0027,
+      "valid_boilerplate_frac": 0.0324,
+      "after_dedup_docs": 174489,
+      "train_docs": 90072,
+      "train_bytes": 100011831,
+      "train_copy_docs": 2176,
+      "train_copy_frac": 0.0242,
+      "train_copy_bytes_frac": 0.0088,
+      "train_available_bytes": 183408078,
+      "valid_docs": 9110,
+      "valid_bytes": 9824789,
+      "valid_copy_docs": 349,
+      "test_docs": 9269,
+      "test_bytes": 10003122,
+      "valid_with_train_copy": 380,
+      "valid_leak_frac": 0.0417,
+      "valid_leaked_train_copies_mean": 1.39,
+      "train_chars": 42064410
+    },
+    "ads_eval": {
+      "source": "adextract dev + test 人工广告",
+      "docs": 60
+    },
+    "tokenizer": {
+      "kind": "bpe",
+      "vocab_size": 16384,
+      "train_seconds": 611.7,
+      "train_bytes": 20000313,
+      "mix": {
+        "wiki_bytes": 20000313,
+        "ads_docs": 0,
+        "ads_bytes": 0
+      }
+    },
+    "tokenized": {
+      "tokens_total": 27278011,
+      "bytes_total": 100011831,
+      "bytes_per_token": 3.6785,
+      "chars_per_token": 1.5472
+    }
+  },
+  "model": {
+    "arch": "GPT（Pre-RMSNorm、位置 rope、注意力 gqa、SwiGLU、tied embedding）",
+    "params": {
+      "total": 15733632,
+      "trainable": 15733632,
+      "embedding": 6291456,
+      "body": 9442176,
+      "embedding_share": 0.3999,
+      "vocab_padded": 16384,
+      "vocab_real": 16384,
+      "attn_per_layer": 393216,
+      "ffn_per_layer": 1179648,
+      "active": 15733632,
+      "active_body": 9442176
+    },
+    "flops": {
+      "train_flops_per_token": 101479680.0,
+      "lm_head_share": 0.372,
+      "body_share": 0.5583,
+      "attn_share": 0.0697,
+      "six_n_per_token": 94401792
+    },
+    "kv_cache": {
+      "elems_per_token_layer": 256,
+      "bytes_per_token": 3072,
+      "ratio_vs_mha": 0.3333,
+      "kind": "gqa"
+    },
+    "device": "cuda",
+    "dtype": "float32",
+    "train_mode": "full",
+    "precision": "bf16 autocast"
+  },
+  "train": {
+    "steps": 832,
+    "seconds": 71.9,
+    "train_tokens": 27262976,
+    "tokens_per_s": 506502,
+    "bytes_per_s": 1857034
+  },
+  "artifacts": {
+    "model.pt": {
+      "kind": "checkpoint",
+      "bytes": 62946457,
+      "note": "小 GPT 权重（tied embedding）"
+    }
+  },
+  "checks": {
+    "reload_identical": true
+  },
+  "ended_at": 1794211066.9663322,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.kv_cache.elems_per_token_layer == 256",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

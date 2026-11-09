@@ -1,0 +1,31 @@
+[worker] 等待设备锁 gpu7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L04/accum4/s0-6134be/code/tinylm/experiment.py
+[15:47:06] ===== 阶段：prepare =====
+[15:47:06] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:47:07] 缓存 tinylm_tokenizer key=8f1c62481401: 命中，复用运行 s2-618736 的产物
+[15:47:07] 缓存 tinylm_streams key=448eb79ffd73: 命中，复用运行 s2-618736 的产物
+[15:47:07] 压缩率：验证集每 token 3.6612 字节 / 1.55 字；广告每条 26.33 个 token
+[15:47:07] 模型：总参数 16,913,280，其中 embedding 6,291,456（37%）；每 token 训练 109 MFLOPs，输出层占 35%；KV cache 每 token 9,216 字节（bf16）
+[15:47:07] ===== 阶段：train =====
+[15:47:12] 训练：832 步 × 64 × 512 = 27,262,976 token（训练流共 27,278,011 token，用前 27,277,824 个 × 1 遍；每 token 3.67 字节）；梯度累积 4 × 16；在第 [104, 208, 312, 416, 520, 624, 728, 832] 步评估
+[15:47:23] step 104/832 train_loss 6.6685 valid loss 6.4296 bpb 2.5336
+[15:47:33] step 208/832 train_loss 6.0766 valid loss 5.6493 bpb 2.2261
+[15:47:44] step 312/832 train_loss 4.9696 valid loss 5.2109 bpb 2.0534
+[15:47:54] step 416/832 train_loss 4.6850 valid loss 4.9267 bpb 1.9414
+[15:48:04] step 520/832 train_loss 4.9489 valid loss 4.7258 bpb 1.8622
+[15:48:14] step 624/832 train_loss 4.6317 valid loss 4.5644 bpb 1.7986
+[15:48:25] step 728/832 train_loss 4.4413 valid loss 4.4639 bpb 1.7590
+[15:48:35] step 832/832 train_loss 4.2907 valid loss 4.4019 bpb 1.7346
+[15:48:35] ===== 阶段：evaluate =====
+[15:48:37] [valid] 9.82 MB  每 token loss 4.4019  bpb 1.73457
+[15:48:39] [test] 10.00 MB  每 token loss 4.47419  bpb 1.74944
+[15:48:39] [ads] 0.00 MB  每 token loss 7.25388  bpb 3.52858
+[15:48:39] [valid_leaked] 0.09 MB  每 token loss 3.487  bpb 1.04159
+[15:48:39] [valid_leak_few] 0.09 MB  每 token loss 3.50057  bpb 1.05342
+[15:48:40] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:48:40] [valid_dup] 1.89 MB  每 token loss 4.19787  bpb 1.69538
+[15:48:42] [valid_uniq] 7.85 MB  每 token loss 4.45908  bpb 1.75221
+[15:48:48] 重新加载核对：广告 bpb 3.52858 → 3.52858（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

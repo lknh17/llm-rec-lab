@@ -1,0 +1,27 @@
+job_id: 20261109-1317-l02-l03-l04-h20x8
+created_at: '2026-11-09T05:17:50Z'
+profile: h20x8
+courses:
+- L02
+- L03
+- L04
+only: []
+seeds: []
+requested_commit: a08272e3210748f60986d93a936672ae9a90a493
+note: L02-L04 首次生成（tinylm 结构/预算/精度扩展，a08272e）
+how_to_run: python -m labkit jobs run 20261109-1317-l02-l03-l04-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-09T07:38:48Z'
+started_at: '2026-11-09T07:39:52Z'
+ran_commit: f755145ea8052d0782fd12ad153bc1038d322723
+host_summary:
+  torch: 2.15.0+cu132
+  cuda: '13.2'
+  gpu: NVIDIA H20
+  gpu_count: 8
+  gpu_mem_gb: 95.0
+  driver: 535.161.08
+status: failed
+finished_at: '2026-11-09T08:02:22Z'
+problems:
+- 'ValueError: Invalid format specifier ''++.3f'' for object of type ''float'''

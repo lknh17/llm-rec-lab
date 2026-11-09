@@ -1,0 +1,360 @@
+{
+  "valid": {
+    "loss": 6.07007,
+    "bpb": 2.39192,
+    "tokens": 2683496,
+    "bytes": 9824789
+  },
+  "test": {
+    "loss": 6.14396,
+    "bpb": 2.40233,
+    "tokens": 2711101,
+    "bytes": 10003122
+  },
+  "ads": {
+    "loss": 7.82536,
+    "bpb": 3.80657,
+    "tokens": 1580,
+    "bytes": 4686
+  },
+  "valid_leaked": {
+    "loss": 5.48946,
+    "bpb": 1.63973,
+    "tokens": 19567,
+    "bytes": 94505
+  },
+  "valid_leak_few": {
+    "loss": 5.48184,
+    "bpb": 1.64964,
+    "tokens": 18348,
+    "bytes": 87963
+  },
+  "valid_leak_many": {
+    "loss": null,
+    "bpb": null,
+    "tokens": 0,
+    "bytes": 0
+  },
+  "valid_dup": {
+    "loss": 5.86269,
+    "bpb": 2.36775,
+    "tokens": 528664,
+    "bytes": 1888493
+  },
+  "valid_uniq": {
+    "loss": 6.12488,
+    "bpb": 2.4068,
+    "tokens": 2138753,
+    "bytes": 7852240
+  },
+  "seen": {
+    "loss": 6.14684,
+    "bpb": 2.41044,
+    "tokens": 2708858,
+    "bytes": 9965892
+  },
+  "valid_long": {
+    "loss": 6.07297,
+    "bpb": 2.39306,
+    "tokens": 2683496,
+    "bytes": 9824789
+  },
+  "valid_t512": {
+    "loss": 6.07007,
+    "bpb": 2.39192,
+    "tokens": 2683496,
+    "bytes": 9824789
+  },
+  "ads_isolated": {
+    "loss": 7.9747,
+    "bpb": 3.87921,
+    "tokens": 1580,
+    "docs": 60
+  },
+  "gap": {
+    "test_minus_valid_bpb": 0.01041,
+    "dup_minus_uniq_bpb": -0.03905,
+    "leaked_minus_uniq_bpb": -0.76707,
+    "leak_few_minus_uniq_bpb": -0.75716,
+    "leak_many_minus_uniq_bpb": null,
+    "valid_bytes_frac": {
+      "leaked": 0.0096,
+      "leak_few": 0.009,
+      "leak_many": 0.0,
+      "dup": 0.1922,
+      "uniq": 0.7992
+    },
+    "valid_minus_seen_bpb": -0.01852
+  },
+  "compression": {
+    "train": {
+      "docs": 90072,
+      "tokens": 27187938,
+      "bytes": 100011831,
+      "chars": 42064410,
+      "bytes_per_token": 3.6785,
+      "chars_per_token": 1.5472,
+      "tokens_per_doc": 301.85
+    },
+    "valid": {
+      "docs": 9110,
+      "tokens": 2683496,
+      "bytes": 9824789,
+      "chars": 4159389,
+      "bytes_per_token": 3.6612,
+      "chars_per_token": 1.55,
+      "tokens_per_doc": 294.57
+    },
+    "test": {
+      "docs": 9269,
+      "tokens": 2711101,
+      "bytes": 10003122,
+      "chars": 4197580,
+      "bytes_per_token": 3.6897,
+      "chars_per_token": 1.5483,
+      "tokens_per_doc": 292.49
+    },
+    "ads": {
+      "docs": 60,
+      "tokens": 1580,
+      "bytes": 4686,
+      "chars": 1706,
+      "bytes_per_token": 2.9658,
+      "chars_per_token": 1.0797,
+      "tokens_per_doc": 26.33
+    }
+  },
+  "char_split": {
+    "chars_checked": 3000,
+    "multi_token_chars": 52,
+    "multi_token_weighted": 0.0013,
+    "examples": [
+      "咒",
+      "啤",
+      "怖",
+      "鱈",
+      "粘",
+      "荻",
+      "莓",
+      "鲷",
+      "彗",
+      "蝙",
+      "窪",
+      "炱"
+    ]
+  },
+  "params": {
+    "total": 33694208,
+    "trainable": 33694208,
+    "embedding": 8388608,
+    "body": 25305600,
+    "embedding_share": 0.249,
+    "vocab_padded": 16384,
+    "vocab_real": 16384,
+    "attn_per_layer": 1048576,
+    "ffn_per_layer": 2113536,
+    "active": 33694208,
+    "active_body": 25305600
+  },
+  "flops": {
+    "train_flops_per_token": 214748160.0,
+    "lm_head_share": 0.2344,
+    "body_share": 0.707,
+    "attn_share": 0.0586,
+    "six_n_per_token": 202165248,
+    "train_total": 1477742218444800.0,
+    "train_total_pf": 1.4777,
+    "six_nd": 1391155677757440,
+    "ratio_vs_6nd": 1.0622,
+    "achieved_tflops": 49.76,
+    "peak_tflops": 148.0,
+    "mfu": 0.3362
+  },
+  "train": {
+    "steps": 210,
+    "seconds": 57.4,
+    "train_tokens": 6881280,
+    "train_bytes_seen": 25229457,
+    "bytes_per_token": 3.6664,
+    "tokens_per_s": 231729,
+    "bytes_per_s": 849610,
+    "final_train_loss": 6.06716,
+    "loss_at_warmup_end": 8.55336,
+    "train_loss_tail": 6.19904,
+    "loss_spikes": 0,
+    "grad_norm_max": 5.069,
+    "grad_norm_median": 0.3403,
+    "nan_step": null,
+    "steps_done": 210,
+    "micro_batch": 64,
+    "grad_accum": 1,
+    "epochs": 1,
+    "unique_tokens": 27277824,
+    "budget_capped": false,
+    "batch_check": {
+      "y_eq_x_frac": 0.0154,
+      "x_head": [
+        3210,
+        405,
+        753,
+        1510,
+        263,
+        7316,
+        7582,
+        3094
+      ],
+      "y_head": [
+        405,
+        753,
+        1510,
+        263,
+        7316,
+        7582,
+        3094,
+        1729
+      ]
+    },
+    "tokens_per_param": 0.204,
+    "unique_mb": 100.34
+  },
+  "valid_at": {
+    "f0125": 2.58712,
+    "f025": 2.39192,
+    "f05": null,
+    "f1": null
+  },
+  "kv_cache": {
+    "elems_per_token_layer": 1024,
+    "bytes_per_token": 16384,
+    "ratio_vs_mha": 1.0,
+    "kind": "mha"
+  },
+  "precision": {
+    "dtype": "bfloat16",
+    "dlogits_zero_frac": 0.0,
+    "grad_scaler": false,
+    "scaler_scale_final": null,
+    "skipped_steps": null
+  },
+  "moe": null,
+  "memory": {
+    "peak_train_gb": 15.624,
+    "static_est_gb": 0.539
+  },
+  "attn": {
+    "doc_mask": false,
+    "impl": "sdpa is_causal"
+  },
+  "valid_curve": [
+    {
+      "step": 26,
+      "loss": 7.35471,
+      "bpb": 2.89813,
+      "tokens": 2683496,
+      "bytes": 9824789,
+      "train_tokens": 851968
+    },
+    {
+      "step": 52,
+      "loss": 7.11042,
+      "bpb": 2.80187,
+      "tokens": 2683496,
+      "bytes": 9824789,
+      "train_tokens": 1703936
+    },
+    {
+      "step": 79,
+      "loss": 6.86389,
+      "bpb": 2.70472,
+      "tokens": 2683496,
+      "bytes": 9824789,
+      "train_tokens": 2588672
+    },
+    {
+      "step": 105,
+      "loss": 6.56546,
+      "bpb": 2.58712,
+      "tokens": 2683496,
+      "bytes": 9824789,
+      "train_tokens": 3440640
+    },
+    {
+      "step": 131,
+      "loss": 6.35529,
+      "bpb": 2.50431,
+      "tokens": 2683496,
+      "bytes": 9824789,
+      "train_tokens": 4292608
+    },
+    {
+      "step": 158,
+      "loss": 6.21761,
+      "bpb": 2.45005,
+      "tokens": 2683496,
+      "bytes": 9824789,
+      "train_tokens": 5177344
+    },
+    {
+      "step": 184,
+      "loss": 6.1289,
+      "bpb": 2.4151,
+      "tokens": 2683496,
+      "bytes": 9824789,
+      "train_tokens": 6029312
+    },
+    {
+      "step": 210,
+      "loss": 6.07007,
+      "bpb": 2.39192,
+      "tokens": 2683496,
+      "bytes": 9824789,
+      "train_tokens": 6881280
+    }
+  ],
+  "corpus": {
+    "train_docs": 90072,
+    "train_bytes": 100011831,
+    "train_copy_frac": 0.0242,
+    "train_copy_bytes_frac": 0.0088,
+    "valid_docs": 9110,
+    "valid_copy_docs": 349,
+    "valid_leak_frac": 0.0417,
+    "valid_leaked_train_copies_mean": 1.39,
+    "valid_self_dup_frac": 0.0027,
+    "valid_boilerplate_frac": 0.0324,
+    "test_docs": 9269,
+    "source_dedup": {
+      "removed_docs": 35333,
+      "removed_bytes_frac": 0.0853
+    },
+    "dedup_removed": 117170,
+    "injected_copies": 123303
+  },
+  "headline": {
+    "valid_bpb": 2.39192,
+    "test_bpb": 2.40233,
+    "ads_bpb": 3.80657,
+    "valid_loss": 6.07007,
+    "ads_tokens_per_doc": 26.33,
+    "embedding_share": 0.249
+  },
+  "display": {
+    "验证 bpb": 2.39192,
+    "留出 bpb": 2.40233,
+    "广告 bpb": 3.80657,
+    "验证 每 token loss": 6.07007,
+    "每 token 字节数": 3.6612,
+    "广告 每条 token 数": 26.33,
+    "embedding 占比": 0.249,
+    "被转载原文 − 未转载原文 bpb": -0.03905,
+    "训练 token（百万）": 6.88,
+    "字节/秒（百万）": 0.85,
+    "MFU": 0.3362,
+    "训练峰值显存 GB": 15.624
+  },
+  "display_pct": [
+    "embedding 占比",
+    "MFU",
+    "logits 梯度为 0 的比例"
+  ]
+}

@@ -1,0 +1,31 @@
+[worker] 等待设备锁 gpu1-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L02/data_50/s0-97075e/code/tinylm/experiment.py
+[15:44:29] ===== 阶段：prepare =====
+[15:44:29] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:44:30] 缓存 tinylm_tokenizer key=8f1c62481401: 命中，复用运行 s2-618736 的产物
+[15:44:30] 缓存 tinylm_streams key=448eb79ffd73: 命中，复用运行 s2-618736 的产物
+[15:44:30] 压缩率：验证集每 token 3.6612 字节 / 1.55 字；广告每条 26.33 个 token
+[15:44:30] 模型：总参数 16,913,280，其中 embedding 6,291,456（37%）；每 token 训练 109 MFLOPs，输出层占 35%；KV cache 每 token 9,216 字节（bf16）
+[15:44:30] ===== 阶段：train =====
+[15:44:36] 训练：416 步 × 64 × 512 = 13,631,488 token（训练流共 27,278,011 token，用前 13,638,656 个 × 1 遍；每 token 3.67 字节）；在第 [52, 104, 156, 208, 260, 312, 364, 416] 步评估
+[15:44:43] step 52/416 train_loss 6.8880 valid loss 6.8696 bpb 2.7070
+[15:44:49] step 104/416 train_loss 6.1351 valid loss 6.2619 bpb 2.4675
+[15:44:55] step 156/416 train_loss 5.7740 valid loss 5.8487 bpb 2.3047
+[15:45:00] step 208/416 train_loss 5.4211 valid loss 5.5678 bpb 2.1940
+[15:45:06] step 260/416 train_loss 5.2591 valid loss 5.3795 bpb 2.1198
+[15:45:12] step 312/416 train_loss 4.8666 valid loss 5.2492 bpb 2.0684
+[15:45:18] step 364/416 train_loss 5.1632 valid loss 5.1583 bpb 2.0326
+[15:45:24] step 416/416 train_loss 4.8995 valid loss 5.1027 bpb 2.0107
+[15:45:24] ===== 阶段：evaluate =====
+[15:45:26] [valid] 9.82 MB  每 token loss 5.10266  bpb 2.01071
+[15:45:29] [test] 10.00 MB  每 token loss 5.17427  bpb 2.02318
+[15:45:29] [ads] 0.00 MB  每 token loss 7.30221  bpb 3.55209
+[15:45:29] [valid_leaked] 0.09 MB  每 token loss 4.17418  bpb 1.24685
+[15:45:29] [valid_leak_few] 0.09 MB  每 token loss 4.18453  bpb 1.25924
+[15:45:29] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:45:29] [valid_dup] 1.89 MB  每 token loss 4.92193  bpb 1.98781
+[15:45:31] [valid_uniq] 7.85 MB  每 token loss 5.15387  bpb 2.02523
+[15:45:37] 重新加载核对：广告 bpb 3.55209 → 3.55209（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

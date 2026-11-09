@@ -1,0 +1,31 @@
+[worker] 等待设备锁 gpu4-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L02/data_12/s2-b43e21/code/tinylm/experiment.py
+[15:54:57] ===== 阶段：prepare =====
+[15:54:57] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:54:58] 缓存 tinylm_tokenizer key=8f1c62481401: 命中，复用运行 s2-618736 的产物
+[15:54:58] 缓存 tinylm_streams key=448eb79ffd73: 命中，复用运行 s2-618736 的产物
+[15:54:59] 压缩率：验证集每 token 3.6612 字节 / 1.55 字；广告每条 26.33 个 token
+[15:54:59] 模型：总参数 16,913,280，其中 embedding 6,291,456（37%）；每 token 训练 109 MFLOPs，输出层占 35%；KV cache 每 token 9,216 字节（bf16）
+[15:54:59] ===== 阶段：train =====
+[15:55:04] 训练：104 步 × 64 × 512 = 3,407,872 token（训练流共 27,278,011 token，用前 3,409,408 个 × 1 遍；每 token 3.67 字节）；在第 [13, 26, 39, 52, 65, 78, 91, 104] 步评估
+[15:55:08] step 13/104 train_loss 7.8397 valid loss 7.6380 bpb 3.0098
+[15:55:11] step 26/104 train_loss 7.3773 valid loss 7.3287 bpb 2.8879
+[15:55:14] step 39/104 train_loss 7.5319 valid loss 7.1891 bpb 2.8329
+[15:55:17] step 52/104 train_loss 6.7933 valid loss 7.0531 bpb 2.7793
+[15:55:20] step 65/104 train_loss 6.8276 valid loss 6.9106 bpb 2.7231
+[15:55:24] step 78/104 train_loss 6.7147 valid loss 6.7978 bpb 2.6787
+[15:55:27] step 91/104 train_loss 7.1394 valid loss 6.7196 bpb 2.6479
+[15:55:30] step 104/104 train_loss 6.8436 valid loss 6.6617 bpb 2.6251
+[15:55:30] ===== 阶段：evaluate =====
+[15:55:32] [valid] 9.82 MB  每 token loss 6.66175  bpb 2.62507
+[15:55:34] [test] 10.00 MB  每 token loss 6.72092  bpb 2.62793
+[15:55:34] [ads] 0.00 MB  每 token loss 8.09352  bpb 3.93701
+[15:55:34] [valid_leaked] 0.09 MB  每 token loss 6.42363  bpb 1.91878
+[15:55:34] [valid_leak_few] 0.09 MB  每 token loss 6.41683  bpb 1.93101
+[15:55:34] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:55:35] [valid_dup] 1.89 MB  每 token loss 6.47249  bpb 2.61403
+[15:55:36] [valid_uniq] 7.85 MB  每 token loss 6.70955  bpb 2.63654
+[15:55:42] 重新加载核对：广告 bpb 3.93701 → 3.93701（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

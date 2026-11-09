@@ -1,0 +1,31 @@
+[worker] 等待设备锁 gpu6-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L03/gqa2/s1-f3e901/code/tinylm/experiment.py
+[15:50:57] ===== 阶段：prepare =====
+[15:50:57] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:50:58] 缓存 tinylm_tokenizer key=8f1c62481401: 命中，复用运行 s2-618736 的产物
+[15:50:59] 缓存 tinylm_streams key=448eb79ffd73: 命中，复用运行 s2-618736 的产物
+[15:50:59] 压缩率：验证集每 token 3.6612 字节 / 1.55 字；广告每条 26.33 个 token
+[15:50:59] 模型：总参数 15,733,632，其中 embedding 6,291,456（40%）；每 token 训练 101 MFLOPs，输出层占 37%；KV cache 每 token 3,072 字节（bf16）
+[15:50:59] ===== 阶段：train =====
+[15:51:04] 训练：832 步 × 64 × 512 = 27,262,976 token（训练流共 27,278,011 token，用前 27,277,824 个 × 1 遍；每 token 3.67 字节）；在第 [104, 208, 312, 416, 520, 624, 728, 832] 步评估
+[15:51:14] step 104/832 train_loss 6.2119 valid loss 6.2619 bpb 2.4675
+[15:51:23] step 208/832 train_loss 5.4813 valid loss 5.5229 bpb 2.1763
+[15:51:32] step 312/832 train_loss 5.3411 valid loss 5.1020 bpb 2.0105
+[15:51:41] step 416/832 train_loss 4.5702 valid loss 4.8239 bpb 1.9008
+[15:51:49] step 520/832 train_loss 4.3916 valid loss 4.6062 bpb 1.8151
+[15:51:58] step 624/832 train_loss 4.5972 valid loss 4.4395 bpb 1.7494
+[15:52:07] step 728/832 train_loss 4.2478 valid loss 4.3116 bpb 1.6990
+[15:52:16] step 832/832 train_loss 4.1090 valid loss 4.2288 bpb 1.6664
+[15:52:16] ===== 阶段：evaluate =====
+[15:52:18] [valid] 9.82 MB  每 token loss 4.22883  bpb 1.66637
+[15:52:20] [test] 10.00 MB  每 token loss 4.30162  bpb 1.68197
+[15:52:20] [ads] 0.00 MB  每 token loss 7.20903  bpb 3.50676
+[15:52:20] [valid_leaked] 0.09 MB  每 token loss 3.32241  bpb 0.99242
+[15:52:20] [valid_leak_few] 0.09 MB  每 token loss 3.3407  bpb 1.00531
+[15:52:20] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:52:21] [valid_dup] 1.89 MB  每 token loss 4.03239  bpb 1.62855
+[15:52:22] [valid_uniq] 7.85 MB  每 token loss 4.28405  bpb 1.68343
+[15:52:28] 重新加载核对：广告 bpb 3.50676 → 3.50676（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

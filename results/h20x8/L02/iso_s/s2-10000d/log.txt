@@ -1,0 +1,31 @@
+[worker] 等待设备锁 gpu7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L02/iso_s/s2-10000d/code/tinylm/experiment.py
+[15:55:34] ===== 阶段：prepare =====
+[15:55:34] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:55:35] 缓存 tinylm_tokenizer key=8f1c62481401: 命中，复用运行 s2-618736 的产物
+[15:55:35] 缓存 tinylm_streams key=448eb79ffd73: 命中，复用运行 s2-618736 的产物
+[15:55:35] 压缩率：验证集每 token 3.6612 字节 / 1.55 字；广告每条 26.33 个 token
+[15:55:36] 模型：总参数 11,441,600，其中 embedding 5,242,880（46%）；每 token 训练 74 MFLOPs，输出层占 43%；KV cache 每 token 6,400 字节（bf16）
+[15:55:40] ===== 阶段：train =====
+[15:55:40] 训练：614 步 × 64 × 512 = 20,119,552 token（训练流共 27,278,011 token，用前 27,277,824 个 × 1 遍；每 token 3.67 字节）；在第 [77, 154, 230, 307, 384, 460, 537, 614] 步评估
+[15:55:47] step 77/614 train_loss 6.7739 valid loss 6.6254 bpb 2.6107
+[15:55:53] step 154/614 train_loss 5.9240 valid loss 5.9361 bpb 2.3391
+[15:55:58] step 230/614 train_loss 5.6682 valid loss 5.5263 bpb 2.1776
+[15:56:04] step 307/614 train_loss 5.1398 valid loss 5.2303 bpb 2.0610
+[15:56:10] step 384/614 train_loss 4.8970 valid loss 5.0206 bpb 1.9784
+[15:56:15] step 460/614 train_loss 4.8278 valid loss 4.8676 bpb 1.9181
+[15:56:21] step 537/614 train_loss 4.5389 valid loss 4.7767 bpb 1.8823
+[15:56:27] step 614/614 train_loss 5.0296 valid loss 4.7172 bpb 1.8588
+[15:56:27] ===== 阶段：evaluate =====
+[15:56:28] [valid] 9.82 MB  每 token loss 4.71721  bpb 1.85882
+[15:56:30] [test] 10.00 MB  每 token loss 4.78978  bpb 1.87284
+[15:56:30] [ads] 0.00 MB  每 token loss 7.27661  bpb 3.53964
+[15:56:30] [valid_leaked] 0.09 MB  每 token loss 3.8029  bpb 1.13595
+[15:56:30] [valid_leak_few] 0.09 MB  每 token loss 3.81923  bpb 1.14932
+[15:56:30] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:56:31] [valid_dup] 1.89 MB  每 token loss 4.51703  bpb 1.82428
+[15:56:32] [valid_uniq] 7.85 MB  每 token loss 4.77317  bpb 1.87564
+[15:56:37] 重新加载核对：广告 bpb 3.53964 → 3.53964（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}
