@@ -28,6 +28,8 @@ class Param:
     max: float | None = None
     cost_note: str = ""  # 改它的代价（时间、显存、计算量）
     advanced: bool = False
+    # 取默认值时不进配置哈希：给已有项目加参数（例如 L02 在 tinylm 上加 epochs）时，已有场景的 run_id 不变
+    omit_default: bool = False
 
     def coerce(self, value: Any) -> Any:
         t = self.type
@@ -80,6 +82,14 @@ class ParamSpace:
         for p in self.params:
             cfg[p.name] = p.coerce(overrides.get(p.name, p.default))
         return cfg
+
+    def hash_view(self, cfg: dict) -> dict:
+        """参与配置哈希的那部分配置：去掉 omit_default 且等于默认值的参数。"""
+        return {k: v for k, v in cfg.items()
+                if not (k in self.by_name and self.by_name[k].omit_default and v == self.by_name[k].default)}
+
+    def hash_cfg(self, cfg: dict) -> str:
+        return config_hash(self.hash_view(cfg))
 
     def to_json(self) -> list[dict]:
         out = []

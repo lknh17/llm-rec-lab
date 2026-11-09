@@ -1,0 +1,523 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: L04
+profiles:
+  h20x8: H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景只改一个训练参数 · 3 种子
+metric:
+  path: summary.test.bpb
+  label: 干净留出集 bits-per-byte（越低越好）
+table:
+- path: summary.test.bpb
+  label: 留出集 bpb
+- path: summary.valid_t512.bpb
+  label: 验证 bpb（512 窗口）
+- path: summary.train.grad_norm_max
+  label: 梯度范数最大值
+- path: summary.train.loss_spikes
+  label: loss 尖刺次数
+- path: summary.memory.peak_train_gb
+  label: 训练峰值显存 GB
+- path: summary.train.tokens_per_s
+  label: 训练 token/s
+- path: summary.precision.dlogits_zero_frac
+  label: logits 梯度为 0 的比例
+figures:
+  loss: []
+noise_note: bpb 差异小于 0.02 或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: lr
+  title: 学习率与 warmup
+- id: memory
+  title: batch、序列与显存
+- id: packing
+  title: packing
+- id: precision
+  title: 精度
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 发散、吞吐低、显存爆——哪些参数影响质量，哪些只影响显存和吞吐？
+  body: '内容理解模型做 SFT 或继续预训练，常见的三类事故：
+
+
+    1. **发散**：loss 曲线中途出现尖刺，然后变成 NaN；或者没有 NaN，但就是比上次差。是学习率、warmup，还是精度？
+
+    2. **显存爆**：batch 放不下，改成梯度累积——结果会变吗？
+
+    3. **吞吐低**：长输入的打标样本把序列拉到 2K、8K，注意力的算力占比涨了多少？短样本 packing 时要不要加 mask？
+
+
+    这一课每个场景只改一个参数，质量（bpb）、显存、吞吐、稳定性（梯度范数、尖刺）分开看。每个场景都已在 H20 上跑好（3 个种子）。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '一步训练的完整路径。每个环节对应这一课的一个参数，点击看代码。
+
+    '
+  nodes:
+  - id: pack
+    title: packing
+    shape: 文档 + EOS 首尾相接 → [B, T + 1] 块
+    detail: doc_mask 打开时按 EOS 分段：块对角因果 mask，位置从 0 重新计。
+    code:
+      file: tinylm/model.py
+      region: docmask
+  - id: accum
+    title: 梯度累积
+    shape: '[64, 512] → 4 × [16, 512]'
+    detail: 每份 loss ÷ 4 再反向，梯度在参数上累加；4 份做完才更新一次。
+    code:
+      file: tinylm/train.py
+      region: train
+  - id: fwd
+    title: 16 位前向
+    shape: autocast bf16 / fp16
+    detail: 矩阵乘用 16 位，归一化和 softmax 内部用 fp32；参数和优化器状态始终是 fp32。
+  - id: loss
+    title: 交叉熵
+    shape: logits [B, T, V] → fp32 → 标量
+    detail: 对 logits 的梯度 = (softmax − onehot) / (B × T)，绝大多数分量很小。
+  - id: bwd
+    title: 反向 + GradScaler
+    shape: loss × scale → 反向 → 梯度 ÷ scale
+    detail: 只有 fp16 需要：把小梯度抬进 fp16 的可表示范围。出现 inf 时跳过这一步并把 scale 减半。
+  - id: clip
+    title: 梯度裁剪
+    shape: 全局范数 > 1 时整体缩放
+    detail: 防止单步更新过大；梯度范数曲线是稳定性的第一信号。
+  - id: sched
+    title: 调度器
+    shape: warmup 2% → 余弦到 10%
+    detail: warmup_frac = 0 时第一步就用峰值学习率。
+    code:
+      file: tinylm/train.py
+      region: schedule
+  - id: opt
+    title: AdamW
+    shape: fp32 参数 + 两份 fp32 状态
+    detail: 每个参数 16 字节：权重 4 + 梯度 4 + 一阶矩 4 + 二阶矩 4。
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪一步训练
+  body: '基线的一次真实运行：第一个 batch 的输入和目标、一层注意力的张量形状、训练了多少步。打开文档 mask 的场景可以对照看同一行里有几篇文档。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: tinylm/train.py
+    region: train
+    title: ① 梯度累积与 GradScaler
+    note: 外层每步取 batch_size 条，内层拆成 grad_accum 份；loss ÷ accum 再 backward。fp16 + scaler 时 backward 的是 scale × loss，更新前 unscale_、裁剪，scaler.step 遇到 inf 会跳过。
+  - file: tinylm/train.py
+    region: schedule
+    title: ② warmup 与余弦
+    note: warm = total × warmup_frac；warmup_frac = 0 时 warm 取 1，第一步就是峰值。
+  - file: tinylm/model.py
+    region: docmask
+    title: ③ 文档 mask
+    note: doc = EOS 的累计计数 [B, T]；mask = (doc_i == doc_j) & 因果 [B, 1, T, T]；pos = 到本文档开头的距离，喂给 RoPE。显式 mask 让 SDPA 走不了 flash kernel。
+  - file: tinylm/model.py
+    region: attention
+    title: ④ 注意力
+    note: mask 为 None 时用 is_causal（flash 路径），否则传 attn_mask（稠密 [T, T] mask）。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答四个问题。基线：总参数约 1690 万；batch 64 × 512 = 32768 token；词表 16384；bf16 autocast，交叉熵前把 logits 转成 fp32。
+
+    '
+  questions:
+  - text: 基线训练时的峰值显存大约是多少？（提示：参数 + 梯度 + Adam 状态共 16 字节/参数；logits [64, 512, 16384] 有 bf16 和 fp32 两份，反向时还有同样大小的梯度）
+    options:
+    - 不到 3 GB
+    - 3 - 15 GB
+    - 15 - 50 GB
+    - 50 GB 以上
+  - text: 梯度累积 4 次（每次前向 16 条），峰值显存是基线的多少？
+    options:
+    - 不到 40%
+    - 40% - 80%
+    - 80% 以上：差不多
+  - text: Qwen2.5-7B（76 亿参数）全参 AdamW 训练，只算参数 + 梯度 + 优化器状态（16 字节/参数），一张 96 GB 的 H20 放得下吗？
+    options:
+    - 放得下，还剩一半给激活
+    - 刚好放得下
+    - 放不下：要 ZeRO / FSDP 切分，或者只训 LoRA
+  - text: 交叉熵对 logits 的梯度是 (p − y) / N，N = 32768 个 token、V = 16384 个词。大部分词的 p 小于 1e-4。fp16 的最小正规数约 6.1e-5、最小次正规数约 6e-8。这些梯度分量在 fp16 里会怎样？
+    options:
+    - 完整保留：fp16 精度够用
+    - 绝大多数变成 0，或者只剩一两位有效数字
+    - 上溢成 inf，这一步被跳过
+- id: p_lr_lo
+  file: 06-lr-lo
+  stage: lr
+  title: 学习率 ÷ 3
+  body: '峰值学习率从 2e-3 降到 6e-4，warmup 和余弦形状不变。
+
+    '
+  scenarios:
+  - lr_6e-4
+  compare_to: baseline
+  question:
+    text: 和基线比，留出集 bpb 怎样？
+    options:
+    - 更好（低 0.02 以上）
+    - 差不多（±0.02）
+    - 更差（高 0.02 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.train.grad_norm_max
+    label: 梯度范数最大值
+    fmt: .2f
+  - path: summary.train.loss_spikes
+    label: loss 尖刺次数
+    fmt: d
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 两条验证曲线的差距是越来越大还是越来越小？
+- id: p_lr_hi
+  file: 07-lr-hi
+  stage: lr
+  title: 学习率 × 3
+  body: '峰值学习率从 2e-3 提到 6e-3，warmup 仍是 2%。
+
+    '
+  scenarios:
+  - lr_6e-3
+  compare_to: baseline
+  also:
+  - lr_6e-4
+  question:
+    text: 和基线比，留出集 bpb 怎样？
+    options:
+    - 更好（低 0.02 以上）
+    - 差不多（±0.02）
+    - 更差（高 0.02 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.train.grad_norm_max
+    label: 梯度范数最大值
+    fmt: .2f
+  - path: summary.train.loss_spikes
+    label: loss 尖刺次数
+    fmt: d
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 三个学习率按 bpb 排序，U 形的底在哪？
+- id: p_lr_xhi
+  file: 08-lr-xhi
+  stage: lr
+  title: 学习率 × 10
+  body: '峰值学习率提到 2e-2（基线的 10 倍），warmup 仍是 2%，梯度裁剪 1.0。
+
+    '
+  scenarios:
+  - lr_2e-2
+  compare_to: baseline
+  also:
+  - lr_6e-3
+  question:
+    text: 和基线比，留出集 bpb 怎样？
+    options:
+    - 还好（差不到 0.05）
+    - 明显更差（差 0.05 - 0.3）
+    - 很差或发散（差 0.3 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.train.grad_norm_max
+    label: 梯度范数最大值
+    fmt: .2f
+  - path: summary.train.loss_spikes
+    label: loss 尖刺次数
+    fmt: d
+  - path: summary.train.nan_step
+    label: 出现 NaN 的步
+  charts:
+  - metrics
+  - loss
+  curve: grad_norm
+  look: grad_norm 曲线上，大学习率的尖刺出现在什么时候？
+- id: p_warmup
+  file: 09-warmup
+  stage: lr
+  title: 大学习率去掉 warmup
+  body: '学习率 6e-3，第一步就用峰值，不做 warmup。对照组是同样 6e-3、warmup 2%。
+
+    '
+  scenarios:
+  - nowarm_6e-3
+  compare_to: lr_6e-3
+  also:
+  - baseline
+  question:
+    text: 去掉 warmup，留出集 bpb 比有 warmup 时差多少？
+    options:
+    - 差不多（差 0.02 以内）
+    - 差 0.02 - 0.1
+    - 差 0.1 以上
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.train.grad_norm_max
+    label: 梯度范数最大值
+    fmt: .2f
+  - path: summary.train.loss_spikes
+    label: loss 尖刺次数
+    fmt: d
+  charts:
+  - metrics
+  - loss
+  curve: grad_norm
+  look: 训练前 50 步的 loss 曲线，两者差在哪？
+- id: p_accum
+  file: 10-accum
+  stage: memory
+  title: 梯度累积 4 次
+  body: '每步仍是 64 条，但拆成 4 次前向反向（每次 16 条），梯度累加后更新一次。学习率、步数、数据顺序都不变。
+
+    '
+  scenarios:
+  - accum4
+  compare_to: baseline
+  question:
+    text: 和基线比，留出集 bpb 差多少？
+    options:
+    - 更好（低 0.01 以上）
+    - 几乎一样（±0.01）
+    - 更差（高 0.01 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .4f
+    delta: true
+  - path: summary.memory.peak_train_gb
+    label: 峰值显存 GB
+    fmt: .2f
+  - path: summary.train.tokens_per_s
+    label: 训练 token/s
+    fmt: ','
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 两条 loss 曲线几乎重合吗？
+- id: p_seq
+  file: 11-seq
+  stage: memory
+  title: 序列 512 → 2048
+  body: '序列长度 2048、batch 16，每步 token 数（32768）和总步数都不变。注意力的每 token 算力和序列长度成正比，其余部分不变。为了公平，质量用同样的 512 窗口评估。
+
+    '
+  scenarios:
+  - seq_2048
+  compare_to: baseline
+  question:
+    text: 训练吞吐（token/s）是基线的多少？
+    options:
+    - 不到 70%
+    - 70% - 95%
+    - 95% 以上：差不多
+  columns:
+  - path: summary.train.tokens_per_s
+    label: 训练 token/s
+    fmt: ','
+    delta: true
+  - path: summary.flops.attn_share
+    label: 注意力占比
+    pct: true
+  - path: summary.memory.peak_train_gb
+    label: 峰值显存 GB
+    fmt: .2f
+  - path: summary.valid_t512.bpb
+    label: 验证 bpb（512 窗口）
+    fmt: .3f
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 吞吐下降的比例和注意力占比上升的比例对得上吗？
+- id: p_docmask
+  file: 12-docmask
+  stage: packing
+  title: packing 加文档 mask
+  body: '基线把文档首尾相接切成 512 的块，后一篇文档能看到前一篇（以 EOS 隔开）。打开文档 mask：块对角因果 mask，每篇文档只看自己，位置从 0 重新计。维基文章平均约 1000 字，一个 512 的块里常常是一篇的结尾 + 下一篇的开头。
+
+    '
+  scenarios:
+  - doc_mask
+  compare_to: baseline
+  question:
+    text: 加文档 mask 后，留出集 bpb 怎样？
+    options:
+    - 更好（低 0.01 以上）
+    - 差不多（±0.01）
+    - 更差（高 0.01 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.ads_isolated.bpb
+    label: 广告逐条 bpb
+    fmt: .3f
+  - path: summary.train.tokens_per_s
+    label: 训练 token/s
+    fmt: ','
+  - path: summary.memory.peak_train_gb
+    label: 峰值显存 GB
+    fmt: .2f
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 质量差和吞吐差，哪个更值得在意？
+- id: p_fault
+  file: 13-fault
+  stage: precision
+  title: 换成 fp16
+  body: '为了兼容一批只支持 fp16 的老卡，同事把 autocast 从 bf16 换成了 fp16，其余不变。训练跑完了，没有 NaN，没有报错。
+
+    '
+  scenarios:
+  - fault_fp16
+  compare_to: baseline
+  question:
+    text: 和 bf16 基线比，留出集 bpb 怎样？
+    options:
+    - 差不多（差 0.02 以内）
+    - 差 0.02 - 0.1
+    - 差 0.1 以上
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.train.grad_norm_median
+    label: 梯度范数中位数
+    fmt: .4f
+  - path: summary.train.nan_step
+    label: 出现 NaN 的步
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: fp16 的 loss 曲线是一开始就慢，还是中途才变慢？
+- id: diagnose
+  file: 14-diagnose
+  stage: precision
+  title: 诊断：fp16 为什么静默变差
+  body: '只把 bf16 换成了 fp16，没有 NaN、没有报错，效果明显变差。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - baseline
+  compare_to: fault_fp16
+  question:
+    text: fp16 训练静默变差的根因是什么？
+    options:
+    - fp16 的尾数只有 10 位，前向的 loss 算不准
+    - 没有 loss scaling：交叉熵对 logits 的小梯度在 fp16 里下溢成 0，大部分词收不到梯度
+    - 梯度上溢成 inf，这些步被跳过了
+    - fp16 要配更小的学习率
+  clues:
+  - 看 loss 曲线和梯度范数：梯度范数中位数 bf16 {{v:baseline:summary.train.grad_norm_median:.4f}}，fp16 {{v:fault_fp16:summary.train.grad_norm_median:.4f}}。没有出现 NaN。
+  - 统计 logits 梯度里恰好为 0 的比例：bf16 {{v:baseline:summary.precision.dlogits_zero_frac:.1%}}，fp16 {{v:fault_fp16:summary.precision.dlogits_zero_frac:.1%}}。交叉熵的梯度要除以 32768 个 token。
+  - 加上 GradScaler 之后：bpb {{v:fp16_scaler:summary.test.bpb:.3f}}（bf16 {{v:baseline:summary.test.bpb:.3f}}），零梯度比例 {{v:fp16_scaler:summary.precision.dlogits_zero_frac:.1%}}，最终 scale {{v:fp16_scaler:summary.precision.scaler_scale_final}}。
+  columns:
+  - path: summary.precision.dlogits_zero_frac
+    label: logits 梯度为 0 的比例
+    pct: true
+  - path: summary.train.grad_norm_median
+    label: 梯度范数中位数
+    fmt: .4f
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+  charts:
+  - metrics
+  - loss
+- id: p_fix
+  file: 15-fix
+  stage: precision
+  title: fp16 + GradScaler
+  body: '修复：fp16 加上动态 loss scaling（初始 scale 65536，连续 2000 步没有 inf 就翻倍，遇到 inf 就减半并跳过这一步）。
+
+    '
+  scenarios:
+  - fp16_scaler
+  compare_to: baseline
+  also:
+  - fault_fp16
+  question:
+    text: 加上 GradScaler 后，fp16 和 bf16 基线比怎样？
+    options:
+    - 比 bf16 更好（低 0.02 以上）
+    - 和 bf16 差不多（±0.02）
+    - 仍然更差（高 0.02 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.precision.dlogits_zero_frac
+    label: logits 梯度为 0 的比例
+    pct: true
+  - path: summary.precision.skipped_steps
+    label: 跳过的步
+    fmt: d
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 三条 loss 曲线里，fp16 + GradScaler 和 bf16 重合吗？
+- id: keycard
+  file: 16-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 哪些参数影响质量，哪些只影响显存和吞吐？
+  - 学习率太大时，loss 曲线和梯度范数各是什么样？梯度裁剪为什么挡不住？
+  - warmup 解决什么问题？代价是什么？
+  - 梯度累积为什么数学等价？什么情况下不等价？
+  - 序列变长，注意力占比、吞吐、显存各怎么变？比较不同序列长度的模型要注意什么？
+  - SFT 的 packing 为什么必须加文档 mask？生产里怎么实现才没有开销？
+  - fp16 和 bf16 的区别在哪一位？为什么 fp16 必须配 loss scaling？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。

@@ -15,9 +15,9 @@
 | 3. 模拟转载 + 去重 + 切分 | 20% 文章 × 1-40 份副本 → 去重 → 按 URL 哈希切分 | 留出集在注入副本之前拿走。去重只看文本；原文优先保留；验证集按（来源, 副本号）哈希切分，各场景验证集里的原文是同一批。 | [`tinylm/corpus.py#L220-L281`](../../../projects/tinylm/corpus.py#L220-L281) |
 | 4. 训练 BPE | 训练集前 20 MB → 词表 V | HF tokenizers 的字节级 BPE，预切分正则与 Qwen2 相同（数字、标点、汉字串分开）。 | [`tinylm/tokenizer.py#L86-L100`](../../../projects/tinylm/tokenizer.py#L86-L100) |
 | 5. token 流 | 文档首尾相接 + 分隔符 → [N_tokens] | 训练时随机切成 [B, T] = [64, 512] 的块，目标是右移一位的同一块。 |  |
-| 6. 小 GPT | [B, T] → [B, T, V] | Pre-RMSNorm、RoPE、SwiGLU；输入 embedding 和输出层共享同一个 V × d 矩阵。 | [`tinylm/model.py#L65-L92`](../../../projects/tinylm/model.py#L65-L92) |
-| 7. 训练 | 100 MB 文本过一遍 | AdamW（只对矩阵权重做衰减），warmup 后余弦降到 10%，梯度裁剪 1.0。 | [`tinylm/train.py#L92-L154`](../../../projects/tinylm/train.py#L92-L154) |
-| 8. bits-per-byte | Σ NLL / ln 2 / 字节数 | 评估所有子集：验证集、留出集、广告、验证集按泄漏拆的组。 | [`tinylm/train.py#L54-L87`](../../../projects/tinylm/train.py#L54-L87) |
+| 6. 小 GPT | [B, T] → [B, T, V] | Pre-RMSNorm、RoPE、SwiGLU；输入 embedding 和输出层共享同一个 V × d 矩阵。 | [`tinylm/model.py#L201-L243`](../../../projects/tinylm/model.py#L201-L243) |
+| 7. 训练 | 100 MB 文本过一遍 | AdamW（只对矩阵权重做衰减），warmup 后余弦降到 10%，梯度裁剪 1.0。 | [`tinylm/train.py#L163-L295`](../../../projects/tinylm/train.py#L163-L295) |
+| 8. bits-per-byte | Σ NLL / ln 2 / 字节数 | 评估所有子集：验证集、留出集、广告、验证集按泄漏拆的组。 | [`tinylm/train.py#L81-L118`](../../../projects/tinylm/train.py#L81-L118) |
 
 ---
 

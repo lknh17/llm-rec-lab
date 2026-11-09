@@ -1,4 +1,6 @@
-"""从零训练小 GPT 的全部可调参数（L01 数据与分词起步，L02-L04 在此基础上加参数，默认值不变）。"""
+"""从零训练小 GPT 的全部可调参数（L01 数据与分词起步，L02-L04 在此基础上加参数）。
+
+L02 起新加的参数都标 omit_default=True：取默认值时不进配置哈希，L01 已有运行的编号不变。"""
 
 from labkit.params import Param, ParamSpace
 
@@ -45,6 +47,28 @@ PARAMS = ParamSpace([
     Param("d_ff", "int", 1024, "SwiGLU 前馈的中间维度", affects="model", min=32, max=16384),
     Param("seq_len", "int", 512, "训练和评估的序列长度（token）", affects="model", min=16, max=8192,
           cost_note="同样 512 个 token，字节级只覆盖约 170 个汉字，16K BPE 约 700 个"),
+    # ---------- L03 结构消融（以下新参数都 omit_default：取默认值时不进配置哈希，L01 的运行编号不变）----------
+    Param("n_kv_head", "int", 0, "KV 头数（0 = 等于 n_head，即 MHA；1 = MQA；其余能整除 n_head 的值 = GQA）", affects="model",
+          min=0, max=64, omit_default=True, cost_note="KV cache 和 k/v 投影的参数都按 n_kv_head / n_head 缩小"),
+    Param("kv_lora_rank", "int", 0, "MLA 的 KV 潜向量维度（0 = 不用 MLA）", affects="model", min=0, max=4096, omit_default=True,
+          cost_note="KV cache 每层每 token 只存 kv_lora_rank + mla_rope_dim 个元素"),
+    Param("mla_rope_dim", "int", 32, "MLA 里解耦出来的 RoPE key 维度（所有头共享）", affects="model", min=2, max=256,
+          omit_default=True),
+    Param("pos_emb", "choice", "rope", "位置编码", affects="model", choices=("rope", "none", "learned"), omit_default=True,
+          choice_notes={"rope": "旋转位置编码：q、k 按位置旋转，内积只依赖相对位置",
+                        "none": "不加位置编码（NoPE）：只靠因果 mask 隐式感知位置",
+                        "learned": "可学习的绝对位置 embedding（GPT-2）：超过训练长度的位置没有向量"}),
+    Param("norm_pos", "choice", "pre", "Norm 放在哪", affects="model", choices=("pre", "post"), omit_default=True,
+          choice_notes={"pre": "Pre-Norm：x + f(norm(x))，残差流不经过 norm（现代 LLM 的默认）",
+                        "post": "Post-Norm：norm(x + f(x))（原始 Transformer、BERT），深层时梯度更难传回底层"}),
+    Param("ffn", "choice", "dense", "前馈层", affects="model", choices=("dense", "moe"), omit_default=True,
+          choice_notes={"dense": "一个 SwiGLU，中间维 d_ff", "moe": "moe_experts 个 SwiGLU 专家，每 token 选 top-k"}),
+    Param("moe_experts", "int", 8, "MoE 专家数", affects="model", min=2, max=256, omit_default=True),
+    Param("moe_top_k", "int", 2, "每个 token 选几个专家", affects="model", min=1, max=16, omit_default=True),
+    Param("moe_d_ff", "int", 0, "每个专家的中间维（0 = d_ff / top_k，激活参数和 dense 相同）", affects="model", min=0,
+          max=16384, omit_default=True),
+    Param("doc_mask", "bool", False, "按分隔符分段的块对角因果 mask：packing 时每篇文档只看自己，位置从 0 重新计",
+          affects="model", omit_default=True, cost_note="显式 mask 走不了 flash 注意力，注意力部分更慢、更占显存"),
     # ---------- 训练 ----------
     Param("batch_size", "int", 64, "每步多少条序列（每步 token = batch_size × seq_len）", affects="train", min=1, max=4096),
     Param("lr", "float", 2e-3, "峰值学习率（AdamW；warmup 后余弦降到 10%）", affects="train", min=1e-6, max=1.0),
@@ -52,9 +76,28 @@ PARAMS = ParamSpace([
     Param("weight_decay", "float", 0.1, "权重衰减（只作用于矩阵权重，不作用于 norm 和 embedding）", affects="train",
           min=0.0, max=1.0),
     Param("grad_clip", "float", 1.0, "梯度裁剪的全局范数上限（0 表示不裁剪）", affects="train", min=0.0, max=100.0),
-    Param("precision", "choice", "auto", "计算精度", affects="train", choices=("auto", "bf16", "fp32"),
-          choice_notes={"auto": "CUDA 上 bf16 autocast，其他设备 fp32"}),
+    Param("precision", "choice", "auto", "计算精度", affects="train", choices=("auto", "bf16", "fp32", "fp16"),
+          choice_notes={"auto": "CUDA 上 bf16 autocast，其他设备 fp32",
+                        "fp16": "fp16 autocast：指数只有 5 位，小于约 6e-8 的梯度变成 0，需要 GradScaler"}),
     Param("max_steps", "int", 0, "最多训练多少步（0 = 把训练集过一遍）", affects="train", min=0, max=10_000_000),
+    # ---------- L02 token 预算与调度 ----------
+    Param("data_frac", "float", 1.0, "只用训练 token 流的前多少比例（独特数据量）", affects="train", min=0.001, max=1.0,
+          omit_default=True),
+    Param("epochs", "int", 1, "独特数据过几遍（每遍重新打乱）", affects="train", min=1, max=256, omit_default=True,
+          cost_note="训练 token = 独特 token × epochs"),
+    Param("flops_budget_frac", "float", 0.0, "按算力定步数：预算 = 这个比例 × 默认结构（d=384、6 层）把训练流过一遍的 FLOPs（0 = 不用）",
+          affects="train", min=0.0, max=8.0, omit_default=True,
+          cost_note="等算力对照：模型小就多看 token，模型大就少看 token"),
+    Param("lr_schedule", "choice", "cosine", "学习率调度（warmup 之后）", affects="train", choices=("cosine", "constant"),
+          omit_default=True, choice_notes={"cosine": "余弦降到峰值的 10%", "constant": "保持峰值不变"}),
+    Param("target_offset", "int", 1, "目标相对输入右移几位（1 = next-token；0 = 教学故障：目标就是输入本身）", affects="train",
+          min=0, max=1, omit_default=True),
+    # ---------- L03 / L04 训练 ----------
+    Param("moe_aux_coef", "float", 0.01, "MoE 负载均衡损失的系数（0 = 不加，教学故障）", affects="train", min=0.0, max=1.0,
+          omit_default=True),
+    Param("grad_accum", "int", 1, "梯度累积：每步拆成几个 micro batch（batch_size 仍是每步的总条数）", affects="train", min=1,
+          max=64, omit_default=True, cost_note="激活显存按 1 / grad_accum 缩小，数学上和不累积等价"),
+    Param("grad_scaler", "bool", False, "fp16 时用动态 loss scaling（GradScaler）", affects="train", omit_default=True),
     Param("eval_points", "int", 8, "训练过程中在验证集上评估几次（均匀分布，最后一步一定评估）", affects="eval", min=1, max=100),
     Param("device", "choice", "auto", "设备", affects="runtime", choices=("auto", "cuda", "mps", "cpu")),
     Param("seed", "int", 0, "模型初始化和数据顺序的随机种子", affects="train"),

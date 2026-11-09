@@ -1,0 +1,88 @@
+course: L04
+title: L04 关键参数选择：学习率与 warmup、梯度累积、序列长度、packing 的文档 mask、fp16 与 loss scaling
+project: tinylm
+entry: tinylm.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。语料、分词器（16K BPE）和 L01 完全相同（缓存共用）；基线小 GPT（d=384、6 层）= L01 基线，每个场景只改一个训练参数
+    base: {device: cuda, max_minutes: 60}
+    seeds: [0, 1, 2]
+    assets: [zhwiki-2311-s2]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：0.3 MB 训练文本、2 层 64 维小模型，只验证流程能跑通（结果没有教学意义，不检查断言）
+    base: {train_mb: 0.3, valid_mb: 0.05, test_mb: 0.05, tok_train_mb: 0.3, d_model: 64, n_layer: 2, n_head: 2, d_ff: 128,
+           seq_len: 128, batch_size: 8, eval_points: 2, max_minutes: 15}
+    seeds: [0]
+    skip_expect: true
+    assets: [zhwiki-2311-s2]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：lr 2e-3、warmup 2%、batch 64 × 512、bf16（= L01 基线）
+    params: {}
+    expect:
+      - "summary.precision.dlogits_zero_frac < 0.05"
+
+  # ---------- 学习率与 warmup ----------
+  - id: lr_6e-4
+    role: variant
+    title: 学习率 ÷ 3（6e-4）
+    params: {lr: 0.0006}
+  - id: lr_6e-3
+    role: variant
+    title: 学习率 × 3（6e-3）
+    params: {lr: 0.006}
+  - id: lr_2e-2
+    role: variant
+    title: 学习率 × 10（2e-2）
+    params: {lr: 0.02}
+    expect:
+      - "summary.train.grad_norm_max > base.summary.train.grad_norm_max"
+  - id: nowarm_6e-3
+    role: variant
+    title: 学习率 6e-3 且不做 warmup
+    params: {lr: 0.006, warmup_frac: 0.0}
+
+  # ---------- batch 与显存 ----------
+  - id: accum4
+    role: variant
+    title: 梯度累积 4 次（每步仍是 64 条，每次前向 16 条）
+    params: {grad_accum: 4}
+    profile_params: {mac-smoke: {grad_accum: 2}}
+    expect:
+      - "abs(summary.test.bpb - base.summary.test.bpb) < 0.01"
+      - "summary.memory.peak_train_gb < 0.7 * base.summary.memory.peak_train_gb"
+  - id: seq_2048
+    role: variant
+    title: 序列 2048、batch 16（每步 token 数不变）
+    params: {seq_len: 2048, batch_size: 16}
+    profile_params: {mac-smoke: {seq_len: 512, batch_size: 2}}
+    expect:
+      - "summary.flops.attn_share > 2 * base.summary.flops.attn_share"
+
+  # ---------- packing ----------
+  - id: doc_mask
+    role: variant
+    title: packing 加文档 mask：每篇文档只看自己，位置从 0 重新计
+    params: {doc_mask: true}
+    expect:
+      - "summary.attn.doc_mask == True"
+
+  # ---------- 精度：教学故障与修复 ----------
+  - id: fault_fp16
+    role: fault
+    title: 换成 fp16 autocast，没有 loss scaling
+    params: {precision: fp16}
+    expect:
+      - "summary.precision.dlogits_zero_frac > 0.5"
+      - "summary.test.bpb > base.summary.test.bpb + 0.03"
+  - id: fp16_scaler
+    role: fix
+    title: fp16 + GradScaler（动态 loss scaling）
+    params: {precision: fp16, grad_scaler: true}
+    expect:
+      - "abs(summary.test.bpb - base.summary.test.bpb) < 0.03"

@@ -1,0 +1,89 @@
+course: L03
+title: L03 模型结构消融：MHA / GQA / MQA / MLA 的 KV cache 与质量，NoPE，Pre-Norm 与 Post-Norm，Dense 与 MoE，专家坍缩
+project: tinylm
+entry: tinylm.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。语料、分词器（16K BPE）和 L01 完全相同（缓存共用）；基线小 GPT（d=384、6 层、MHA 6 头）= L01 基线，每个场景只换一处结构
+    base: {device: cuda, max_minutes: 60}
+    seeds: [0, 1, 2]
+    assets: [zhwiki-2311-s2]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：0.3 MB 训练文本、2 层 64 维小模型，只验证流程能跑通（结果没有教学意义，不检查断言）
+    base: {train_mb: 0.3, valid_mb: 0.05, test_mb: 0.05, tok_train_mb: 0.3, d_model: 64, n_layer: 2, n_head: 2, d_ff: 128,
+           seq_len: 128, batch_size: 8, eval_points: 2, max_minutes: 15}
+    seeds: [0]
+    skip_expect: true
+    assets: [zhwiki-2311-s2]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：MHA 6 头、RoPE、Pre-Norm、Dense SwiGLU（= L01 基线）
+    params: {}
+
+  # ---------- 注意力 ----------
+  - id: gqa2
+    role: variant
+    title: GQA：6 个查询头共享 2 组 KV
+    params: {n_kv_head: 2}
+    profile_params: {mac-smoke: {n_kv_head: 1}}
+    expect:
+      - "summary.kv_cache.elems_per_token_layer == 256"
+  - id: mqa
+    role: variant
+    title: MQA：6 个查询头共享 1 组 KV
+    params: {n_kv_head: 1}
+    expect:
+      - "summary.kv_cache.elems_per_token_layer == 128"
+  - id: mla
+    role: variant
+    title: MLA：KV 压成 96 维潜向量 + 32 维共享 RoPE key（缓存字节和 MQA 相同）
+    params: {kv_lora_rank: 96}
+    expect:
+      - "summary.kv_cache.elems_per_token_layer == 128"
+      - "summary.params.attn_per_layer < base.summary.params.attn_per_layer"
+
+  # ---------- 位置编码 ----------
+  - id: nope
+    role: variant
+    title: 不加位置编码（NoPE）
+    params: {pos_emb: none}
+
+  # ---------- Norm 位置（12 层才看得出差别） ----------
+  - id: pre12
+    role: variant
+    title: 12 层 Pre-Norm
+    params: {n_layer: 12}
+    expect:
+      - "summary.test.bpb < base.summary.test.bpb + 0.02"
+  - id: post12
+    role: variant
+    title: 12 层 Post-Norm（其余同 pre12）
+    params: {n_layer: 12, norm_pos: post}
+
+  # ---------- MoE ----------
+  - id: moe
+    role: variant
+    title: MoE：8 个专家（中间维 512）top-2，激活参数和 dense 相同，负载均衡系数 0.01
+    params: {ffn: moe}
+    expect:
+      - "summary.moe.load_max_over_mean < 1.8"
+      - "summary.flops.train_flops_per_token < 1.05 * base.summary.flops.train_flops_per_token"
+  - id: dense_wide
+    role: variant
+    title: 宽 Dense：中间维 4096（FFN 总参数和 MoE 相同，每 token 算力约 2.2 倍）
+    params: {d_ff: 4096}
+    expect:
+      - "summary.params.body > 2.5 * base.summary.params.body"
+
+  # ---------- 教学故障：MoE 不加负载均衡 ----------
+  - id: fault_moe_noaux
+    role: fault
+    title: MoE 去掉负载均衡损失（moe_aux_coef = 0）
+    params: {ffn: moe, moe_aux_coef: 0.0}
+    expect:
+      - "summary.moe.load_max_over_mean > 2.0"

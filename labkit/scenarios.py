@@ -133,10 +133,10 @@ def expand(course_id: str, profile: str, only: list[str] | None = None, seeds: l
             merged.update((s.get("profile_params") or {}).get(profile, {}))
             merged["seed"] = seed
             cfg = space.resolve(merged)
-            group = config_hash({k: cfg[k] for k in data_params} | {"_project": course["project"]})
+            group = config_hash(space.hash_view({k: cfg[k] for k in data_params}) | {"_project": course["project"]})
             out.append(RunSpec(course=course_id, project=course["project"], entry=course["entry"], profile=profile,
                                scenario=s["id"], role=s["role"], title=s.get("title", ""), seed=seed, cfg=cfg,
-                               config_hash=config_hash(cfg), data_group=group,
+                               config_hash=space.hash_cfg(cfg), data_group=group,
                                # 冒烟档（skip_expect: true）只验证流程能跑通，规模太小，教学断言不适用
                                expect=[] if prof.get("skip_expect") else list(s.get("expect", []))))
     return out

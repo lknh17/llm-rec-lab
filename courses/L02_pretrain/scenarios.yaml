@@ -1,0 +1,92 @@
+course: L02
+title: L02 预训练 next-token：6ND 与实测 FLOPs、token 预算与 scaling、数据重复、学习率调度、等算力下的模型大小，标签没右移
+project: tinylm
+entry: tinylm.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。语料、分词器（16K BPE）和 L01 完全相同（缓存共用）；小 GPT（d=384、6 层，主体约 1060 万参数）从零训练，基线 = L01 基线（同配置同代码时直接复用）
+    base: {device: cuda, max_minutes: 60}
+    seeds: [0, 1, 2]
+    assets: [zhwiki-2311-s2]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：0.3 MB 训练文本、2 层 64 维小模型，只验证流程能跑通（结果没有教学意义，不检查断言）
+    base: {train_mb: 0.3, valid_mb: 0.05, test_mb: 0.05, tok_train_mb: 0.3, d_model: 64, n_layer: 2, n_head: 2, d_ff: 128,
+           seq_len: 128, batch_size: 8, eval_points: 2, max_minutes: 15}
+    seeds: [0]
+    skip_expect: true
+    assets: [zhwiki-2311-s2]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：100 MB 训练流过一遍，余弦调度（= L01 基线）
+    params: {}
+    expect:
+      - "summary.train.batch_check.y_eq_x_frac < 0.1"
+      - "abs(summary.flops.ratio_vs_6nd - 1.07) < 0.03"
+
+  # ---------- token 预算 ----------
+  - id: data_12
+    role: variant
+    title: 只用训练流前 12.5%（约 12.5 MB），调度按自己的步数跑完
+    params: {data_frac: 0.125}
+    expect:
+      - "summary.test.bpb > base.summary.test.bpb + 0.05"
+  - id: data_25
+    role: variant
+    title: 只用前 25%
+    params: {data_frac: 0.25}
+    expect:
+      - "summary.test.bpb > base.summary.test.bpb + 0.02"
+  - id: data_50
+    role: variant
+    title: 只用前 50%
+    params: {data_frac: 0.5}
+    expect:
+      - "summary.test.bpb > base.summary.test.bpb"
+
+  # ---------- 数据重复 ----------
+  - id: repeat_4x
+    role: variant
+    title: 前 25% 过 4 遍（训练 token 数和基线相同，独特数据只有 1/4）
+    params: {data_frac: 0.25, epochs: 4}
+    expect:
+      - "abs(summary.train.train_tokens / base.summary.train.train_tokens - 1) < 0.01"
+  - id: repeat_16x
+    role: variant
+    title: 前 6.25% 过 16 遍
+    params: {data_frac: 0.0625, epochs: 16}
+    expect:
+      - "summary.gap.valid_minus_seen_bpb > base.summary.gap.valid_minus_seen_bpb + 0.1"
+
+  # ---------- 学习率调度 ----------
+  - id: const_lr
+    role: variant
+    title: warmup 后学习率保持不变（不做余弦退火）
+    params: {lr_schedule: constant}
+
+  # ---------- 等算力：模型大小 vs 数据量（算力 = data_50） ----------
+  - id: iso_s
+    role: variant
+    title: 等算力小模型：d=320、5 层（主体约 620 万），算力和 data_50 相同，看更多 token
+    params: {d_model: 320, n_layer: 5, n_head: 5, d_ff: 864, flops_budget_frac: 0.5}
+    expect:
+      - "summary.train.budget_capped == False"
+  - id: iso_l
+    role: variant
+    title: 等算力大模型：d=512、8 层（主体约 2530 万），算力和 data_50 相同，看更少 token
+    params: {d_model: 512, n_layer: 8, n_head: 8, d_ff: 1376, flops_budget_frac: 0.5}
+    expect:
+      - "summary.train.budget_capped == False"
+
+  # ---------- 教学故障：标签没右移 ----------
+  - id: fault_noshift
+    role: fault
+    title: 数据代码重构后目标没有右移（y = x）
+    params: {target_offset: 0}
+    expect:
+      - "summary.train.batch_check.y_eq_x_frac > 0.99"
+      - "summary.test.bpb < 0.5"

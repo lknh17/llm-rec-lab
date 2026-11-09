@@ -18,7 +18,7 @@ def test_course_loads_and_expands(course):
         ids = [s.run_id for s in specs]
         assert len(ids) == len(set(ids)), "同一档位里运行编号重复"
         for s in specs:
-            assert s.config_hash == config_hash(s.cfg)
+            assert s.config_hash == scenarios.param_space(s.project).hash_cfg(s.cfg)
             assert s.rel_dir.parts[:3] == (prof, course, s.scenario)
 
 
@@ -88,3 +88,29 @@ def test_expect_evaluate():
     assert missing["ok"] is None and "summary.test" in missing["error"]
     no_base = scenarios.evaluate("summary.valid.auc > base.summary.valid.auc", summary, meta, None)
     assert no_base["ok"] is None
+
+
+# 给项目加参数（omit_default=True）时，已有课程的 run_id 必须不变：已推回的 H20 结果靠它定位
+GOLDEN_HASHES = {
+    "L01": {"baseline": "39279f", "bpe_4k": "2c023d", "bpe_64k": "c432bd", "bytes": "e4f925", "qwen": "e6bc06",
+            "tok_ads": "ef559c", "dedup_exact": "dce1e0", "fault_nodedup": "37d57c"},
+    "L1": {"baseline": "11e3fc", "fault_truncation": "9927ff", "lora_r64": "d386de"},
+    "L06": {"baseline": "4c72c9", "fault_plain": "f5531b"},
+    "L07": {"baseline": "606cc1", "grpo": "946274", "fault_flip": "4190ee"},
+}
+
+
+@pytest.mark.parametrize("course", sorted(GOLDEN_HASHES))
+def test_existing_run_ids_unchanged(course):
+    got = {s.scenario: s.config_hash[:6] for s in scenarios.expand(course, "h20x8", seeds=[0])}
+    for scen, h in GOLDEN_HASHES[course].items():
+        assert got[scen] == h, f"{course}/{scen} 的配置哈希变了：新参数要设 omit_default=True"
+
+
+def test_omit_default_params_skip_hash():
+    from labkit.params import Param, ParamSpace
+
+    a = ParamSpace([Param("x", "int", 1, "")])
+    b = ParamSpace([Param("x", "int", 1, ""), Param("y", "int", 0, "", omit_default=True)])
+    assert a.hash_cfg(a.resolve()) == b.hash_cfg(b.resolve())
+    assert b.hash_cfg(b.resolve({"y": 2})) != a.hash_cfg(a.resolve())

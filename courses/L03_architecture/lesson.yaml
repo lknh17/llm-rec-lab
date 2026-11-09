@@ -1,0 +1,519 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: L03
+profiles:
+  h20x8: H20 · 小 GPT（6 层 d=384）从零训练 100 MB 中文维基 · 每个场景只换一处结构 · 3 种子
+metric:
+  path: summary.test.bpb
+  label: 干净留出集 bits-per-byte（越低越好）
+table:
+- path: summary.test.bpb
+  label: 留出集 bpb
+- path: summary.kv_cache.bytes_per_token
+  label: KV cache 每 token 字节
+- path: summary.params.total
+  label: 总参数
+- path: summary.params.active
+  label: 激活参数
+- path: summary.flops.train_flops_per_token
+  label: 每 token 训练 FLOPs
+- path: summary.moe.load_max_over_mean
+  label: 专家负载 最大/平均
+- path: summary.train.grad_norm_max
+  label: 梯度范数最大值
+- path: summary.train.seconds
+  label: 训练秒数
+figures:
+  loss: []
+noise_note: bpb 差异小于 0.02 或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: attention
+  title: 注意力变体
+- id: position
+  title: 位置编码
+- id: norm
+  title: Norm 位置
+- id: moe
+  title: MoE
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: GQA、MLA、RoPE、Pre-Norm、MoE 各省的是训练算力、参数还是推理带宽？代价是什么？
+  body: '内容理解模型选基座时，常见的对比是"Qwen2.5-7B（GQA）还是 DeepSeek 系（MLA + MoE）"。技术报告里每个结构都号称"更好"，但它们的收益落在完全不同的地方：
+
+
+    - **GQA / MQA / MLA** 不省训练算力，省的是**推理 KV cache**：打标服务长输入、高并发，KV cache 决定一张卡能同时跑多少请求；
+
+    - **RoPE、Pre-Norm** 不省任何东西，决定的是**质量和训练稳定性**；
+
+    - **MoE** 每 token 算力不变，用更多**参数**换质量，代价是显存、通信和负载均衡。
+
+
+    这一课每个场景只换一处结构，确定量（KV 字节、参数、FLOPs）和质量（bpb）分开看。每个场景都已在 H20 上跑好（3 个种子）。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '训练循环和 L02 完全一样，只是 Block 里的几个部件可以替换。点击每个部件看代码。
+
+    '
+  nodes:
+  - id: emb
+    title: embedding
+    shape: '[B, T] → [B, T, C]'
+    detail: 和输出层共享。learned 位置编码时还要加一张 [T, C] 的位置表。
+    code:
+      file: tinylm/model.py
+      region: gpt
+  - id: attn
+    title: 注意力变体
+    shape: q [B, H, T, D]；k、v [B, Hkv, T, D]
+    detail: MHA：Hkv = H；GQA：H 个查询头分成 Hkv 组；MQA：Hkv = 1。
+    code:
+      file: tinylm/model.py
+      region: attention
+  - id: mla
+    title: MLA
+    shape: x → c [B, T, R] + k_rope [B, T, Dr] → 各头 k、v
+    detail: 缓存 c 和 k_rope；RoPE 只加在解耦出来的 Dr 维上。
+    code:
+      file: tinylm/model.py
+      region: mla
+  - id: norm
+    title: Norm 与残差
+    shape: Pre：x + f(norm(x))；Post：norm(x + f(x))
+    detail: Pre-Norm 的残差流不经过 norm，梯度有一条恒等路径。
+    code:
+      file: tinylm/model.py
+      region: norm
+  - id: ffn
+    title: FFN 或 MoE
+    shape: '[N, C] → 路由 [N, E] → top-k → 专家 → 加权和'
+    detail: MoE 每个专家是中间维 512 的 SwiGLU，top-2 时激活参数和 1024 的 Dense 相同。
+    code:
+      file: tinylm/model.py
+      region: moe
+  - id: kv
+    title: KV cache 统计
+    shape: 每层每 token 缓存的元素数 × 层数 × 2 字节
+    detail: 不训练也能算：只取决于结构。
+    code:
+      file: tinylm/model.py
+      region: kvcache
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪一层注意力
+  body: '各变体的真实运行：一层注意力里 q、k、v 的形状、每 token 每层缓存几个元素；MoE 场景里验证集前 16 个 token 在第 1 层选中了哪两个专家。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: tinylm/model.py
+    region: attention
+    title: ① MHA / GQA / MQA
+    note: qkv 投影的输出是 C + 2 × Hkv × D：查询头 H 个，KV 头 Hkv 个。SDPA 的 enable_gqa 让每 H / Hkv 个查询头共用一组 k、v，不必复制。
+  - file: tinylm/model.py
+    region: mla
+    title: ② MLA
+    note: kv_down 把 x 压成 R + Dr 维（这就是缓存的全部）；kv_up 再展开成每个头的 k_nope、v。q 的每个头也分成 D 维内容 + Dr 维位置，和 [k_nope, k_rope] 拼起来算内积。
+  - file: tinylm/model.py
+    region: norm
+    title: ③ Pre-Norm 与 Post-Norm
+    note: 只差一行：norm 包住 f 的输入，还是包住残差相加之后的结果。
+  - file: tinylm/model.py
+    region: moe
+    title: ④ MoE 路由与负载均衡
+    note: probs [N, E] → topk [N, K] → 重新归一化 → 逐专家 gather / scatter。aux = E × Σ f_e × P_e：f 不可导（计数），梯度通过 P 推着路由把概率分给冷门专家。
+  - file: tinylm/model.py
+    region: kvcache
+    title: ⑤ KV cache 字节数
+    note: MHA / GQA：2 × Hkv × D；MLA：R + Dr。乘层数、乘 2 字节（bf16）。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答四个问题。基线：6 层、6 头、D = 64、SwiGLU 中间维 1024，总参数约 1690 万（含 630 万 embedding）。
+
+    '
+  questions:
+  - text: Qwen2.5-7B（28 层、28 个查询头、4 个 KV 头、D = 128、bf16），每个 token 的 KV cache 是多少？
+    options:
+    - 约 14 KB
+    - 约 56 KB
+    - 约 400 KB
+    - 约 1.6 MB
+  - text: 本模型（6 个查询头）换成 MQA（1 个 KV 头），每 token 的 KV cache 是 MHA 的多少？
+    options:
+    - 不到 20%
+    - 20% - 40%
+    - 40% 以上
+  - text: 换成 MoE（8 个专家，每个专家中间维 512，top-2），模型总参数是 Dense 基线的几倍？
+    options:
+    - 不到 1.5 倍
+    - 1.5 - 2.5 倍
+    - 2.5 - 4 倍
+    - 4 倍以上
+  - text: 同一个 MoE，每 token 的训练 FLOPs 是 Dense 基线的几倍？
+    options:
+    - 不到 1.1 倍：几乎不变
+    - 1.1 - 2 倍
+    - 2 倍以上
+- id: p_gqa
+  file: 06-gqa
+  stage: attention
+  title: GQA：6 个查询头共享 2 组 KV
+  body: 'KV 头从 6 个降到 2 个，每 token 的 KV cache 少 2/3。k、v 投影的参数也跟着少了：每层注意力参数从约 59 万降到约 39 万。
+
+    '
+  scenarios:
+  - gqa2
+  compare_to: baseline
+  question:
+    text: 和 MHA 比，GQA（2 组）的留出集 bpb 怎样？
+    options:
+    - 更好（低 0.02 以上）
+    - 差不多（±0.02）
+    - 更差（高 0.02 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.kv_cache.bytes_per_token
+    label: KV 每 token 字节
+    fmt: ','
+  - path: summary.params.attn_per_layer
+    label: 每层注意力参数
+    fmt: ','
+  - path: summary.train.tokens_per_s
+    label: 训练 token/s
+    fmt: ','
+  charts:
+  - metrics
+  - params
+  - loss
+  curve: valid_bpb
+  look: 质量差和种子间波动比，哪个大？
+- id: p_mqa
+  file: 07-mqa
+  stage: attention
+  title: MQA：只剩 1 组 KV
+  body: '再极端一点：6 个查询头共享同一组 k、v。KV cache 只剩 MHA 的 1/6。
+
+    '
+  scenarios:
+  - mqa
+  compare_to: baseline
+  also:
+  - gqa2
+  question:
+    text: 和 MHA 比，MQA 的留出集 bpb 怎样？
+    options:
+    - 更好（低 0.02 以上）
+    - 差不多（±0.02）
+    - 更差（高 0.02 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.kv_cache.bytes_per_token
+    label: KV 每 token 字节
+    fmt: ','
+  - path: summary.params.attn_per_layer
+    label: 每层注意力参数
+    fmt: ','
+  charts:
+  - metrics
+  - params
+  - loss
+  curve: valid_bpb
+  look: MHA → GQA → MQA，bpb 是单调变差的吗？
+- id: p_mla
+  file: 08-mla
+  stage: attention
+  title: 同样的 KV 字节，MLA 对 MQA
+  body: 'MLA 每层每 token 缓存 96 维潜向量 + 32 维共享 RoPE key = 128 个元素，和 MQA（2 × 64）**完全相同**。区别在于 MLA 的每个头仍有自己的 k、v（由潜向量展开），而 MQA 所有头用同一组。
+
+    '
+  scenarios:
+  - mla
+  compare_to: mqa
+  also:
+  - baseline
+  question:
+    text: 同样的 KV cache 字节，MLA 和 MQA 比，留出集 bpb 怎样？
+    options:
+    - MLA 更好（低 0.02 以上）
+    - 差不多（±0.02）
+    - MLA 更差（高 0.02 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.kv_cache.bytes_per_token
+    label: KV 每 token 字节
+    fmt: ','
+  - path: summary.params.attn_per_layer
+    label: 每层注意力参数
+    fmt: ','
+  - path: summary.train.tokens_per_s
+    label: 训练 token/s
+    fmt: ','
+  charts:
+  - metrics
+  - params
+  - loss
+  curve: valid_bpb
+  look: 三者的 KV 字节和 bpb 放在一起，哪个是"每字节质量"最高的？
+- id: p_nope
+  file: 09-nope
+  stage: position
+  title: 去掉位置编码
+  body: '不加任何位置编码（NoPE）。模型只能靠因果 mask 隐式知道位置：第 t 个位置能看到 t 个 token，注意力的分母随位置变化。另外在 2 倍训练长度（1024 token）的窗口上评估，看外推。
+
+    '
+  scenarios:
+  - nope
+  compare_to: baseline
+  question:
+    text: 去掉 RoPE，留出集 bpb 会差多少？
+    options:
+    - 差不到 0.02
+    - 差 0.02 - 0.1
+    - 差 0.1 以上
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.valid.bpb
+    label: 验证 bpb（512）
+    fmt: .3f
+  - path: summary.valid_long.bpb
+    label: 验证 bpb（1024 窗口）
+    fmt: .3f
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 两条验证曲线在训练早期差得多，还是后期差得多？
+- id: p_post
+  file: 10-post
+  stage: norm
+  title: 12 层 Post-Norm
+  body: '层数加到 12，对比两种 Norm 位置。Pre-Norm：x + f(norm(x))；Post-Norm（原始 Transformer、BERT）：norm(x + f(x))。学习率、warmup、梯度裁剪完全相同（lr 2e-3、warmup 2%、裁剪 1.0），没有为 Post-Norm 调参。
+
+    '
+  scenarios:
+  - post12
+  compare_to: pre12
+  also:
+  - baseline
+  question:
+    text: 12 层 Post-Norm 和 12 层 Pre-Norm 比，留出集 bpb 怎样？
+    options:
+    - 差不多（差 0.02 以内）
+    - 明显更差（差 0.02 - 0.2）
+    - 很差或发散（差 0.2 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.train.grad_norm_max
+    label: 梯度范数最大值
+    fmt: .2f
+  - path: summary.train.grad_norm_median
+    label: 梯度范数中位数
+    fmt: .3f
+  - path: summary.train.loss_spikes
+    label: loss 尖刺次数
+    fmt: d
+  charts:
+  - metrics
+  - loss
+  curve: grad_norm
+  look: 12 层 Pre-Norm 比 6 层好了多少？Post-Norm 吃到了加深的收益吗？
+- id: p_moe
+  file: 11-moe
+  stage: moe
+  title: MoE：同样的激活算力
+  body: 'FFN 换成 8 个专家（每个中间维 512）、每 token 选 top-2，负载均衡系数 0.01。每 token 的算力和 Dense 相同，总参数约 2.3 倍。
+
+    '
+  scenarios:
+  - moe
+  compare_to: baseline
+  question:
+    text: 和 Dense 基线比，MoE 的留出集 bpb 怎样？
+    options:
+    - 更好（低 0.02 以上）
+    - 差不多（±0.02）
+    - 更差（高 0.02 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.params.total
+    label: 总参数
+    fmt: ','
+  - path: summary.params.active
+    label: 激活参数
+    fmt: ','
+  - path: summary.moe.load_max_over_mean
+    label: 负载 最大/平均
+    fmt: .2f
+  - path: summary.train.seconds
+    label: 训练秒数
+    fmt: .0f
+  charts:
+  - metrics
+  - params
+  - loss
+  curve: valid_bpb
+  look: 训练早期 MoE 比 Dense 慢还是快？最后呢？
+- id: p_moe_wide
+  file: 12-moe-wide
+  stage: moe
+  title: MoE 对同总参数的宽 Dense
+  body: '另一个对照：宽 Dense，中间维 4096，FFN 参数和 MoE 的 8 个专家加起来一样多，但每个 token 都要过全部参数，每 token 算力约 2.2 倍。它是 MoE 的"上限"：同样的参数全都用上。
+
+    '
+  scenarios:
+  - moe
+  compare_to: dense_wide
+  also:
+  - baseline
+  question:
+    text: MoE 比同总参数的宽 Dense 差多少？
+    options:
+    - 差不到 0.02：几乎追平
+    - 差 0.02 - 0.06
+    - 差 0.06 以上
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.params.total
+    label: 总参数
+    fmt: ','
+  - path: summary.flops.train_flops_per_token
+    label: 每 token 训练 FLOPs
+    fmt: ','
+  - path: summary.train.seconds
+    label: 训练秒数
+    fmt: .0f
+  charts:
+  - metrics
+  - params
+  - loss
+  curve: valid_bpb
+  look: 按"每 token FLOPs"横轴摆这三个点，MoE 在不在两个 Dense 连线的下方？
+- id: p_fault
+  file: 13-fault
+  stage: moe
+  title: 去掉负载均衡损失
+  body: '同事觉得负载均衡损失"和语言建模无关、会拖累质量"，把系数设成 0 重训了一遍。其余和 MoE 场景完全相同。
+
+    '
+  scenarios:
+  - fault_moe_noaux
+  compare_to: moe
+  also:
+  - baseline
+  question:
+    text: 去掉负载均衡后，最忙的专家分到的 token 是平均的几倍？（top-2 / 8 专家时最多 4 倍）
+    options:
+    - 不到 1.5 倍：路由自己会均衡
+    - 1.5 - 2.5 倍
+    - 2.5 倍以上
+  columns:
+  - path: summary.moe.load_max_over_mean
+    label: 负载 最大/平均
+    fmt: .2f
+    delta: true
+  - path: summary.moe.router_entropy_norm
+    label: 路由熵（归一化）
+    fmt: .3f
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+  charts:
+  - metrics
+  - loss
+  curve: moe_max_load
+  look: moe_max_load 曲线上，失衡是在训练早期就出现了，还是慢慢变严重？
+- id: diagnose
+  file: 14-diagnose
+  stage: moe
+  title: 诊断：去掉负载均衡的代价在哪
+  body: '去掉负载均衡损失后，离线 bpb 差不多，但专家负载严重不均。计划上线时用 8 卡专家并行（每卡放 1 个专家）。按需逐级点开线索，然后点选最主要的问题。
+
+    '
+  scenarios:
+  - moe
+  compare_to: fault_moe_noaux
+  question:
+    text: 去掉负载均衡损失，最主要的问题是什么？
+    options:
+    - 没有问题：bpb 差不多，均衡损失确实多余
+    - 路由强者愈强，少数专家吃掉大部分 token：专家并行时最忙的卡决定整层耗时，其余卡空等；容量上限下还会丢 token
+    - top-k 权重没有重新归一化，输出尺度不对
+    - 专家太多、数据太少，每个专家都欠训练
+  clues:
+  - 离线质量：留出集 bpb 有均衡 {{v:moe:summary.test.bpb:.3f}}，去掉 {{v:fault_moe_noaux:summary.test.bpb:.3f}}，Dense 基线 {{v:baseline:summary.test.bpb:.3f}}。
+  - 负载：最忙的专家分到的 token 是平均的几倍——有均衡 {{v:moe:summary.moe.load_max_over_mean:.2f}}，去掉 {{v:fault_moe_noaux:summary.moe.load_max_over_mean:.2f}}；各专家的负载比例（层平均）：{{v:fault_moe_noaux:summary.moe.load_frac}}。看 moe_max_load 曲线。
+  - 路由熵（1 = 均匀，0 = 总选同一个）：有均衡 {{v:moe:summary.moe.router_entropy_norm:.3f}}，去掉 {{v:fault_moe_noaux:summary.moe.router_entropy_norm:.3f}}。专家并行时每层耗时由最忙的那张卡决定。
+  columns:
+  - path: summary.moe.load_max_over_mean
+    label: 负载 最大/平均
+    fmt: .2f
+  - path: summary.moe.router_entropy_norm
+    label: 路由熵（归一化）
+    fmt: .3f
+  - path: summary.moe.dead_experts
+    label: 几乎不用的专家
+    fmt: d
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+  charts:
+  - metrics
+- id: keycard
+  file: 15-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - GQA、MQA、MLA 省的是什么？每 token KV cache 怎么算？Qwen2.5-7B 是多少？
+  - MLA 为什么要把 RoPE 解耦出来？同字节下它比 MQA 强在哪？
+  - 没有位置编码的因果模型怎么知道位置？RoPE 外推的问题是什么？
+  - Pre-Norm 和 Post-Norm 差在哪一行？为什么深层时 Pre-Norm 更稳？
+  - MoE 的总参数、激活参数、每 token FLOPs 各怎么算？
+  - 去掉负载均衡，为什么离线指标看不出来？代价落在哪？
+  - 哪些结论是确定量可以外推，哪些质量差不能外推？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。

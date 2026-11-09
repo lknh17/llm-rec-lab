@@ -1,0 +1,551 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: L02
+profiles:
+  h20x8: H20 · 小 GPT（1060 万主体参数）从零训练中文维基 · 每个场景 3 种子
+metric:
+  path: summary.test.bpb
+  label: 干净留出集 bits-per-byte（越低越好）
+table:
+- path: summary.test.bpb
+  label: 留出集 bpb
+- path: summary.train.train_tokens
+  label: 训练 token
+- path: summary.train.unique_mb
+  label: 独特数据 MB
+- path: summary.train.epochs
+  label: 遍数
+- path: summary.gap.valid_minus_seen_bpb
+  label: 验证 − 已见 bpb
+- path: summary.flops.train_total_pf
+  label: 训练 PFLOPs
+- path: summary.flops.mfu
+  label: MFU
+- path: summary.train.seconds
+  label: 训练秒数
+figures:
+  loss: []
+noise_note: bpb 差异小于 0.02 或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: budget
+  title: token 预算
+- id: repeat
+  title: 数据重复
+- id: schedule
+  title: 学习率调度
+- id: chinchilla
+  title: 等算力下的模型大小
+- id: fault
+  title: 故障诊断
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 继续预训练要多少卡时、loss 降到哪里算够、数据不够能不能重复用——训练之前能估出来吗？
+  body: '团队想在业务语料（广告、商品、内容）上给 7B 基座做一轮继续预训练。立项会上会被问到：
+
+
+    1. **要多少卡时？** 100 亿 token、8 张 H20，是一天、两周还是三个月？
+
+    2. **数据多少才够？** 加一倍数据，loss 能降多少？现在的数据量处在曲线的哪一段？
+
+    3. **独特数据不够怎么办？** 业务语料只有 20 亿 token，重复 5 遍和找 100 亿新数据差多少？
+
+
+    这一课在 L01 的小 GPT 上把这三件事各量一遍：先把 FLOPs 的账算清楚，再改 token 预算、重复次数、调度和模型大小。每个场景都已在 H20 上跑好（3 个种子）。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '语料和分词器直接复用 L01 的缓存。和 L01 不同的只有"训练流怎么用"：取前缀、重复几遍、跑多少步。点击每个环节看对应代码。
+
+    '
+  nodes:
+  - id: stream
+    title: token 流
+    shape: 100 MB 文本 → [约 2700 万 token]
+    detail: L01 的产物：文档首尾相接，中间插分隔符 EOS。
+  - id: budget
+    title: 取前缀 × 遍数
+    shape: 前 data_frac 的块 × epochs 遍
+    detail: 每遍重新打乱；给了算力预算时，步数 = 预算 ÷ 每步 FLOPs。
+    code:
+      file: tinylm/train.py
+      region: budget
+  - id: batch
+    title: 切块 + 右移
+    shape: '[B, T + 1] → x [B, T]，y [B, T]'
+    detail: y 是 x 右移一位：位置 t 的目标是 x[t+1]。
+    code:
+      file: tinylm/train.py
+      region: batch
+  - id: gpt
+    title: 前向
+    shape: '[B, T] → [B, T, V]'
+    detail: 每 token 前向约 2N FLOPs + 注意力。
+    code:
+      file: tinylm/model.py
+      region: gpt
+  - id: loss
+    title: 交叉熵 + 反向 + AdamW
+    shape: '[B × T, V] → 标量'
+    detail: 反向约是前向的 2 倍算力；梯度裁剪 1.0。
+    code:
+      file: tinylm/train.py
+      region: train
+  - id: sched
+    title: 学习率调度
+    shape: warmup 2% → 余弦降到 10%
+    detail: 调度的总步数跟着 token 预算走，每个预算都完整跑完一个余弦。
+    code:
+      file: tinylm/train.py
+      region: schedule
+  - id: eval
+    title: 评估
+    shape: 验证集 8 个点 + 留出集 + 已见数据
+    detail: 已见数据 = 训练前缀开头的一段，用来量模型背下了多少。
+    code:
+      file: tinylm/train.py
+      region: evaluate
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪一个 batch
+  body: '基线的一次真实运行：第一个 batch 的输入和目标（目标是右移一位的输入）、一层注意力里各张量的形状、训练了多少步多少 token、每 token 的 FLOPs 拆分。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: tinylm/train.py
+    region: batch
+    title: ① 切块与右移
+    note: blk [B, T + 1]；x = blk[:, :T]，y = blk[:, 1:T + 1]。这一行写错（y 不右移），训练和评估会一起错，而且看起来非常好。
+  - file: tinylm/train.py
+    region: schedule
+    title: ② 学习率调度
+    note: warmup 线性升到峰值，再按余弦降到峰值的 10%。total 是这个运行自己的总步数：token 预算小，余弦就压缩得短。
+  - file: tinylm/model.py
+    region: gpt
+    title: ③ 每 token FLOPs
+    note: flops_per_token：前向 = 2 × 主体参数 + 2 × V × d（共享的输出层）+ 注意力；训练 = 3 × 前向。6ND 口径少了注意力那一项。
+  - file: tinylm/train.py
+    region: budget
+    title: ④ 前缀、遍数与预算
+    note: order = 每遍各自打乱的块编号拼接；budget_steps 给定时步数取 min(预算, 数据能提供的)。
+  - file: tinylm/experiment.py
+    region: flops_budget
+    title: ⑤ 等算力换算
+    note: 预算 = 比例 × 基线模型把训练流过一遍的 FLOPs；小模型每 token 便宜，同样的预算能多走几步。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答四个问题。基线：Transformer 主体约 1060 万参数，tied 输出层 16384 × 384 ≈ 630 万，序列 512，训练流约 2700 万 token。
+
+    '
+  questions:
+  - text: 基线把 100 MB 训练流过一遍，训练总 FLOPs 大约是多少？（1 PF = 10¹⁵ FLOPs）
+    options:
+    - 不到 1 PF
+    - 1 - 5 PF
+    - 5 - 20 PF
+    - 20 PF 以上
+  - text: 代码里逐项记账（主体 + 输出层 + 注意力）的训练 FLOPs，是 6ND 的几倍？
+    options:
+    - 不到 1.03 倍：6ND 已经很准
+    - 1.03 - 1.15 倍
+    - 1.15 倍以上
+  - text: H20 bf16 稠密峰值约 148 TFLOPS。这个小 GPT 训练时的 MFU（实际 FLOPS ÷ 峰值）大约是多少？
+    options:
+    - 不到 10%
+    - 10% - 30%
+    - 30% - 60%
+    - 60% 以上
+  - text: Qwen2.5-7B 在业务语料上继续预训练 100 亿 token，8 张 H20，MFU 35%。大约要多久？
+    options:
+    - 约 1 天
+    - 约 2 周
+    - 约 3 个月
+    - 约 1 年
+- id: p_data_half
+  file: 06-data-half
+  stage: budget
+  title: 训练数据减半
+  body: '只用训练流的前 50%（约 50 MB、1350 万 token），学习率调度按自己的步数完整跑完。模型、语料、分词器都不变。
+
+    '
+  scenarios:
+  - data_50
+  compare_to: baseline
+  question:
+    text: 和基线（100 MB）比，干净留出集 bpb（3 种子均值）会差多少？
+    options:
+    - 差不多（差 0.02 以内）
+    - 差 0.02 - 0.08
+    - 差 0.08 以上
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.train.train_tokens
+    label: 训练 token
+    fmt: ','
+  - path: summary.train.tokens_per_param
+    label: 每参数 token
+    fmt: .2f
+  - path: summary.train.seconds
+    label: 训练秒数
+    fmt: .0f
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 两条验证集曲线在前一半是重合的吗？50 MB 那条最后一段为什么下降得更快？
+- id: p_scaling
+  file: 07-scaling
+  stage: budget
+  title: 数据翻 3 倍，bpb 降多少
+  body: '四个 token 预算：12.5 MB、25 MB、50 MB、100 MB，每次翻倍，每个都把调度跑完。从 12.5 MB 到 100 MB 是三次翻倍（8 倍数据）。
+
+    '
+  scenarios:
+  - data_12
+  compare_to: baseline
+  also:
+  - data_25
+  - data_50
+  question:
+    text: 从 12.5 MB 到 100 MB，留出集 bpb 一共降多少？
+    options:
+    - 降 0.3 以上
+    - 降 0.1 - 0.3
+    - 降不到 0.1
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.train.unique_mb
+    label: 独特数据 MB
+    fmt: .1f
+  - path: summary.train.steps
+    label: 步数
+    fmt: ','
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 每次翻倍的收益是不变、变大还是变小？
+- id: p_anneal
+  file: 08-anneal
+  stage: budget
+  title: 跑完的 25 MB vs 途中的 25 MB
+  body: '能不能省事：只跑一次 100 MB，在训练到 25 MB 时看一眼验证集，就当作"25 MB 预算的结果"？对比两者：data_25 是把余弦完整跑完的 25 MB 预算；基线在训练途中刚看完 25 MB 时，学习率还在高位。
+
+    '
+  scenarios:
+  - data_25
+  compare_to: baseline
+  question:
+    text: 完整跑完的 25 MB 预算，和基线训练到 25 MB 时相比，验证集 bpb 怎样？
+    options:
+    - 跑完的更好（低 0.02 以上）
+    - 差不多
+    - 跑完的更差
+  columns:
+  - path: summary.valid_at.f025
+    label: 25 MB 处验证 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.valid_at.f1
+    label: 100 MB 处验证 bpb
+    fmt: .3f
+  - path: summary.train.steps
+    label: 步数
+    fmt: ','
+  charts:
+  - loss
+  curve: valid_bpb
+  look: 验证集曲线上，data_25 的终点落在基线曲线的上方还是下方？
+- id: p_repeat4
+  file: 09-repeat4
+  stage: repeat
+  title: 25 MB × 4 遍 vs 100 MB × 1 遍
+  body: '独特数据只有 25 MB，重复 4 遍（每遍重新打乱），训练 token 数和算力都和基线相同。业务语料不够时，这是最常见的做法。
+
+    '
+  scenarios:
+  - repeat_4x
+  compare_to: baseline
+  also:
+  - data_25
+  question:
+    text: 和 100 MB 不重复的基线比，留出集 bpb 差多少？
+    options:
+    - 差不多（差 0.02 以内）
+    - 差 0.02 - 0.08
+    - 差 0.08 以上
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.gap.valid_minus_seen_bpb
+    label: 验证 − 已见 bpb
+    fmt: +.3f
+  - path: summary.train.epochs
+    label: 遍数
+    fmt: d
+  - path: summary.train.unique_mb
+    label: 独特数据 MB
+    fmt: .1f
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 25 MB × 4 落在 25 MB × 1 和 100 MB × 1 之间的什么位置？
+- id: p_repeat16
+  file: 10-repeat16
+  stage: repeat
+  title: 6 MB × 16 遍：背下来多少
+  body: '再极端一点：独特数据只有 6.25 MB，重复 16 遍。除了留出集，我们还在训练前缀开头的一段"已见数据"上评估，"验证 − 已见"就是模型对见过的文本额外背下来的部分。
+
+    '
+  scenarios:
+  - repeat_16x
+  compare_to: baseline
+  also:
+  - repeat_4x
+  question:
+    text: 重复 16 遍后，"验证集 bpb − 已见数据 bpb"大约是多少？
+    options:
+    - 不到 0.05：几乎没背
+    - 0.05 - 0.3
+    - 0.3 以上：背下了很多
+  columns:
+  - path: summary.gap.valid_minus_seen_bpb
+    label: 验证 − 已见 bpb
+    fmt: +.3f
+    delta: true
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+  - path: summary.seen.bpb
+    label: 已见数据 bpb
+    fmt: .3f
+  - path: summary.train.epochs
+    label: 遍数
+    fmt: d
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 16 遍的验证集曲线在后半段还在下降吗？
+- id: p_const
+  file: 11-const
+  stage: schedule
+  title: 不做余弦退火
+  body: 'warmup 之后学习率保持 2e-3 不变，一直到最后。其余完全同基线。
+
+    '
+  scenarios:
+  - const_lr
+  compare_to: baseline
+  question:
+    text: 和余弦退火比，留出集 bpb 差多少？
+    options:
+    - 差不多（差 0.02 以内）
+    - 差 0.02 - 0.06
+    - 差 0.06 以上
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.valid_at.f05
+    label: 50% 处验证 bpb
+    fmt: .3f
+  - path: summary.train.train_loss_tail
+    label: 最后 5% 训练 loss
+    fmt: .3f
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 两条曲线是从什么时候开始分开的？
+- id: p_iso_small
+  file: 12-iso-small
+  stage: chinchilla
+  title: 同样算力，换小模型多看数据
+  body: '算力固定为"基线模型训 50 MB"（约 1.5 PF）。换一个小一号的模型：d = 320、5 层，主体约 620 万参数，每 token 的训练 FLOPs 约是基线的 2/3，同样的算力能看约 1.5 倍的 token。学习率没有重调。
+
+    '
+  scenarios:
+  - iso_s
+  compare_to: data_50
+  also:
+  - iso_l
+  question:
+    text: 等算力下，小模型 vs 中模型（data_50），留出集 bpb 怎样？
+    options:
+    - 小模型更好（低 0.02 以上）
+    - 差不多
+    - 小模型更差
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.flops.train_total_pf
+    label: 训练 PFLOPs
+    fmt: .2f
+  - path: summary.train.tokens_per_param
+    label: 每参数 token
+    fmt: .2f
+  - path: summary.params.body
+    label: 主体参数
+    fmt: ','
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 三个模型的训练 PFLOPs 一样吗？小模型的验证曲线在相同 FLOPs 处是不是更低？
+- id: p_iso_large
+  file: 13-iso-large
+  stage: chinchilla
+  title: 同样算力，换大模型少看数据
+  body: '反方向：d = 512、8 层，主体约 2530 万参数，每 token 的训练 FLOPs 约是基线的 2 倍，同样的算力只能看约一半的 token（约 25 MB）。学习率没有重调。
+
+    '
+  scenarios:
+  - iso_l
+  compare_to: data_50
+  also:
+  - iso_s
+  question:
+    text: 等算力下，大模型 vs 中模型（data_50），留出集 bpb 怎样？
+    options:
+    - 大模型更好（低 0.02 以上）
+    - 差不多
+    - 大模型更差
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.flops.train_total_pf
+    label: 训练 PFLOPs
+    fmt: .2f
+  - path: summary.train.tokens_per_param
+    label: 每参数 token
+    fmt: .2f
+  - path: summary.train.steps
+    label: 步数
+    fmt: ','
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 小、中、大三个模型按 bpb 排序是怎样的？和每参数 token 数的排序一致吗？
+- id: p_fault
+  file: 14-fault
+  stage: fault
+  title: 同事重构了数据代码
+  body: '同事重构了切块的代码，说"顺手简化了一下索引"，模型、语料、超参都没动。重新训练后，他在群里说：效果大幅提升了。
+
+    '
+  scenarios:
+  - fault_noshift
+  compare_to: baseline
+  question:
+    text: 重构后，干净留出集 bpb 和基线比怎样？
+    options:
+    - 低 1 以上：好得不可能
+    - 低 0.05 - 1：确实大幅提升
+    - 差不多或更差
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.valid.bpb
+    label: 验证集 bpb
+    fmt: .3f
+  - path: summary.train.loss_at_warmup_end
+    label: warmup 结束时 loss
+    fmt: .3f
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: loss 曲线是在什么时候降到底的？
+- id: diagnose
+  file: 15-diagnose
+  stage: fault
+  title: 诊断：为什么好得不可能
+  body: '模型、语料、超参都没变，只动了切块的代码；loss 很快降到接近 0，留出集也一样低。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - baseline
+  compare_to: fault_noshift
+  question:
+    text: loss 降到接近 0 的根因是什么？
+    options:
+    - 验证集和留出集混进了训练集（泄漏）
+    - 目标没有右移，模型只要把当前位置的输入抄过去
+    - 学习率太大，模型把训练集背下来了
+    - 评估只算了一小部分容易的窗口
+  clues:
+  - 对比干净留出集：基线 {{v:baseline:summary.test.bpb:.3f}}，重构后 {{v:fault_noshift:summary.test.bpb:.3f}}；验证集泄漏比例 基线 {{v:baseline:summary.corpus.valid_leak_frac:.1%}}，重构后 {{v:fault_noshift:summary.corpus.valid_leak_frac:.1%}}。留出集从没进过训练，它也一样低说明什么？
+  - 看 loss 降得多快：warmup 刚结束（总步数的 2%）时，基线 loss {{v:baseline:summary.train.loss_at_warmup_end:.3f}}，重构后 {{v:fault_noshift:summary.train.loss_at_warmup_end:.3f}}。
+  - batch 自检：第一个 batch 里 y 和 x 逐位置相等的比例，基线 {{v:baseline:summary.train.batch_check.y_eq_x_frac:.1%}}，重构后 {{v:fault_noshift:summary.train.batch_check.y_eq_x_frac:.1%}}。去 trace 里看 x 和 y 的前 8 个 token。
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+  - path: summary.train.loss_at_warmup_end
+    label: warmup 结束时 loss
+    fmt: .3f
+  - path: summary.train.batch_check.y_eq_x_frac
+    label: y 与 x 逐位相等比例
+    pct: true
+  - path: summary.corpus.valid_leak_frac
+    label: 验证集泄漏比例
+    pct: true
+  charts:
+  - metrics
+  - loss
+- id: keycard
+  file: 16-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 6ND 的 N 包括哪些参数？漏掉了什么？什么时候漏掉的那项会变大？
+  - 给你模型大小、token 数、卡数和 MFU，怎么估训练天数？
+  - 为什么比较 token 预算时不能用一次长训练的中间点？
+  - 数据不够时重复几遍还划算？看哪个信号决定停？
+  - 余弦退火的收益集中在哪一段？WSD 调度解决什么问题？
+  - 等算力下模型该大还是该小？推理成本怎么改变这个答案？
+  - loss 好得不可能时，第一步查什么？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。

@@ -170,7 +170,7 @@ def train_bpe(texts: list[str], vocab_size: int) -> HFTokenizer:
 
 [B, T] → wte → [B, T, C] → N 层 → RMSNorm → 与 wte 共享的输出层 → [B, T, V]。词表补齐到 64 的倍数。
 
-[`tinylm/model.py#L65-L92`](../../../projects/tinylm/model.py#L65-L92)
+[`tinylm/model.py#L201-L243`](../../../projects/tinylm/model.py#L201-L243)
 
 ```python
 class GPT(nn.Module):
@@ -181,13 +181,19 @@ class GPT(nn.Module):
             raise ValueError(f"d_model={C} 不能被 n_head={H} 整除")
         self.vocab_real, self.V = vocab_size, padded_vocab(vocab_size)
         self.wte = nn.Embedding(self.V, C)                                 # [V, C]，同时当输出层（tied）
-        self.blocks = nn.ModuleList(Block(C, H, cfg["d_ff"]) for _ in range(cfg["n_layer"]))
+        self.blocks = nn.ModuleList(Block(C, H, cfg["d_ff"], cfg) for _ in range(cfg["n_layer"]))
         self.ln_f = RMSNorm(C)
         self.T, self.D = cfg["seq_len"], C // H
+        self.pos_emb = _get(cfg, "pos_emb", "rope")
+        self.doc_mask, self.eos_id = bool(_get(cfg, "doc_mask", False)), cfg.get("eos_id")
+        if self.pos_emb == "learned":
+            self.wpe = nn.Embedding(self.T, C)                             # [T, C]：只认得训练长度以内的位置
         self.apply(self._init)
         for b in self.blocks:  # 残差分支的输出层按层数缩小初始化（GPT-2 的做法），深层时激活不随层数放大
-            for w in (b.proj.weight, b.down.weight):
+            for w in (b.proj.weight, b.moe.w_down if hasattr(b, "moe") else b.down.weight):
                 nn.init.normal_(w, std=0.02 / math.sqrt(2 * cfg["n_layer"]))
+            if hasattr(b, "moe"):
+                nn.init.normal_(b.moe.w_gate_up, std=0.02)
 
     @staticmethod
     def _init(m):
@@ -196,10 +202,19 @@ class GPT(nn.Module):
 
     def forward(self, idx):
         """idx: [B, T] token id → logits [B, T, V]。"""
-        cos, sin = rope_cache(idx.shape[1], self.D, idx.device)
+        T = idx.shape[1]
+        mask, pos = None, None
+        if self.doc_mask:
+            _, pos, mask = doc_layout(idx, self.eos_id)                    # pos [B, T]，mask [B, 1, T, T]
+        cos, sin = rope_cache(T, self.D, idx.device)                       # [T, D/2]
+        if pos is not None:
+            cos, sin = cos[pos], sin[pos]                                  # [B, T, D/2]：每篇文档从位置 0 开始
         x = self.wte(idx)                                                  # [B, T, C]
+        if self.pos_emb == "learned":
+            p = pos if pos is not None else torch.arange(T, device=idx.device)
+            x = x + self.wpe(p)
         for b in self.blocks:
-            x = b(x, cos, sin)
+            x = b(x, cos, sin, mask)
         return self.ln_f(x) @ self.wte.weight.T                            # [B, T, V]
 ```
 
@@ -207,15 +222,18 @@ class GPT(nn.Module):
 
 逐块求交叉熵之和；预测分隔符（EOS）的位置不计入，因为它不对应原文字节。
 
-[`tinylm/train.py#L54-L87`](../../../projects/tinylm/train.py#L54-L87)
+[`tinylm/train.py#L81-L118`](../../../projects/tinylm/train.py#L81-L118)
 
 ```python
 @torch.no_grad()
-def evaluate(model, stream: np.ndarray, n_bytes: int, eos_id: int, cfg: dict, device, max_windows: int | None = None) -> dict:
+def evaluate(model, stream: np.ndarray, n_bytes: int, eos_id: int, cfg: dict, device, max_windows: int | None = None,
+             T: int | None = None) -> dict:
     """不重叠的定长窗口过一遍。分隔符 EOS 作为预测目标时不计（它不对应原文字节）。
-    返回 loss（每 token 平均 NLL，nats）、bpb（总 NLL / ln2 / 原文字节数）。"""
+    返回 loss（每 token 平均 NLL，nats）、bpb（总 NLL / ln2 / 原文字节数）。T 不写时用训练的 seq_len。"""
     model.eval()
-    T, B = cfg["seq_len"], max(1, cfg["batch_size"])
+    T = T or cfg["seq_len"]
+    B = max(1, cfg["batch_size"] * cfg["seq_len"] // T)
+    off = cfg.get("target_offset", 1)
     n_win = max(1, (len(stream) - 1 + T - 1) // T)
     if max_windows:
         n_win = min(n_win, max_windows)
@@ -226,7 +244,8 @@ def evaluate(model, stream: np.ndarray, n_bytes: int, eos_id: int, cfg: dict, de
             seg = stream[w * T: w * T + T + 1]
             x = np.full(T, eos_id, dtype=np.int64)
             y = np.full(T, -100, dtype=np.int64)
-            x[:len(seg) - 1], y[:len(seg) - 1] = seg[:-1], seg[1:]
+            n = len(seg) - 1
+            x[:n], y[:n] = seg[:-1], seg[off:off + n]
             y[y == eos_id] = -100
             xs.append(x)
             ys.append(y)
