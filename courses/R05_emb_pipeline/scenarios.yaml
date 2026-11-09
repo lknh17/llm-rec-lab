@@ -1,0 +1,62 @@
+course: R05
+title: R05 Embedding 与数据管线：查表是带宽问题、表规模与精度、Zipf 热点、SparseAdam 与稠密 Adam、端到端逐阶段耗时，Python 逐样本特征处理饿死 GPU 的故障
+project: recops
+entry: recops.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行（同一张卡上不并发，避免互相抢带宽）。微基准用随机输入；端到端是 26 + 2 张表（每张 100 万 × 64）的 DLRM
+    base: {suite: r05, device: cuda, max_minutes: 15}
+    seeds: [0, 1, 2]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：表缩到 20 万行、批 1024、端到端 20 步、CPU，只验证流程能跑通（不检查断言）
+    base: {suite: r05, device: cpu, emb_rows: 200000, emb_batch: 1024, bag_lens: "1,10", iters: 3, warmup: 1, min_time_ms: 0,
+           e2e_rows: 20000, batch_size: 256, e2e_steps: 20, e2e_profile_steps: 5, grid_rows: "1e4,1e5", grid_dims: "16",
+           max_minutes: 10}
+    seeds: [0]
+    skip_expect: true
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：查表微基准（1000 万 × 64 fp32，bag 1 / 10 / 50，均匀与 Zipf）、SparseAdam 与 Adam、数据管线、端到端 DLRM
+    params: {}
+    expect:
+      - "summary.emb.bag10_uniform.eff_gbs > 100"
+      - "summary.optim.dense_over_sparse > 3"
+      - "summary.e2e.stage_share.wait_data < 0.3"
+
+  # ---------- 表规模与精度 ----------
+  - id: grid
+    role: reference
+    title: 表规模 × 维度 × 精度（100 万 / 1000 万 / 1 亿行 × 64 / 128 × fp32 / bf16）
+    params: {parts: grid}
+
+  # ---------- 端到端旋钮 ----------
+  - id: e2e_dense_adam
+    role: variant
+    title: 端到端改用稠密梯度 + Adam
+    params: {parts: e2e, emb_optim: adam}
+  - id: e2e_workers0
+    role: variant
+    title: 端到端 DataLoader 不开 worker（主进程取数）
+    params: {parts: "loader,e2e", num_workers: 0}
+  - id: e2e_nopin
+    role: variant
+    title: 端到端不锁页、阻塞拷贝
+    params: {parts: e2e, pin_memory: false, non_blocking: false}
+
+  # ---------- 故障与修复 ----------
+  - id: fault_pyfeat
+    role: fault
+    title: 特征处理改成逐样本、逐特征的 Python 循环
+    params: {parts: "loader,e2e", feature_proc: python}
+    expect:
+      - "summary.e2e.stage_share.wait_data > 0.5"
+      - "summary.e2e.samples_per_s < 0.5 * base.summary.e2e.samples_per_s"
+  - id: pyfeat_workers16
+    role: variant
+    title: Python 特征处理，worker 加到 16
+    params: {parts: "loader,e2e", feature_proc: python, num_workers: 16}

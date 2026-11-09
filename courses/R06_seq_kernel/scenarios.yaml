@@ -1,0 +1,64 @@
+course: R06
+title: R06 序列 attention 的融合 kernel：naive / SDPA / torch.compile / 手写 Triton，softmax 与 HSTU 逐点打分，显存与耗时随长度、roofline、块大小，对角块漏掉因果 mask 的故障
+project: recops
+entry: recops.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。随机输入 B = 4、H = 8，L = 512 / 2048 / 8192 和 2000（非块倍数），D = 64 / 128，bf16；每次计时前冲刷 L2，取中位数
+    base: {suite: r06, device: cuda, max_minutes: 20}
+    seeds: [0, 1, 2]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：只跑 naive（CPU 没有 Triton / flash），L = 64 / 128，只验证流程能跑通（不检查断言）
+    base: {suite: r06, device: cpu, attn_impl: naive, seq_lens: "64,128", ragged_len: 100, head_dims: "16", attn_batch: 1,
+           attn_heads: 2, iters: 3, warmup: 1, min_time_ms: 0, layer_len: 128, layer_d_model: 64, max_minutes: 10}
+    seeds: [0]
+    skip_expect: true
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：naive（PyTorch 逐步，物化 L × L）
+    params: {}
+    expect:
+      - "summary.check.max_rel_err < 0.02"
+  - id: sdpa
+    role: variant
+    title: PyTorch SDPA（flash，只有 softmax）
+    params: {attn_impl: sdpa, attn_kinds: softmax}
+    expect:
+      - "summary.check.max_rel_err < 0.02"
+  - id: compiled
+    role: variant
+    title: torch.compile(naive)
+    params: {attn_impl: compiled}
+  - id: triton
+    role: fix
+    title: 手写 Triton 融合 kernel（块 64 × 64）
+    params: {attn_impl: triton}
+    expect:
+      - "summary.check.max_rel_err < 0.02"
+
+  # ---------- 块大小 ----------
+  - id: triton_b128
+    role: variant
+    title: Triton，块 128 × 64、8 warp
+    params: {attn_impl: triton, block_m: 128, num_warps: 8}
+    expect:
+      - "summary.check.max_rel_err < 0.02"
+  - id: triton_b32
+    role: variant
+    title: Triton，块 32 × 32
+    params: {attn_impl: triton, block_m: 32, block_n: 32}
+    expect:
+      - "summary.check.max_rel_err < 0.02"
+
+  # ---------- 故障 ----------
+  - id: fault_diag
+    role: fault
+    title: Triton 的对角块内部没有做因果 mask
+    params: {attn_impl: triton, diag_causal: false}
+    expect:
+      - "summary.check.max_rel_err > 0.05"
