@@ -6,13 +6,14 @@ LLM 与推荐的循序渐进实践课。每门课 = 一个真实可跑的小项�
 
 | 课程 | 主题 | 项目 | 你会回答的问题 |
 | - | - | - | - |
+| [L01 数据与分词](courses/L01_tokenizer/) | 清洗 → 模拟转载与去重 → 字节级 BPE → 从零训练小 GPT → bits-per-byte | [`projects/tinylm`](projects/tinylm/) | 词表大小怎样同时改变序列长度、embedding 参数和输出层算力？为什么跨分词器只能比 bpb？Qwen2.5 的大词表在维基和广告上各压缩得怎样？关掉去重，验证集会乐观多少？ |
 | [L05 SFT 与 LoRA](courses/L1_lora_extraction/)（课程编号 `L1`） | 7B 上做结构化抽取的 LoRA SFT | [`projects/adextract`](projects/adextract/) | 一条样本从 messages 到 labels mask 到 loss 怎么走？LoRA 的 rank、挂载层对参数、显存和效果各有多大影响？截断为什么让训练"什么都没学到"？ |
 | [L06 围绕错误迭代](courses/L06_error_iteration/) | 错例归类 → 只改一个变量 → 多种子与逐样本判断 → 保留集检验 | [`projects/adextract`](projects/adextract/) | 5 个种子的波动有多大？针对错例补数据和泛泛加难样本哪个有效？dev loss 和任务指标同步吗？训练推理模板不一致会掉多少？ |
 | [L07 偏好优化](courses/L07_preference/) | 在 L05 的 SFT 模型上做 DPO 与 GRPO | [`projects/adpref`](projects/adpref/)（复用 adextract） | 偏好对从规则构造还是在线采样？prompt 落在哪里才有信号？β 管住了什么？可验证奖励没覆盖的维度会怎样？时间花在生成还是训练？ |
 
 - 只看 GitHub 也能学：按课程 README 的步骤走，代码链接直达锚点，结果表和证据图默认折叠，**先想好自己的预测，再展开**。
-- 所有数据和模型都是公开的（Qwen2.5、合成广告文案、人工撰写的评测集），不含任何业务数据。
-- 档位：`h20x8`（8 × H20，7B、4000 条训练样本、3 个种子，**课程数字以它为准**）、`mac-m4pro`（Mac 小规模（历史），0.5B、400 条）、`mac-smoke`（Mac 冒烟，只验证流程，不进结果表）。
+- 所有数据和模型都是公开的（Qwen2.5、中文维基的一个分片、合成广告文案、人工撰写的评测集），不含任何业务数据。
+- 档位：`h20x8`（8 × H20，3 个种子，**课程数字以它为准**；各课的模型和规模见 `scenarios.yaml`）、`mac-m4pro`（Mac 小规模（历史），只有 L05）、`mac-smoke`（Mac 冒烟，只验证流程，不进结果表）。
 
 > **H20 机器**：直接看 [`AGENT_RUNBOOK.md`](AGENT_RUNBOOK.md) 开头的"现在要做什么"。
 

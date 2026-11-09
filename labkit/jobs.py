@@ -146,6 +146,23 @@ def host_summary() -> dict:
     return out
 
 
+def _ensure_assets(job: dict) -> None:
+    """跑之前准备好作业涉及课程在该档位声明的资产（模型、数据集分片）；已存在的直接跳过。
+    下载失败不中止：缺资产的运行会在自己的日志里报出具体缺什么，其他课程照常跑。"""
+    from . import assets, scenarios
+
+    names: list[str] = []
+    for c in job.get("courses") or []:
+        prof = scenarios.load_course(c)["profiles"].get(job.get("profile")) or {}
+        names += [n for n in prof.get("assets", []) if n not in names]
+    if not names:
+        return
+    try:
+        assets.ensure(names)
+    except SystemExit as e:
+        print(f"[注意] {e}", flush=True)
+
+
 def run_job(job_id: str, max_slots: int | None = None, publish_each: bool = True) -> dict:
     """H20 端执行一个作业：领取 → 批量运行 → 导出脱敏结果 → 写回报。publish 由调用方决定是否推送。"""
     from . import batch, redact
@@ -163,6 +180,7 @@ def run_job(job_id: str, max_slots: int | None = None, publish_each: bool = True
 
         publish(f"jobs: 开始 {job_id}", paths_to_add=["jobs"])
     t0 = time.time()
+    _ensure_assets(job)
     report = batch.run_batch(job["courses"], job["profile"], job.get("only") or None, job.get("seeds") or None,
                              max_slots=max_slots)
     exported = redact.export_all(job["profile"], job["courses"])

@@ -1,0 +1,548 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: L01
+profiles:
+  h20x8: H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子
+metric:
+  path: summary.test.bpb
+  label: 干净留出集 bits-per-byte（越低越好）
+table:
+- path: summary.test.bpb
+  label: 留出集 bpb
+- path: summary.valid.bpb
+  label: 验证集 bpb
+- path: summary.compression.valid.bytes_per_token
+  label: 每 token 字节数
+- path: summary.compression.ads.tokens_per_doc
+  label: 广告 每条 token 数
+- path: summary.params.embedding_share
+  label: embedding 参数占比
+- path: summary.corpus.valid_leak_frac
+  label: 验证集泄漏比例
+- path: summary.train.seconds
+  label: 训练秒数
+figures:
+  loss: []
+noise_note: bpb 差异小于 0.02 或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: vocab
+  title: 词表大小与分词方式
+- id: domain
+  title: 词表的领域
+- id: dedup
+  title: 去重与验证集
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 训练开始之前的两个决定——怎么切 token、怎么去重——会让成本差几倍、让验证集失真多少？
+  body: '内容理解模型的数据管道里，有两步通常"配一次就不再看"：
+
+
+    1. **分词器**：直接用基座自带的，还是在业务语料上训一个？词表多大？同一条广告文案，切成 23 个 token 还是 78 个，训练步数、KV cache、推理延迟都跟着变；
+
+    2. **去重**：网页、电商文案里转载和模板极多。只做精确去重够不够？去重没做干净，验证集还能信吗？
+
+
+    这一课在一个从零训练的小 GPT 上把这两件事各拆开量一遍：先比词表大小和分词方式（同一份训练文本，只换分词器），再比去重方式（同一个分词器，只换去重）。每个场景都已在 H20 上跑好（3 个种子）。依次点选预测、揭晓、看证据。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '语料准备的每一步都有缓存：同一份语料和分词器只建一次，3 个种子、只换模型参数的场景都复用。点击每个环节看它的输入输出和对应代码。
+
+    '
+  nodes:
+  - id: clean
+    title: 清洗
+    shape: 23 万篇 → 去空括号、多余空行，丢掉 < 50 字的
+    detail: 维基转纯文本后，被删掉的模板会留下"（）"之类的痕迹。
+    code:
+      file: tinylm/corpus.py
+      region: clean
+  - id: srcdedup
+    title: 底稿去重
+    shape: MinHash 去掉维基自带的模板化近重复条目
+    detail: 市镇、物种等条目由模板生成，彼此高度相似（约占 8% 字节）。先去掉，干净留出集和验证集才同分布。
+    code:
+      file: tinylm/corpus.py
+      region: minhash
+  - id: inject
+    title: 模拟转载 + 去重 + 切分
+    shape: 20% 文章 × 1-40 份副本 → 去重 → 按 URL 哈希切分
+    detail: 留出集在注入副本之前拿走。去重只看文本；原文优先保留；验证集按（来源, 副本号）哈希切分，各场景验证集里的原文是同一批。
+    code:
+      file: tinylm/corpus.py
+      region: build
+  - id: bpe
+    title: 训练 BPE
+    shape: 训练集前 20 MB → 词表 V
+    detail: HF tokenizers 的字节级 BPE，预切分正则与 Qwen2 相同（数字、标点、汉字串分开）。
+    code:
+      file: tinylm/tokenizer.py
+      region: train_bpe
+  - id: stream
+    title: token 流
+    shape: 文档首尾相接 + 分隔符 → [N_tokens]
+    detail: 训练时随机切成 [B, T] = [64, 512] 的块，目标是右移一位的同一块。
+  - id: gpt
+    title: 小 GPT
+    shape: '[B, T] → [B, T, V]'
+    detail: Pre-RMSNorm、RoPE、SwiGLU；输入 embedding 和输出层共享同一个 V × d 矩阵。
+    code:
+      file: tinylm/model.py
+      region: gpt
+  - id: train
+    title: 训练
+    shape: 100 MB 文本过一遍
+    detail: AdamW（只对矩阵权重做衰减），warmup 后余弦降到 10%，梯度裁剪 1.0。
+    code:
+      file: tinylm/train.py
+      region: train
+  - id: eval
+    title: bits-per-byte
+    shape: Σ NLL / ln 2 / 字节数
+    detail: 评估所有子集：验证集、留出集、广告、验证集按泄漏拆的组。
+    code:
+      file: tinylm/train.py
+      region: evaluate
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪一段文本
+  body: '基线（16K BPE）的一次真实运行：一条广告文案和一段维基文本被切成了哪些 token，哪些常用汉字没被合并（回退成字节），训练 token 流长什么样，保存的权重重新加载后结果是否一致。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '全部代码在 `tinylm/` 下。读的时候只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: tinylm/corpus.py
+    region: minhash
+    title: ① MinHash + LSH
+    note: shingle 哈希 [n] → 签名 [64] → 16 段 × 4 行分桶；同桶的候选再用签名估计 Jaccard ≥ 0.7 确认。阈值决定了删句多的副本会不会漏。
+  - file: tinylm/corpus.py
+    region: build
+    title: ② 语料管线的顺序
+    note: 留出集在注入副本之前拿走；去重在切分之前；切分按（来源, 副本号）哈希。顺序错一步，验证集就会泄漏。
+  - file: tinylm/tokenizer.py
+    region: train_bpe
+    title: ③ 训练字节级 BPE
+    note: ByteLevel 预处理把每个字节映射成可见字符；initial_alphabet 保证 256 个字节都在词表里。
+  - file: tinylm/model.py
+    region: gpt
+    title: ④ 小 GPT
+    note: '[B, T] → wte → [B, T, C] → N 层 → RMSNorm → 与 wte 共享的输出层 → [B, T, V]。词表补齐到 64 的倍数。'
+  - file: tinylm/train.py
+    region: evaluate
+    title: ⑤ bits-per-byte
+    note: 逐块求交叉熵之和；预测分隔符（EOS）的位置不计入，因为它不对应原文字节。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答四个问题。模型：d = 384、6 层、SwiGLU 中间维 1024，Transformer 主体约 1060 万参数；输入 embedding 和输出层共享一个 V × 384 的矩阵。基线 16K BPE 在维基上每 token 约 3.7 字节。
+
+    '
+  questions:
+  - text: 词表换成 64K（65536）。embedding 参数占模型总参数的比例大约是？
+    options:
+    - 不到 20%
+    - 20% - 50%
+    - 50% - 80%
+    - 80% 以上
+  - text: 同样 100 MB 训练文本，64K 词表比 16K 词表的**训练总算力**大约是几倍？（提示：输出层每 token 前向 2 × V × d FLOPs；64K 每 token 约 4.3 字节）
+    options:
+    - 不到 1 倍：token 变少了，算力反而省
+    - 1.05 - 1.4 倍
+    - 1.4 - 2.4 倍
+    - 2.4 倍以上
+  - text: 一个模型在验证集上每 token loss 是 4.2（自然对数），分词器每 token 平均 3.7 字节。bits-per-byte 是多少？
+    options:
+    - 约 0.8
+    - 约 1.6
+    - 约 4.2
+    - 约 6.1
+  - text: 不分词，直接把 UTF-8 字节当 token（一个汉字 3 个 token）。同样 100 MB 文本，训练 token 数是 16K BPE 的几倍？
+    options:
+    - 差不多
+    - 1.5 - 2.5 倍
+    - 2.5 - 6 倍
+    - 6 倍以上
+- id: p_vocab_4k
+  file: 06-vocab-4k
+  stage: vocab
+  title: 词表 16K → 4K
+  body: '同一份 100 MB 训练文本、同一个模型，只把 BPE 词表从 16384 降到 4096。4K 词表放不下多数常用汉字，会有更多汉字回退成字节；同样的文本切成更多 token，训练步数更多。
+
+    '
+  scenarios:
+  - bpe_4k
+  compare_to: baseline
+  question:
+    text: 和 16K 比，4K 词表的干净留出集 bpb（3 种子均值）会怎样？
+    options:
+    - 4K 明显更差（高 0.02 以上）
+    - 差不多（±0.02 以内）
+    - 4K 明显更好（低 0.02 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.valid.loss
+    label: 验证集 每 token loss
+    fmt: .3f
+  - path: summary.compression.valid.bytes_per_token
+    label: 每 token 字节数
+    fmt: .2f
+  - path: summary.char_split.multi_token_weighted
+    label: 常用字被拆比例
+    pct: true
+  - path: summary.params.embedding_share
+    label: embedding 占比
+    pct: true
+  - path: summary.train.train_tokens
+    label: 训练 token 数
+    fmt: ','
+  charts:
+  - metrics
+  - loss
+  - tokens
+  curve: valid_bpb
+  look: 每 token loss 和 bpb 的排序一致吗？验证集 bpb 曲线是从训练早期就分开，还是最后才分开？
+- id: p_vocab_64k
+  file: 07-vocab-64k
+  stage: vocab
+  title: 词表 16K → 64K
+  body: '反方向：词表从 16384 加到 65536。序列更短，但 embedding 占了模型 70% 的参数，输出层每 token 的算力翻倍，很多低频 token 在 100 MB 文本里只出现几十次。
+
+    '
+  scenarios:
+  - bpe_64k
+  compare_to: baseline
+  also:
+  - bpe_4k
+  question:
+    text: 和 16K 比，64K 词表的干净留出集 bpb（3 种子均值）会怎样？
+    options:
+    - 64K 明显更差（高 0.02 以上）
+    - 差不多（±0.02 以内）
+    - 64K 明显更好（低 0.02 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.compression.valid.bytes_per_token
+    label: 每 token 字节数
+    fmt: .2f
+  - path: summary.params.embedding_share
+    label: embedding 占比
+    pct: true
+  - path: summary.flops.lm_head_share
+    label: 输出层占前向 FLOPs
+    pct: true
+  - path: summary.train.seconds
+    label: 训练秒数
+    fmt: .0f
+  - path: summary.compression.ads.tokens_per_doc
+    label: 广告 每条 token 数
+    fmt: .1f
+  charts:
+  - metrics
+  - loss
+  - tokens
+  curve: valid_bpb
+  look: 三种词表的压缩率是等比增长的吗？训练时间涨了多少？
+- id: p_bytes
+  file: 08-bytes
+  stage: vocab
+  title: 不分词：UTF-8 字节当 token
+  body: '不训练分词器，直接把每个 UTF-8 字节当一个 token（词表 257）。同样 100 MB 文本，token 数是 BPE 的约 3.7 倍，所以模型多走了 3.7 倍的训练步；但 512 token 的上下文只覆盖约 170 个汉字。
+
+    '
+  scenarios:
+  - bytes
+  compare_to: baseline
+  question:
+    text: 和 16K BPE 比，字节级的干净留出集 bpb（3 种子均值）会怎样？
+    options:
+    - 字节级明显更差（高 0.05 以上）
+    - 差不多（±0.05 以内）
+    - 字节级明显更好（低 0.05 以上）
+  columns:
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+    delta: true
+  - path: summary.valid.loss
+    label: 验证集 每 token loss
+    fmt: .3f
+  - path: summary.train.train_tokens
+    label: 训练 token 数
+    fmt: ','
+  - path: summary.train.seconds
+    label: 训练秒数
+    fmt: .0f
+  - path: summary.train.bytes_per_s
+    label: 训练吞吐（字节/秒）
+    fmt: ',.0f'
+  charts:
+  - metrics
+  - loss
+  - tokens
+  curve: valid_bpb
+  look: 训练曲线（按步数）谁先降下来？同样的墙钟时间，谁处理的文本多？
+- id: p_qwen
+  file: 09-qwen
+  stage: vocab
+  title: 直接用 Qwen2.5 的分词器
+  body: '业务上最常见的做法：不自己训分词器，直接用基座模型的。Qwen2.5 的词表约 15.2 万，在海量多语种语料（中英文、代码……）上训练。其余全部同基线。
+
+    '
+  scenarios:
+  - qwen
+  compare_to: baseline
+  question:
+    text: 在这份维基验证集上，Qwen2.5 分词器的每 token 字节数，和本语料训练的 16K BPE 比？
+    options:
+    - Qwen 压缩得更好（高 5% 以上）
+    - 差不多（±5% 以内）
+    - Qwen 压缩得更差（低 5% 以上）
+  columns:
+  - path: summary.compression.valid.bytes_per_token
+    label: 维基 每 token 字节数
+    fmt: .2f
+    delta: true
+  - path: summary.compression.ads.tokens_per_doc
+    label: 广告 每条 token 数
+    fmt: .1f
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+  - path: summary.params.embedding_share
+    label: embedding 占比
+    pct: true
+  - path: summary.train.seconds
+    label: 训练秒数
+    fmt: .0f
+  charts:
+  - metrics
+  - loss
+  - tokens
+  curve: valid_bpb
+  look: 维基和广告上，两个分词器的压缩率排序一样吗？
+- id: p_tok_ads
+  file: 10-tok-ads
+  stage: domain
+  title: BPE 训练文本里混入广告
+  body: '训练 BPE 的 20 MB 文本里，10% 换成模板生成的广告文案（和评估用的 60 条人工广告不重叠）。**语言模型的训练数据完全不变**，只改了词表：广告高频词（"满减""包邮""第二件半价"）有机会合并成整词。
+
+    '
+  scenarios:
+  - tok_ads
+  compare_to: baseline
+  also:
+  - qwen
+  question:
+    text: 60 条人工广告，平均每条 token 数和基线比会怎样？
+    options:
+    - 减少 15% 以上
+    - 减少 5% - 15%
+    - 变化不到 5%
+  columns:
+  - path: summary.compression.ads.tokens_per_doc
+    label: 广告 每条 token 数
+    fmt: .1f
+    delta: true
+  - path: summary.compression.valid.bytes_per_token
+    label: 维基 每 token 字节数
+    fmt: .2f
+  - path: summary.ads.bpb
+    label: 广告 bpb
+    fmt: .3f
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+  charts:
+  - metrics
+  - tokens
+  look: 广告上少了几个 token？维基上的压缩率付出了多少？
+- id: p_dedup_exact
+  file: 11-dedup-exact
+  stage: dedup
+  title: 只做精确去重
+  body: '回到 16K BPE，改去重方式。基线是"精确去重 + MinHash 近似去重"；这个场景**只做精确去重**（去掉空白后逐字相同的才删）。注入的副本一半是逐字相同，一半删了 1-2 句、前后加了转载声明——后一半精确去重删不掉。
+
+    '
+  scenarios:
+  - dedup_exact
+  compare_to: baseline
+  question:
+    text: 只做精确去重时，验证集里有多少比例的文档，它的同源文档（原文或副本）进了训练集？
+    options:
+    - 不到 5%
+    - 5% - 20%
+    - 20% 以上
+  columns:
+  - path: summary.corpus.valid_leak_frac
+    label: 验证集泄漏比例
+    pct: true
+    delta: true
+  - path: summary.corpus.train_copy_bytes_frac
+    label: 训练集副本占字节
+    pct: true
+  - path: summary.corpus.dedup_removed
+    label: 去重删掉的文档数
+    fmt: ','
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+  charts:
+  - metrics
+  look: 精确去重删掉了多少篇？和注入的副本数比呢？
+- id: p_fault
+  file: 12-fault
+  stage: dedup
+  title: 关掉去重，验证集变乐观了
+  body: '同事为了省时间把去重整个关掉（MinHash 在 CPU 上要跑几十秒），重新训了一遍，只看验证集就下了结论。训练文本还是 100 MB，模型、分词器都不变。
+
+
+    我们手里多一样东西：**干净留出集 test**（注入副本之前就拿走，各场景完全相同）。同一个模型上，"留出集 bpb − 验证集 bpb"衡量验证集有多乐观。基线模型上它是 {{v:baseline:summary.gap.test_minus_valid_bpb:+.3f}}——两批不同文档本身的难易差，不是泄漏（基线的验证集泄漏比例只有 {{v:baseline:summary.corpus.valid_leak_frac:.1%}}）。
+
+    '
+  scenarios:
+  - fault_nodedup
+  compare_to: baseline
+  also:
+  - dedup_exact
+  question:
+    text: 不去重的模型上，"留出集 − 验证集"的 bpb 差，比基线大多少？
+    options:
+    - 几乎不变（不到 0.01）
+    - 大 0.01 - 0.05
+    - 大 0.05 以上
+  columns:
+  - path: summary.gap.test_minus_valid_bpb
+    label: 留出集 − 验证集
+    fmt: +.3f
+    delta: true
+  - path: summary.valid.bpb
+    label: 验证集 bpb
+    fmt: .3f
+  - path: summary.test.bpb
+    label: 留出集 bpb
+    fmt: .3f
+  - path: summary.corpus.valid_leak_frac
+    label: 验证集泄漏比例
+    pct: true
+  - path: summary.corpus.train_copy_bytes_frac
+    label: 训练集副本占字节
+    pct: true
+  charts:
+  - metrics
+  - loss
+  curve: valid_bpb
+  look: 验证集和留出集，哪个变得多？
+- id: diagnose
+  file: 13-diagnose
+  stage: dedup
+  title: 诊断：验证集为什么更乐观
+  body: '模型、分词器、超参、训练文本量都没变，只是去重关了；验证集比干净留出集更乐观了。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - baseline
+  compare_to: fault_nodedup
+  question:
+    text: 验证集变得更乐观的主要原因是什么？
+    options:
+    - 重复数据相当于多训了几轮，模型在所有文本上都学得更好了
+    - 转载副本分别落进训练集和验证集，验证集里有模型背过的文章
+    - 不去重时验证集换了一批更容易的文档，是抽样差异
+    - 转载声明这类模板句在验证集里很多，模型很容易预测
+  clues:
+  - 对比干净留出集：基线 验证集 {{v:baseline:summary.valid.bpb:.3f}} / 留出集 {{v:baseline:summary.test.bpb:.3f}}；不去重 验证集 {{v:fault_nodedup:summary.valid.bpb:.3f}} / 留出集 {{v:fault_nodedup:summary.test.bpb:.3f}}。两个集合是一起变的吗？
+  - 看语料统计：验证集里同源文档进了训练集的比例，基线 {{v:baseline:summary.corpus.valid_leak_frac:.1%}}，不去重 {{v:fault_nodedup:summary.corpus.valid_leak_frac:.1%}}；不去重时训练集里副本占字节 {{v:fault_nodedup:summary.corpus.train_copy_bytes_frac:.1%}}。
+  - 同一个模型内部拆开看：不去重时，验证集里同源文档在训练集有 8 篇以上的那部分 bpb {{v:fault_nodedup:summary.valid_leak_many.bpb:.3f}}，从没被转载过的原文 {{v:fault_nodedup:summary.valid_uniq.bpb:.3f}}。
+  columns:
+  - path: summary.gap.test_minus_valid_bpb
+    label: 留出集 − 验证集
+    fmt: +.3f
+  - path: summary.corpus.valid_leak_frac
+    label: 验证集泄漏比例
+    pct: true
+  - path: summary.valid_leak_many.bpb
+    label: 同源 ≥ 8 篇的部分 bpb
+    fmt: .3f
+  - path: summary.valid_uniq.bpb
+    label: 未转载原文 bpb
+    fmt: .3f
+  charts:
+  - metrics
+- id: p_leak
+  file: 14-leak
+  stage: dedup
+  title: 背过几遍才算背下来
+  body: '量化"背过"的效果。不去重的模型上，把验证集按"训练集里有几篇同源文档"拆开：**1-2 篇**（大多数转载只有一两份）、**8 篇以上**（被转载几十次的长尾文章），和**从没被转载过的原文**比。
+
+    '
+  scenarios:
+  - fault_nodedup
+  compare_to: baseline
+  also:
+  - dedup_exact
+  question:
+    text: 不去重的模型上，"训练集里有 8 篇以上同源文档"的那部分验证文档，bpb 比从没被转载过的原文低多少？
+    options:
+    - 不到 0.1
+    - 0.1 - 0.5
+    - 0.5 以上
+  columns:
+  - path: summary.gap.leak_many_minus_uniq_bpb
+    label: 同源 ≥ 8 篇 − 未转载
+    fmt: +.3f
+  - path: summary.gap.leak_few_minus_uniq_bpb
+    label: 同源 1-2 篇 − 未转载
+    fmt: +.3f
+  - path: summary.gap.dup_minus_uniq_bpb
+    label: 被转载原文 − 未转载原文
+    fmt: +.3f
+  - path: summary.corpus.valid_leak_frac
+    label: 验证集泄漏比例
+    pct: true
+  charts:
+  - metrics
+  look: 1-2 篇和 8 篇以上，差了几倍？基线和只做精确去重的这两列是多少？
+- id: keycard
+  file: 15-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 词表变大，序列长度、embedding 参数、输出层算力各怎么变？小模型和 7B 有什么不同？
+  - 为什么跨分词器不能比每 token loss？bpb 怎么算？
+  - 字节级分词的每 token loss 为什么很低？它的代价在哪？
+  - 基座自带的大词表，在你的业务文本上一定压缩得更好吗？怎么量？
+  - 只做精确去重，漏掉的是哪类重复？MinHash 的阈值是什么取舍？
+  - 验证集比留出集更乐观，先怀疑什么？怎么排查？
+  - 重复几次的数据会被记住？为什么大模型更要去重？
+  - 量化一个处理的效果，为什么要用同一批文档配对比较？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。

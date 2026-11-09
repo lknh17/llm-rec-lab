@@ -31,7 +31,8 @@ CURVE_TITLES = {"train_loss": "train loss", "dev_loss": "dev loss", "dpo_loss": 
                 "dpo_reward_acc": "DPO 偏好准确率（隐式奖励 chosen > rejected 的比例）", "dpo_margin": "DPO 隐式奖励差",
                 "chosen_logp_delta": "chosen 的 log π − log π_ref", "rejected_logp_delta": "rejected 的 log π − log π_ref",
                 "grpo_reward": "GRPO 采样奖励均值", "grpo_zero_adv_frac": "GRPO 无信号组比例（组内奖励全相同）",
-                "grpo_kl": "GRPO 相对参考模型的 KL", "grpo_resp_len": "GRPO 回答长度（token）"}
+                "grpo_kl": "GRPO 相对参考模型的 KL", "grpo_resp_len": "GRPO 回答长度（token）",
+                "valid_loss": "验证集 每 token loss", "valid_bpb": "验证集 bits-per-byte"}
 LOSS_SCENES = {"adextract": ["baseline", "all_tokens", "fault_truncation", "lr_5e-5", "lr_1e-3"]}
 MEMORY_SCENES = {"adextract": ["base_model", "lora_qv", "lora_attn", "baseline", "lora_r64"]}
 PARAM_SCENES = {"adextract": ["lora_qv", "lora_attn", "lora_r4", "lora_r8", "baseline", "lora_r64"]}

@@ -1,0 +1,73 @@
+course: L01
+title: L01 数据与分词：清洗、模拟转载与去重、字节级 BPE 的词表大小、压缩率与 bits-per-byte，验证集泄漏
+project: tinylm
+entry: tinylm.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。中文维基一个分片（约 9300 万字）→ 训练集固定 100 MB 文本；小 GPT（d=384、6 层，主体约 1060 万参数）从零训练一遍
+    base: {device: cuda, max_minutes: 60}
+    seeds: [0, 1, 2]
+    assets: [zhwiki-2311-s2, qwen2.5-0.5b]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：0.3 MB 训练文本、2 层 64 维小模型，只验证流程能跑通（结果没有教学意义，不检查断言）
+    base: {train_mb: 0.3, valid_mb: 0.05, test_mb: 0.05, tok_train_mb: 0.3, d_model: 64, n_layer: 2, n_head: 2, d_ff: 128,
+           seq_len: 128, batch_size: 8, eval_points: 2, max_minutes: 15}
+    seeds: [0]
+    skip_expect: true
+    assets: [zhwiki-2311-s2, qwen2.5-0.5b]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：16K 字节级 BPE（本语料训练），精确 + MinHash 去重，训练集 100 MB
+    params: {}
+    expect:
+      - "meta.data.corpus.valid_leak_frac < 0.05"
+      - "summary.test.bpb < 2.6"
+      - "abs(summary.test.bpb - summary.valid_uniq.bpb) < 0.08"   # 底稿去重后，留出集和未转载原文同分布
+
+  # ---------- 词表大小 ----------
+  - id: bpe_4k
+    role: variant
+    title: BPE 词表 4K（其余同基线）
+    params: {vocab_size: 4096}
+  - id: bpe_64k
+    role: variant
+    title: BPE 词表 64K（其余同基线）
+    params: {vocab_size: 65536}
+  - id: bytes
+    role: variant
+    title: 不分词：UTF-8 字节当 token（词表 257），一个汉字 3 个 token
+    params: {tokenizer: bytes}
+    expect:
+      - "summary.compression.valid.bytes_per_token == 1.0"
+  - id: qwen
+    role: variant
+    title: 直接用 Qwen2.5 的分词器（约 15.2 万词表）
+    params: {tokenizer: qwen}
+
+  # ---------- 词表的领域 ----------
+  - id: tok_ads
+    role: variant
+    title: BPE 训练文本里 10% 换成模板广告文案（LM 训练数据不变，只改词表）
+    params: {tok_ads_ratio: 0.1}
+
+  # ---------- 去重 ----------
+  - id: dedup_exact
+    role: variant
+    title: 只做精确去重：删句、加转载声明的近似副本留下
+    params: {dedup: exact}
+
+  # ---------- 教学故障：不去重，验证集泄漏 ----------
+  - id: fault_nodedup
+    role: fault
+    title: 不去重：转载副本随机落进训练集和验证集
+    params: {dedup: none}
+    expect:
+      # 只断言同一个模型内部的对照（文档内容的难易在场景间不同，跨场景比验证集 bpb 不可靠）
+      - "meta.data.corpus.valid_leak_frac > 0.15"
+      - "summary.valid_leak_many.bpb < summary.valid_uniq.bpb - 0.1"
+      - "summary.gap.leaked_minus_uniq_bpb < -0.03"

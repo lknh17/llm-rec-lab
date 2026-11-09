@@ -4,8 +4,9 @@
     python -m labkit assets qwen2.5-7b               # 下载/校验指定资产
     python -m labkit assets --profile h20x8          # 下载该档位所有场景需要的资产
 
-训练数据是仓库里的合成数据（projects/adextract/synth.py）和人工评测集（evalsets/），不需要下载。
-许可：Qwen2.5（阿里）Apache-2.0。
+adextract / adpref 的训练数据是仓库里的合成数据（projects/adextract/synth.py）和人工评测集（evalsets/），不需要下载；
+tinylm（L01-L04）用公开数据集的单个分片（DATASETS）。
+许可：Qwen2.5（阿里）Apache-2.0；中文维基 CC-BY-SA-4.0。
 国内网络：设 HF_ENDPOINT=https://hf-mirror.com，或装 modelscope 后用 LABKIT_MODEL_SOURCE=modelscope。
 """
 
@@ -71,11 +72,54 @@ def ensure_model(name: str) -> str:
     return str(target)
 
 
+# 公开数据集：只下载指定文件（一个 parquet 分片），放在 LAB_ASSETS_DIR/datasets/<名称>/ 下
+DATASETS = {
+    "zhwiki-2311-s2": {"repo": "wikimedia/wikipedia", "files": ["20231101.zh/train-00002-of-00006.parquet"],
+                       "size": "127 MB", "license": "CC-BY-SA-4.0",
+                       "note": "中文维基 2023-11-01 快照的第 3 个分片（约 13 万篇，繁简混排，原文未转换）"},
+}
+
+
+def dataset_dir(name: str) -> Path:
+    return assets_dir() / "datasets" / name
+
+
+def resolve_dataset_files(name: str, must_exist: bool = True) -> list[str] | None:
+    """数据集文件的本地路径（全部存在才返回）。不在这里联网。"""
+    spec = DATASETS[name]
+    files = [dataset_dir(name) / f for f in spec["files"]]
+    if all(f.exists() and f.stat().st_size > 0 for f in files):
+        return [str(f) for f in files]
+    if must_exist:
+        raise FileNotFoundError(f"本地找不到数据集 {name}（{spec['repo']}）。运行 python -m labkit assets {name} 下载；"
+                                f"或把 {spec['files']} 放到 {dataset_dir(name)}")
+    return None
+
+
+def ensure_dataset(name: str) -> list[str]:
+    found = resolve_dataset_files(name, must_exist=False)
+    if found:
+        print(f"{name}: {dataset_dir(name)} 已存在", flush=True)
+        return found
+    spec = DATASETS[name]
+    print(f"下载数据集 {spec['repo']} {spec['files']}（{spec['size']}）"
+          f"HF_ENDPOINT={os.environ.get('HF_ENDPOINT', 'https://huggingface.co')}", flush=True)
+    from huggingface_hub import hf_hub_download
+
+    for f in spec["files"]:
+        hf_hub_download(spec["repo"], f, repo_type="dataset", local_dir=str(dataset_dir(name)))
+    return resolve_dataset_files(name)
+
+
 def status() -> dict:
     out: dict = {"assets_dir": str(assets_dir())}
     for name, spec in MODELS.items():
         p = resolve_model_path(spec["repo"], must_exist=False)
         out[name] = {"kind": "model", "repo": spec["repo"], "path": p, "ok": bool(p), "size": spec["size"]}
+    for name, spec in DATASETS.items():
+        p = resolve_dataset_files(name, must_exist=False)
+        out[name] = {"kind": "dataset", "repo": spec["repo"], "path": str(dataset_dir(name)) if p else None,
+                     "ok": bool(p), "size": spec["size"]}
     return out
 
 
@@ -85,8 +129,10 @@ def ensure(names: list[str]) -> None:
         try:
             if n in MODELS or n in MODEL_ALIASES:
                 ensure_model(MODEL_ALIASES.get(n, n))
+            elif n in DATASETS:
+                ensure_dataset(n)
             else:
-                raise KeyError(f"未知资产 {n}，可选 {list(MODELS)}")
+                raise KeyError(f"未知资产 {n}，可选 {list(MODELS) + list(DATASETS)}")
         except Exception as e:  # noqa: BLE001
             failed.append(n)
             print(f"[失败] {n}: {e}", file=sys.stderr, flush=True)
