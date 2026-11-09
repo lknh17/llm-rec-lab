@@ -5,13 +5,9 @@
   "gpu": "NVIDIA H20",
   "gpu_count": 8,
   "gpu_mem_gb": 95.0,
-  "last_pull_at": 1794215674.5155172,
+  "last_pull_at": 1794216552.5260534,
   "state": "idle",
-  "queue": 2,
-  "job_id": null,
-  "progress": null,
-  "started_at": 1794215847.0823832,
-  "last_error": "发布失败：git push 失败：To https://github.com/lknh17/llm-rec-lab.git\n ! [rejected]        main -> main (fetch first)\nerror: failed to push some refs to 'https://github.com/lknh17/llm-rec-lab.git'\nhint: Updates were rejected because the remote contains work that you do not\nhint: have locally. This is usuall",
+  "queue": 0,
   "beat_every_s": 10800,
-  "updated_at": 1794216460.598027
+  "updated_at": 1794216566.0497863
 }
