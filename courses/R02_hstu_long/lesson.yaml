@@ -1,0 +1,576 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: R02
+profiles:
+  h20x8: H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子
+metric:
+  path: summary.test.recall10
+  label: 测试 Recall@10（全量排序）
+table:
+- path: summary.test.recall10
+  label: Recall@10
+- path: summary.test.long.recall10
+  label: 长程题 Recall@10
+- path: summary.test.recent.recall10
+  label: 近期题 Recall@10
+- path: summary.test.newsess.recall10
+  label: 新会话题 Recall@10
+- path: summary.train.tokens_per_s
+  label: 训练 token/秒
+- path: summary.train.peak_gb
+  label: 训练峰值 GB
+figures:
+  loss: []
+noise_note: Recall@10 在 2048 个测试用户上的抽样标准误约 0.01，长程题（约 800 个）约 0.017；均值差小于 0.03（长程题小于 0.05）或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: length
+  title: 长度的收益与成本
+- id: arch
+  title: 结构与实现
+- id: padding
+  title: padding
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 行为序列从 512 推到 10K，收益落在谁身上、成本是多少？
+  body: '业务里生成式推荐的用户行为序列长 10K。把序列从几百推到 10K，训练显存和耗时按 L² 涨，团队会问：
+
+
+    - **收益**：加长之后哪些请求变好了？占多少？整体指标能涨多少？
+
+    - **成本**：10K 的显存和耗时是 512 的多少倍？用什么实现能扛住？
+
+    - **工程坑**：用户长度差异巨大，补齐浪费多少？左补齐的 mask 怎么写才对？
+
+
+    这一课用一份"远处信息确实有用"的合成数据，把收益和成本分开量。每个场景都已在 H20 上跑好。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '一条合成长序列从生成到按类型评估。点击每个节点看代码。
+
+    '
+  nodes:
+  - id: gen
+    title: 合成长序列
+    shape: 每用户 1K-10K 个 (物品, 时间)
+    detail: 会话 + 簇偏好的背景；每隔约 P 步回访一次回访簇。
+    code:
+      file: recseq/synth.py
+      region: generate
+  - id: window
+    title: 训练窗口
+    shape: 随机终点 → 最近 L+1 个 → 左补齐 [B, L]
+    detail: L = 10240 时每步 6 条序列（61440 个 token）。
+    code:
+      file: recseq/data.py
+      region: windows
+  - id: rab
+    title: 相对位置 / 时间桶
+    shape: '[q, k] 的距离和 Δt → 桶号 → 每头一个偏置'
+    detail: 位置 0-15 精确、之后对数；时间 ⌊log2(1+Δt)⌋。
+    code:
+      file: recseq/models.py
+      region: rab
+  - id: hstu
+    title: HSTU 层
+    shape: '[B, L, d] → U, V, Q, K → A [B, H, q, k] → [B, L, d]'
+    detail: 逐点 SiLU、除以真实长度 n；按 query 分块，每块 checkpoint。
+    code:
+      file: recseq/models.py
+      region: hstu_attn
+  - id: mask
+    title: mask
+    shape: 因果 ∧ key 是真实行为 ∧ query 是真实行为
+    detail: 左补齐时 padding 在过去一侧，因果 mask 挡不住。
+    code:
+      file: recseq/models.py
+      region: mask
+  - id: eval
+    title: 按类型评估
+    shape: 长程 / 近期 / 新会话，长程再按距离分桶
+    detail: 全量排序 Recall@10。
+    code:
+      file: recseq/train.py
+      region: evaluate
+  - id: probe
+    title: 成本探针
+    shape: L = 512 / 2K / 8K / 10K，手写 vs 分块 / SDPA
+    detail: 一条序列前向 + 反向的毫秒和峰值显存；jagged 对补齐。
+    code:
+      file: recseq/cost.py
+      region: probe
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪一个用户
+  body: '基线运行的真实追踪：
+
+    - 一个测试用户切点前的 12 个行为（背景 / 回访入口 / 回访簇物品、会话起点）、目标类型和长程距离；
+
+    - 6 个位置、左补 2 个 pad 的 mask，正确写法和"只有因果"各一份；
+
+    - 几个 Δt 和距离对应的桶号；
+
+    - 成本探针：各长度、各实现的毫秒、峰值显存、是否 OOM。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: recseq/synth.py
+    region: generate
+    title: ① 合成长序列
+    note: 回访簇从长期偏好排在后一半的簇里挑，背景几乎不碰它；回访从序列末尾往前每隔约 P 步写一段 [τ, 8 个回访簇物品]。
+  - file: recseq/models.py
+    region: rab
+    title: ② 相对位置 / 时间桶
+    note: 位置桶覆盖到 10240；时间桶 ⌊log2(1+Δt)⌋：1 分钟约 6、1 天约 16。Δt 用的是请求时刻（下一个行为的时间），新会话的第一个位置能看到"隔了一天"。
+  - file: recseq/models.py
+    region: hstu_attn
+    title: ③ HSTU 注意力
+    note: SiLU(QKᵀ/√dh + rab) · mask / n：没有 softmax，每个 (i, j) 独立。按 query 分块时每块只需要 [B, H, 1024, L] 的中间结果，块之间不需要 online softmax 的 max / sum 规约。
+  - file: recseq/models.py
+    region: mask
+    title: ④ mask
+    note: 三个条件取与：因果、key 有效、query 有效。只保留因果（causal_only）就是本课的故障。
+  - file: recseq/models.py
+    region: sasrec
+    title: ⑤ SASRec 的右补齐
+    note: SDPA 传了 mask 就走不了 flash。先把左补齐转成右补齐，padding 到了"未来"一侧，只用 is_causal 就够。
+  - file: recseq/cost.py
+    region: probe
+    title: ⑥ 成本探针
+    note: 随机输入、B = 1，预热后用 CUDA event 计 5 次前向 + 反向的平均毫秒；每次前清零峰值显存统计；OOM 记为 oom。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答四个问题。HSTU d = 64、2 层、2 头。
+
+    '
+  questions:
+  - text: 手写注意力，L = 10240、2 头、B = 1，一个 bf16 的 [B, H, L, L] 张量多大？
+    options:
+    - 不到 0.1 GB
+    - 0.1 - 1 GB
+    - 1 - 10 GB
+    - 10 GB 以上
+  - text: HSTU（d = 64）在 L = 10240 时，注意力占每 token 前向计算量的多少？
+    options:
+    - 不到 30%
+    - 30% - 60%
+    - 60% - 90%
+    - 90% 以上
+  - text: 截断到 512 时，长程题的"上一次回访"还在窗口里的比例大约是？
+    options:
+    - 不到 10%
+    - 10% - 30%
+    - 30% - 60%
+    - 60% 以上
+  - text: 用户长度在 1K-10K 之间对数均匀，全部补齐到 10240，浪费的注意力 (i, j) 对占多少？
+    options:
+    - 不到 30%
+    - 30% - 60%
+    - 60% - 80%
+    - 80% 以上
+- id: p_len512
+  file: 06-len512
+  stage: length
+  title: 截断到 512
+  body: '同一个 HSTU，只保留最近 512 个行为（每步 120 条序列，token 数不变）。按"上一次回访在不在窗口里"，长程题大部分看不到上一次回访。
+
+    '
+  scenarios:
+  - hstu_512
+  compare_to: baseline
+  question:
+    text: 长程题的 Recall@10，L = 512 比 L = 10240 低多少？
+    options:
+    - 低 0.2 以上
+    - 低 0.05 - 0.2
+    - 差不到 0.05
+  columns:
+  - path: summary.test.long.recall10
+    label: 长程题
+    fmt: .3f
+    delta: true
+  - path: summary.test.recent.recall10
+    label: 近期题
+    fmt: .3f
+    delta: true
+  - path: summary.test.newsess.recall10
+    label: 新会话题
+    fmt: .3f
+  - path: summary.test.long_by_dist.d512_2k.recall10
+    label: 长程 512-2K
+    fmt: .3f
+  - path: summary.test.long_by_dist.d2k_8k.recall10
+    label: 长程 2K-8K
+    fmt: .3f
+  charts:
+  - metrics
+  - loss
+  curve: valid_recall10
+  look: 各距离桶里，两个长度的差落在哪几个桶？
+- id: p_len_mid
+  file: 07-len-mid
+  stage: length
+  title: 2K 和 8K
+  body: '再看中间两个长度：2048 和 8192。2048 时约 {{v:baseline:summary.data.long_cover.L2048:.0%}} 的长程题能看到上一次回访，8192 时 {{v:baseline:summary.data.long_cover.L8192:.0%}}。
+
+    '
+  scenarios:
+  - hstu_2k
+  compare_to: baseline
+  also:
+  - hstu_8k
+  - hstu_512
+  question:
+    text: 长程题的 Recall@10，L = 2048 比 L = 10240 低多少？
+    options:
+    - 低 0.2 以上
+    - 低 0.05 - 0.2
+    - 差不到 0.05
+  columns:
+  - path: summary.test.long.recall10
+    label: 长程题
+    fmt: .3f
+    delta: true
+  - path: summary.test.recall10
+    label: 整体
+    fmt: .3f
+  - path: summary.train.tokens_per_s
+    label: 训练 token/秒
+    fmt: ',.0f'
+  charts:
+  - metrics
+  look: 四个长度的长程题 Recall，曲线在哪里变平？
+- id: p_benefit
+  file: 08-benefit
+  stage: length
+  title: 整体收益被稀释
+  body: '真实流量里，依赖远处行为的请求可能只占很小一部分。把三类题按比例重新加权：长程题占 ρ，其余按近期 : 新会话 = 2 : 1。
+
+    '
+  scenarios:
+  - baseline
+  compare_to: hstu_512
+  question:
+    text: 只有 5% 的请求依赖远处行为时，L = 10240 比 L = 512 的整体 Recall@10 高多少？
+    options:
+    - 不到 0.005：测不出来
+    - 0.005 - 0.02
+    - 0.02 以上
+  columns:
+  - path: summary.test.mix.r05.recall10
+    label: ρ=5%
+    fmt: .3f
+    delta: true
+  - path: summary.test.mix.r20.recall10
+    label: ρ=20%
+    fmt: .3f
+    delta: true
+  - path: summary.test.mix.r50.recall10
+    label: ρ=50%
+    fmt: .3f
+    delta: true
+  charts:
+  - metrics
+  look: ρ 从 5% 到 50%，差值放大了几倍？
+- id: p_cost_len
+  file: 09-cost-len
+  stage: length
+  title: 长度的成本
+  body: '每步的 token 数相同（61440）。L = 512 时一步 120 条短序列，L = 10240 时一步 6 条长序列。
+
+    '
+  scenarios:
+  - hstu_512
+  compare_to: baseline
+  question:
+    text: 每个 token 的训练耗时，L = 10240 是 L = 512 的几倍？
+    options:
+    - 不到 2 倍
+    - 2 - 5 倍
+    - 5 - 20 倍
+    - 20 倍以上
+  columns:
+  - path: summary.train.tokens_per_s
+    label: 训练 token/秒
+    fmt: ',.0f'
+    delta: true
+  - path: summary.train.peak_gb
+    label: 训练峰值 GB
+    fmt: .1f
+  - path: summary.train.seconds
+    label: 训练秒数
+    fmt: .0f
+  charts:
+  - throughput
+  - memory
+  look: 探针里 L 翻 4 倍（2048 → 8192），毫秒数翻了几倍？
+- id: p_softmax
+  file: 10-softmax
+  stage: arch
+  title: SASRec（softmax）对 HSTU
+  body: '同样 10240 的窗口、同样的训练预算，换成 SASRec：softmax 注意力 + MLP，绝对位置，没有时间偏置，SDPA（flash）实现。
+
+    '
+  scenarios:
+  - sasrec_10k
+  compare_to: baseline
+  question:
+    text: 长程题的 Recall@10，SASRec 和 HSTU 比怎样？
+    options:
+    - SASRec 低 0.05 以上
+    - 差不多（±0.05）
+    - SASRec 高 0.05 以上
+  columns:
+  - path: summary.test.long.recall10
+    label: 长程题
+    fmt: .3f
+    delta: true
+  - path: summary.test.recent.recall10
+    label: 近期题
+    fmt: .3f
+  - path: summary.test.newsess.recall10
+    label: 新会话题
+    fmt: .3f
+  - path: summary.train.tokens_per_s
+    label: 训练 token/秒
+    fmt: ',.0f'
+  - path: summary.params.body
+    label: 主体参数
+    fmt: ','
+  charts:
+  - metrics
+  - loss
+  curve: valid_recall10
+  look: 三类题里，两种结构差得最多的是哪一类？
+- id: p_manual
+  file: 11-manual
+  stage: arch
+  title: 手写注意力对 SDPA
+  body: '同一个 SASRec，注意力从 SDPA（flash）换成手写：显式构造 [B, H, L, L] 的打分、softmax、再乘 V。数学上完全等价。
+
+    '
+  scenarios:
+  - sasrec_10k_manual
+  compare_to: sasrec_10k
+  question:
+    text: 训练峰值显存，手写是 SDPA 的几倍？
+    options:
+    - 不到 1.5 倍
+    - 1.5 - 4 倍
+    - 4 - 10 倍
+    - 10 倍以上
+  columns:
+  - path: summary.train.peak_gb
+    label: 训练峰值 GB
+    fmt: .1f
+    delta: true
+  - path: summary.train.tokens_per_s
+    label: 训练 token/秒
+    fmt: ',.0f'
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+  charts:
+  - memory
+  - throughput
+  look: 两者的 Recall 一样吗？（数学等价时应该在噪声内）
+- id: p_timebias
+  file: 12-timebias
+  stage: arch
+  title: 去掉时间偏置
+  body: 'HSTU 去掉相对时间偏置，只保留相对位置偏置。新会话题的输入和"同一个会话的下一步"在位置上看起来一样，区别只在"隔了多久"。
+
+    '
+  scenarios:
+  - hstu_notime
+  compare_to: baseline
+  question:
+    text: 新会话题的 Recall@10 会怎样？
+    options:
+    - 降 0.03 以上
+    - 差不多（±0.03）
+    - 升 0.03 以上
+  columns:
+  - path: summary.test.newsess.recall10
+    label: 新会话题
+    fmt: .3f
+    delta: true
+  - path: summary.test.recent.recall10
+    label: 近期题
+    fmt: .3f
+    delta: true
+  - path: summary.test.long.recall10
+    label: 长程题
+    fmt: .3f
+    delta: true
+  charts:
+  - metrics
+  look: 哪一类题对时间偏置最敏感？
+- id: p_ml1m
+  file: 13-ml1m
+  stage: arch
+  title: 回到 ML-1M
+  body: '把两个结构搬回 R01 的 ML-1M（L = 200、每步 128 条、4000 步）。ML-1M 的远处信息很少，同一秒的评分顺序也是任意的。
+
+    '
+  scenarios:
+  - ml1m_hstu
+  compare_to: ml1m_sasrec
+  question:
+    text: ML-1M 上 HSTU 和 SASRec 比，测试 Recall@10 怎样？
+    options:
+    - HSTU 低 0.01 以上
+    - 差不多（±0.01）
+    - HSTU 高 0.01 以上
+  columns:
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+    delta: true
+  - path: summary.test.ndcg10
+    label: NDCG@10
+    fmt: .3f
+  - path: summary.train.samples_per_s
+    label: 训练 样本/秒
+    fmt: ',.0f'
+  charts:
+  - metrics
+- id: p_jagged
+  file: 14-jagged
+  stage: padding
+  title: 补齐 vs jagged
+  body: '从真实长度分布里抽 6 个用户，两种算法做同样的前向 + 反向：补齐到最长的那个、整批算；不补齐、逐条算再求和（jagged 的朴素版）。
+
+    '
+  scenarios:
+  - baseline
+  question:
+    text: jagged 比补齐快几倍？
+    options:
+    - 不到 1.5 倍
+    - 1.5 - 3 倍
+    - 3 - 6 倍
+    - 6 倍以上
+  columns:
+  - path: summary.cost.jagged.ms_padded
+    label: 补齐 ms
+    fmt: .1f
+  - path: summary.cost.jagged.ms_jagged
+    label: 逐条 ms
+    fmt: .1f
+  - path: summary.cost.jagged.speedup
+    label: 加速
+    fmt: .1f
+  - path: summary.data.pad_attn_waste
+    label: 注意力浪费
+    fmt: .1%
+  charts:
+  - metrics
+- id: p_fault
+  file: 15-fault
+  stage: padding
+  title: 同事简化了 mask
+  body: '同事觉得 HSTU 的 mask"三个条件太啰嗦，因果就够了"，只保留了因果 mask。序列是左补齐的。训练正常结束。
+
+    '
+  scenarios:
+  - fault_padmask
+  compare_to: baseline
+  question:
+    text: 短用户（总长度 < 2048）的测试 Recall@10 会怎样？
+    options:
+    - 降不到 0.01
+    - 降 0.01 - 0.05
+    - 降 0.05 以上
+  columns:
+  - path: summary.test.by_len.short.recall10
+    label: 短用户
+    fmt: .3f
+    delta: true
+  - path: summary.test.by_len.long.recall10
+    label: 长用户
+    fmt: .3f
+    delta: true
+  - path: summary.test.recall10
+    label: 整体
+    fmt: .3f
+    delta: true
+  charts:
+  - metrics
+  - loss
+  curve: valid_recall10
+  look: 训练 loss 曲线看得出问题吗？
+- id: diagnose
+  file: 16-diagnose
+  stage: padding
+  title: 诊断：短用户为什么掉得多
+  body: '只改了 mask 一个参数，短用户掉得最多，长用户几乎不变。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - fault_padmask
+  compare_to: baseline
+  question:
+    text: 根因是什么？
+    options:
+    - 只用了因果 mask：左补齐的 padding 在过去一侧，被当成历史参与了聚合
+    - HSTU 没有 softmax，数值不稳定
+    - 短用户本来就没有长程信号
+    - padding 的时间戳为 0，落进了越界的时间桶
+  clues:
+  - 按用户长度分组：短用户（< 2048）Recall@10 {{v:fault_padmask:summary.test.by_len.short.recall10:.3f}}（基线 {{v:baseline:summary.test.by_len.short.recall10:.3f}}）；长用户（> 8192）{{v:fault_padmask:summary.test.by_len.long.recall10:.3f}}（基线 {{v:baseline:summary.test.by_len.long.recall10:.3f}}）。
+  - 同一批用户"各自不补齐"和"补齐到 10240"，最后一个位置 logits 的最大差：基线 {{v:baseline:summary.checks.pad_invariance_max_dlogit:.1e}}，故障 {{v:fault_padmask:summary.checks.pad_invariance_max_dlogit:.2f}}。
+  - 短用户最后一个位置的注意力有多少落在 padding 上：{{v:fault_padmask:summary.checks.pad_attn_mass_short:.0%}}（基线 {{v:baseline:summary.checks.pad_attn_mass_short:.0%}}）。看追踪里的 6 × 6 mask。
+  columns:
+  - path: summary.checks.pad_invariance_max_dlogit
+    label: 补不补齐的 logits 差
+    fmt: .3f
+  - path: summary.checks.pad_attn_mass_short
+    label: 注意力落在 pad 上
+    fmt: .1%
+  - path: summary.test.by_len.short.recall10
+    label: 短用户
+    fmt: .3f
+  - path: summary.test.by_len.long.recall10
+    label: 长用户
+    fmt: .3f
+  charts:
+  - metrics
+- id: keycard
+  file: 17-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - HSTU 相对 Transformer 改了哪三处？每层参数从 12d² 变成多少？
+  - 长度的收益落在哪类请求？整体收益和长程请求占比 ρ 是什么关系？
+  - 10K 序列手写注意力的显存怎么估？为什么必须用 flash / 分块？
+  - 补齐的浪费怎么算？为什么注意力浪费比 token 浪费大？
+  - 左补齐时为什么因果 mask 不够？用什么检查能守住？
+  - 时间偏置主要帮哪一类请求？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。

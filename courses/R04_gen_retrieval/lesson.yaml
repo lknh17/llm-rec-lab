@@ -1,0 +1,481 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: R04
+profiles:
+  h20x8: H20 · ML-1M · 语义 ID 3 × 64 + 去重位 · encoder-decoder（4 + 2 层）· 3 种子
+metric:
+  path: summary.test.recall10
+  label: 测试 Recall@10（越高越好）
+table:
+- path: summary.test.recall10
+  label: Recall@10
+- path: summary.test.ndcg10
+  label: NDCG@10
+- path: summary.test.invalid_frac
+  label: 非法元组比例
+- path: summary.test.unique_per_user
+  label: 每用户不重复物品数
+- path: summary.test.ms_per_user
+  label: 解码 ms/用户
+- path: summary.train.seconds
+  label: 训练秒数
+figures:
+  loss: []
+noise_note: Recall@10 在 6040 个测试用户上的抽样标准误约 0.005；均值差小于 0.01 或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: beam
+  title: beam 宽度
+- id: trie
+  title: trie 约束
+- id: ids
+  title: ID 质量
+- id: compare
+  title: 和 SASRec 比
+- id: fault
+  title: 故障
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 让模型直接写出物品 ID：解码要花多少、会写出不存在的 ID 吗、beam 写错会怎样？
+  body: '生成式召回把召回从"向量检索"变成"文本生成"：模型读完用户历史，逐个 token 写出下一个物品的语义 ID。落地时绕不开三个问题：
+
+
+    - **解码成本**：每个用户 4 步 decoder 前向、每步在 W × V 个候选里选；beam 宽度和延迟怎么取舍？
+
+    - **合法性**：模型可能写出不存在的码组合；加 trie 约束要多少显存？
+
+    - **正确性**：beam search 的实现细节（初始分数、去重）一旦写错，结果可能全是重复的，离线指标却看起来"只是低了一点"。
+
+
+    每个场景都已在 H20 上跑好。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '一个用户从历史到 Top-10。点击每个节点看代码。
+
+    '
+  nodes:
+  - id: sid
+    title: 语义 ID
+    shape: 物品 → 3 位码 + 1 位去重 → 4 个 token
+    detail: R03 基线的做法，量化种子固定。
+    code:
+      file: genrec/sid.py
+      region: collide
+  - id: enc
+    title: encoder
+    shape: 最近 200 个物品 × 4 个 token → 每个物品一个位置 [B, 200, d]
+    detail: 每个物品的输入 = 4 个 token 的 embedding 之和 + 位置编码。
+    code:
+      file: genrec/model.py
+      region: encdec
+  - id: dec
+    title: decoder
+    shape: BOS → t1 → t2 → t3 → t4，每步 [B·W, V] 的 logits
+    detail: cross-attend encoder 输出；W 条 beam 共享同一份 memory。
+  - id: trie
+    title: trie 掩码
+    shape: 节点 [B, W] → 合法掩码 [B, W, V]
+    detail: 稠密转移表，一次 gather。
+    code:
+      file: genrec/model.py
+      region: trie
+  - id: beam
+    title: beam search
+    shape: '[B, W·V] 取全局 top-W'
+    detail: 初始只有第 0 条 beam 分数为 0。
+    code:
+      file: genrec/model.py
+      region: beam
+  - id: map
+    title: 反查物品
+    shape: token 元组 → 物品 → Top-10
+    detail: 没有去重位时一个元组对应一桶物品，按热度排开。
+    code:
+      file: genrec/train.py
+      region: evaluate
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪一个用户
+  body: '基线运行的真实追踪：一个测试用户最近 5 部电影和它们的语义 ID token；encoder 输入的形状；根节点允许的 token 数；beam 10 解码出的 10 个 token 元组、分数和对应的电影；目标电影是否命中。另有"保存后重新加载，Top-10 是否一致"。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: genrec/model.py
+    region: encdec
+    title: ① encoder-decoder
+    note: encoder 每个历史物品一个位置（不是每个 token 一个位置），序列短 4 倍；decoder 只有 4 个位置。选 encoder-decoder 而不是 decoder-only：历史只编码一次，W 条 beam 共享。
+  - file: genrec/model.py
+    region: beam
+    title: ② beam search
+    note: score[:, 1:] = −∞ 那一行是关键：只有第 0 条 beam 能扩展，第一步才会选出 W 个不同的 token。cand [B, W·V] 取 top-W，beam = idx // V，token = idx % V。
+  - file: genrec/model.py
+    region: trie
+    title: ③ GPU trie
+    note: next_node [节点数, V]，−1 = 这个前缀下不存在。合法掩码 = next_node[nodes] ≥ 0，状态转移 = next_node[nodes, tokens]。
+  - file: genrec/train.py
+    region: train
+    title: ④ 训练
+    note: 随机取用户和终点，历史 = seq[:end] 的最后 200 个，目标 = seq[end] 的 4 个 token；交叉熵在全词表上算。
+  - file: genrec/cost.py
+    region: cost
+    title: ⑤ 成本基准
+    note: 1000 万 × d 的 bf16 物品表，256 个用户一批打分取 top-10，和 beam 10 解码的每用户毫秒比。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答三个问题。
+
+    '
+  questions:
+  - text: 3 层 + 去重位、beam 10，每个用户要做几次 decoder 前向（批量算，按步数计）、每步在多少个候选里选？
+    options:
+    - 1 次，约 200 个
+    - 4 次，约 10 × 200 个
+    - 40 次，约 200 个
+    - 4 次，约 3706 个
+  - text: beam 5 时，Recall@10 的上限受什么限制？
+    options:
+    - 不受限，和 beam 10 一样
+    - 最多只有 5 个候选，Recall@10 实际是 Recall@5
+    - 受 trie 限制
+  - text: 1000 万个物品全量打分（bf16 物品表 + top-10）和 beam 10 解码相比，每用户耗时比大约是？
+    options:
+    - 不到 0.5：全量打分更快
+    - 0.5 - 2：差不多
+    - 2 以上：beam 解码更快
+- id: p_beam1
+  file: 06-beam1
+  stage: beam
+  title: 贪心解码
+  body: '同一个模型，beam 从 10 降到 1（每步取概率最高的 token）。只改推理。
+
+    '
+  scenarios:
+  - beam1
+  compare_to: baseline
+  question:
+    text: 贪心解码的 Recall@10 是 beam 10 的几倍？
+    options:
+    - 不到 0.5 倍
+    - 0.5 - 0.9 倍
+    - 0.9 倍以上
+  columns:
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+    delta: true
+  - path: summary.test.cands_per_user
+    label: 每用户候选数
+    fmt: .1f
+  - path: summary.test.ms_per_user
+    label: 解码 ms/用户
+    fmt: .3f
+  charts:
+  - metrics
+  - loss
+  curve: beam_recall10
+  look: beam 扫描曲线是在哪一段变平的？
+- id: p_beam20
+  file: 07-beam20
+  stage: beam
+  title: beam 20
+  body: 'beam 从 10 加到 20。取前 10 个算 Recall@10。
+
+    '
+  scenarios:
+  - beam20
+  compare_to: baseline
+  question:
+    text: beam 20 的 Recall@10 是 beam 10 的几倍？
+    options:
+    - 不到 1.02 倍
+    - 1.02 - 1.10 倍
+    - 1.10 倍以上
+  columns:
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+    delta: true
+  - path: summary.test.ms_per_user
+    label: 解码 ms/用户
+    fmt: .3f
+    delta: true
+  charts:
+  - metrics
+- id: p_notrie
+  file: 08-notrie
+  stage: trie
+  title: 不加 trie
+  body: '同一个模型，解码时不加 trie 约束：每步可以选全词表的任意 token。输出层不按层限制，所以可能出现"第 1 位写了第 3 层的 token"（错层），也可能每一位都在本层、但组合不存在。
+
+    '
+  scenarios:
+  - no_trie
+  compare_to: baseline
+  question:
+    text: 不加 trie 时，beam 10 返回的元组里非法的占多少？
+    options:
+    - 不到 5%
+    - 5% - 30%
+    - 30% 以上
+  columns:
+  - path: summary.test.invalid_frac
+    label: 非法元组
+    fmt: .1%
+    delta: true
+  - path: summary.test.wrong_level_frac
+    label: 含错层 token
+    fmt: .1%
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+    delta: true
+  - path: summary.test.unique_per_user
+    label: 不重复物品
+    fmt: .1f
+  charts:
+  - metrics
+- id: p_k256
+  file: 09-k256
+  stage: ids
+  title: 3 × 256 的语义 ID
+  body: '语义 ID 换成 3 × 256：碰撞更少、词表 3 倍。重新训练模型。
+
+    '
+  scenarios:
+  - sid_k256
+  compare_to: baseline
+  question:
+    text: Recall@10 和 3 × 64 比怎样？
+    options:
+    - 低 0.01 以上
+    - 差不多（±0.01）
+    - 高 0.01 以上
+  columns:
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+    delta: true
+  - path: summary.sid.collision_rate
+    label: 碰撞率
+    fmt: .1%
+  - path: summary.sid.vocab
+    label: 词表
+    fmt: d
+  charts:
+  - metrics
+  - loss
+  curve: valid_recall10
+- id: p_content
+  file: 10-content
+  stage: ids
+  title: 内容向量做的 ID
+  body: '语义 ID 换成用内容向量（Qwen2.5-0.5B 读片名 + 类型）量化。前缀对应"类型相似"而不是"被连着看"。
+
+    '
+  scenarios:
+  - sid_content
+  compare_to: baseline
+  question:
+    text: Recall@10 和协同 ID 比怎样？
+    options:
+    - 低 0.01 以上
+    - 差不多（±0.01）
+    - 高 0.01 以上
+  columns:
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+    delta: true
+  - path: summary.sid.collision_rate
+    label: 碰撞率
+    fmt: .1%
+  charts:
+  - metrics
+- id: p_random
+  file: 11-random
+  stage: ids
+  title: 随机向量做的 ID
+  body: '语义 ID 换成用随机向量量化：码就是一个随机编号，前缀没有任何含义。模型、训练完全相同。
+
+    '
+  scenarios:
+  - sid_random
+  compare_to: baseline
+  question:
+    text: Recall@10 和协同 ID 比怎样？
+    options:
+    - 低 0.01 以上
+    - 差不多（±0.01）
+    - 高 0.01 以上
+  columns:
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+    delta: true
+  - path: summary.sid.collision_rate
+    label: 碰撞率
+    fmt: .1%
+  charts:
+  - metrics
+- id: p_nodedup
+  file: 12-nodedup
+  stage: ids
+  title: 不加去重位
+  body: '不追加去重位：每个物品只有 3 个 token。解出一个码组合后，如果桶里有多部电影，按热度依次填进结果。
+
+    '
+  scenarios:
+  - no_dedup
+  compare_to: baseline
+  question:
+    text: Recall@10 和有去重位比怎样？
+    options:
+    - 低 0.01 以上
+    - 差不多（±0.01）
+    - 高 0.01 以上
+  columns:
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+    delta: true
+  - path: summary.sid.target_collided_frac
+    label: 目标在碰撞桶里
+    fmt: .1%
+  - path: summary.test.ms_per_user
+    label: 解码 ms/用户
+    fmt: .3f
+  charts:
+  - metrics
+- id: p_sasrec
+  file: 13-sasrec
+  stage: compare
+  title: 和 SASRec 比
+  body: '参照：SASRec（和 R01 基线同一套代码）对全部 3706 部电影打分取 Top-10。
+
+    '
+  scenarios:
+  - sasrec
+  compare_to: baseline
+  question:
+    text: SASRec 和生成式召回比，Recall@10 怎样？
+    options:
+    - SASRec 高 0.02 以上
+    - 差不多（±0.02）
+    - 生成式召回高 0.02 以上
+  columns:
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+    delta: true
+  - path: summary.test.ndcg10
+    label: NDCG@10
+    fmt: .3f
+  - path: summary.test.ms_per_user
+    label: ms/用户
+    fmt: .3f
+  charts:
+  - metrics
+- id: p_fault
+  file: 14-fault
+  stage: fault
+  title: 同事改了 beam search
+  body: '同事重构 beam search 时把初始化写成了 score = torch.zeros(B, W)——"所有 beam 一开始都是 0 分，很合理"。模型没动（同一个训练好的模型），只改了推理代码。
+
+    '
+  scenarios:
+  - fault_beamdup
+  compare_to: baseline
+  question:
+    text: Recall@10 是基线的几倍？
+    options:
+    - 不到 0.5 倍
+    - 0.5 - 0.9 倍
+    - 0.9 倍以上
+  columns:
+  - path: summary.test.recall10
+    label: Recall@10
+    fmt: .3f
+    delta: true
+  - path: summary.test.unique_per_user
+    label: 不重复物品
+    fmt: .1f
+  - path: summary.test.cands_per_user
+    label: 候选数
+    fmt: .1f
+  charts:
+  - metrics
+  curve: beam_recall10
+- id: diagnose
+  file: 15-diagnose
+  stage: fault
+  title: 诊断：模型没变，召回为什么掉了
+  body: '模型是同一个（训练缓存命中），只改了 beam search 的初始化。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - fault_beamdup
+  compare_to: baseline
+  question:
+    text: 根因是什么？
+    options:
+    - trie 掩码错了
+    - beam 初始分数全为 0，同一个前缀被扩展了 W 次，W 条 beam 完全相同
+    - 模型坍缩到热门物品
+    - 去重位让碰撞的物品无法区分
+  clues:
+  - beam 扫描：W = 1 / 10 / 20 时 Recall {{v:fault_beamdup:summary.beam.w1.recall10:.3f}} / {{v:fault_beamdup:summary.beam.w10.recall10:.3f}} / {{v:fault_beamdup:summary.beam.w20.recall10:.3f}}；基线 {{v:baseline:summary.beam.w1.recall10:.3f}} / {{v:baseline:summary.beam.w10.recall10:.3f}} / {{v:baseline:summary.beam.w20.recall10:.3f}}。
+  - 每用户不重复物品数：故障 {{v:fault_beamdup:summary.test.unique_per_user:.1f}}，基线 {{v:baseline:summary.test.unique_per_user:.1f}}；非法元组 {{v:fault_beamdup:summary.test.invalid_frac:.1%}}。
+  - 看追踪里同一个用户的 10 条 beam：token 元组和分数是否完全相同。
+  columns:
+  - path: summary.beam.w1.recall10
+    label: W=1
+    fmt: .3f
+  - path: summary.beam.w10.recall10
+    label: W=10
+    fmt: .3f
+  - path: summary.beam.w20.recall10
+    label: W=20
+    fmt: .3f
+  - path: summary.test.unique_per_user
+    label: 不重复物品
+    fmt: .1f
+  charts:
+  - metrics
+- id: keycard
+  file: 16-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 生成式召回每用户要做几步解码？encoder-decoder 相比 decoder-only 省在哪？
+  - beam 宽度怎么限制候选数？加宽 beam 的收益和成本各怎么变？
+  - 不加 trie 会出现哪两种非法？trie 的代价是什么？
+  - beam 初始化为什么只能有一条根？怎么用测试守住？
+  - 语义 ID 的语义值多少？去重位值多少？
+  - 什么规模下生成式召回才比全量打分有优势？优势具体在哪？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。

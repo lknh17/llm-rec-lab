@@ -1,0 +1,481 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: R03
+profiles:
+  h20x8: H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子
+metric:
+  path: summary.sid.collision_rate
+  label: 碰撞率（越低越好）
+table:
+- path: summary.sid.collision_rate
+  label: 碰撞率
+- path: summary.sid.uniform
+  label: 均匀基准
+- path: summary.sid.combos
+  label: 码组合数
+- path: summary.sid.levels.L1.ppl_frac
+  label: L1 困惑度 / K
+- path: summary.sid.nmi.L1_L2
+  label: NMI(L1
+  L2): null
+- path: summary.sid.prefix_sim.d1
+  label: 同 c1 余弦
+- path: summary.sid.timing.quantize_s
+  label: 量化秒数
+figures:
+  loss: []
+noise_note: 量化只受种子影响（k-means 初始化），比例类指标的种子间波动通常在 1 个百分点以内；差值小于种子间波动按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: repr
+  title: 表示来源
+- id: shape
+  title: 码本形状与规模
+- id: rqvae
+  title: RQ-VAE
+- id: fault
+  title: 故障
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 千万级物品怎么用几百个 token 拼出 ID？拼出来的码好不好怎么量？
+  body: '生成式召回（TIGER、OneRec）让模型逐个 token 生成物品 ID。直接用原始 ID 的问题：
+
+
+    - **输出层太大**：1000 万个物品 × d = 128 就是 12.8 亿参数，softmax 每步都要算全部；
+
+    - **没有泛化**：冷启动物品的 ID 向量没训练过，相似物品之间也不共享任何东西。
+
+
+    语义 ID 用几层离散码表示一个物品：相似物品共享前缀，词表只有几百个 token。但码的质量决定了召回的上限：撞码的物品分不开、前缀没语义就学不到泛化。这一课把这些量化出来。每个场景都已在 H20 上跑好。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '从物品向量到语义 ID 和统计。点击每个节点看代码。
+
+    '
+  nodes:
+  - id: emb
+    title: 物品向量
+    shape: '[N, D]：协同 64 维 / 内容 896 维 / 合成 128 维'
+    detail: 协同向量来自和 R01 同一套代码训的 SASRec，只用 seq[:-2] 训练。
+    code:
+      file: genrec/items.py
+      region: content_emb
+  - id: norm
+    title: 归一化
+    shape: '[N, D] → 每行除以范数'
+    detail: k-means 用欧氏距离，归一化后等价于按余弦聚类。
+  - id: km
+    title: k-means
+    shape: '[N, D] → 中心 [K, D]、分配 [N]'
+    detail: k-means++ 初始化 + Lloyd 迭代；距离分块算；空簇用最远点重置。
+    code:
+      file: genrec/sid.py
+      region: kmeans
+  - id: rq
+    title: 逐层残差
+    shape: r_l = r_{l−1} − C_l[c_l]，L 层 → codes [N, L]
+    detail: 每层对上一层没解释掉的部分聚类。
+    code:
+      file: genrec/sid.py
+      region: rq
+  - id: dedup
+    title: 去重位
+    shape: '[N, L] → [N, L+1]'
+    detail: 码完全相同的物品依次编号；排序 + 分组，向量化。
+    code:
+      file: genrec/sid.py
+      region: collide
+  - id: stats
+    title: 统计
+    shape: 碰撞率 / 均匀基准 / 利用率 / 困惑度 / 重建 / NMI / 跨视角
+    detail: 4 层运行的前 d 层就是 d 层的结果（逐层贪心）。
+    code:
+      file: genrec/sid.py
+      region: metrics
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪一部电影
+  body: '基线运行的真实追踪：《Toy Story》每层选了哪个码、减掉之后残差还剩多少；和它共享第 1 层码的 5 部电影；和它码完全相同（碰撞）的电影；码本的形状。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: genrec/items.py
+    region: content_emb
+    title: ① 内容向量
+    note: 'Qwen2.5-0.5B 读 "Title: … Genres: …"，取最后一层隐藏状态 [B, T, 896]，按 attention_mask 求平均。'
+  - file: genrec/sid.py
+    region: kmeans
+    title: ② k-means
+    note: 距离 ‖x‖² − 2xcᵀ + ‖c‖² 按 26 万行分块，1000 万物品时也不会一次建 [N, K] 的大矩阵。空簇用离中心最远的点重置，所以利用率总是 100%。
+  - file: genrec/sid.py
+    region: rq
+    title: ③ 残差量化
+    note: target = r if residual else x：只差这一行。每层的码本在样本上拟合，再分块分配全部物品。
+  - file: genrec/sid.py
+    region: collide
+    title: ④ 去重位
+    note: 把码元组打包成一个 int64，排序后找每组的起点，组内序号就是去重位。
+  - file: genrec/sid.py
+    region: metrics
+    title: ⑤ 指标
+    note: 碰撞率按物品算（被撞的物品占比）；困惑度 = exp(熵)；NMI 衡量两层码是不是在重复描述同一件事。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答三个问题。
+
+    '
+  questions:
+  - text: 100 万个物品均匀撒进 3 层 × 256 码（1677 万个格子），一个物品和别的物品撞码的概率大约是？
+    options:
+    - 不到 1%
+    - 1% - 10%
+    - 10% - 30%
+    - 30% 以上
+  - text: 1000 万个物品、每层 256 码，要让均匀基准碰撞率低于 5%，至少几层？
+    options:
+    - 2 层
+    - 3 层
+    - 4 层
+    - 5 层
+  - text: 1000 万个物品、d = 128，"每个物品一个 ID"的输出层参数，是 4 层 × 256 语义 ID 词表的大约几倍？
+    options:
+    - 不到 10 倍
+    - 10 - 1000 倍
+    - 1000 - 10 万倍
+    - 10 万倍以上
+- id: p_content
+  file: 06-content
+  stage: repr
+  title: 内容向量
+  body: '同样 3 层 × 64 码，物品向量换成内容向量：Qwen2.5-0.5B 读"片名 + 类型"。协同向量反映"谁和谁被同一批人看"，内容向量反映"片名和类型像不像"。用一个第三方视角检验：用户相邻两次评分的两部电影，第 1 层码相同的比例。
+
+    '
+  scenarios:
+  - content
+  compare_to: baseline
+  question:
+    text: 内容 ID 的"相邻行为同 c1 比例"是协同 ID 的几倍？
+    options:
+    - 不到 0.7 倍
+    - 0.7 - 1.1 倍
+    - 1.1 倍以上
+  columns:
+  - path: summary.sid.cross.cooc_same_c1
+    label: 相邻行为同 c1
+    fmt: .3f
+    delta: true
+  - path: summary.sid.cross.genre_jacc_c1
+    label: 同 c1 类型 Jaccard
+    fmt: .3f
+  - path: summary.sid.collision_rate
+    label: 碰撞率
+    fmt: .1%
+  - path: summary.sid.levels.L1.ppl_frac
+    label: L1 困惑度 / K
+    fmt: .2f
+  charts:
+  - metrics
+  look: 两个视角的检验，方向一致吗？
+- id: p_random
+  file: 07-random
+  stage: repr
+  title: 随机向量
+  body: '物品向量换成随机高斯向量：码完全没有语义，只是一个随机的编号方式。随机向量在空间里分布很均匀。
+
+    '
+  scenarios:
+  - random
+  compare_to: baseline
+  question:
+    text: 随机 ID 的碰撞率和协同 ID 比怎样？
+    options:
+    - 随机低 5 个点以上
+    - 差不多（±5 个点）
+    - 随机高 5 个点以上
+  columns:
+  - path: summary.sid.collision_rate
+    label: 碰撞率
+    fmt: .1%
+    delta: true
+  - path: summary.sid.prefix_sim.d1
+    label: 同 c1 余弦
+    fmt: .2f
+  - path: summary.sid.cross.cooc_same_c1
+    label: 相邻行为同 c1
+    fmt: .3f
+  - path: summary.sid.levels.L1.ppl_frac
+    label: L1 困惑度 / K
+    fmt: .2f
+  charts:
+  - metrics
+- id: p_unnorm
+  file: 08-unnorm
+  stage: repr
+  title: 不做归一化
+  body: '协同向量不做 L2 归一化，直接做 k-means。协同 embedding 的范数往往和物品的热度有关（训练时出现得多，被推得远）。
+
+    '
+  scenarios:
+  - unnorm
+  compare_to: baseline
+  question:
+    text: 第 1 层码的困惑度 / K（分布有多均匀）会怎样？
+    options:
+    - 降 10 个点以上
+    - 差不多（±10 个点）
+    - 升 10 个点以上
+  columns:
+  - path: summary.sid.levels.L1.ppl_frac
+    label: L1 困惑度 / K
+    fmt: .2f
+    delta: true
+  - path: summary.sid.cross.pop_eta2_c1
+    label: 热度 η²（c1）
+    fmt: .2f
+  - path: summary.sid.collision_rate
+    label: 碰撞率
+    fmt: .1%
+  charts:
+  - metrics
+- id: p_depth
+  file: 09-depth
+  stage: shape
+  title: 100 万物品，3 × 256
+  body: '合成 100 万个物品（有顶簇、子簇、微簇三层结构），4 层 × 256 码。逐层贪心的性质：4 层运行的前 3 层，就是一次 3 层运行的结果。3 层的容量 1677 万，均匀基准碰撞率约 5.8%。
+
+    '
+  scenarios:
+  - synth
+  also:
+  - ml1m_k256
+  question:
+    text: 前 3 层的实测碰撞率大约多少？
+    options:
+    - 不到 6%
+    - 6% - 20%
+    - 20% - 50%
+    - 50% 以上
+  columns:
+  - path: summary.sid.by_depth.d2.collision_rate
+    label: 2 层碰撞率
+    fmt: .1%
+  - path: summary.sid.by_depth.d3.collision_rate
+    label: 3 层碰撞率
+    fmt: .1%
+  - path: summary.sid.by_depth.d4.collision_rate
+    label: 4 层碰撞率
+    fmt: .1%
+  - path: summary.sid.max_bucket
+    label: 最大桶
+    fmt: ','
+  - path: summary.sid.timing.quantize_s
+    label: 量化秒数
+    fmt: .1f
+  charts:
+  - metrics
+  - loss
+  curve: kmeans_err
+  look: kmeans_err 曲线每一层的台阶有多高？哪一层降得最多？
+- id: p_k64
+  file: 10-k64
+  stage: shape
+  title: 同样容量，4 × 64
+  body: '4 层 × 64 码和 3 层 × 256 码的容量都是 1677 万。层多、每层小，还是层少、每层大？
+
+    '
+  scenarios:
+  - synth_k64
+  compare_to: synth
+  question:
+    text: 同容量（1677 万）时，4 × 64 的碰撞率和 3 × 256 比怎样？
+    options:
+    - 多 5 个点以上
+    - 差不多（±5 个点）
+    - 少 5 个点以上
+  columns:
+  - path: summary.sid.at_cap.c16m.collision_rate
+    label: 容量 1677 万的碰撞率
+    fmt: .1%
+    delta: true
+  - path: summary.sid.combos
+    label: 码组合数
+    fmt: ','
+  - path: summary.sid.levels.L1.ppl_frac
+    label: L1 困惑度 / K
+    fmt: .2f
+  charts:
+  - metrics
+- id: p_scale
+  file: 11-scale
+  stage: shape
+  title: 1000 万物品
+  body: '物品数从 100 万到 1000 万，同样 4 层 × 256（码本在 100 万个样本上拟合，1000 万个物品分块分配）。3 层的容量还是 1677 万。
+
+    '
+  scenarios:
+  - synth_10m
+  compare_to: synth
+  question:
+    text: 前 3 层的碰撞率上升多少？
+    options:
+    - 不到 10 个点
+    - 10 - 30 个点
+    - 30 个点以上
+  columns:
+  - path: summary.sid.by_depth.d3.collision_rate
+    label: 3 层碰撞率
+    fmt: .1%
+    delta: true
+  - path: summary.sid.by_depth.d4.collision_rate
+    label: 4 层碰撞率
+    fmt: .1%
+    delta: true
+  - path: summary.sid.max_bucket
+    label: 最大桶
+    fmt: ','
+  - path: summary.sid.timing.quantize_s
+    label: 量化秒数
+    fmt: .0f
+  charts:
+  - metrics
+- id: p_rqvae
+  file: 12-rqvae
+  stage: rqvae
+  title: RQ-VAE
+  body: 'TIGER 原文用 RQ-VAE：编码器把物品向量压到 64 维，3 层 × 256 的残差码本和编解码器一起训练（straight-through + commitment loss）。码本随机初始化、**不**重置死码。
+
+    '
+  scenarios:
+  - rqvae
+  compare_to: synth
+  question:
+    text: RQ-VAE 第 1 层实际用到的码字占多少？
+    options:
+    - 不到 50%
+    - 50% - 90%
+    - 90% 以上
+  columns:
+  - path: summary.sid.levels.L1.used_frac
+    label: L1 利用率
+    fmt: .1%
+    delta: true
+  - path: summary.sid.levels.L1.ppl_frac
+    label: L1 困惑度 / K
+    fmt: .2f
+  - path: summary.sid.collision_rate
+    label: 碰撞率
+    fmt: .1%
+  - path: summary.rqvae.dead_L1
+    label: L1 死码比例
+    fmt: .1%
+  charts:
+  - metrics
+  - loss
+  curve: rqvae_ppl_L1
+- id: p_fault
+  file: 13-fault
+  stage: fault
+  title: 同事简化了量化代码
+  body: '同事重构量化代码时觉得"每层都对物品向量聚类更直观"，删掉了减残差那一行，只给每层换了一个随机种子。跑完一看：每层码字利用率都是 100%。
+
+    '
+  scenarios:
+  - fault_noresid
+  compare_to: baseline
+  question:
+    text: 碰撞率会上升多少？
+    options:
+    - 不到 5 个点
+    - 5 - 30 个点
+    - 30 个点以上
+  columns:
+  - path: summary.sid.collision_rate
+    label: 碰撞率
+    fmt: .1%
+    delta: true
+  - path: summary.sid.combos
+    label: 码组合数
+    fmt: ','
+  - path: summary.sid.levels.L2.used_frac
+    label: L2 利用率
+    fmt: .0%
+  charts:
+  - metrics
+  - loss
+  curve: kmeans_err
+- id: diagnose
+  file: 14-diagnose
+  stage: fault
+  title: 诊断：利用率 100%，为什么撞得厉害
+  body: '每层的码字利用率都是 100%，碰撞率却大幅上升。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - fault_noresid
+  compare_to: baseline
+  question:
+    text: 根因是什么？
+    options:
+    - 码本 K 太小
+    - 每层都对原向量聚类，没有减残差，层与层重复描述同一件事
+    - 没有归一化，码本坍缩
+    - SASRec 向量训练不足
+  clues:
+  - 每层之后的重建误差：基线 {{v:baseline:summary.sid.recon.L1:.3f}} → {{v:baseline:summary.sid.recon.L3:.3f}}；故障 {{v:fault_noresid:summary.sid.recon.L1:.3f}} → {{v:fault_noresid:summary.sid.recon.L3:.3f}}。看 kmeans_err 曲线有没有阶梯。
+  - 利用率 / 困惑度：故障每层 {{v:fault_noresid:summary.sid.levels.L2.used_frac:.0%}} / {{v:fault_noresid:summary.sid.levels.L2.ppl_frac:.2f}}，和基线接近；但码组合数只有 {{v:fault_noresid:summary.sid.combos:,.0f}}（基线 {{v:baseline:summary.sid.combos:,.0f}}）。
+  - 层间归一化互信息 NMI(L1, L2)：故障 {{v:fault_noresid:summary.sid.nmi.L1_L2:.2f}}，基线 {{v:baseline:summary.sid.nmi.L1_L2:.2f}}。
+  columns:
+  - path: summary.sid.recon.L1
+    label: L1 后重建误差
+    fmt: .3f
+  - path: summary.sid.recon.L3
+    label: L3 后重建误差
+    fmt: .3f
+  - path: summary.sid.nmi.L1_L2
+    label: NMI(L1
+    L2): null
+    fmt: .2f
+  - path: summary.sid.combos
+    label: 码组合数
+    fmt: ','
+  charts:
+  - metrics
+- id: keycard
+  file: 15-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 语义 ID 的容量和词表各是多少？为什么能把输出层缩小上万倍？
+  - 均匀基准碰撞率怎么算？为什么真实数据的碰撞率远高于它？
+  - 利用率 100% 为什么不代表码本均衡？看什么？
+  - 碰撞率低一定好吗？随机 ID 说明了什么？
+  - 协同 ID 和内容 ID 的前缀各对应什么？怎么用另一个视角检验？
+  - 不归一化会发生什么？残差没减会发生什么？各用哪个指标发现？
+  - RQ-VAE 为什么会码本坍缩？RQ-KMeans 为什么不会？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。
