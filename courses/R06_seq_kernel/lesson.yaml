@@ -1,0 +1,458 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: R06
+profiles:
+  h20x8: H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子
+metric:
+  path: summary.attn.pointwise_L8192_D64.median_ms
+  label: 逐点 attention L=8192 D=64 耗时 ms（越低越好）
+table:
+- path: summary.attn.softmax_L8192_D64.median_ms
+  label: softmax L=8192 ms
+- path: summary.attn.pointwise_L8192_D64.median_ms
+  label: 逐点 L=8192 ms
+- path: summary.attn.pointwise_L8192_D64.peak_delta_gb
+  label: 逐点 L=8192 增量显存 GB
+- path: summary.attn.pointwise_L8192_D64.roofline_frac
+  label: 逐点 L=8192 占 roofline
+- path: summary.check.max_rel_err
+  label: 最大相对误差
+- path: summary.layer.attn_share
+  label: HSTU 层里 attention 占比
+figures:
+  loss: []
+noise_note: 微基准的种子只影响随机输入；耗时差小于 10% 或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: impls
+  title: 四种实现
+- id: tune
+  title: 块大小与 roofline
+- id: fault
+  title: 故障
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: HSTU 的逐点 attention 用不了 SDPA，写 kernel 值不值、怎么验证写对了？
+  body: 'R02 里 HSTU 的 attention 在 10K 序列上占了 97% 以上的计算，PyTorch 逐步实现又要物化 L × L。三条路：
+
+
+    - **torch.compile**：不改代码，看编译器能不能把 L × L 融合掉；
+
+    - **手写 Triton**：照着 FlashAttention 的结构写，逐点打分反而比 softmax 简单；
+
+    - **用现成的**：HSTU 官方有 Triton kernel，但要知道它在自己的形状上快多少。
+
+
+    写 kernel 的风险是"快了但错了"：因果 mask 的边界只在部分位置出错，平均误差可能看不出来。这一课把四种实现在 H20 上逐项量出来，并且每个结果都和 fp32 参照对拍。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '一次 attention 调用在四种实现里各走什么路径。点击每个节点看代码。
+
+    '
+  nodes:
+  - id: naive
+    title: naive
+    shape: QKᵀ [B, H, L, L] → mask → softmax / SiLU → @ V
+    detail: 每一步一个 kernel，中间张量都写回 HBM。
+    code:
+      file: recops/attn.py
+      region: naive
+  - id: kernel
+    title: Triton 融合
+    shape: grid = (⌈L / BLOCK_M⌉, B·H)，每个 program 一块 Q
+    detail: 循环读 K / V 块，打分、mask、激活、累加都在片上。
+    code:
+      file: recops/attn.py
+      region: triton_kernel
+  - id: mirror
+    title: CPU 分块镜像
+    shape: 和 kernel 同样的循环，PyTorch 写
+    detail: 在没有 GPU 的地方验证分块算法和故障。
+    code:
+      file: recops/attn.py
+      region: block_mirror
+  - id: acct
+    title: FLOPs 与字节
+    shape: 2·B·H·L²·D FLOPs；融合 4·B·H·L·D 个元素
+    detail: naive 还要加上 L × L 中间张量的读写。
+    code:
+      file: recops/attn.py
+      region: accounting
+  - id: roof
+    title: roofline
+    shape: AI = FLOPs / 字节 → min(峰值, AI × 带宽)
+    detail: H20：148 TFLOPS、4.0 TB/s，拐点 37。
+    code:
+      file: recops/bench.py
+      region: roofline
+  - id: timer
+    title: 计时
+    shape: 热身 → L2 冲刷 → CUDA event → 中位数
+    code:
+      file: recops/bench.py
+      region: timer
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪
+  body: '运行的真实追踪：第一个组合的 Q 形状、grid、块大小，以及它的耗时、误差、TFLOPS、roofline 占比。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: recops/attn.py
+    region: naive
+    title: ① naive
+    note: s [B, H, L, L] 先写出来，再 masked_fill / softmax（或加偏置、SiLU），再乘 V。L = 8192、B·H = 32 时一个 bf16 的 L × L 张量就是 4.3 GB。
+  - file: recops/attn.py
+    region: triton_kernel
+    title: ② Triton kernel
+    note: hi = min((pid_m+1)·BLOCK_M, L)：右侧整块不读。POINTWISE 分支：s·sigmoid(s)·(1/L) 直接累加；softmax 分支：维护 m_i、l_i，acc 按 alpha 重新缩放。DIAG_CAUSAL 控制对角块里的逐元素 mask。
+  - file: recops/attn.py
+    region: block_mirror
+    title: ③ 分块镜像
+    note: 同样的块循环、同样的 mask 逻辑，用 PyTorch 写。测试里它和 naive 对拍（含长度不是块倍数的情形），也复现故障。
+  - file: recops/attn.py
+    region: accounting
+    title: ④ 计数
+    note: 因果下 QKᵀ 和 AV 各约 B·H·L²·D/2 次乘加。融合实现读写 Q、K、V、O；naive 多出至少 4 次 L × L 的读写。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答三个问题。B = 4、H = 8、D = 64、bf16。
+
+    '
+  questions:
+  - text: L = 8192 时，naive 实现的一个 [B, H, L, L] bf16 中间张量多大？
+    options:
+    - 约 0.4 GB
+    - 约 4 GB
+    - 约 40 GB
+  - text: 融合实现、L = 8192、D = 64，算术强度大约多少 FLOP/B？
+    options:
+    - 约 10
+    - 约 100
+    - 约 1000 以上
+  - text: 同一个手写 kernel，逐点打分和 softmax 打分比，谁更快？
+    options:
+    - 逐点更快：块之间不需要最大值、指数和与重新缩放
+    - 差不多
+    - softmax 更快：逐点要额外查相对位置偏置
+- id: p_naive_mem
+  file: 06-naive-mem
+  stage: impls
+  title: naive 的显存
+  body: 'naive 实现，逐点打分，L 从 512 到 8192（16 倍）。看增量峰值显存。
+
+    '
+  scenarios:
+  - baseline
+  question:
+    text: L = 8192 时 naive 逐点 attention 的增量峰值显存大约多少？
+    options:
+    - 不到 1 GB
+    - 1 - 10 GB
+    - 10 GB 以上
+  columns:
+  - path: summary.attn.pointwise_L512_D64.peak_delta_gb
+    label: L=512 GB
+    fmt: .3f
+  - path: summary.attn.pointwise_L2048_D64.peak_delta_gb
+    label: L=2048 GB
+    fmt: .2f
+  - path: summary.attn.pointwise_L8192_D64.peak_delta_gb
+    label: L=8192 GB
+    fmt: .1f
+  - path: summary.attn.pointwise_L8192_D64.median_ms
+    label: L=8192 ms
+    fmt: .1f
+  charts:
+  - metrics
+  curve: attn_ms
+- id: p_sdpa
+  file: 07-sdpa
+  stage: impls
+  title: SDPA
+  body: 'softmax 打分换成 PyTorch SDPA（is_causal=True，走 flash 后端）。SDPA 不支持逐点打分，这个场景只测 softmax。
+
+    '
+  scenarios:
+  - sdpa
+  compare_to: baseline
+  question:
+    text: L = 8192 时 SDPA 比 naive softmax 快几倍？
+    options:
+    - 不到 3 倍
+    - 3 - 10 倍
+    - 10 倍以上
+  columns:
+  - path: summary.attn.softmax_L8192_D64.median_ms
+    label: softmax L=8192 ms
+    fmt: .2f
+    delta: true
+  - path: summary.attn.softmax_L8192_D64.peak_delta_gb
+    label: 增量显存 GB
+    fmt: .2f
+  - path: summary.attn.softmax_L8192_D64.tflops
+    label: TFLOPS
+    fmt: .1f
+  charts:
+  - metrics
+  curve: attn_ms
+- id: p_compile
+  file: 08-compile
+  stage: impls
+  title: torch.compile
+  body: '不改代码，把 naive 交给 torch.compile。编译器（Inductor）会把逐元素操作融合起来，但 QKᵀ 和 AV 两个矩阵乘之间的 L × L 张量能不能消掉，要看它能不能识别出整个 attention 模式。
+
+    '
+  scenarios:
+  - compiled
+  compare_to: baseline
+  question:
+    text: L = 8192 逐点打分，torch.compile 的增量显存比 naive 少多少？
+    options:
+    - 少不到一半
+    - 少一半到 90%
+    - 少 90% 以上
+  columns:
+  - path: summary.attn.pointwise_L8192_D64.peak_delta_gb
+    label: 逐点 L=8192 GB
+    fmt: .2f
+    delta: true
+  - path: summary.attn.pointwise_L8192_D64.median_ms
+    label: 逐点 L=8192 ms
+    fmt: .1f
+    delta: true
+  charts:
+  - metrics
+  curve: attn_ms
+- id: p_triton
+  file: 09-triton
+  stage: impls
+  title: 手写 Triton
+  body: '手写的 Triton 融合 kernel（块 64 × 64、4 warp、2 级流水），逐点和 softmax 两种打分。每个结果都和 fp32 参照比相对误差。
+
+    '
+  scenarios:
+  - triton
+  compare_to: baseline
+  also:
+  - compiled
+  question:
+    text: L = 8192 逐点打分，Triton 比 naive 快几倍？
+    options:
+    - 不到 3 倍
+    - 3 - 10 倍
+    - 10 倍以上
+  columns:
+  - path: summary.attn.pointwise_L8192_D64.median_ms
+    label: 逐点 L=8192 ms
+    fmt: .2f
+    delta: true
+  - path: summary.attn.pointwise_L8192_D64.peak_delta_gb
+    label: 增量显存 GB
+    fmt: .3f
+  - path: summary.attn.pointwise_L2000_D64.rel_err
+    label: L=2000 相对误差
+    fmt: .4f
+  - path: summary.check.max_rel_err
+    label: 最大相对误差
+    fmt: .4f
+  charts:
+  - metrics
+  curve: attn_ms
+- id: p_block
+  file: 10-block
+  stage: tune
+  title: 块大小
+  body: '同一个 kernel 换块大小：BLOCK_M 128 + 8 warp，或者 32 × 32。块越大，每块 Q 复用 K / V 的次数越多，但寄存器压力越大、能同时跑的 program 越少。
+
+    '
+  scenarios:
+  - triton_b128
+  compare_to: triton
+  also:
+  - triton_b32
+  question:
+    text: L = 8192 逐点打分，BLOCK_M = 128 比 64 快多少？
+    options:
+    - 慢了
+    - 差不多（±5%）
+    - 快 5% 以上
+  columns:
+  - path: summary.attn.pointwise_L8192_D64.median_ms
+    label: D=64 ms
+    fmt: .2f
+    delta: true
+  - path: summary.attn.pointwise_L8192_D128.median_ms
+    label: D=128 ms
+    fmt: .2f
+    delta: true
+  - path: summary.check.max_rel_err
+    label: 最大相对误差
+    fmt: .4f
+  charts:
+  - metrics
+  curve: attn_ms
+- id: p_roofline
+  file: 11-roofline
+  stage: tune
+  title: 离 roofline 多远
+  body: 'Triton 逐点 kernel 在 L = 8192、D = 64 时，算术强度约 2048 FLOP/B，远在拐点右边：上限是 148 TFLOPS。
+
+    '
+  scenarios:
+  - triton
+  also:
+  - sdpa
+  question:
+    text: 它达到了 roofline 上限的多少？
+    options:
+    - 不到 20%
+    - 20% - 50%
+    - 50% 以上
+  columns:
+  - path: summary.attn.pointwise_L8192_D64.tflops
+    label: 逐点 TFLOPS
+    fmt: .1f
+  - path: summary.attn.softmax_L8192_D64.tflops
+    label: softmax TFLOPS
+    fmt: .1f
+  - path: summary.attn.pointwise_L8192_D64.roofline_frac
+    label: 逐点占 roofline
+    fmt: .1%
+  - path: summary.hw.ref_matmul_tflops
+    label: 本机矩阵乘 TFLOPS
+    fmt: .0f
+  charts:
+  - metrics
+- id: p_layer
+  file: 12-layer
+  stage: tune
+  title: attention 在整层里占多少
+  body: '一个 HSTU 层（d_model = 512、8 头、L = 2048）：f1 投影 → 逐点 attention → 门控 → f2 投影，前向。
+
+    '
+  scenarios:
+  - triton
+  compare_to: baseline
+  question:
+    text: 用 Triton kernel 时，attention 占整层前向耗时的多少？
+    options:
+    - 不到 30%
+    - 30% - 70%
+    - 70% 以上
+  columns:
+  - path: summary.layer.attn_share
+    label: attention 占比
+    fmt: .1%
+    delta: true
+  - path: summary.layer.attn_ms
+    label: attention ms
+    fmt: .2f
+  - path: summary.layer.layer_ms
+    label: 整层 ms
+    fmt: .2f
+  charts:
+  - metrics
+- id: p_fault
+  file: 13-fault
+  stage: fault
+  title: 同事改了 kernel
+  body: '同事看到 kernel 里"既跳过了右侧整块，又在每块里做因果 mask"，觉得重复了，删掉了块内的因果 mask——"右边的块根本没读，哪来的未来？"。耗时略有下降。
+
+    '
+  scenarios:
+  - fault_diag
+  compare_to: triton
+  question:
+    text: 和 fp32 参照比，最大相对误差会是多少？
+    options:
+    - 不到 2%：bf16 噪声
+    - 2% - 20%
+    - 20% 以上
+  columns:
+  - path: summary.check.max_rel_err
+    label: 最大相对误差
+    fmt: .3f
+    delta: true
+  - path: summary.attn.pointwise_L8192_D64.rel_err
+    label: 逐点 L=8192 误差
+    fmt: .4f
+  - path: summary.attn.softmax_L512_D64.rel_err
+    label: softmax L=512 误差
+    fmt: .4f
+  charts:
+  - metrics
+- id: diagnose
+  file: 14-diagnose
+  stage: fault
+  title: 诊断：哪里看到了未来
+  body: '只删了块内的因果 mask。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - fault_diag
+  compare_to: triton
+  question:
+    text: 根因是什么？
+    options:
+    - bf16 精度不够
+    - 尾块越界读了垃圾数据
+    - 对角块里 query 看到了同一块里更靠后的 key（未来）
+    - online softmax 的缩放写错了
+  clues:
+  - 误差的量级：正确的 kernel {{v:triton:summary.check.max_rel_err:.4f}}（bf16 噪声），故障 {{v:fault_diag:summary.check.max_rel_err:.3f}}。
+  - 是不是只在尾块出错：L = 2000（不是 64 的倍数）{{v:fault_diag:summary.attn.pointwise_L2000_D64.rel_err:.3f}}，L = 2048 {{v:fault_diag:summary.attn.pointwise_L2048_D64.rel_err:.3f}}。两种打分：逐点 {{v:fault_diag:summary.attn.pointwise_L512_D64.rel_err:.3f}}，softmax {{v:fault_diag:summary.attn.softmax_L512_D64.rel_err:.3f}}。
+  - 第 m 个 query 块循环到哪一块为止？最后那一块里，第 i 行和第 j 列（j > i）是什么关系？
+  columns:
+  - path: summary.check.max_rel_err
+    label: 最大误差
+    fmt: .3f
+  - path: summary.attn.pointwise_L2000_D64.rel_err
+    label: L=2000
+    fmt: .4f
+  - path: summary.attn.pointwise_L2048_D64.rel_err
+    label: L=2048
+    fmt: .4f
+  - path: summary.attn.softmax_L512_D64.rel_err
+    label: softmax L=512
+    fmt: .4f
+  charts:
+  - metrics
+- id: keycard
+  file: 15-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - naive 实现的显存为什么是 O(L²)？L = 8192 时一个中间张量多大？
+  - 融合 kernel 的算术强度怎么算？为什么长序列上是算力受限？
+  - 逐点打分比 softmax 少了哪些操作？为什么 SDPA 用不上？
+  - torch.compile 能省掉什么、省不掉什么？
+  - 块大小怎么影响性能？为什么要 autotune？
+  - 因果 mask 的两层分别做什么？删掉块内那一层会怎样，怎么测出来？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。

@@ -1,0 +1,508 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: R05
+profiles:
+  h20x8: H20 · 微基准 + 28 张表的 DLRM · 3 种子
+metric:
+  path: summary.e2e.samples_per_s
+  label: 端到端训练 样本/秒（越高越好）
+table:
+- path: summary.e2e.samples_per_s
+  label: 端到端 样本/秒
+- path: summary.e2e.stage_share.wait_data
+  label: 等数据占比
+- path: summary.e2e.stage_share.optimizer
+  label: 优化器占比
+- path: summary.emb.bag10_uniform.eff_gbs
+  label: 查表有效带宽 GB/s
+- path: summary.optim.dense_over_sparse
+  label: 稠密 ÷ 稀疏 每步耗时
+figures:
+  loss: []
+noise_note: 微基准的种子只影响随机输入；耗时差小于 10% 或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: lookup
+  title: 查表
+- id: optim
+  title: 优化器
+- id: pipeline
+  title: 数据管线
+- id: fault
+  title: 故障
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 推荐训练慢，时间到底花在查表、优化器、还是等数据上？
+  body: '推荐模型训练慢，最常见的误判是"GPU 算力不够"。实际上：
+
+
+    - Embedding 查表几乎不做计算，速度取决于显存带宽和访问模式；
+
+    - 稠密优化器在大表上每步读写整张表，可能比前向反向还慢；
+
+    - CPU 特征处理跟不上时，GPU 利用率看起来"不低"（偶尔满载），但大部分时间在等。
+
+
+    不分阶段计时，就只能猜。这一课在 H20 上把每一项量出来。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '一步训练的四个阶段，和三组微基准。点击每个节点看代码。
+
+    '
+  nodes:
+  - id: raw
+    title: 原始样本
+    shape: 13 数值 + 26 类别 + 2 × 50 多值
+    detail: 类别是 40 位整数，按表行数取模。
+    code:
+      file: recops/embops.py
+      region: feature_proc
+  - id: loader
+    title: DataLoader
+    shape: 每个 __getitem__ 返回一整批 4096
+    detail: worker 进程里做特征处理，锁页内存。
+  - id: h2d
+    title: 拷到 GPU
+    shape: 约 2 MB / 批
+    detail: 锁页内存 + non_blocking 时可以和计算重叠。
+  - id: model
+    title: DLRM
+    shape: 28 个 [B, 64] embedding + 数值塔 → 两两内积 → MLP
+    detail: 表用稀疏梯度。
+    code:
+      file: recops/embops.py
+      region: dlrm
+  - id: opt
+    title: 优化器
+    shape: MLP 用 Adam；表用 SparseAdam（或稠密 Adam）
+    detail: 稀疏只更新本批碰到的行。
+    code:
+      file: recops/embops.py
+      region: optim
+  - id: bench
+    title: 微基准
+    shape: 查表 / 表规模 / 优化器
+    detail: CUDA event 计时、L2 冲刷、取中位数。
+    code:
+      file: recops/bench.py
+      region: timer
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪
+  body: '基线运行的真实追踪：查表一次读多少字节、耗时、有效带宽和本机拷贝带宽；3 条原始样本处理前后的样子和一批的形状。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: recops/bench.py
+    region: timer
+    title: ① 计时
+    note: 热身 → 每次前冲刷 L2（写 2 × L2 大小的缓冲，不计时）→ CUDA event 包住被测函数 → 一轮只同步一次 → 取中位数和 p10 / p90。
+  - file: recops/embops.py
+    region: emb_bench
+    title: ② 查表微基准
+    note: 有效带宽 = 读的字节 ÷ 时间，读的字节 = 样本数 × bag × d × 元素字节。理论下限按 HBM 标称带宽算。
+  - file: recops/embops.py
+    region: optim
+    title: ③ 稀疏 vs 稠密优化器
+    note: sparse=True 时 backward 产生稀疏梯度（只含本批碰到的行），SparseAdam 只读写这些行；否则梯度是整张表大小的稠密张量。
+  - file: recops/embops.py
+    region: feature_proc
+    title: ④ 特征处理
+    note: 两种写法结果完全相同（测试里对拍），差别只在一个是整批 numpy、一个是 Python 三重循环。
+  - file: recops/embops.py
+    region: e2e
+    title: ⑤ 端到端逐阶段计时
+    note: 每个阶段前后都同步，拿到真实耗时（会略微降低吞吐）；吞吐窗口里不插同步。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答三个问题。H20 标称 HBM 带宽 4.0 TB/s。
+
+    '
+  questions:
+  - text: EmbeddingBag 求和（每个 id 读 64 个 fp32、做 64 次加法），算术强度大约多少 FLOP/B？
+    options:
+    - 约 0.25
+    - 约 4
+    - 约 40
+    - 约 400
+  - text: 16384 个样本 × 每个 10 个 id × 64 维 fp32，按 4.0 TB/s 读完至少要多久？
+    options:
+    - 约 0.01 ms
+    - 约 0.01 - 0.1 ms
+    - 约 1 ms
+    - 约 10 ms
+  - text: 1 亿行 × 128 维 fp32 的表，加上稠密 Adam 的两份状态，要多少显存？
+    options:
+    - 约 15 GB
+    - 约 50 GB
+    - 约 150 GB
+    - 约 500 GB
+- id: p_bw
+  file: 06-bw
+  stage: lookup
+  title: bag 长度与有效带宽
+  body: '同一张 1000 万 × 64 fp32 的表，每个样本查 1 / 10 / 50 个 id（均匀随机）。查得越多，读的字节越多，GPU 的并行度也越高。
+
+    '
+  scenarios:
+  - baseline
+  question:
+    text: bag 50 的有效带宽是 bag 1 的几倍？
+    options:
+    - 不到 1.5 倍
+    - 1.5 - 5 倍
+    - 5 倍以上
+  columns:
+  - path: summary.emb.bag1_uniform.eff_gbs
+    label: bag 1 GB/s
+    fmt: ',.0f'
+  - path: summary.emb.bag10_uniform.eff_gbs
+    label: bag 10 GB/s
+    fmt: ',.0f'
+  - path: summary.emb.bag50_uniform.eff_gbs
+    label: bag 50 GB/s
+    fmt: ',.0f'
+  - path: summary.hw.ref_copy_gbs
+    label: 顺序拷贝 GB/s
+    fmt: ',.0f'
+  charts:
+  - metrics
+  curve: emb_eff_gbs
+- id: p_zipf
+  file: 07-zipf
+  stage: lookup
+  title: Zipf 热点
+  body: '同样 bag 10，id 换成 Zipf 分布（α = 1.05）：少数热门 id 反复出现，读过的行可能还在 L2 里（H20 的 L2 是 60 MB）。
+
+    '
+  scenarios:
+  - baseline
+  question:
+    text: Zipf 分布下查表耗时是均匀分布的多少？
+    options:
+    - 不到 50%
+    - 50% - 90%
+    - 90% 以上
+  columns:
+  - path: summary.emb.bag10_uniform.median_ms
+    label: 均匀 ms
+    fmt: .4f
+  - path: summary.emb.bag10_zipf.median_ms
+    label: Zipf ms
+    fmt: .4f
+  - path: summary.emb.bag10_zipf.unique_frac
+    label: Zipf 不重复 id
+    fmt: .1%
+  charts:
+  - metrics
+- id: p_grid
+  file: 08-grid
+  stage: lookup
+  title: 表规模与精度
+  body: '表从 100 万行到 1 亿行，维度 64 / 128，精度 fp32 / bf16。每个组合都测显存和 bag 10 的查表耗时。
+
+    '
+  scenarios:
+  - grid
+  question:
+    text: 1 亿 × 128 × fp32 的表能放进 H20 吗？
+    options:
+    - 能，查表耗时和小表差不多
+    - 能，但查表明显变慢
+    - 放不下（OOM）
+  columns:
+  - path: summary.grid.r1e8_d128_fp32.table_gb
+    label: 1 亿×128 fp32 GB
+    fmt: .1f
+  - path: summary.grid.r1e8_d128_fp32.median_ms
+    label: 1 亿×128 fp32 ms
+    fmt: .4f
+  - path: summary.grid.r1e8_d128_bf16.median_ms
+    label: 1 亿×128 bf16 ms
+    fmt: .4f
+  - path: summary.grid.r1e6_d128_fp32.median_ms
+    label: 100 万×128 fp32 ms
+    fmt: .4f
+  charts:
+  - metrics
+- id: p_optim
+  file: 09-optim
+  stage: optim
+  title: SparseAdam 对稠密 Adam
+  body: '1000 万 × 64 fp32 的表（2.56 GB），一步 = 查表 → 求和 → 反向 → 优化器。一批 16384 × 10 个 id，碰到的行不到表的 2%。
+
+    '
+  scenarios:
+  - baseline
+  question:
+    text: 稠密 Adam 每步耗时是 SparseAdam 的几倍？
+    options:
+    - 不到 2 倍
+    - 2 - 10 倍
+    - 10 倍以上
+  columns:
+  - path: summary.optim.sparse_adam.median_ms
+    label: SparseAdam ms
+    fmt: .3f
+  - path: summary.optim.adam.median_ms
+    label: 稠密 Adam ms
+    fmt: .3f
+  - path: summary.optim.adam.peak_delta_gb
+    label: 稠密 增量峰值 GB
+    fmt: .2f
+  charts:
+  - metrics
+- id: p_e2e_dense
+  file: 10-e2e-dense
+  stage: optim
+  title: 端到端换稠密 Adam
+  body: '端到端 DLRM（28 张表，每张 100 万 × 64，共 7.2 GB）的表从 SparseAdam 换成稠密 Adam。
+
+    '
+  scenarios:
+  - e2e_dense_adam
+  compare_to: baseline
+  question:
+    text: 端到端吞吐（样本/秒）是 SparseAdam 的多少？
+    options:
+    - 不到 30%
+    - 30% - 80%
+    - 80% 以上
+  columns:
+  - path: summary.e2e.samples_per_s
+    label: 样本/秒
+    fmt: ',.0f'
+    delta: true
+  - path: summary.e2e.stage_share.optimizer
+    label: 优化器占比
+    fmt: .1%
+  - path: summary.e2e.opt_state_gb
+    label: 优化器状态 GB
+    fmt: .1f
+  - path: summary.e2e.peak_gb
+    label: 峰值 GB
+    fmt: .1f
+  charts:
+  - metrics
+  curve: stage_ms
+- id: p_stages
+  file: 11-stages
+  stage: pipeline
+  title: 一步的时间花在哪
+  body: '基线端到端（向量化特征处理、2 个 worker、锁页内存、SparseAdam），按阶段计时：等数据、拷到 GPU、前向 + 反向、优化器。
+
+    '
+  scenarios:
+  - baseline
+  question:
+    text: 哪个阶段占比最大？
+    options:
+    - 等数据
+    - 拷到 GPU
+    - 前向 + 反向
+    - 优化器
+  columns:
+  - path: summary.e2e.stage_ms.wait_data
+    label: 等数据 ms
+    fmt: .2f
+  - path: summary.e2e.stage_ms.h2d
+    label: 拷贝 ms
+    fmt: .2f
+  - path: summary.e2e.stage_ms.forward_backward
+    label: 前向反向 ms
+    fmt: .2f
+  - path: summary.e2e.stage_ms.optimizer
+    label: 优化器 ms
+    fmt: .2f
+  charts:
+  - metrics
+  curve: stage_ms
+- id: p_workers0
+  file: 12-workers0
+  stage: pipeline
+  title: 不开 worker
+  body: 'DataLoader 的 num_workers 设成 0：主进程自己取数和处理，取数时 GPU 不工作（不能重叠）。特征处理仍然是向量化的。
+
+    '
+  scenarios:
+  - e2e_workers0
+  compare_to: baseline
+  question:
+    text: 端到端吞吐是基线的多少？
+    options:
+    - 不到 50%
+    - 50% - 90%
+    - 90% 以上
+  columns:
+  - path: summary.e2e.samples_per_s
+    label: 样本/秒
+    fmt: ',.0f'
+    delta: true
+  - path: summary.e2e.stage_ms.wait_data
+    label: 等数据 ms
+    fmt: .2f
+  - path: summary.loader.proc_ms_per_batch
+    label: 处理一批 ms
+    fmt: .2f
+  charts:
+  - metrics
+- id: p_nopin
+  file: 13-nopin
+  stage: pipeline
+  title: 不锁页、阻塞拷贝
+  body: '关掉锁页内存和 non_blocking：每次拷贝先从可分页内存拷到临时锁页缓冲，再拷到 GPU，并且阻塞。一批约 2 MB。
+
+    '
+  scenarios:
+  - e2e_nopin
+  compare_to: baseline
+  question:
+    text: 拷到 GPU 这一阶段的耗时是基线的几倍？
+    options:
+    - 不到 1.5 倍
+    - 1.5 - 5 倍
+    - 5 倍以上
+  columns:
+  - path: summary.e2e.stage_ms.h2d
+    label: 拷贝 ms
+    fmt: .3f
+    delta: true
+  - path: summary.e2e.samples_per_s
+    label: 样本/秒
+    fmt: ',.0f'
+    delta: true
+  charts:
+  - metrics
+- id: p_fault
+  file: 14-fault
+  stage: fault
+  title: 同事改了特征处理
+  body: '同事给特征处理加了一个新规则，顺手把整批 numpy 改成了"更好读"的逐样本、逐特征 Python 循环。结果在单元测试里完全一致。上线训练后，nvidia-smi 里 GPU 利用率时高时低。
+
+    '
+  scenarios:
+  - fault_pyfeat
+  compare_to: baseline
+  question:
+    text: 端到端吞吐是基线的多少？
+    options:
+    - 不到 30%
+    - 30% - 70%
+    - 70% 以上
+  columns:
+  - path: summary.e2e.samples_per_s
+    label: 样本/秒
+    fmt: ',.0f'
+    delta: true
+  - path: summary.e2e.stage_share.wait_data
+    label: 等数据占比
+    fmt: .1%
+  charts:
+  - metrics
+  curve: stage_ms
+- id: diagnose
+  file: 15-diagnose
+  stage: fault
+  title: 诊断：GPU 在等什么
+  body: '模型和优化器都没变。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - fault_pyfeat
+  compare_to: baseline
+  question:
+    text: 根因是什么？
+    options:
+    - PCIe 带宽不够
+    - GPU 被别的进程占用
+    - CPU 上逐样本的 Python 特征处理太慢，worker 跟不上，GPU 在等数据
+    - Embedding 表太大
+  clues:
+  - 逐阶段耗时：等数据 {{v:fault_pyfeat:summary.e2e.stage_ms.wait_data:.1f}} ms（基线 {{v:baseline:summary.e2e.stage_ms.wait_data:.2f}}），前向反向 {{v:fault_pyfeat:summary.e2e.stage_ms.forward_backward:.1f}} ms（基线 {{v:baseline:summary.e2e.stage_ms.forward_backward:.1f}}）。
+  - 只取数不训练：管线每秒 {{v:fault_pyfeat:summary.loader.samples_per_s:,.0f}} 个样本（基线 {{v:baseline:summary.loader.samples_per_s:,.0f}}）；处理一批 {{v:fault_pyfeat:summary.loader.proc_ms_per_batch:.0f}} ms（基线 {{v:baseline:summary.loader.proc_ms_per_batch:.1f}}）。
+  - worker 数 {{v:fault_pyfeat:summary.e2e.workers}}：每批平均要多久才能产出？和 GPU 一步比呢？
+  columns:
+  - path: summary.e2e.stage_ms.wait_data
+    label: 等数据 ms
+    fmt: .1f
+  - path: summary.e2e.stage_ms.forward_backward
+    label: 前向反向 ms
+    fmt: .1f
+  - path: summary.loader.samples_per_s
+    label: 管线 样本/秒
+    fmt: ',.0f'
+  - path: summary.loader.proc_ms_per_batch
+    label: 处理一批 ms
+    fmt: .1f
+  charts:
+  - metrics
+  curve: stage_ms
+- id: p_fix
+  file: 16-fix
+  stage: fault
+  title: 加 worker 能救吗
+  body: '不改代码，Python 特征处理保持不变，把 worker 从 2 个加到 16 个。
+
+    '
+  scenarios:
+  - pyfeat_workers16
+  compare_to: fault_pyfeat
+  also:
+  - baseline
+  question:
+    text: 端到端吞吐能恢复到基线的多少？
+    options:
+    - 不到 50%
+    - 50% - 90%
+    - 90% 以上
+  columns:
+  - path: summary.e2e.samples_per_s
+    label: 样本/秒
+    fmt: ',.0f'
+    delta: true
+  - path: summary.e2e.stage_share.wait_data
+    label: 等数据占比
+    fmt: .1%
+  - path: summary.e2e.workers
+    label: 实际 worker
+    fmt: d
+  charts:
+  - metrics
+- id: keycard
+  file: 17-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 查表的算术强度是多少？为什么它受带宽限制？
+  - 有效带宽为什么到不了顺序拷贝的带宽？Zipf 热点为什么能加速？
+  - 表的显存怎么算？训练时还要加什么？
+  - 稠密 Adam 在大表上每步读写多少？SparseAdam 省在哪、代价是什么？
+  - 端到端怎么分阶段计时？各阶段的占比说明了什么？
+  - GPU 利用率时高时低，怎么确认是在等数据？加 worker 和向量化各是什么代价？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。
