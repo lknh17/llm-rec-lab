@@ -1,0 +1,33 @@
+[worker] 等待设备锁 gpu6-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L01/bpe_4k/s0-2c023d/code/tinylm/experiment.py
+[15:11:53] ===== 阶段：prepare =====
+[15:12:55] 语料：原始 230791 篇 → 清洗后 212958 篇 → 底稿去重后 177625 篇；注入副本 123303 份；去重（minhash）去掉 117170 篇；训练 90072 篇 100.0 MB，验证 9110 篇（其中 380 篇在训练集有副本），留出 9269 篇
+[15:12:57] 缓存 tinylm_corpus key=f9348045de2b: 未命中，重新生成
+[15:18:23] 分词器 bpe：词表 4096，用时 324.7 秒
+[15:18:23] 缓存 tinylm_tokenizer key=ad8b610a7455: 未命中，重新生成
+[15:19:06] 缓存 tinylm_streams key=bbddc6f32d3c: 未命中，重新生成
+[15:19:06] 压缩率：验证集每 token 2.9754 字节 / 1.2597 字；广告每条 32.18 个 token
+[15:19:07] 模型：总参数 12,194,688，其中 embedding 1,572,864（13%）；每 token 训练 80 MFLOPs，输出层占 12%；KV cache 每 token 9,216 字节（bf16）
+[15:19:07] ===== 阶段：train =====
+[15:19:20] 训练：1027 步 × 64 × 512 = 33,652,736 token（训练流共 33,666,564 token，用前 33,666,560 个 × 1 遍；每 token 2.97 字节）；在第 [128, 257, 385, 514, 642, 770, 899, 1027] 步评估
+[15:19:32] step 128/1027 train_loss 5.7381 valid loss 5.5051 bpb 2.6693
+[15:19:42] step 257/1027 train_loss 4.8331 valid loss 4.7911 bpb 2.3231
+[15:19:52] step 385/1027 train_loss 4.3515 valid loss 4.3091 bpb 2.0894
+[15:20:02] step 514/1027 train_loss 4.1482 valid loss 3.9778 bpb 1.9287
+[15:20:12] step 642/1027 train_loss 3.5484 valid loss 3.7134 bpb 1.8005
+[15:20:22] step 770/1027 train_loss 3.5368 valid loss 3.5298 bpb 1.7115
+[15:20:32] step 899/1027 train_loss 3.4841 valid loss 3.4193 bpb 1.6580
+[15:20:42] step 1027/1027 train_loss 3.4258 valid loss 3.3616 bpb 1.6300
+[15:20:42] ===== 阶段：evaluate =====
+[15:20:44] [valid] 9.82 MB  每 token loss 3.36164  bpb 1.62998
+[15:20:47] [test] 10.00 MB  每 token loss 3.41357  bpb 1.64574
+[15:20:47] [ads] 0.00 MB  每 token loss 6.00145  bpb 3.56788
+[15:20:47] [valid_leaked] 0.09 MB  每 token loss 2.44308  bpb 0.97524
+[15:20:47] [valid_leak_few] 0.09 MB  每 token loss 2.47568  bpb 0.99025
+[15:20:47] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:20:48] [valid_dup] 1.89 MB  每 token loss 3.22377  bpb 1.58945
+[15:20:50] [valid_uniq] 7.85 MB  每 token loss 3.40433  bpb 1.64742
+[15:20:58] 重新加载核对：广告 bpb 3.56788 → 3.56788（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

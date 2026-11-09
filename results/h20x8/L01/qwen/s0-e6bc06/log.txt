@@ -1,0 +1,32 @@
+[worker] 等待设备锁 gpu6-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L01/qwen/s0-e6bc06/code/tinylm/experiment.py
+[15:21:24] ===== 阶段：prepare =====
+[15:21:24] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:21:57] 分词器 qwen：词表 151665，用时 31.5 秒
+[15:21:57] 缓存 tinylm_tokenizer key=65a4eb0ba3b1: 未命中，重新生成
+[15:22:43] 缓存 tinylm_streams key=63f948bf5363: 未命中，重新生成
+[15:22:43] 压缩率：验证集每 token 3.2204 字节 / 1.3634 字；广告每条 23.17 个 token
+[15:22:44] 模型：总参数 68,866,944，其中 embedding 58,245,120（85%）；每 token 训练 420 MFLOPs，输出层占 83%；KV cache 每 token 9,216 字节（bf16）
+[15:22:44] ===== 阶段：train =====
+[15:22:55] 训练：949 步 × 64 × 512 = 31,096,832 token（训练流共 31,120,852 token，用前 31,120,384 个 × 1 遍；每 token 3.21 字节）；在第 [119, 237, 356, 474, 593, 712, 830, 949] 步评估
+[15:23:33] step 119/949 train_loss 6.0218 valid loss 6.0370 bpb 2.7045
+[15:24:09] step 237/949 train_loss 5.3501 valid loss 5.1661 bpb 2.3143
+[15:24:46] step 356/949 train_loss 4.8790 valid loss 4.6834 bpb 2.0981
+[15:25:22] step 474/949 train_loss 4.8300 valid loss 4.4008 bpb 1.9715
+[15:25:59] step 593/949 train_loss 4.2747 valid loss 4.1970 bpb 1.8802
+[15:26:36] step 712/949 train_loss 4.1270 valid loss 4.0541 bpb 1.8162
+[15:27:13] step 830/949 train_loss 3.7134 valid loss 3.9529 bpb 1.7709
+[15:27:49] step 949/949 train_loss 4.0778 valid loss 3.8851 bpb 1.7405
+[15:27:49] ===== 阶段：evaluate =====
+[15:27:58] [valid] 9.82 MB  每 token loss 3.88511  bpb 1.74046
+[15:28:06] [test] 10.00 MB  每 token loss 3.94607  bpb 1.75804
+[15:28:07] [ads] 0.00 MB  每 token loss 8.02245  bpb 3.43316
+[15:28:07] [valid_leaked] 0.09 MB  每 token loss 2.53677  bpb 1.0547
+[15:28:07] [valid_leak_few] 0.09 MB  每 token loss 2.56082  bpb 1.06799
+[15:28:07] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:28:09] [valid_dup] 1.89 MB  每 token loss 3.70015  bpb 1.70924
+[15:28:15] [valid_uniq] 7.85 MB  每 token loss 3.94551  bpb 1.75638
+[15:28:35] 重新加载核对：广告 bpb 3.43316 → 3.43316（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

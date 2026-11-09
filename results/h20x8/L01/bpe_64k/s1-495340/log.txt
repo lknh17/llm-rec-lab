@@ -1,0 +1,32 @@
+[worker] 等待设备锁 gpu0-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L01/bpe_64k/s1-495340/code/tinylm/experiment.py
+[15:25:49] ===== 阶段：prepare =====
+[15:25:49] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:28:11] 分词器 bpe：词表 65536，用时 140.9 秒
+[15:28:12] 缓存 tinylm_tokenizer key=0b8844b7ce67: 未命中，重新生成
+[15:28:12] 缓存 tinylm_streams key=b1455a090012: 命中，复用运行 s0-c432bd 的产物
+[15:28:12] 压缩率：验证集每 token 4.2222 字节 / 1.7875 字；广告每条 23.65 个 token
+[15:28:12] 模型：总参数 35,787,648，其中 embedding 25,165,824（70%）；每 token 训练 222 MFLOPs，输出层占 68%；KV cache 每 token 9,216 字节（bf16）
+[15:28:12] ===== 阶段：train =====
+[15:28:17] 训练：717 步 × 64 × 512 = 23,494,656 token（训练流共 23,501,894 token，用前 23,501,824 个 × 1 遍；每 token 4.26 字节）；在第 [90, 179, 269, 358, 448, 538, 627, 717] 步评估
+[15:28:33] step 90/717 train_loss 7.3634 valid loss 7.2952 bpb 2.4927
+[15:28:49] step 179/717 train_loss 6.8170 valid loss 6.5525 bpb 2.2390
+[15:29:04] step 269/717 train_loss 5.9207 valid loss 6.0581 bpb 2.0700
+[15:29:19] step 358/717 train_loss 5.5499 valid loss 5.7199 bpb 1.9545
+[15:29:35] step 448/717 train_loss 5.6916 valid loss 5.5056 bpb 1.8812
+[15:29:50] step 538/717 train_loss 5.5773 valid loss 5.3508 bpb 1.8283
+[15:30:05] step 627/717 train_loss 5.0716 valid loss 5.2500 bpb 1.7939
+[15:30:20] step 717/717 train_loss 5.4286 valid loss 5.1887 bpb 1.7729
+[15:30:21] ===== 阶段：evaluate =====
+[15:30:24] [valid] 9.82 MB  每 token loss 5.1887  bpb 1.77294
+[15:30:28] [test] 10.00 MB  每 token loss 5.27366  bpb 1.78542
+[15:30:28] [ads] 0.00 MB  每 token loss 8.00883  bpb 3.49884
+[15:30:28] [valid_leaked] 0.09 MB  每 token loss 4.0637  bpb 1.04561
+[15:30:28] [valid_leak_few] 0.09 MB  每 token loss 4.08138  bpb 1.05844
+[15:30:28] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:30:29] [valid_dup] 1.89 MB  每 token loss 4.92815  bpb 1.73979
+[15:30:31] [valid_uniq] 7.85 MB  每 token loss 5.26201  bpb 1.78952
+[15:30:40] 重新加载核对：广告 bpb 3.49884 → 3.49884（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

@@ -1,0 +1,430 @@
+{"name": "train_loss", "value": 9.106945991516113, "step": 4, "split": "train", "time": 585.247, "stage": "train", "lr": 0.0005, "grad_norm": 1.6377108097076416, "tokens_per_s": 49171, "bytes_per_s": 181538}
+{"name": "grad_norm", "value": 1.6377, "step": 4, "split": "train", "time": 585.261, "stage": "train"}
+{"name": "train_loss", "value": 8.493640899658203, "step": 8, "split": "train", "time": 585.544, "stage": "train", "lr": 0.001, "grad_norm": 1.2712105512619019, "tokens_per_s": 470126, "bytes_per_s": 1735688}
+{"name": "grad_norm", "value": 1.2712, "step": 8, "split": "train", "time": 585.549, "stage": "train"}
+{"name": "train_loss", "value": 7.903449535369873, "step": 12, "split": "train", "time": 585.827, "stage": "train", "lr": 0.0015, "grad_norm": 0.762447714805603, "tokens_per_s": 476932, "bytes_per_s": 1760816}
+{"name": "grad_norm", "value": 0.7624, "step": 12, "split": "train", "time": 585.831, "stage": "train"}
+{"name": "train_loss", "value": 7.832679271697998, "step": 16, "split": "train", "time": 586.141, "stage": "train", "lr": 0.002, "grad_norm": 0.7538214325904846, "tokens_per_s": 426894, "bytes_per_s": 1576079}
+{"name": "grad_norm", "value": 0.7538, "step": 16, "split": "train", "time": 586.148, "stage": "train"}
+{"name": "train_loss", "value": 7.523702621459961, "step": 20, "split": "train", "time": 586.428, "stage": "train", "lr": 0.001999939077203386, "grad_norm": 0.9887962341308594, "tokens_per_s": 475275, "bytes_per_s": 1754698}
+{"name": "grad_norm", "value": 0.9888, "step": 20, "split": "train", "time": 586.432, "stage": "train"}
+{"name": "train_loss", "value": 7.548494338989258, "step": 24, "split": "train", "time": 586.72, "stage": "train", "lr": 0.0019996683258500384, "grad_norm": 0.48044195771217346, "tokens_per_s": 469034, "bytes_per_s": 1731656}
+{"name": "grad_norm", "value": 0.4804, "step": 24, "split": "train", "time": 586.723, "stage": "train"}
+{"name": "train_loss", "value": 7.303022384643555, "step": 28, "split": "train", "time": 587.004, "stage": "train", "lr": 0.0019991810418370304, "grad_norm": 0.46486327052116394, "tokens_per_s": 476764, "bytes_per_s": 1760196}
+{"name": "grad_norm", "value": 0.4649, "step": 28, "split": "train", "time": 587.008, "stage": "train"}
+{"name": "train_loss", "value": 7.332586765289307, "step": 32, "split": "train", "time": 587.287, "stage": "train", "lr": 0.0019984773424441414, "grad_norm": 0.555330216884613, "tokens_per_s": 476108, "bytes_per_s": 1757774}
+{"name": "grad_norm", "value": 0.5553, "step": 32, "split": "train", "time": 587.314, "stage": "train"}
+{"name": "train_loss", "value": 7.371807098388672, "step": 36, "split": "train", "time": 587.606, "stage": "train", "lr": 0.0019975573970381225, "grad_norm": 0.42348071932792664, "tokens_per_s": 455078, "bytes_per_s": 1680131}
+{"name": "grad_norm", "value": 0.4235, "step": 36, "split": "train", "time": 587.611, "stage": "train"}
+{"name": "train_loss", "value": 7.450984954833984, "step": 40, "split": "train", "time": 587.906, "stage": "train", "lr": 0.001996421427031932, "grad_norm": 0.3746175467967987, "tokens_per_s": 453764, "bytes_per_s": 1675280}
+{"name": "grad_norm", "value": 0.3746, "step": 40, "split": "train", "time": 587.915, "stage": "train"}
+{"name": "train_loss", "value": 7.401213645935059, "step": 44, "split": "train", "time": 588.193, "stage": "train", "lr": 0.001995069705831446, "grad_norm": 0.32786619663238525, "tokens_per_s": 476234, "bytes_per_s": 1758238}
+{"name": "grad_norm", "value": 0.3279, "step": 44, "split": "train", "time": 588.198, "stage": "train"}
+{"name": "train_loss", "value": 7.379946708679199, "step": 48, "split": "train", "time": 588.485, "stage": "train", "lr": 0.0019935025587696545, "grad_norm": 0.40425941348075867, "tokens_per_s": 470007, "bytes_per_s": 1735249}
+{"name": "grad_norm", "value": 0.4043, "step": 48, "split": "train", "time": 588.489, "stage": "train"}
+{"name": "train_loss", "value": 7.191106796264648, "step": 52, "split": "train", "time": 588.769, "stage": "train", "lr": 0.0019917203630283606, "grad_norm": 0.4510200321674347, "tokens_per_s": 474961, "bytes_per_s": 1753539}
+{"name": "grad_norm", "value": 0.451, "step": 52, "split": "train", "time": 588.779, "stage": "train"}
+{"name": "train_loss", "value": 7.167222023010254, "step": 56, "split": "train", "time": 589.066, "stage": "train", "lr": 0.0019897235475474003, "grad_norm": 0.4255055785179138, "tokens_per_s": 471279, "bytes_per_s": 1739943}
+{"name": "grad_norm", "value": 0.4255, "step": 56, "split": "train", "time": 589.078, "stage": "train"}
+{"name": "train_loss", "value": 6.7440667152404785, "step": 60, "split": "train", "time": 589.391, "stage": "train", "lr": 0.0019875125929214046, "grad_norm": 0.4704515337944031, "tokens_per_s": 423071, "bytes_per_s": 1561964}
+{"name": "grad_norm", "value": 0.4705, "step": 60, "split": "train", "time": 589.393, "stage": "train"}
+{"name": "train_loss", "value": 7.198982238769531, "step": 64, "split": "train", "time": 589.68, "stage": "train", "lr": 0.0019850880312841292, "grad_norm": 0.7256932258605957, "tokens_per_s": 476746, "bytes_per_s": 1760128}
+{"name": "grad_norm", "value": 0.7257, "step": 64, "split": "train", "time": 589.686, "stage": "train"}
+{"name": "train_loss", "value": 7.236799240112305, "step": 68, "split": "train", "time": 589.973, "stage": "train", "lr": 0.0019824504461803815, "grad_norm": 0.5009499192237854, "tokens_per_s": 462904, "bytes_per_s": 1709026}
+{"name": "grad_norm", "value": 0.5009, "step": 68, "split": "train", "time": 589.976, "stage": "train"}
+{"name": "train_loss", "value": 6.9044952392578125, "step": 72, "split": "train", "time": 590.254, "stage": "train", "lr": 0.001979600472425572, "grad_norm": 0.48634669184684753, "tokens_per_s": 476972, "bytes_per_s": 1760964}
+{"name": "grad_norm", "value": 0.4863, "step": 72, "split": "train", "time": 590.256, "stage": "train"}
+{"name": "train_loss", "value": 6.862864971160889, "step": 76, "split": "train", "time": 590.556, "stage": "train", "lr": 0.001976538795952927, "grad_norm": 0.39169326424598694, "tokens_per_s": 462430, "bytes_per_s": 1707277}
+{"name": "grad_norm", "value": 0.3917, "step": 76, "split": "train", "time": 590.562, "stage": "train"}
+{"name": "train_loss", "value": 6.705985069274902, "step": 80, "split": "train", "time": 590.859, "stage": "train", "lr": 0.0019732661536483965, "grad_norm": 0.3761012554168701, "tokens_per_s": 475041, "bytes_per_s": 1753836}
+{"name": "grad_norm", "value": 0.3761, "step": 80, "split": "train", "time": 590.862, "stage": "train"}
+{"name": "train_loss", "value": 6.301626205444336, "step": 84, "split": "train", "time": 591.174, "stage": "train", "lr": 0.0019697833331733033, "grad_norm": 0.4581874907016754, "tokens_per_s": 424116, "bytes_per_s": 1565821}
+{"name": "grad_norm", "value": 0.4582, "step": 84, "split": "train", "time": 591.181, "stage": "train"}
+{"name": "train_loss", "value": 6.64008903503418, "step": 88, "split": "train", "time": 591.459, "stage": "train", "lr": 0.001966091172774763, "grad_norm": 0.400158554315567, "tokens_per_s": 476938, "bytes_per_s": 1760838}
+{"name": "grad_norm", "value": 0.4002, "step": 88, "split": "train", "time": 591.464, "stage": "train"}
+{"name": "train_loss", "value": 6.8671369552612305, "step": 92, "split": "train", "time": 591.742, "stage": "train", "lr": 0.00196219056108394, "grad_norm": 0.3023688495159149, "tokens_per_s": 476671, "bytes_per_s": 1759853}
+{"name": "grad_norm", "value": 0.3024, "step": 92, "split": "train", "time": 591.746, "stage": "train"}
+{"name": "train_loss", "value": 6.831759452819824, "step": 96, "split": "train", "time": 592.024, "stage": "train", "lr": 0.0019580824369021667, "grad_norm": 0.3611631393432617, "tokens_per_s": 476853, "bytes_per_s": 1760526}
+{"name": "grad_norm", "value": 0.3612, "step": 96, "split": "train", "time": 592.029, "stage": "train"}
+{"name": "train_loss", "value": 6.765506744384766, "step": 100, "split": "train", "time": 592.308, "stage": "train", "lr": 0.001953767788974996, "grad_norm": 0.36065417528152466, "tokens_per_s": 474345, "bytes_per_s": 1751266}
+{"name": "grad_norm", "value": 0.3607, "step": 100, "split": "train", "time": 592.311, "stage": "train"}
+{"name": "valid_loss", "value": 6.39223, "step": 103, "split": "valid", "time": 596.39, "stage": "train"}
+{"name": "valid_bpb", "value": 2.50404, "step": 103, "split": "valid", "time": 596.398, "stage": "train"}
+{"name": "train_loss", "value": 6.823423385620117, "step": 104, "split": "train", "time": 596.466, "stage": "train", "lr": 0.001949247655754225, "grad_norm": 0.3623863458633423, "tokens_per_s": 513272, "bytes_per_s": 1894983}
+{"name": "grad_norm", "value": 0.3624, "step": 104, "split": "train", "time": 596.47, "stage": "train"}
+{"name": "train_loss", "value": 6.718676567077637, "step": 108, "split": "train", "time": 596.757, "stage": "train", "lr": 0.0019445231251479656, "grad_norm": 0.35549959540367126, "tokens_per_s": 469090, "bytes_per_s": 1731863}
+{"name": "grad_norm", "value": 0.3555, "step": 108, "split": "train", "time": 596.762, "stage": "train"}
+{"name": "train_loss", "value": 6.369053363800049, "step": 112, "split": "train", "time": 597.072, "stage": "train", "lr": 0.0019395953342588007, "grad_norm": 0.3841332495212555, "tokens_per_s": 426694, "bytes_per_s": 1575339}
+{"name": "grad_norm", "value": 0.3841, "step": 112, "split": "train", "time": 597.076, "stage": "train"}
+{"name": "train_loss", "value": 6.094879150390625, "step": 116, "split": "train", "time": 597.366, "stage": "train", "lr": 0.0019344654691101086, "grad_norm": 0.4770796298980713, "tokens_per_s": 476925, "bytes_per_s": 1760789}
+{"name": "grad_norm", "value": 0.4771, "step": 116, "split": "train", "time": 597.368, "stage": "train"}
+{"name": "train_loss", "value": 6.046542167663574, "step": 120, "split": "train", "time": 597.652, "stage": "train", "lr": 0.001929134764360611, "grad_norm": 0.3166392147541046, "tokens_per_s": 466112, "bytes_per_s": 1720870}
+{"name": "grad_norm", "value": 0.3166, "step": 120, "split": "train", "time": 597.655, "stage": "train"}
+{"name": "train_loss", "value": 5.928347110748291, "step": 124, "split": "train", "time": 597.938, "stage": "train", "lr": 0.001923604503007212, "grad_norm": 0.3387604355812073, "tokens_per_s": 475812, "bytes_per_s": 1756680}
+{"name": "grad_norm", "value": 0.3388, "step": 124, "split": "train", "time": 597.945, "stage": "train"}
+{"name": "train_loss", "value": 6.278378009796143, "step": 128, "split": "train", "time": 598.225, "stage": "train", "lr": 0.0019178760160762079, "grad_norm": 0.35233333706855774, "tokens_per_s": 475072, "bytes_per_s": 1753948}
+{"name": "grad_norm", "value": 0.3523, "step": 128, "split": "train", "time": 598.229, "stage": "train"}
+{"name": "train_loss", "value": 6.1961212158203125, "step": 132, "split": "train", "time": 598.51, "stage": "train", "lr": 0.001911950682302934, "grad_norm": 0.35589277744293213, "tokens_per_s": 473102, "bytes_per_s": 1746677}
+{"name": "grad_norm", "value": 0.3559, "step": 132, "split": "train", "time": 598.528, "stage": "train"}
+{"name": "train_loss", "value": 6.3776397705078125, "step": 136, "split": "train", "time": 598.82, "stage": "train", "lr": 0.0019058299277999304, "grad_norm": 0.32870596647262573, "tokens_per_s": 456875, "bytes_per_s": 1686765}
+{"name": "grad_norm", "value": 0.3287, "step": 136, "split": "train", "time": 598.824, "stage": "train"}
+{"name": "train_loss", "value": 6.084424018859863, "step": 140, "split": "train", "time": 599.122, "stage": "train", "lr": 0.0018995152257137039, "grad_norm": 0.406558632850647, "tokens_per_s": 448625, "bytes_per_s": 1656309}
+{"name": "grad_norm", "value": 0.4066, "step": 140, "split": "train", "time": 599.132, "stage": "train"}
+{"name": "train_loss", "value": 6.284341812133789, "step": 144, "split": "train", "time": 599.413, "stage": "train", "lr": 0.0018930080958701708, "grad_norm": 0.38282662630081177, "tokens_per_s": 476481, "bytes_per_s": 1759150}
+{"name": "grad_norm", "value": 0.3828, "step": 144, "split": "train", "time": 599.417, "stage": "train"}
+{"name": "train_loss", "value": 6.130924224853516, "step": 148, "split": "train", "time": 599.696, "stage": "train", "lr": 0.0018863101044088641, "grad_norm": 0.36794036626815796, "tokens_per_s": 477085, "bytes_per_s": 1761382}
+{"name": "grad_norm", "value": 0.3679, "step": 148, "split": "train", "time": 599.704, "stage": "train"}
+{"name": "train_loss", "value": 6.01573371887207, "step": 152, "split": "train", "time": 599.983, "stage": "train", "lr": 0.0018794228634059949, "grad_norm": 0.3234143853187561, "tokens_per_s": 477178, "bytes_per_s": 1761724}
+{"name": "grad_norm", "value": 0.3234, "step": 152, "split": "train", "time": 599.985, "stage": "train"}
+{"name": "train_loss", "value": 5.898711204528809, "step": 156, "split": "train", "time": 600.263, "stage": "train", "lr": 0.0018723480304864554, "grad_norm": 0.36526018381118774, "tokens_per_s": 477036, "bytes_per_s": 1761201}
+{"name": "grad_norm", "value": 0.3653, "step": 156, "split": "train", "time": 600.272, "stage": "train"}
+{"name": "train_loss", "value": 5.952787399291992, "step": 160, "split": "train", "time": 600.55, "stage": "train", "lr": 0.0018650873084248623, "grad_norm": 0.36970075964927673, "tokens_per_s": 477256, "bytes_per_s": 1762012}
+{"name": "grad_norm", "value": 0.3697, "step": 160, "split": "train", "time": 600.553, "stage": "train"}
+{"name": "train_loss", "value": 5.5234222412109375, "step": 164, "split": "train", "time": 600.831, "stage": "train", "lr": 0.0018576424447357316, "grad_norm": 0.38026192784309387, "tokens_per_s": 476930, "bytes_per_s": 1760810}
+{"name": "grad_norm", "value": 0.3803, "step": 164, "split": "train", "time": 600.839, "stage": "train"}
+{"name": "train_loss", "value": 5.906175136566162, "step": 168, "split": "train", "time": 601.117, "stage": "train", "lr": 0.0018500152312528864, "grad_norm": 0.41226282715797424, "tokens_per_s": 476678, "bytes_per_s": 1759879}
+{"name": "grad_norm", "value": 0.4123, "step": 168, "split": "train", "time": 601.122, "stage": "train"}
+{"name": "train_loss", "value": 5.964754104614258, "step": 172, "split": "train", "time": 601.423, "stage": "train", "lr": 0.0018422075036981962, "grad_norm": 0.36305683851242065, "tokens_per_s": 446032, "bytes_per_s": 1646734}
+{"name": "grad_norm", "value": 0.3631, "step": 172, "split": "train", "time": 601.431, "stage": "train"}
+{"name": "train_loss", "value": 6.007328033447266, "step": 176, "split": "train", "time": 601.715, "stage": "train", "lr": 0.001834221141239755, "grad_norm": 0.3299022912979126, "tokens_per_s": 469563, "bytes_per_s": 1733610}
+{"name": "grad_norm", "value": 0.3299, "step": 176, "split": "train", "time": 601.722, "stage": "train"}
+{"name": "train_loss", "value": 5.664545059204102, "step": 180, "split": "train", "time": 602.008, "stage": "train", "lr": 0.0018260580660396024, "grad_norm": 0.39477407932281494, "tokens_per_s": 465186, "bytes_per_s": 1717448}
+{"name": "grad_norm", "value": 0.3948, "step": 180, "split": "train", "time": 602.011, "stage": "train"}
+{"name": "train_loss", "value": 5.456945419311523, "step": 184, "split": "train", "time": 602.292, "stage": "train", "lr": 0.0018177202427910966, "grad_norm": 0.33822759985923767, "tokens_per_s": 471473, "bytes_per_s": 1740660}
+{"name": "grad_norm", "value": 0.3382, "step": 184, "split": "train", "time": 602.295, "stage": "train"}
+{"name": "train_loss", "value": 5.62308406829834, "step": 188, "split": "train", "time": 602.591, "stage": "train", "lr": 0.0018092096782460496, "grad_norm": 0.34232208132743835, "tokens_per_s": 476760, "bytes_per_s": 1760181}
+{"name": "grad_norm", "value": 0.3423, "step": 188, "split": "train", "time": 602.594, "stage": "train"}
+{"name": "train_loss", "value": 5.655721664428711, "step": 192, "split": "train", "time": 602.876, "stage": "train", "lr": 0.001800528420731744, "grad_norm": 0.37588852643966675, "tokens_per_s": 470443, "bytes_per_s": 1736860}
+{"name": "grad_norm", "value": 0.3759, "step": 192, "split": "train", "time": 602.879, "stage": "train"}
+{"name": "train_loss", "value": 5.848681926727295, "step": 196, "split": "train", "time": 603.195, "stage": "train", "lr": 0.001791678559657937, "grad_norm": 0.3548593819141388, "tokens_per_s": 427117, "bytes_per_s": 1576899}
+{"name": "grad_norm", "value": 0.3549, "step": 196, "split": "train", "time": 603.199, "stage": "train"}
+{"name": "train_loss", "value": 5.994283676147461, "step": 200, "split": "train", "time": 603.477, "stage": "train", "lr": 0.001782662225013982, "grad_norm": 0.3823584318161011, "tokens_per_s": 476993, "bytes_per_s": 1761039}
+{"name": "grad_norm", "value": 0.3824, "step": 200, "split": "train", "time": 603.48, "stage": "train"}
+{"name": "train_loss", "value": 5.437803268432617, "step": 204, "split": "train", "time": 603.767, "stage": "train", "lr": 0.0017734815868561823, "grad_norm": 0.42839089035987854, "tokens_per_s": 469149, "bytes_per_s": 1732080}
+{"name": "grad_norm", "value": 0.4284, "step": 204, "split": "train", "time": 603.777, "stage": "train"}
+{"name": "valid_loss", "value": 5.61632, "step": 206, "split": "valid", "time": 607.558, "stage": "train"}
+{"name": "valid_bpb", "value": 2.20009, "step": 206, "split": "valid", "time": 607.578, "stage": "train"}
+{"name": "train_loss", "value": 5.973729133605957, "step": 208, "split": "train", "time": 607.745, "stage": "train", "lr": 0.0017641388547854988, "grad_norm": 0.36153775453567505, "tokens_per_s": 412106, "bytes_per_s": 1521482}
+{"name": "grad_norm", "value": 0.3615, "step": 208, "split": "train", "time": 607.763, "stage": "train"}
+{"name": "train_loss", "value": 5.745923042297363, "step": 212, "split": "train", "time": 608.045, "stage": "train", "lr": 0.0017546362774157438, "grad_norm": 0.3919373154640198, "tokens_per_s": 476101, "bytes_per_s": 1757748}
+{"name": "grad_norm", "value": 0.3919, "step": 212, "split": "train", "time": 608.048, "stage": "train"}
+{"name": "train_loss", "value": 5.495116233825684, "step": 216, "split": "train", "time": 608.331, "stage": "train", "lr": 0.0017449761418323825, "grad_norm": 0.38335171341896057, "tokens_per_s": 470186, "bytes_per_s": 1735909}
+{"name": "grad_norm", "value": 0.3834, "step": 216, "split": "train", "time": 608.334, "stage": "train"}
+{"name": "train_loss", "value": 5.704929351806641, "step": 220, "split": "train", "time": 608.613, "stage": "train", "lr": 0.001735160773042076, "grad_norm": 0.4075115919113159, "tokens_per_s": 476019, "bytes_per_s": 1757445}
+{"name": "grad_norm", "value": 0.4075, "step": 220, "split": "train", "time": 608.616, "stage": "train"}
+{"name": "train_loss", "value": 5.640159606933594, "step": 224, "split": "train", "time": 608.922, "stage": "train", "lr": 0.0017251925334130975, "grad_norm": 0.37780746817588806, "tokens_per_s": 437309, "bytes_per_s": 1614529}
+{"name": "grad_norm", "value": 0.3778, "step": 224, "split": "train", "time": 608.93, "stage": "train"}
+{"name": "train_loss", "value": 5.747872829437256, "step": 228, "split": "train", "time": 609.215, "stage": "train", "lr": 0.0017150738221067574, "grad_norm": 0.38298100233078003, "tokens_per_s": 476969, "bytes_per_s": 1760954}
+{"name": "grad_norm", "value": 0.383, "step": 228, "split": "train", "time": 609.22, "stage": "train"}
+{"name": "train_loss", "value": 5.2236328125, "step": 232, "split": "train", "time": 609.5, "stage": "train", "lr": 0.0017048070744999702, "grad_norm": 0.41551920771598816, "tokens_per_s": 477192, "bytes_per_s": 1761776}
+{"name": "grad_norm", "value": 0.4155, "step": 232, "split": "train", "time": 609.504, "stage": "train"}
+{"name": "train_loss", "value": 5.429728031158447, "step": 236, "split": "train", "time": 609.789, "stage": "train", "lr": 0.0016943947615991068, "grad_norm": 0.3643948435783386, "tokens_per_s": 466077, "bytes_per_s": 1720741}
+{"name": "grad_norm", "value": 0.3644, "step": 236, "split": "train", "time": 609.795, "stage": "train"}
+{"name": "train_loss", "value": 5.76947021484375, "step": 240, "split": "train", "time": 610.085, "stage": "train", "lr": 0.0016838393894452732, "grad_norm": 0.4088611602783203, "tokens_per_s": 457465, "bytes_per_s": 1688946}
+{"name": "grad_norm", "value": 0.4089, "step": 240, "split": "train", "time": 610.089, "stage": "train"}
+{"name": "train_loss", "value": 5.655649185180664, "step": 244, "split": "train", "time": 610.377, "stage": "train", "lr": 0.0016731434985111525, "grad_norm": 0.3354606032371521, "tokens_per_s": 469692, "bytes_per_s": 1734086}
+{"name": "grad_norm", "value": 0.3355, "step": 244, "split": "train", "time": 610.384, "stage": "train"}
+{"name": "train_loss", "value": 5.474177360534668, "step": 248, "split": "train", "time": 610.69, "stage": "train", "lr": 0.001662309663089564, "grad_norm": 0.3947494924068451, "tokens_per_s": 437293, "bytes_per_s": 1614470}
+{"name": "grad_norm", "value": 0.3947, "step": 248, "split": "train", "time": 610.694, "stage": "train"}
+{"name": "train_loss", "value": 5.4376630783081055, "step": 252, "split": "train", "time": 610.976, "stage": "train", "lr": 0.0016513404906738824, "grad_norm": 0.37693753838539124, "tokens_per_s": 472237, "bytes_per_s": 1743483}
+{"name": "grad_norm", "value": 0.3769, "step": 252, "split": "train", "time": 610.982, "stage": "train"}
+{"name": "train_loss", "value": 5.720539093017578, "step": 256, "split": "train", "time": 611.262, "stage": "train", "lr": 0.0016402386213304621, "grad_norm": 0.32085588574409485, "tokens_per_s": 473804, "bytes_per_s": 1749266}
+{"name": "grad_norm", "value": 0.3209, "step": 256, "split": "train", "time": 611.272, "stage": "train"}
+{"name": "train_loss", "value": 5.265935897827148, "step": 260, "split": "train", "time": 611.555, "stage": "train", "lr": 0.001629006727063226, "grad_norm": 0.36249086260795593, "tokens_per_s": 476173, "bytes_per_s": 1758013}
+{"name": "grad_norm", "value": 0.3625, "step": 260, "split": "train", "time": 611.558, "stage": "train"}
+{"name": "train_loss", "value": 5.484901428222656, "step": 264, "split": "train", "time": 611.842, "stage": "train", "lr": 0.001617647511170566, "grad_norm": 0.3432582914829254, "tokens_per_s": 467760, "bytes_per_s": 1726953}
+{"name": "grad_norm", "value": 0.3433, "step": 264, "split": "train", "time": 611.849, "stage": "train"}
+{"name": "train_loss", "value": 5.430197715759277, "step": 268, "split": "train", "time": 612.129, "stage": "train", "lr": 0.001606163707594712, "grad_norm": 0.36086827516555786, "tokens_per_s": 475481, "bytes_per_s": 1755457}
+{"name": "grad_norm", "value": 0.3609, "step": 268, "split": "train", "time": 612.134, "stage": "train"}
+{"name": "train_loss", "value": 5.31950569152832, "step": 272, "split": "train", "time": 612.442, "stage": "train", "lr": 0.0015945580802637254, "grad_norm": 0.35848724842071533, "tokens_per_s": 431862, "bytes_per_s": 1594420}
+{"name": "grad_norm", "value": 0.3585, "step": 272, "split": "train", "time": 612.447, "stage": "train"}
+{"name": "train_loss", "value": 5.597807884216309, "step": 276, "split": "train", "time": 612.726, "stage": "train", "lr": 0.0015828334224262742, "grad_norm": 0.3618491590023041, "tokens_per_s": 474831, "bytes_per_s": 1753060}
+{"name": "grad_norm", "value": 0.3618, "step": 276, "split": "train", "time": 612.735, "stage": "train"}
+{"name": "train_loss", "value": 5.239220142364502, "step": 280, "split": "train", "time": 613.018, "stage": "train", "lr": 0.0015709925559793528, "grad_norm": 0.3547014892101288, "tokens_per_s": 470058, "bytes_per_s": 1735437}
+{"name": "grad_norm", "value": 0.3547, "step": 280, "split": "train", "time": 613.025, "stage": "train"}
+{"name": "train_loss", "value": 5.015449523925781, "step": 284, "split": "train", "time": 613.306, "stage": "train", "lr": 0.001559038330789108, "grad_norm": 0.38969743251800537, "tokens_per_s": 472978, "bytes_per_s": 1746219}
+{"name": "grad_norm", "value": 0.3897, "step": 284, "split": "train", "time": 613.315, "stage": "train"}
+{"name": "train_loss", "value": 5.758337020874023, "step": 288, "split": "train", "time": 613.598, "stage": "train", "lr": 0.0015469736240049286, "grad_norm": 0.3439332842826843, "tokens_per_s": 469419, "bytes_per_s": 1733077}
+{"name": "grad_norm", "value": 0.3439, "step": 288, "split": "train", "time": 613.604, "stage": "train"}
+{"name": "train_loss", "value": 5.584486961364746, "step": 292, "split": "train", "time": 613.896, "stage": "train", "lr": 0.0015348013393669745, "grad_norm": 0.3118743300437927, "tokens_per_s": 456820, "bytes_per_s": 1686561}
+{"name": "grad_norm", "value": 0.3119, "step": 292, "split": "train", "time": 613.902, "stage": "train"}
+{"name": "train_loss", "value": 5.388383865356445, "step": 296, "split": "train", "time": 614.204, "stage": "train", "lr": 0.0015225244065073017, "grad_norm": 0.33716055750846863, "tokens_per_s": 438808, "bytes_per_s": 1620065}
+{"name": "grad_norm", "value": 0.3372, "step": 296, "split": "train", "time": 614.214, "stage": "train"}
+{"name": "train_loss", "value": 4.960883140563965, "step": 300, "split": "train", "time": 614.496, "stage": "train", "lr": 0.001510145780244756, "grad_norm": 0.3386516273021698, "tokens_per_s": 472507, "bytes_per_s": 1744481}
+{"name": "grad_norm", "value": 0.3387, "step": 300, "split": "train", "time": 614.502, "stage": "train"}
+{"name": "train_loss", "value": 5.171473026275635, "step": 304, "split": "train", "time": 614.782, "stage": "train", "lr": 0.0014976684398738073, "grad_norm": 0.34504055976867676, "tokens_per_s": 475326, "bytes_per_s": 1754885}
+{"name": "grad_norm", "value": 0.345, "step": 304, "split": "train", "time": 614.788, "stage": "train"}
+{"name": "train_loss", "value": 5.22231388092041, "step": 308, "split": "train", "time": 615.067, "stage": "train", "lr": 0.0014850953884474889, "grad_norm": 0.36092716455459595, "tokens_per_s": 476459, "bytes_per_s": 1759069}
+{"name": "grad_norm", "value": 0.3609, "step": 308, "split": "train", "time": 615.074, "stage": "train"}
+{"name": "valid_loss", "value": 5.18426, "step": 310, "split": "valid", "time": 618.882, "stage": "train"}
+{"name": "valid_bpb", "value": 2.03084, "step": 310, "split": "valid", "time": 618.918, "stage": "train"}
+{"name": "train_loss", "value": 4.9662933349609375, "step": 312, "split": "train", "time": 619.048, "stage": "train", "lr": 0.0014724296520546255, "grad_norm": 0.41602376103401184, "tokens_per_s": 525193, "bytes_per_s": 1938992}
+{"name": "grad_norm", "value": 0.416, "step": 312, "split": "train", "time": 619.077, "stage": "train"}
+{"name": "train_loss", "value": 4.690218448638916, "step": 316, "split": "train", "time": 619.361, "stage": "train", "lr": 0.0014596742790915073, "grad_norm": 0.33078259229660034, "tokens_per_s": 477207, "bytes_per_s": 1761833}
+{"name": "grad_norm", "value": 0.3308, "step": 316, "split": "train", "time": 619.37, "stage": "train"}
+{"name": "train_loss", "value": 5.312056541442871, "step": 320, "split": "train", "time": 619.654, "stage": "train", "lr": 0.0014468323395282034, "grad_norm": 0.34165477752685547, "tokens_per_s": 477205, "bytes_per_s": 1761825}
+{"name": "grad_norm", "value": 0.3417, "step": 320, "split": "train", "time": 619.66, "stage": "train"}
+{"name": "train_loss", "value": 4.9800615310668945, "step": 324, "split": "train", "time": 619.948, "stage": "train", "lr": 0.0014339069241696802, "grad_norm": 0.36956787109375, "tokens_per_s": 474554, "bytes_per_s": 1752036}
+{"name": "grad_norm", "value": 0.3696, "step": 324, "split": "train", "time": 619.954, "stage": "train"}
+{"name": "train_loss", "value": 5.203324317932129, "step": 328, "split": "train", "time": 620.24, "stage": "train", "lr": 0.001420901143911902, "grad_norm": 0.3475886285305023, "tokens_per_s": 465545, "bytes_per_s": 1718776}
+{"name": "grad_norm", "value": 0.3476, "step": 328, "split": "train", "time": 620.244, "stage": "train"}
+{"name": "train_loss", "value": 4.798714637756348, "step": 332, "split": "train", "time": 620.548, "stage": "train", "lr": 0.001407818128993102, "grad_norm": 0.34329476952552795, "tokens_per_s": 437398, "bytes_per_s": 1614857}
+{"name": "grad_norm", "value": 0.3433, "step": 332, "split": "train", "time": 620.554, "stage": "train"}
+{"name": "train_loss", "value": 5.421072959899902, "step": 336, "split": "train", "time": 620.832, "stage": "train", "lr": 0.001394661028240392, "grad_norm": 0.3459572196006775, "tokens_per_s": 478534, "bytes_per_s": 1766729}
+{"name": "grad_norm", "value": 0.346, "step": 336, "split": "train", "time": 620.837, "stage": "train"}
+{"name": "train_loss", "value": 5.3285322189331055, "step": 340, "split": "train", "time": 621.116, "stage": "train", "lr": 0.0013814330083119037, "grad_norm": 0.402953177690506, "tokens_per_s": 477848, "bytes_per_s": 1764199}
+{"name": "grad_norm", "value": 0.403, "step": 340, "split": "train", "time": 621.128, "stage": "train"}
+{"name": "train_loss", "value": 5.149746417999268, "step": 344, "split": "train", "time": 621.418, "stage": "train", "lr": 0.0013681372529346337, "grad_norm": 0.38556286692619324, "tokens_per_s": 476720, "bytes_per_s": 1760031}
+{"name": "grad_norm", "value": 0.3856, "step": 344, "split": "train", "time": 621.427, "stage": "train"}
+{"name": "train_loss", "value": 4.886204719543457, "step": 348, "split": "train", "time": 621.706, "stage": "train", "lr": 0.0013547769621381834, "grad_norm": 0.31502023339271545, "tokens_per_s": 477840, "bytes_per_s": 1764166}
+{"name": "grad_norm", "value": 0.315, "step": 348, "split": "train", "time": 621.711, "stage": "train"}
+{"name": "train_loss", "value": 4.92869758605957, "step": 352, "split": "train", "time": 621.992, "stage": "train", "lr": 0.0013413553514845737, "grad_norm": 0.35650965571403503, "tokens_per_s": 475435, "bytes_per_s": 1755289}
+{"name": "grad_norm", "value": 0.3565, "step": 352, "split": "train", "time": 621.999, "stage": "train"}
+{"name": "train_loss", "value": 5.02947473526001, "step": 356, "split": "train", "time": 622.313, "stage": "train", "lr": 0.0013278756512943217, "grad_norm": 0.35315611958503723, "tokens_per_s": 423616, "bytes_per_s": 1563974}
+{"name": "grad_norm", "value": 0.3532, "step": 356, "split": "train", "time": 622.318, "stage": "train"}
+{"name": "train_loss", "value": 5.177765369415283, "step": 360, "split": "train", "time": 622.596, "stage": "train", "lr": 0.0013143411058689658, "grad_norm": 0.38827401399612427, "tokens_per_s": 477956, "bytes_per_s": 1764596}
+{"name": "grad_norm", "value": 0.3883, "step": 360, "split": "train", "time": 622.603, "stage": "train"}
+{"name": "train_loss", "value": 5.09010124206543, "step": 364, "split": "train", "time": 622.881, "stage": "train", "lr": 0.0013007549727102254, "grad_norm": 0.35612043738365173, "tokens_per_s": 478951, "bytes_per_s": 1768269}
+{"name": "grad_norm", "value": 0.3561, "step": 364, "split": "train", "time": 622.887, "stage": "train"}
+{"name": "train_loss", "value": 5.440712928771973, "step": 368, "split": "train", "time": 623.171, "stage": "train", "lr": 0.0012871205217359833, "grad_norm": 0.3566499650478363, "tokens_per_s": 472412, "bytes_per_s": 1744128}
+{"name": "grad_norm", "value": 0.3566, "step": 368, "split": "train", "time": 623.176, "stage": "train"}
+{"name": "train_loss", "value": 5.298073768615723, "step": 372, "split": "train", "time": 623.456, "stage": "train", "lr": 0.0012734410344932808, "grad_norm": 0.36887046694755554, "tokens_per_s": 476720, "bytes_per_s": 1760031}
+{"name": "grad_norm", "value": 0.3689, "step": 372, "split": "train", "time": 623.468, "stage": "train"}
+{"name": "train_loss", "value": 5.317571640014648, "step": 376, "split": "train", "time": 623.749, "stage": "train", "lr": 0.0012597198033685118, "grad_norm": 0.34546053409576416, "tokens_per_s": 476750, "bytes_per_s": 1760143}
+{"name": "grad_norm", "value": 0.3455, "step": 376, "split": "train", "time": 623.756, "stage": "train"}
+{"name": "train_loss", "value": 5.012878894805908, "step": 380, "split": "train", "time": 624.041, "stage": "train", "lr": 0.0012459601307950108, "grad_norm": 0.3251112997531891, "tokens_per_s": 478658, "bytes_per_s": 1767189}
+{"name": "grad_norm", "value": 0.3251, "step": 380, "split": "train", "time": 624.045, "stage": "train"}
+{"name": "train_loss", "value": 4.956862449645996, "step": 384, "split": "train", "time": 624.323, "stage": "train", "lr": 0.001232165328458221, "grad_norm": 0.32401618361473083, "tokens_per_s": 475978, "bytes_per_s": 1757295}
+{"name": "grad_norm", "value": 0.324, "step": 384, "split": "train", "time": 624.328, "stage": "train"}
+{"name": "train_loss", "value": 5.141181945800781, "step": 388, "split": "train", "time": 624.64, "stage": "train", "lr": 0.0012183387164986363, "grad_norm": 0.3706003725528717, "tokens_per_s": 440560, "bytes_per_s": 1626533}
+{"name": "grad_norm", "value": 0.3706, "step": 388, "split": "train", "time": 624.649, "stage": "train"}
+{"name": "train_loss", "value": 5.206700801849365, "step": 392, "split": "train", "time": 624.927, "stage": "train", "lr": 0.0012044836227127073, "grad_norm": 0.37426382303237915, "tokens_per_s": 478056, "bytes_per_s": 1764967}
+{"name": "grad_norm", "value": 0.3743, "step": 392, "split": "train", "time": 624.933, "stage": "train"}
+{"name": "train_loss", "value": 5.186075687408447, "step": 396, "split": "train", "time": 625.212, "stage": "train", "lr": 0.0011906033817519063, "grad_norm": 0.288809210062027, "tokens_per_s": 479227, "bytes_per_s": 1769291}
+{"name": "grad_norm", "value": 0.2888, "step": 396, "split": "train", "time": 625.217, "stage": "train"}
+{"name": "train_loss", "value": 4.9307355880737305, "step": 400, "split": "train", "time": 625.496, "stage": "train", "lr": 0.001176701334320141, "grad_norm": 0.3143530786037445, "tokens_per_s": 478009, "bytes_per_s": 1764794}
+{"name": "grad_norm", "value": 0.3144, "step": 400, "split": "train", "time": 625.502, "stage": "train"}
+{"name": "train_loss", "value": 4.7832159996032715, "step": 404, "split": "train", "time": 625.781, "stage": "train", "lr": 0.0011627808263697129, "grad_norm": 0.3439290225505829, "tokens_per_s": 477000, "bytes_per_s": 1761068}
+{"name": "grad_norm", "value": 0.3439, "step": 404, "split": "train", "time": 625.788, "stage": "train"}
+{"name": "train_loss", "value": 5.099704742431641, "step": 408, "split": "train", "time": 626.069, "stage": "train", "lr": 0.0011488452082960105, "grad_norm": 0.4112463593482971, "tokens_per_s": 478605, "bytes_per_s": 1766994}
+{"name": "grad_norm", "value": 0.4112, "step": 408, "split": "train", "time": 626.073, "stage": "train"}
+{"name": "train_loss", "value": 5.1018571853637695, "step": 412, "split": "train", "time": 626.359, "stage": "train", "lr": 0.0011348978341311352, "grad_norm": 0.3879276514053345, "tokens_per_s": 469729, "bytes_per_s": 1734221}
+{"name": "grad_norm", "value": 0.3879, "step": 412, "split": "train", "time": 626.364, "stage": "train"}
+{"name": "valid_loss", "value": 4.90336, "step": 413, "split": "valid", "time": 630.092, "stage": "train"}
+{"name": "valid_bpb", "value": 1.92081, "step": 413, "split": "valid", "time": 630.108, "stage": "train"}
+{"name": "train_loss", "value": 4.964539527893066, "step": 416, "split": "train", "time": 630.341, "stage": "train", "lr": 0.0011209420607366507, "grad_norm": 0.35968098044395447, "tokens_per_s": 446155, "bytes_per_s": 1647188}
+{"name": "grad_norm", "value": 0.3597, "step": 416, "split": "train", "time": 630.349, "stage": "train"}
+{"name": "train_loss", "value": 5.1569952964782715, "step": 420, "split": "train", "time": 630.63, "stage": "train", "lr": 0.0011069812469956524, "grad_norm": 0.3387722969055176, "tokens_per_s": 473651, "bytes_per_s": 1748703}
+{"name": "grad_norm", "value": 0.3388, "step": 420, "split": "train", "time": 630.638, "stage": "train"}
+{"name": "train_loss", "value": 4.769660472869873, "step": 424, "split": "train", "time": 630.921, "stage": "train", "lr": 0.001093018753004348, "grad_norm": 0.3669627010822296, "tokens_per_s": 470132, "bytes_per_s": 1735712}
+{"name": "grad_norm", "value": 0.367, "step": 424, "split": "train", "time": 630.936, "stage": "train"}
+{"name": "train_loss", "value": 4.77168083190918, "step": 428, "split": "train", "time": 631.216, "stage": "train", "lr": 0.0010790579392633494, "grad_norm": 0.348854660987854, "tokens_per_s": 478230, "bytes_per_s": 1765609}
+{"name": "grad_norm", "value": 0.3489, "step": 428, "split": "train", "time": 631.221, "stage": "train"}
+{"name": "train_loss", "value": 4.739250183105469, "step": 432, "split": "train", "time": 631.501, "stage": "train", "lr": 0.001065102165868865, "grad_norm": 0.3504542112350464, "tokens_per_s": 477581, "bytes_per_s": 1763212}
+{"name": "grad_norm", "value": 0.3505, "step": 432, "split": "train", "time": 631.509, "stage": "train"}
+{"name": "train_loss", "value": 4.7549943923950195, "step": 436, "split": "train", "time": 631.787, "stage": "train", "lr": 0.0010511547917039898, "grad_norm": 0.2940947711467743, "tokens_per_s": 477563, "bytes_per_s": 1763147}
+{"name": "grad_norm", "value": 0.2941, "step": 436, "split": "train", "time": 631.796, "stage": "train"}
+{"name": "train_loss", "value": 5.0805158615112305, "step": 440, "split": "train", "time": 632.074, "stage": "train", "lr": 0.0010372191736302873, "grad_norm": 0.3244091868400574, "tokens_per_s": 477732, "bytes_per_s": 1763771}
+{"name": "grad_norm", "value": 0.3244, "step": 440, "split": "train", "time": 632.082, "stage": "train"}
+{"name": "train_loss", "value": 4.977397441864014, "step": 444, "split": "train", "time": 632.398, "stage": "train", "lr": 0.0010232986656798593, "grad_norm": 0.3075052499771118, "tokens_per_s": 423228, "bytes_per_s": 1562544}
+{"name": "grad_norm", "value": 0.3075, "step": 444, "split": "train", "time": 632.402, "stage": "train"}
+{"name": "train_loss", "value": 4.930473327636719, "step": 448, "split": "train", "time": 632.68, "stage": "train", "lr": 0.001009396618248094, "grad_norm": 0.3153017461299896, "tokens_per_s": 478218, "bytes_per_s": 1765565}
+{"name": "grad_norm", "value": 0.3153, "step": 448, "split": "train", "time": 632.683, "stage": "train"}
+{"name": "train_loss", "value": 4.857076168060303, "step": 452, "split": "train", "time": 632.96, "stage": "train", "lr": 0.0009955163772872927, "grad_norm": 0.32860255241394043, "tokens_per_s": 478671, "bytes_per_s": 1767237}
+{"name": "grad_norm", "value": 0.3286, "step": 452, "split": "train", "time": 632.969, "stage": "train"}
+{"name": "train_loss", "value": 5.140091896057129, "step": 456, "split": "train", "time": 633.247, "stage": "train", "lr": 0.0009816612835013639, "grad_norm": 0.3633144795894623, "tokens_per_s": 478028, "bytes_per_s": 1764863}
+{"name": "grad_norm", "value": 0.3633, "step": 456, "split": "train", "time": 633.252, "stage": "train"}
+{"name": "train_loss", "value": 4.359766960144043, "step": 460, "split": "train", "time": 633.539, "stage": "train", "lr": 0.000967834671541779, "grad_norm": 0.36844930052757263, "tokens_per_s": 465629, "bytes_per_s": 1719085}
+{"name": "grad_norm", "value": 0.3684, "step": 460, "split": "train", "time": 633.551, "stage": "train"}
+{"name": "train_loss", "value": 4.814121723175049, "step": 464, "split": "train", "time": 633.83, "stage": "train", "lr": 0.0009540398692049894, "grad_norm": 0.3283880949020386, "tokens_per_s": 477923, "bytes_per_s": 1764473}
+{"name": "grad_norm", "value": 0.3284, "step": 464, "split": "train", "time": 633.833, "stage": "train"}
+{"name": "train_loss", "value": 5.075038433074951, "step": 468, "split": "train", "time": 634.111, "stage": "train", "lr": 0.0009402801966314885, "grad_norm": 0.3200676143169403, "tokens_per_s": 478109, "bytes_per_s": 1765161}
+{"name": "grad_norm", "value": 0.3201, "step": 468, "split": "train", "time": 634.115, "stage": "train"}
+{"name": "train_loss", "value": 4.783572196960449, "step": 472, "split": "train", "time": 634.427, "stage": "train", "lr": 0.0009265589655067192, "grad_norm": 0.3454931974411011, "tokens_per_s": 427352, "bytes_per_s": 1577767}
+{"name": "grad_norm", "value": 0.3455, "step": 472, "split": "train", "time": 634.436, "stage": "train"}
+{"name": "train_loss", "value": 4.708371162414551, "step": 476, "split": "train", "time": 634.714, "stage": "train", "lr": 0.0009128794782640168, "grad_norm": 0.3224117159843445, "tokens_per_s": 477932, "bytes_per_s": 1764508}
+{"name": "grad_norm", "value": 0.3224, "step": 476, "split": "train", "time": 634.722, "stage": "train"}
+{"name": "train_loss", "value": 4.494997024536133, "step": 480, "split": "train", "time": 635.003, "stage": "train", "lr": 0.0008992450272897747, "grad_norm": 0.36787375807762146, "tokens_per_s": 473721, "bytes_per_s": 1748960}
+{"name": "grad_norm", "value": 0.3679, "step": 480, "split": "train", "time": 635.009, "stage": "train"}
+{"name": "train_loss", "value": 4.491482734680176, "step": 484, "split": "train", "time": 635.288, "stage": "train", "lr": 0.0008856588941310344, "grad_norm": 0.37036213278770447, "tokens_per_s": 477661, "bytes_per_s": 1763507}
+{"name": "grad_norm", "value": 0.3704, "step": 484, "split": "train", "time": 635.298, "stage": "train"}
+{"name": "train_loss", "value": 4.957991600036621, "step": 488, "split": "train", "time": 635.576, "stage": "train", "lr": 0.0008721243487056784, "grad_norm": 0.37472522258758545, "tokens_per_s": 477424, "bytes_per_s": 1762631}
+{"name": "grad_norm", "value": 0.3747, "step": 488, "split": "train", "time": 635.581, "stage": "train"}
+{"name": "train_loss", "value": 5.109651565551758, "step": 492, "split": "train", "time": 635.859, "stage": "train", "lr": 0.0008586446485154262, "grad_norm": 0.343159019947052, "tokens_per_s": 477858, "bytes_per_s": 1764235}
+{"name": "grad_norm", "value": 0.3432, "step": 492, "split": "train", "time": 635.865, "stage": "train"}
+{"name": "train_loss", "value": 4.887086391448975, "step": 496, "split": "train", "time": 636.145, "stage": "train", "lr": 0.0008452230378618166, "grad_norm": 0.32737836241722107, "tokens_per_s": 475218, "bytes_per_s": 1754487}
+{"name": "grad_norm", "value": 0.3274, "step": 496, "split": "train", "time": 636.154, "stage": "train"}
+{"name": "train_loss", "value": 4.628721237182617, "step": 500, "split": "train", "time": 636.433, "stage": "train", "lr": 0.0008318627470653661, "grad_norm": 0.4043430685997009, "tokens_per_s": 478419, "bytes_per_s": 1766307}
+{"name": "grad_norm", "value": 0.4043, "step": 500, "split": "train", "time": 636.442, "stage": "train"}
+{"name": "train_loss", "value": 4.7090654373168945, "step": 504, "split": "train", "time": 636.751, "stage": "train", "lr": 0.0008185669916880965, "grad_norm": 0.32691070437431335, "tokens_per_s": 430995, "bytes_per_s": 1591217}
+{"name": "grad_norm", "value": 0.3269, "step": 504, "split": "train", "time": 636.763, "stage": "train"}
+{"name": "train_loss", "value": 4.784095764160156, "step": 508, "split": "train", "time": 637.042, "stage": "train", "lr": 0.0008053389717596081, "grad_norm": 0.3209257423877716, "tokens_per_s": 476307, "bytes_per_s": 1758510}
+{"name": "grad_norm", "value": 0.3209, "step": 508, "split": "train", "time": 637.046, "stage": "train"}
+{"name": "train_loss", "value": 4.598217964172363, "step": 512, "split": "train", "time": 637.329, "stage": "train", "lr": 0.0007921818710068982, "grad_norm": 0.35527220368385315, "tokens_per_s": 474965, "bytes_per_s": 1753554}
+{"name": "grad_norm", "value": 0.3553, "step": 512, "split": "train", "time": 637.337, "stage": "train"}
+{"name": "train_loss", "value": 4.725569248199463, "step": 516, "split": "train", "time": 637.616, "stage": "train", "lr": 0.0007790988560880981, "grad_norm": 0.2959607243537903, "tokens_per_s": 478020, "bytes_per_s": 1764832}
+{"name": "grad_norm", "value": 0.296, "step": 516, "split": "train", "time": 637.619, "stage": "train"}
+{"name": "valid_loss", "value": 4.66849, "step": 516, "split": "valid", "time": 641.264, "stage": "train"}
+{"name": "valid_bpb", "value": 1.8288, "step": 516, "split": "valid", "time": 641.271, "stage": "train"}
+{"name": "train_loss", "value": 5.058317184448242, "step": 520, "split": "train", "time": 641.552, "stage": "train", "lr": 0.0007660930758303197, "grad_norm": 0.3295639157295227, "tokens_per_s": 476694, "bytes_per_s": 1759937}
+{"name": "grad_norm", "value": 0.3296, "step": 520, "split": "train", "time": 641.558, "stage": "train"}
+{"name": "train_loss", "value": 4.348360061645508, "step": 524, "split": "train", "time": 641.838, "stage": "train", "lr": 0.0007531676604717967, "grad_norm": 0.3430909812450409, "tokens_per_s": 477322, "bytes_per_s": 1762256}
+{"name": "grad_norm", "value": 0.3431, "step": 524, "split": "train", "time": 641.848, "stage": "train"}
+{"name": "train_loss", "value": 4.7612175941467285, "step": 528, "split": "train", "time": 642.128, "stage": "train", "lr": 0.0007403257209084933, "grad_norm": 0.31417277455329895, "tokens_per_s": 475504, "bytes_per_s": 1755544}
+{"name": "grad_norm", "value": 0.3142, "step": 528, "split": "train", "time": 642.136, "stage": "train"}
+{"name": "train_loss", "value": 4.641251564025879, "step": 532, "split": "train", "time": 642.431, "stage": "train", "lr": 0.0007275703479453749, "grad_norm": 0.3183976113796234, "tokens_per_s": 450215, "bytes_per_s": 1662177}
+{"name": "grad_norm", "value": 0.3184, "step": 532, "split": "train", "time": 642.437, "stage": "train"}
+{"name": "train_loss", "value": 5.007661819458008, "step": 536, "split": "train", "time": 642.723, "stage": "train", "lr": 0.0007149046115525115, "grad_norm": 0.330838143825531, "tokens_per_s": 467578, "bytes_per_s": 1726281}
+{"name": "grad_norm", "value": 0.3308, "step": 536, "split": "train", "time": 642.729, "stage": "train"}
+{"name": "train_loss", "value": 4.369446754455566, "step": 540, "split": "train", "time": 643.015, "stage": "train", "lr": 0.0007023315601261933, "grad_norm": 0.3117850124835968, "tokens_per_s": 469085, "bytes_per_s": 1731846}
+{"name": "grad_norm", "value": 0.3118, "step": 540, "split": "train", "time": 643.02, "stage": "train"}
+{"name": "train_loss", "value": 4.3430705070495605, "step": 544, "split": "train", "time": 643.299, "stage": "train", "lr": 0.0006898542197552442, "grad_norm": 0.3414294123649597, "tokens_per_s": 477272, "bytes_per_s": 1762071}
+{"name": "grad_norm", "value": 0.3414, "step": 544, "split": "train", "time": 643.304, "stage": "train"}
+{"name": "train_loss", "value": 5.028453350067139, "step": 548, "split": "train", "time": 643.585, "stage": "train", "lr": 0.0006774755934926986, "grad_norm": 0.33609145879745483, "tokens_per_s": 471985, "bytes_per_s": 1742553}
+{"name": "grad_norm", "value": 0.3361, "step": 548, "split": "train", "time": 643.591, "stage": "train"}
+{"name": "train_loss", "value": 4.577333450317383, "step": 552, "split": "train", "time": 643.879, "stage": "train", "lr": 0.0006651986606330254, "grad_norm": 0.3585522472858429, "tokens_per_s": 472962, "bytes_per_s": 1746157}
+{"name": "grad_norm", "value": 0.3586, "step": 552, "split": "train", "time": 643.887, "stage": "train"}
+{"name": "train_loss", "value": 4.919432163238525, "step": 556, "split": "train", "time": 644.185, "stage": "train", "lr": 0.0006530263759950717, "grad_norm": 0.33797189593315125, "tokens_per_s": 447190, "bytes_per_s": 1651010}
+{"name": "grad_norm", "value": 0.338, "step": 556, "split": "train", "time": 644.194, "stage": "train"}
+{"name": "train_loss", "value": 4.314526557922363, "step": 560, "split": "train", "time": 644.478, "stage": "train", "lr": 0.0006409616692108923, "grad_norm": 0.46694234013557434, "tokens_per_s": 468114, "bytes_per_s": 1728258}
+{"name": "grad_norm", "value": 0.4669, "step": 560, "split": "train", "time": 644.486, "stage": "train"}
+{"name": "train_loss", "value": 4.618757247924805, "step": 564, "split": "train", "time": 644.766, "stage": "train", "lr": 0.0006290074440206474, "grad_norm": 0.3657580018043518, "tokens_per_s": 477357, "bytes_per_s": 1762386}
+{"name": "grad_norm", "value": 0.3658, "step": 564, "split": "train", "time": 644.771, "stage": "train"}
+{"name": "train_loss", "value": 4.712439060211182, "step": 568, "split": "train", "time": 645.048, "stage": "train", "lr": 0.0006171665775737262, "grad_norm": 0.34293293952941895, "tokens_per_s": 478728, "bytes_per_s": 1767448}
+{"name": "grad_norm", "value": 0.3429, "step": 568, "split": "train", "time": 645.053, "stage": "train"}
+{"name": "train_loss", "value": 4.994926929473877, "step": 572, "split": "train", "time": 645.332, "stage": "train", "lr": 0.0006054419197362746, "grad_norm": 0.3188171088695526, "tokens_per_s": 478384, "bytes_per_s": 1766178}
+{"name": "grad_norm", "value": 0.3188, "step": 572, "split": "train", "time": 645.34, "stage": "train"}
+{"name": "train_loss", "value": 4.930494785308838, "step": 576, "split": "train", "time": 645.622, "stage": "train", "lr": 0.0005938362924052881, "grad_norm": 0.3230745196342468, "tokens_per_s": 478263, "bytes_per_s": 1765729}
+{"name": "grad_norm", "value": 0.3231, "step": 576, "split": "train", "time": 645.626, "stage": "train"}
+{"name": "train_loss", "value": 4.588531494140625, "step": 580, "split": "train", "time": 645.912, "stage": "train", "lr": 0.000582352488829434, "grad_norm": 0.3478250205516815, "tokens_per_s": 469201, "bytes_per_s": 1732272}
+{"name": "grad_norm", "value": 0.3478, "step": 580, "split": "train", "time": 645.918, "stage": "train"}
+{"name": "train_loss", "value": 4.718661308288574, "step": 584, "split": "train", "time": 646.219, "stage": "train", "lr": 0.0005709932729367744, "grad_norm": 0.3273473083972931, "tokens_per_s": 442486, "bytes_per_s": 1633643}
+{"name": "grad_norm", "value": 0.3273, "step": 584, "split": "train", "time": 646.225, "stage": "train"}
+{"name": "train_loss", "value": 4.531772613525391, "step": 588, "split": "train", "time": 646.504, "stage": "train", "lr": 0.0005597613786695381, "grad_norm": 0.3325778841972351, "tokens_per_s": 478170, "bytes_per_s": 1765388}
+{"name": "grad_norm", "value": 0.3326, "step": 588, "split": "train", "time": 646.517, "stage": "train"}
+{"name": "train_loss", "value": 4.486978054046631, "step": 592, "split": "train", "time": 646.795, "stage": "train", "lr": 0.0005486595093261175, "grad_norm": 0.33972764015197754, "tokens_per_s": 478695, "bytes_per_s": 1767325}
+{"name": "grad_norm", "value": 0.3397, "step": 592, "split": "train", "time": 646.801, "stage": "train"}
+{"name": "train_loss", "value": 5.056025505065918, "step": 596, "split": "train", "time": 647.079, "stage": "train", "lr": 0.000537690336910436, "grad_norm": 0.34388163685798645, "tokens_per_s": 479180, "bytes_per_s": 1769115}
+{"name": "grad_norm", "value": 0.3439, "step": 596, "split": "train", "time": 647.082, "stage": "train"}
+{"name": "train_loss", "value": 4.333254814147949, "step": 600, "split": "train", "time": 647.36, "stage": "train", "lr": 0.0005268565014888477, "grad_norm": 0.4463808834552765, "tokens_per_s": 477062, "bytes_per_s": 1761298}
+{"name": "grad_norm", "value": 0.4464, "step": 600, "split": "train", "time": 647.366, "stage": "train"}
+{"name": "train_loss", "value": 4.594145774841309, "step": 604, "split": "train", "time": 647.648, "stage": "train", "lr": 0.000516160610554727, "grad_norm": 0.3268609046936035, "tokens_per_s": 478870, "bytes_per_s": 1767971}
+{"name": "grad_norm", "value": 0.3269, "step": 604, "split": "train", "time": 647.654, "stage": "train"}
+{"name": "train_loss", "value": 4.706269264221191, "step": 608, "split": "train", "time": 647.935, "stage": "train", "lr": 0.0005056052384008932, "grad_norm": 0.3395288288593292, "tokens_per_s": 473574, "bytes_per_s": 1748419}
+{"name": "grad_norm", "value": 0.3395, "step": 608, "split": "train", "time": 647.95, "stage": "train"}
+{"name": "train_loss", "value": 4.682586669921875, "step": 612, "split": "train", "time": 648.243, "stage": "train", "lr": 0.0004951929255000299, "grad_norm": 0.33590462803840637, "tokens_per_s": 453328, "bytes_per_s": 1673672}
+{"name": "grad_norm", "value": 0.3359, "step": 612, "split": "train", "time": 648.257, "stage": "train"}
+{"name": "train_loss", "value": 4.252594470977783, "step": 616, "split": "train", "time": 648.538, "stage": "train", "lr": 0.00048492617789324256, "grad_norm": 0.3209696114063263, "tokens_per_s": 474867, "bytes_per_s": 1753192}
+{"name": "grad_norm", "value": 0.321, "step": 616, "split": "train", "time": 648.547, "stage": "train"}
+{"name": "train_loss", "value": 5.022394180297852, "step": 620, "split": "train", "time": 648.826, "stage": "train", "lr": 0.00047480746658690236, "grad_norm": 0.32895350456237793, "tokens_per_s": 477388, "bytes_per_s": 1762498}
+{"name": "grad_norm", "value": 0.329, "step": 620, "split": "train", "time": 648.832, "stage": "train"}
+{"name": "valid_loss", "value": 4.49801, "step": 620, "split": "valid", "time": 652.465, "stage": "train"}
+{"name": "valid_bpb", "value": 1.76201, "step": 620, "split": "valid", "time": 652.469, "stage": "train"}
+{"name": "train_loss", "value": 4.590726852416992, "step": 624, "split": "train", "time": 652.752, "stage": "train", "lr": 0.0004648392269579243, "grad_norm": 0.35382357239723206, "tokens_per_s": 472957, "bytes_per_s": 1746139}
+{"name": "grad_norm", "value": 0.3538, "step": 624, "split": "train", "time": 652.754, "stage": "train"}
+{"name": "train_loss", "value": 4.450616836547852, "step": 628, "split": "train", "time": 653.033, "stage": "train", "lr": 0.00045502385816761784, "grad_norm": 0.3207940459251404, "tokens_per_s": 475370, "bytes_per_s": 1755049}
+{"name": "grad_norm", "value": 0.3208, "step": 628, "split": "train", "time": 653.037, "stage": "train"}
+{"name": "train_loss", "value": 4.3756303787231445, "step": 632, "split": "train", "time": 653.317, "stage": "train", "lr": 0.00044536372258425615, "grad_norm": 0.3152438998222351, "tokens_per_s": 475024, "bytes_per_s": 1753773}
+{"name": "grad_norm", "value": 0.3152, "step": 632, "split": "train", "time": 653.321, "stage": "train"}
+{"name": "train_loss", "value": 4.677009582519531, "step": 636, "split": "train", "time": 653.631, "stage": "train", "lr": 0.00043586114521450124, "grad_norm": 0.32297924160957336, "tokens_per_s": 428334, "bytes_per_s": 1581395}
+{"name": "grad_norm", "value": 0.323, "step": 636, "split": "train", "time": 653.641, "stage": "train"}
+{"name": "train_loss", "value": 4.433480262756348, "step": 640, "split": "train", "time": 653.927, "stage": "train", "lr": 0.00042651841314381774, "grad_norm": 0.3192918002605438, "tokens_per_s": 471623, "bytes_per_s": 1741215}
+{"name": "grad_norm", "value": 0.3193, "step": 640, "split": "train", "time": 653.936, "stage": "train"}
+{"name": "train_loss", "value": 4.5764570236206055, "step": 644, "split": "train", "time": 654.226, "stage": "train", "lr": 0.00041733777498601806, "grad_norm": 0.3133295178413391, "tokens_per_s": 473789, "bytes_per_s": 1749212}
+{"name": "grad_norm", "value": 0.3133, "step": 644, "split": "train", "time": 654.235, "stage": "train"}
+{"name": "train_loss", "value": 4.538680076599121, "step": 648, "split": "train", "time": 654.518, "stage": "train", "lr": 0.00040832144034206333, "grad_norm": 0.32879385352134705, "tokens_per_s": 471055, "bytes_per_s": 1739118}
+{"name": "grad_norm", "value": 0.3288, "step": 648, "split": "train", "time": 654.527, "stage": "train"}
+{"name": "train_loss", "value": 4.800548553466797, "step": 652, "split": "train", "time": 654.804, "stage": "train", "lr": 0.000399471579268256, "grad_norm": 0.3119308054447174, "tokens_per_s": 478184, "bytes_per_s": 1765439}
+{"name": "grad_norm", "value": 0.3119, "step": 652, "split": "train", "time": 654.818, "stage": "train"}
+{"name": "train_loss", "value": 4.661459922790527, "step": 656, "split": "train", "time": 655.138, "stage": "train", "lr": 0.0003907903217539504, "grad_norm": 0.32506176829338074, "tokens_per_s": 429410, "bytes_per_s": 1585367}
+{"name": "grad_norm", "value": 0.3251, "step": 656, "split": "train", "time": 655.141, "stage": "train"}
+{"name": "train_loss", "value": 4.85677433013916, "step": 660, "split": "train", "time": 655.419, "stage": "train", "lr": 0.0003822797572089036, "grad_norm": 0.3160780668258667, "tokens_per_s": 478033, "bytes_per_s": 1764881}
+{"name": "grad_norm", "value": 0.3161, "step": 660, "split": "train", "time": 655.429, "stage": "train"}
+{"name": "train_loss", "value": 4.392772197723389, "step": 664, "split": "train", "time": 655.71, "stage": "train", "lr": 0.00037394193396039777, "grad_norm": 0.29980552196502686, "tokens_per_s": 477092, "bytes_per_s": 1761408}
+{"name": "grad_norm", "value": 0.2998, "step": 664, "split": "train", "time": 655.714, "stage": "train"}
+{"name": "train_loss", "value": 3.835017204284668, "step": 668, "split": "train", "time": 655.993, "stage": "train", "lr": 0.00036577885876024535, "grad_norm": 0.29503875970840454, "tokens_per_s": 478430, "bytes_per_s": 1766347}
+{"name": "grad_norm", "value": 0.295, "step": 668, "split": "train", "time": 655.998, "stage": "train"}
+{"name": "train_loss", "value": 4.475054740905762, "step": 672, "split": "train", "time": 656.28, "stage": "train", "lr": 0.0003577924963018039, "grad_norm": 0.30232489109039307, "tokens_per_s": 469557, "bytes_per_s": 1733586}
+{"name": "grad_norm", "value": 0.3023, "step": 672, "split": "train", "time": 656.288, "stage": "train"}
+{"name": "train_loss", "value": 4.506092071533203, "step": 676, "split": "train", "time": 656.566, "stage": "train", "lr": 0.00034998476874711367, "grad_norm": 0.3184208869934082, "tokens_per_s": 476894, "bytes_per_s": 1760676}
+{"name": "grad_norm", "value": 0.3184, "step": 676, "split": "train", "time": 656.57, "stage": "train"}
+{"name": "train_loss", "value": 4.5564093589782715, "step": 680, "split": "train", "time": 656.856, "stage": "train", "lr": 0.00034235755526426827, "grad_norm": 0.3438785672187805, "tokens_per_s": 468965, "bytes_per_s": 1731402}
+{"name": "grad_norm", "value": 0.3439, "step": 680, "split": "train", "time": 656.862, "stage": "train"}
+{"name": "train_loss", "value": 4.482501029968262, "step": 684, "split": "train", "time": 657.183, "stage": "train", "lr": 0.0003349126915751378, "grad_norm": 0.319751113653183, "tokens_per_s": 428387, "bytes_per_s": 1581588}
+{"name": "grad_norm", "value": 0.3198, "step": 684, "split": "train", "time": 657.187, "stage": "train"}
+{"name": "train_loss", "value": 4.641579627990723, "step": 688, "split": "train", "time": 657.464, "stage": "train", "lr": 0.0003276519695135449, "grad_norm": 0.3233920633792877, "tokens_per_s": 478700, "bytes_per_s": 1767342}
+{"name": "grad_norm", "value": 0.3234, "step": 688, "split": "train", "time": 657.468, "stage": "train"}
+{"name": "train_loss", "value": 4.286707878112793, "step": 692, "split": "train", "time": 657.745, "stage": "train", "lr": 0.00032057713659400515, "grad_norm": 0.3067149817943573, "tokens_per_s": 477693, "bytes_per_s": 1763625}
+{"name": "grad_norm", "value": 0.3067, "step": 692, "split": "train", "time": 657.748, "stage": "train"}
+{"name": "train_loss", "value": 4.294394493103027, "step": 696, "split": "train", "time": 658.028, "stage": "train", "lr": 0.000313689895591136, "grad_norm": 0.30498793721199036, "tokens_per_s": 477700, "bytes_per_s": 1763650}
+{"name": "grad_norm", "value": 0.305, "step": 696, "split": "train", "time": 658.04, "stage": "train"}
+{"name": "train_loss", "value": 5.0091142654418945, "step": 700, "split": "train", "time": 658.32, "stage": "train", "lr": 0.00030699190412982933, "grad_norm": 0.3247698247432709, "tokens_per_s": 476080, "bytes_per_s": 1757669}
+{"name": "grad_norm", "value": 0.3248, "step": 700, "split": "train", "time": 658.328, "stage": "train"}
+{"name": "train_loss", "value": 4.351647853851318, "step": 704, "split": "train", "time": 658.605, "stage": "train", "lr": 0.0003004847742862965, "grad_norm": 0.3170267343521118, "tokens_per_s": 478211, "bytes_per_s": 1765537}
+{"name": "grad_norm", "value": 0.317, "step": 704, "split": "train", "time": 658.607, "stage": "train"}
+{"name": "train_loss", "value": 4.50462532043457, "step": 708, "split": "train", "time": 658.89, "stage": "train", "lr": 0.0002941700722000699, "grad_norm": 0.3270223140716553, "tokens_per_s": 475920, "bytes_per_s": 1757079}
+{"name": "grad_norm", "value": 0.327, "step": 708, "split": "train", "time": 658.895, "stage": "train"}
+{"name": "train_loss", "value": 4.3026957511901855, "step": 712, "split": "train", "time": 659.174, "stage": "train", "lr": 0.00028804931769706605, "grad_norm": 0.30148983001708984, "tokens_per_s": 477768, "bytes_per_s": 1763901}
+{"name": "grad_norm", "value": 0.3015, "step": 712, "split": "train", "time": 659.177, "stage": "train"}
+{"name": "train_loss", "value": 4.353843688964844, "step": 716, "split": "train", "time": 659.487, "stage": "train", "lr": 0.00028212398392379217, "grad_norm": 0.3154931664466858, "tokens_per_s": 428446, "bytes_per_s": 1581809}
+{"name": "grad_norm", "value": 0.3155, "step": 716, "split": "train", "time": 659.496, "stage": "train"}
+{"name": "train_loss", "value": 4.575726509094238, "step": 720, "split": "train", "time": 659.773, "stage": "train", "lr": 0.00027639549699278804, "grad_norm": 0.3184076249599457, "tokens_per_s": 478570, "bytes_per_s": 1766863}
+{"name": "grad_norm", "value": 0.3184, "step": 720, "split": "train", "time": 659.786, "stage": "train"}
+{"name": "valid_loss", "value": 4.39021, "step": 723, "split": "valid", "time": 663.62, "stage": "train"}
+{"name": "valid_bpb", "value": 1.71979, "step": 723, "split": "valid", "time": 663.641, "stage": "train"}
+{"name": "train_loss", "value": 4.515562534332275, "step": 724, "split": "train", "time": 663.737, "stage": "train", "lr": 0.00027086523563938926, "grad_norm": 0.3090633153915405, "tokens_per_s": 362932, "bytes_per_s": 1339931}
+{"name": "grad_norm", "value": 0.3091, "step": 724, "split": "train", "time": 663.746, "stage": "train"}
+{"name": "train_loss", "value": 4.426142692565918, "step": 728, "split": "train", "time": 664.03, "stage": "train", "lr": 0.00026553453088989145, "grad_norm": 0.3110286295413971, "tokens_per_s": 469118, "bytes_per_s": 1731966}
+{"name": "grad_norm", "value": 0.311, "step": 728, "split": "train", "time": 664.039, "stage": "train"}
+{"name": "train_loss", "value": 4.23930549621582, "step": 732, "split": "train", "time": 664.322, "stage": "train", "lr": 0.0002604046657411995, "grad_norm": 0.3432474136352539, "tokens_per_s": 477894, "bytes_per_s": 1764367}
+{"name": "grad_norm", "value": 0.3432, "step": 732, "split": "train", "time": 664.326, "stage": "train"}
+{"name": "train_loss", "value": 4.38511848449707, "step": 736, "split": "train", "time": 664.605, "stage": "train", "lr": 0.0002554768748520346, "grad_norm": 0.326080322265625, "tokens_per_s": 477694, "bytes_per_s": 1763630}
+{"name": "grad_norm", "value": 0.3261, "step": 736, "split": "train", "time": 664.609, "stage": "train"}
+{"name": "train_loss", "value": 4.266969680786133, "step": 740, "split": "train", "time": 664.91, "stage": "train", "lr": 0.00025075234424577487, "grad_norm": 0.313291996717453, "tokens_per_s": 441882, "bytes_per_s": 1631413}
+{"name": "grad_norm", "value": 0.3133, "step": 740, "split": "train", "time": 664.923, "stage": "train"}
+{"name": "train_loss", "value": 4.32697868347168, "step": 744, "split": "train", "time": 665.203, "stage": "train", "lr": 0.0002462322110250044, "grad_norm": 0.32781878113746643, "tokens_per_s": 474278, "bytes_per_s": 1751017}
+{"name": "grad_norm", "value": 0.3278, "step": 744, "split": "train", "time": 665.207, "stage": "train"}
+{"name": "train_loss", "value": 4.6138834953308105, "step": 748, "split": "train", "time": 665.484, "stage": "train", "lr": 0.0002419175630978331, "grad_norm": 0.34834232926368713, "tokens_per_s": 478187, "bytes_per_s": 1765451}
+{"name": "grad_norm", "value": 0.3483, "step": 748, "split": "train", "time": 665.487, "stage": "train"}
+{"name": "train_loss", "value": 4.372786521911621, "step": 752, "split": "train", "time": 665.764, "stage": "train", "lr": 0.00023780943891606, "grad_norm": 0.32521647214889526, "tokens_per_s": 478103, "bytes_per_s": 1765141}
+{"name": "grad_norm", "value": 0.3252, "step": 752, "split": "train", "time": 665.766, "stage": "train"}
+{"name": "train_loss", "value": 4.746910095214844, "step": 756, "split": "train", "time": 666.052, "stage": "train", "lr": 0.00023390882722523694, "grad_norm": 0.32023441791534424, "tokens_per_s": 463952, "bytes_per_s": 1712893}
+{"name": "grad_norm", "value": 0.3202, "step": 756, "split": "train", "time": 666.057, "stage": "train"}
+{"name": "train_loss", "value": 4.209225654602051, "step": 760, "split": "train", "time": 666.34, "stage": "train", "lr": 0.0002302166668266969, "grad_norm": 0.31182965636253357, "tokens_per_s": 473990, "bytes_per_s": 1749952}
+{"name": "grad_norm", "value": 0.3118, "step": 760, "split": "train", "time": 666.345, "stage": "train"}
+{"name": "train_loss", "value": 4.472508907318115, "step": 764, "split": "train", "time": 666.651, "stage": "train", "lr": 0.00022673384635160318, "grad_norm": 0.31473779678344727, "tokens_per_s": 437294, "bytes_per_s": 1614475}
+{"name": "grad_norm", "value": 0.3147, "step": 764, "split": "train", "time": 666.655, "stage": "train"}
+{"name": "train_loss", "value": 4.291101455688477, "step": 768, "split": "train", "time": 666.935, "stage": "train", "lr": 0.00022346120404707318, "grad_norm": 0.3141748905181885, "tokens_per_s": 474536, "bytes_per_s": 1751970}
+{"name": "grad_norm", "value": 0.3142, "step": 768, "split": "train", "time": 666.94, "stage": "train"}
+{"name": "train_loss", "value": 4.402252197265625, "step": 772, "split": "train", "time": 667.217, "stage": "train", "lr": 0.000220399527574428, "grad_norm": 0.3162505626678467, "tokens_per_s": 477884, "bytes_per_s": 1764332}
+{"name": "grad_norm", "value": 0.3163, "step": 772, "split": "train", "time": 667.22, "stage": "train"}
+{"name": "train_loss", "value": 4.388092041015625, "step": 776, "split": "train", "time": 667.497, "stage": "train", "lr": 0.00021754955381961862, "grad_norm": 0.3183392584323883, "tokens_per_s": 478563, "bytes_per_s": 1766839}
+{"name": "grad_norm", "value": 0.3183, "step": 776, "split": "train", "time": 667.505, "stage": "train"}
+{"name": "train_loss", "value": 4.502066612243652, "step": 780, "split": "train", "time": 667.785, "stage": "train", "lr": 0.00021491196871587098, "grad_norm": 0.44762566685676575, "tokens_per_s": 476966, "bytes_per_s": 1760942}
+{"name": "grad_norm", "value": 0.4476, "step": 780, "split": "train", "time": 667.802, "stage": "train"}
+{"name": "train_loss", "value": 4.511465072631836, "step": 784, "split": "train", "time": 668.083, "stage": "train", "lr": 0.00021248740707859552, "grad_norm": 0.3305581212043762, "tokens_per_s": 477692, "bytes_per_s": 1763621}
+{"name": "grad_norm", "value": 0.3306, "step": 784, "split": "train", "time": 668.091, "stage": "train"}
+{"name": "train_loss", "value": 4.630828857421875, "step": 788, "split": "train", "time": 668.382, "stage": "train", "lr": 0.00021027645245259957, "grad_norm": 0.32159659266471863, "tokens_per_s": 462189, "bytes_per_s": 1706387}
+{"name": "grad_norm", "value": 0.3216, "step": 788, "split": "train", "time": 668.389, "stage": "train"}
+{"name": "train_loss", "value": 4.202864646911621, "step": 792, "split": "train", "time": 668.687, "stage": "train", "lr": 0.00020827963697163924, "grad_norm": 0.310402512550354, "tokens_per_s": 447253, "bytes_per_s": 1651242}
+{"name": "grad_norm", "value": 0.3104, "step": 792, "split": "train", "time": 668.695, "stage": "train"}
+{"name": "train_loss", "value": 4.427694320678711, "step": 796, "split": "train", "time": 668.974, "stage": "train", "lr": 0.00020649744123034549, "grad_norm": 0.30113595724105835, "tokens_per_s": 478603, "bytes_per_s": 1766985}
+{"name": "grad_norm", "value": 0.3011, "step": 796, "split": "train", "time": 668.977, "stage": "train"}
+{"name": "train_loss", "value": 4.523114204406738, "step": 800, "split": "train", "time": 669.257, "stage": "train", "lr": 0.00020493029416855405, "grad_norm": 0.3207909166812897, "tokens_per_s": 473210, "bytes_per_s": 1747075}
+{"name": "grad_norm", "value": 0.3208, "step": 800, "split": "train", "time": 669.26, "stage": "train"}
+{"name": "train_loss", "value": 4.457917213439941, "step": 804, "split": "train", "time": 669.536, "stage": "train", "lr": 0.00020357857296806798, "grad_norm": 0.3144572973251343, "tokens_per_s": 478180, "bytes_per_s": 1765423}
+{"name": "grad_norm", "value": 0.3145, "step": 804, "split": "train", "time": 669.542, "stage": "train"}
+{"name": "train_loss", "value": 4.4093451499938965, "step": 808, "split": "train", "time": 669.823, "stage": "train", "lr": 0.00020244260296187745, "grad_norm": 0.3142862617969513, "tokens_per_s": 473100, "bytes_per_s": 1746668}
+{"name": "grad_norm", "value": 0.3143, "step": 808, "split": "train", "time": 669.827, "stage": "train"}
+{"name": "train_loss", "value": 4.229243278503418, "step": 812, "split": "train", "time": 670.105, "stage": "train", "lr": 0.00020152265755585865, "grad_norm": 0.3306733965873718, "tokens_per_s": 478388, "bytes_per_s": 1766190}
+{"name": "grad_norm", "value": 0.3307, "step": 812, "split": "train", "time": 670.111, "stage": "train"}
+{"name": "train_loss", "value": 4.6674699783325195, "step": 816, "split": "train", "time": 670.398, "stage": "train", "lr": 0.00020081895816296974, "grad_norm": 0.33578673005104065, "tokens_per_s": 461900, "bytes_per_s": 1705317}
+{"name": "grad_norm", "value": 0.3358, "step": 816, "split": "train", "time": 670.402, "stage": "train"}
+{"name": "train_loss", "value": 4.113682746887207, "step": 820, "split": "train", "time": 670.703, "stage": "train", "lr": 0.00020033167414996154, "grad_norm": 0.31407853960990906, "tokens_per_s": 440954, "bytes_per_s": 1627986}
+{"name": "grad_norm", "value": 0.3141, "step": 820, "split": "train", "time": 670.712, "stage": "train"}
+{"name": "train_loss", "value": 4.357783317565918, "step": 824, "split": "train", "time": 670.99, "stage": "train", "lr": 0.00020006092279661403, "grad_norm": 0.3263223171234131, "tokens_per_s": 478029, "bytes_per_s": 1764868}
+{"name": "grad_norm", "value": 0.3263, "step": 824, "split": "train", "time": 670.994, "stage": "train"}
+{"name": "train_loss", "value": 4.36574649810791, "step": 826, "split": "train", "time": 671.116, "stage": "train", "lr": 0.00020000676926750955, "grad_norm": 0.32934218645095825, "tokens_per_s": 557083, "bytes_per_s": 2056729}
+{"name": "grad_norm", "value": 0.3293, "step": 826, "split": "train", "time": 671.122, "stage": "train"}
+{"name": "valid_loss", "value": 4.32573, "step": 826, "split": "valid", "time": 674.725, "stage": "train"}
+{"name": "valid_bpb", "value": 1.69453, "step": 826, "split": "valid", "time": 674.737, "stage": "train"}

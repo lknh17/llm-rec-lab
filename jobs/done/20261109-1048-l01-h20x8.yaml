@@ -1,0 +1,25 @@
+job_id: 20261109-1048-l01-h20x8
+created_at: '2026-11-09T02:48:28Z'
+profile: h20x8
+courses:
+- L01
+only: []
+seeds: []
+requested_commit: 022b3ac421ce7d4f23e782e074becec831b46647
+note: L01 数据与分词首发：8 场景 × 3 种子
+how_to_run: python -m labkit jobs run 20261109-1048-l01-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-09T02:50:27Z'
+started_at: '2026-11-09T07:11:27Z'
+ran_commit: 931107733530ca830f10bb3d94ad837f4fa6769e
+host_summary:
+  torch: 2.15.0+cu132
+  cuda: '13.2'
+  gpu: NVIDIA H20
+  gpu_count: 8
+  gpu_mem_gb: 95.0
+  driver: 535.161.08
+status: failed
+finished_at: '2026-11-09T07:36:14Z'
+problems:
+- 'ValueError: Invalid format specifier ''++.3f'' for object of type ''float'''

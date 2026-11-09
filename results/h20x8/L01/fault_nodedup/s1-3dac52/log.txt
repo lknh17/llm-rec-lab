@@ -1,0 +1,18 @@
+[worker] 等待设备锁 gpu4-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L01/fault_nodedup/s1-3dac52/code/tinylm/experiment.py
+[15:11:53] ===== 阶段：prepare =====
+[15:12:21] 语料：原始 230791 篇 → 清洗后 212958 篇 → 底稿去重后 177625 篇；注入副本 123303 份；去重（none）去掉 0 篇；训练 87846 篇 100.0 MB，验证 15110 篇（其中 5888 篇在训练集有副本），留出 9269 篇
+Traceback (most recent call last):
+  File "<repo>/labkit/worker.py", line 99, in execute
+    module.run(ctx, cfg)
+  File "<data>/batch/h20x8/L01/fault_nodedup/s1-3dac52/code/tinylm/experiment.py", line 109, in run
+    cdir = stage_cache(ctx, "tinylm_corpus", corpus_key(cfg), build_corpus)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/labkit/cache.py", line 42, in stage_cache
+    tmp.rename(final)
+  File "/usr/lib/python3.12/pathlib.py", line 1365, in rename
+    os.rename(self, target)
+OSError: [Errno 39] Directory not empty: '<data>/cache/tinylm_corpus/.f241dd6dcac6.tmp-s1-3dac52' -> '<data>/cache/tinylm_corpus/f241dd6dcac6'
+[worker] 结束：failed（OSError: [Errno 39] Directory not empty: '<data>/cache/tinylm_corpus/.f241dd6dcac6.tmp-s1-3dac52' -> '<data>/cache/tinylm_corpus/f241dd6dcac6'）
+{"status": "failed"}

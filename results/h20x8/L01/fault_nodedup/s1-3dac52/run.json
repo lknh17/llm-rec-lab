@@ -1,0 +1,109 @@
+{
+  "run_id": "h20x8.L01.fault_nodedup.s1-3dac52",
+  "course_id": "L01",
+  "project": "tinylm",
+  "entry": "tinylm.experiment",
+  "profile": "h20x8",
+  "scenario": "fault_nodedup",
+  "role": "fault",
+  "title": "不去重：转载副本随机落进训练集和验证集",
+  "seed": 1,
+  "variant": "fault_nodedup",
+  "config_hash": "3dac52d33c1b",
+  "code_hash": "393fb2e82043",
+  "git": {
+    "commit": "931107733530ca830f10bb3d94ad837f4fa6769e",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "dedup": "none"
+  },
+  "param_affects": {
+    "corpus": "data",
+    "min_chars": "data",
+    "source_dedup": "data",
+    "dup_ratio": "data",
+    "dedup": "data",
+    "train_mb": "data",
+    "valid_mb": "data",
+    "test_mb": "data",
+    "data_seed": "data",
+    "tokenizer": "data",
+    "vocab_size": "data",
+    "tok_train_mb": "data",
+    "tok_ads_ratio": "data",
+    "d_model": "model",
+    "n_layer": "model",
+    "n_head": "model",
+    "d_ff": "model",
+    "seq_len": "model",
+    "n_kv_head": "model",
+    "kv_lora_rank": "model",
+    "mla_rope_dim": "model",
+    "pos_emb": "model",
+    "norm_pos": "model",
+    "ffn": "model",
+    "moe_experts": "model",
+    "moe_top_k": "model",
+    "moe_d_ff": "model",
+    "doc_mask": "model",
+    "batch_size": "train",
+    "lr": "train",
+    "warmup_frac": "train",
+    "weight_decay": "train",
+    "grad_clip": "train",
+    "precision": "train",
+    "max_steps": "train",
+    "data_frac": "train",
+    "epochs": "train",
+    "flops_budget_frac": "train",
+    "lr_schedule": "train",
+    "target_offset": "train",
+    "moe_aux_coef": "train",
+    "grad_accum": "train",
+    "grad_scaler": "train",
+    "eval_points": "eval",
+    "device": "runtime",
+    "seed": "train",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "failed",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794208300.9561534,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794208301.1323843,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794208313.5963597,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "failed",
+      "time": 1794208342.6895013,
+      "note": "OSError: [Errno 39] Directory not empty: '<data>/cache/tinylm_corpus/.f241dd6dcac6.tmp-s1-3dac52' -> '<data>/cache/tinylm_corpus/f241dd6dcac6'"
+    }
+  ],
+  "created_at": 1794208300.9561534,
+  "budget": {
+    "max_minutes": 60.0
+  },
+  "expect": [
+    "meta.data.corpus.valid_leak_frac > 0.15",
+    "summary.valid_leak_many.bpb < summary.valid_uniq.bpb - 0.1",
+    "summary.gap.leaked_minus_uniq_bpb < -0.03"
+  ],
+  "slot": "gpu4-0",
+  "started_at": 1794208301.1323862,
+  "ended_at": 1794208342.6895025,
+  "end_reason": "OSError: [Errno 39] Directory not empty: '<data>/cache/tinylm_corpus/.f241dd6dcac6.tmp-s1-3dac52' -> '<data>/cache/tinylm_corpus/f241dd6dcac6'",
+  "exported": true
+}

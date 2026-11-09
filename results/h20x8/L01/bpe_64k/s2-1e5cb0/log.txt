@@ -1,0 +1,31 @@
+[worker] 等待设备锁 gpu6-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L01/bpe_64k/s2-1e5cb0/code/tinylm/experiment.py
+[15:28:46] ===== 阶段：prepare =====
+[15:28:46] 缓存 tinylm_corpus key=f9348045de2b: 命中，复用运行 s0-39279f 的产物
+[15:28:47] 缓存 tinylm_tokenizer key=0b8844b7ce67: 命中，复用运行 s0-c432bd 的产物
+[15:28:47] 缓存 tinylm_streams key=b1455a090012: 命中，复用运行 s0-c432bd 的产物
+[15:28:48] 压缩率：验证集每 token 4.2222 字节 / 1.7875 字；广告每条 23.65 个 token
+[15:28:48] 模型：总参数 35,787,648，其中 embedding 25,165,824（70%）；每 token 训练 222 MFLOPs，输出层占 68%；KV cache 每 token 9,216 字节（bf16）
+[15:28:48] ===== 阶段：train =====
+[15:28:52] 训练：717 步 × 64 × 512 = 23,494,656 token（训练流共 23,501,894 token，用前 23,501,824 个 × 1 遍；每 token 4.26 字节）；在第 [90, 179, 269, 358, 448, 538, 627, 717] 步评估
+[15:29:09] step 90/717 train_loss 7.6612 valid loss 7.3047 bpb 2.4960
+[15:29:24] step 179/717 train_loss 6.9123 valid loss 6.4709 bpb 2.2111
+[15:29:40] step 269/717 train_loss 6.1220 valid loss 5.9938 bpb 2.0480
+[15:29:55] step 358/717 train_loss 6.0947 valid loss 5.6764 bpb 1.9396
+[15:30:10] step 448/717 train_loss 5.3696 valid loss 5.4572 bpb 1.8647
+[15:30:26] step 538/717 train_loss 5.5735 valid loss 5.2950 bpb 1.8093
+[15:30:41] step 627/717 train_loss 5.0081 valid loss 5.1989 bpb 1.7765
+[15:30:56] step 717/717 train_loss 5.3238 valid loss 5.1397 bpb 1.7562
+[15:30:57] ===== 阶段：evaluate =====
+[15:31:00] [valid] 9.82 MB  每 token loss 5.13973  bpb 1.75621
+[15:31:04] [test] 10.00 MB  每 token loss 5.22899  bpb 1.77029
+[15:31:04] [ads] 0.00 MB  每 token loss 7.94498  bpb 3.47094
+[15:31:04] [valid_leaked] 0.09 MB  每 token loss 4.03363  bpb 1.03787
+[15:31:04] [valid_leak_few] 0.09 MB  每 token loss 4.04592  bpb 1.04925
+[15:31:04] [valid_leak_many] 0.00 MB  每 token loss None  bpb None
+[15:31:05] [valid_dup] 1.89 MB  每 token loss 4.87589  bpb 1.72134
+[15:31:07] [valid_uniq] 7.85 MB  每 token loss 5.21369  bpb 1.77308
+[15:31:16] 重新加载核对：广告 bpb 3.47094 → 3.47094（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}
