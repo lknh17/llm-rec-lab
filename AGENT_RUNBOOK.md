@@ -87,7 +87,7 @@ systemctl --user daemon-reload && systemctl --user enable --now labkit-agent
 loginctl enable-linger $USER                                     # 退出 SSH 后继续运行
 ```
 
-服务文件里设了 `HF_HUB_OFFLINE=1`，所以**必须先完成第 3 节的模型下载**。
+服务文件里**不要**设 `HF_HUB_OFFLINE=1`：agent 执行作业前会自动下载场景声明的资产（已存在就跳过），离线模式会让缺资产的运行全部失败。第 3 节先手动下载一遍，可以避免第一张作业等下载。
 
 agent 每 60 秒一轮（`labkit/agent.py`）：
 
