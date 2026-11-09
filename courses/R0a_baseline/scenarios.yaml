@@ -1,0 +1,81 @@
+course: R0a
+title: R0a 推荐训练基线：样本与标签、三种切分、冷启动占比、AUC / GAUC、embedding 容量与 epoch 数，随机切分的验证虚高
+project: recbase
+entry: recbase.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。MovieLens-1M 全量（100 万条评分，rating ≥ 4 记为喜欢）；只用用户 ID + 电影 ID 的 Embedding + MLP（d=32、256-128），1 个 epoch
+    base: {device: cuda, max_minutes: 20}
+    seeds: [0, 1, 2]
+    assets: [ml-1m]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：只取 300 个用户、8 维 embedding、32 宽 MLP，只验证流程能跑通（结果没有教学意义，不检查断言）
+    base: {max_users: 300, embedding_dim: 8, hidden: "32", batch_size: 256, bootstrap: 5, max_minutes: 10}
+    seeds: [0]
+    skip_expect: true
+    assets: [ml-1m]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：全局时间切分（训练 < t80 ≤ 验证 < t90 ≤ 留出），只用 ID，1 个 epoch
+    params: {}
+    expect:
+      - "summary.data.leak.train_has_future == False"
+      - "summary.data.cold.valid.user_rows > 0.5"
+      - "summary.valid.auc > 0.70"
+      - "summary.valid.auc > summary.reference.valid.item_mean.auc"
+
+  # ---------- 切分 ----------
+  - id: fault_random
+    role: fault
+    title: t90 之前的行随机 8:1 切分训练 / 验证（留出集不变）
+    params: {split: random}
+    expect:
+      - "summary.data.test_hash == base.summary.data.test_hash"
+      - "summary.data.cold.valid.user_rows < 0.01"
+      - "summary.data.leak.valid_rows_with_later_train_same_user > 0.5"
+      - "summary.valid.auc > base.summary.valid.auc + 0.02"
+  - id: split_user_last
+    role: variant
+    title: t90 之前每个用户最后 5 条进验证（leave-last-out）
+    params: {split: user_last}
+    expect:
+      - "summary.data.test_hash == base.summary.data.test_hash"
+      - "summary.data.cold.valid.user_rows == 0"
+      - "summary.data.leak.train_has_future == True"
+
+  # ---------- 容量与 epoch ----------
+  - id: emb_8
+    role: variant
+    title: embedding 维度 32 → 8
+    params: {embedding_dim: 8}
+    expect:
+      - "summary.params.embedding < base.summary.params.embedding"
+  - id: emb_128
+    role: variant
+    title: embedding 维度 32 → 128
+    params: {embedding_dim: 128}
+    expect:
+      - "summary.params.embedding > base.summary.params.embedding"
+  - id: ep8
+    role: variant
+    title: 训 8 个 epoch（每个 epoch 末在验证 / 留出上各评估一次）
+    params: {epochs: 8}
+    expect:
+      - "len(summary.epochs) == 8"
+  - id: ep8_emb128
+    role: variant
+    title: 8 个 epoch + embedding 128 维
+    params: {epochs: 8, embedding_dim: 128}
+    expect:
+      - "len(summary.epochs) == 8"
+  - id: ep8_user_last
+    role: variant
+    title: 8 个 epoch + leave-last-out 切分（验证集全是老用户）
+    params: {epochs: 8, split: user_last}
+    expect:
+      - "len(summary.epochs) == 8"

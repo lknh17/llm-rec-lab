@@ -5,7 +5,7 @@
     python -m labkit assets --profile h20x8          # 下载该档位所有场景需要的资产
 
 adextract / adpref 的训练数据是仓库里的合成数据（projects/adextract/synth.py）和人工评测集（evalsets/），不需要下载；
-tinylm（L01-L04）用公开数据集的单个分片（DATASETS）。
+tinylm（L01-L04）用公开数据集的单个分片；推荐课（recbase / recseq / genrec）用 MovieLens-1M（DATASETS）。
 许可：Qwen2.5（阿里）Apache-2.0；中文维基 CC-BY-SA-4.0。
 国内网络：设 HF_ENDPOINT=https://hf-mirror.com，或装 modelscope 后用 LABKIT_MODEL_SOURCE=modelscope。
 """
@@ -77,6 +77,9 @@ DATASETS = {
     "zhwiki-2311-s2": {"repo": "wikimedia/wikipedia", "files": ["20231101.zh/train-00002-of-00006.parquet"],
                        "size": "127 MB", "license": "CC-BY-SA-4.0",
                        "note": "中文维基 2023-11-01 快照的第 3 个分片（约 13 万篇，繁简混排，原文未转换）"},
+    "ml-1m": {"repo": "hazemessam/ml-1m", "files": ["ratings.csv", "users.csv", "movies.csv"], "size": "约 25 MB",
+              "license": "GroupLens 使用条款（研究用途，不可再分发）",
+              "note": "MovieLens-1M 的 CSV 转写（6040 用户、3883 部电影、100 万条评分）；timestamp 字段带引号且含换行"},
 }
 
 

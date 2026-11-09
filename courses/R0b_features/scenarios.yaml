@@ -1,0 +1,90 @@
+course: R0b
+title: R0b 特征改进与泄漏诊断：种子噪声线、四组特征各自的收益和来源、GAUC 与分组、统计特征的时点口径，全量统计穿越
+project: recbase
+entry: recbase.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。数据、切分和 R0a 基线完全相同（全局时间切分，固定未来留出集）；基线和"全部特征"各跑 5 个种子，用来量噪声线
+    base: {device: cuda, max_minutes: 20}
+    seeds: [0, 1, 2]
+    assets: [ml-1m]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：只取 300 个用户、8 维 embedding、32 宽 MLP，只验证流程能跑通（结果没有教学意义，不检查断言）
+    base: {max_users: 300, embedding_dim: 8, hidden: "32", batch_size: 256, bootstrap: 5, max_minutes: 10}
+    seeds: [0]
+    skip_expect: true
+    assets: [ml-1m]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：只用用户 ID + 电影 ID（= R0a 基线），5 个种子
+    params: {}
+    seeds_by_profile: {h20x8: [0, 1, 2, 3, 4]}
+    expect:
+      - "summary.data.leak.train_has_future == False"
+      - "summary.valid.auc > 0.70"
+
+  # ---------- 逐组加特征（都是时点正确的口径） ----------
+  - id: f_profile
+    role: variant
+    title: + 用户画像（性别、年龄段、职业、邮编首位）
+    params: {feature_groups: [ids, user_profile]}
+  - id: f_item_attr
+    role: variant
+    title: + 电影属性（题材多值、上映年代）
+    params: {feature_groups: [ids, item_attr]}
+  - id: f_user_stats
+    role: variant
+    title: + 用户历史统计（此前评分次数、平滑喜欢率，时点正确）
+    params: {feature_groups: [ids, user_stats]}
+    expect:
+      - "summary.stats_check.user_rows_using_future_share == 0"
+  - id: f_item_stats
+    role: variant
+    title: + 电影历史统计（此前被评分次数、平滑喜欢率，时点正确）
+    params: {feature_groups: [ids, item_stats]}
+    expect:
+      - "summary.stats_check.item_rows_using_future_share == 0"
+  - id: f_all
+    role: fix
+    title: 5 组特征全加（时点正确），5 个种子
+    params: {feature_groups: [ids, user_profile, item_attr, user_stats, item_stats]}
+    seeds_by_profile: {h20x8: [0, 1, 2, 3, 4]}
+    expect:
+      - "summary.stats_check.user_rows_using_future_share == 0"
+      - "summary.stats_check.item_rows_using_future_share == 0"
+  - id: f_no_ids
+    role: variant
+    title: 全部特征去掉用户 ID 和电影 ID（其余 4 组不变）
+    params: {feature_groups: [user_profile, item_attr, user_stats, item_stats]}
+  - id: dcn_all
+    role: variant
+    title: 全部特征 + DCN-v2（MLP 并联 3 层 cross）
+    params: {feature_groups: [ids, user_profile, item_attr, user_stats, item_stats], arch: dcn}
+
+  # ---------- 统计口径 ----------
+  - id: stats_daily
+    role: variant
+    title: 全部特征，统计改成 T+1 天级（只用样本前一天及更早的行为）
+    params: {feature_groups: [ids, user_profile, item_attr, user_stats, item_stats], stats_mode: daily}
+    expect:
+      - "summary.stats_check.user_rows_using_future_share == 0"
+  - id: stats_incl_self
+    role: variant
+    title: 全部特征，统计里多算了本行自己的标签
+    params: {feature_groups: [ids, user_profile, item_attr, user_stats, item_stats], stats_mode: include_self}
+    expect:
+      - "summary.stats_check.user_rows_using_self_share == 1"
+      - "summary.stats_check.user_rows_using_future_share == 0"
+  - id: fault_stats_full
+    role: fault
+    title: 全部特征，统计用全量日志按用户 / 电影聚合后拼回每一行
+    params: {feature_groups: [ids, user_profile, item_attr, user_stats, item_stats], stats_mode: full}
+    expect:
+      - "summary.stats_check.user_rows_using_future_share > 0.9"
+      - "summary.gap.valid_minus_serving_auc > 0.01"
+      - "summary.data.test_hash == base.summary.data.test_hash"

@@ -1,0 +1,639 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: R0b
+profiles:
+  h20x8: H20 · MovieLens-1M 全量 · 在 R0a 基线上逐组加特征、换统计口径 · 3-5 种子
+metric:
+  path: summary.valid.auc
+  label: 验证 AUC（统计特征按场景口径；越高越好）
+table:
+- path: summary.valid.auc
+  label: 验证 AUC
+- path: summary.valid.gauc
+  label: 验证 GAUC
+- path: summary.valid_serving.auc
+  label: 同一批验证行·线上口径 AUC
+- path: summary.test.auc
+  label: 留出 AUC（线上口径）
+- path: summary.gap.valid_minus_serving_auc
+  label: 验证 − 线上口径 AUC
+- path: summary.groups.valid.u_unseen.auc
+  label: 没见过的用户 AUC
+- path: summary.stats_check.user_rows_using_future_share
+  label: 用户统计含未来的行占比
+- path: summary.train.seconds
+  label: 训练秒数
+figures:
+  loss: []
+noise_note: AUC 差异小于 0.3 个百分点（GAUC 小于 0.5）或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: noise
+  title: 噪声线
+- id: features
+  title: 逐组加特征
+- id: timing
+  title: 统计的时效
+- id: leak
+  title: 口径泄漏
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 加一个统计特征涨 3 个点，是真的还是穿越？
+  body: '特征迭代是精排日常工作的大头。两类误判最常见：
+
+
+    - **把噪声当收益**：单种子 +0.2 个点就写进周报；
+
+    - **把穿越当收益**：统计特征离线一次性算好再拼回样本，样本看到了自己的标签和未来，离线涨 2-3 个点，上线持平甚至下跌。
+
+
+    内容理解 LLM 产出的标签、embedding 进推荐模型时，也是一组"新特征"：它的收益落在哪类用户 / 物品、和 ID 特征是不是重复、产出口径和线上是否一致，都要按这一课的方法验证。每个场景都已在 H20 上跑好。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '和 R0a 相同的训练链路，多了特征组和统计口径。点击每个节点看代码。
+
+    '
+  nodes:
+  - id: base
+    title: R0a 基线
+    shape: 用户 ID + 电影 ID → Embedding + MLP
+    detail: 全局时间切分，固定未来留出集。
+    code:
+      file: recbase/data.py
+      region: split
+  - id: stats
+    title: 历史统计
+    shape: (key, 时间, 标签) → 每行的此前次数、此前正例数
+    detail: 按 (key, 时间) 排序后做分组前缀和；四种口径只差"统计到哪一刻为止"。
+    code:
+      file: recbase/features.py
+      region: stats
+  - id: feats
+    title: 训练口径与线上口径
+    shape: 每行两套特征：场景口径 / 线上口径
+    detail: 训练、验证用场景口径；留出集和 valid_serving 永远用线上口径。另做口径体检：多少行数进了未来。
+    code:
+      file: recbase/experiment.py
+      region: build_feats
+  - id: model
+    title: 特征组进模型
+    shape: '[B, F, d] 拼接 + dense [B, n] → MLP'
+    detail: 画像、年代、次数分桶走 embedding；题材是多值字段求平均；喜欢率和 log 次数是 dense。
+    code:
+      file: recbase/model.py
+      region: model
+  - id: groups
+    title: 分组评估
+    shape: 每组 {n, 正例率, AUC, GAUC}
+    detail: 新用户 / 老用户、此前评分数、长尾 / 头部电影。
+    code:
+      file: recbase/metrics.py
+      region: groups
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪一条样本的四种口径
+  body: '训练第 1 个 batch 的第 1 条样本，在四种口径下的用户 / 电影统计并排：此前次数 cnt、此前正例数 pos、平滑喜欢率 rate。对照着看：
+
+    - include_self 比 point_in_time 多了 1 次、多了本行的标签；
+
+    - full 的次数是这个用户 / 这部电影的全部评分，包括这条样本之后的；
+
+    - daily 只到样本前一天。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: recbase/features.py
+    region: stats
+    title: ① 四种口径
+    note: point_in_time 用 (key, 时间) 排序后的组前缀和：同一 key、同一秒的行并成一组，彼此看不见。include_self 在它上面加 1 和本行标签；daily 把时间换成天；full 直接 bincount 全部行。
+  - file: recbase/experiment.py
+    region: build_feats
+    title: ② 训练口径与线上口径
+    note: np.where(offline, 场景口径, 线上口径)：留出行永远退回线上口径。*_serve 是全部行都用线上口径的版本，valid_serving 用它给同一批验证行再打一次分。future_share = 统计次数 > 截至本行时刻的行数 的占比。
+  - file: recbase/metrics.py
+    region: groups
+    title: ③ 分组指标
+    note: 分组键用时点正确的"此前评分数"，不随口径变，各场景的分组是同一批行。
+  - file: recbase/model.py
+    region: model
+    title: ④ 特征组与 DCN-v2
+    note: fields_for 按特征组决定查哪些表；DCN-v2 的 cross 层 x_{l+1} = x0 ⊙ (W x_l + b) + x_l，与 MLP 并联后拼接。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答三个问题。训练集正例率约 0.58，平滑强度 α = 20。
+
+    '
+  questions:
+  - text: 一个用户此前评了 3 部电影，全部 ≥ 4 分。平滑后的"用户喜欢率"约多少？
+    options:
+    - '0.58'
+    - '0.63'
+    - '0.80'
+    - '1.0'
+  - text: 一个特征对同一个用户的所有行取值都相同（例如"用户的总喜欢率"），它能提高 GAUC 吗？
+    options:
+    - 能明显提高
+    - 几乎不能：它只改变用户之间的排序
+    - 会让 GAUC 明显下降
+  - text: 用 include_self 口径时，一部此前只被评过 4 次的电影，本行的标签会让它的平滑喜欢率挪动多少？
+    options:
+    - 约 0.2%
+    - 约 4%
+    - 约 40%
+- id: p_noise
+  file: 06-noise
+  stage: noise
+  title: 只换种子
+  body: '基线配置完全不变，只换训练种子（初始化和样本顺序），跑 5 次。验证集、特征、超参数都一样。
+
+    '
+  scenarios:
+  - baseline
+  question:
+    text: 5 个种子的验证 AUC，最高 − 最低约多少？
+    options:
+    - 不到 0.1 个点
+    - 0.1 - 0.4 个点
+    - 0.4 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+  - path: summary.valid.gauc
+    label: 验证 GAUC
+    fmt: .4f
+  - path: summary.valid.auc_boot_std
+    label: bootstrap 标准差
+    fmt: .4f
+  charts:
+  - metrics
+  look: 把种子切换成单个种子，各种子的柱子差多少？
+- id: p_profile
+  file: 07-profile
+  stage: features
+  title: 加用户画像
+  body: '在 ID 之外加用户画像：性别、年龄段（7 档）、职业（21 种）、邮编首位。另有一个"加电影属性（题材、上映年代）"的对照。验证集里约四分之三的行是训练集没见过的用户——画像是他们唯一的个人信息。
+
+    '
+  scenarios:
+  - f_profile
+  - f_item_attr
+  compare_to: baseline
+  question:
+    text: 加用户画像，验证 AUC 会怎样？
+    options:
+    - 涨 0.3 个点以上
+    - 差不多（±0.3）
+    - 跌 0.3 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.valid.gauc
+    label: 验证 GAUC
+    fmt: .4f
+    delta: true
+  - path: summary.groups.valid.u_unseen.auc
+    label: 没见过的用户 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.groups.valid.i_tail.auc
+    label: 长尾电影 AUC
+    fmt: .4f
+  charts:
+  - metrics
+  look: 三个场景的差和种子间波动比，哪个大？
+- id: p_user_stats
+  file: 08-user-stats
+  stage: features
+  title: 加用户历史统计
+  body: '加两个用户侧特征：样本时刻之前评了多少部（log2 分桶 + log 次数）、平滑喜欢率。口径时点正确：只用时间严格早于样本的评分。注意：训练集没见过的用户，在验证期内也有"样本之前"的评分——线上实时特征就是这么来的。
+
+    '
+  scenarios:
+  - f_user_stats
+  compare_to: baseline
+  question:
+    text: 加用户历史统计，验证 AUC 涨多少？
+    options:
+    - 不到 0.5 个点
+    - 0.5 - 2 个点
+    - 2 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.test.auc
+    label: 留出 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.stats_check.single_auc.user_rate.valid
+    label: 只用用户喜欢率的 AUC
+    fmt: .4f
+  - path: summary.stats_check.user_rows_using_future_share
+    label: 含未来的行占比
+    fmt: .2f
+  charts:
+  - metrics
+  look: 验证和留出的涨幅一致吗？
+- id: p_gauc
+  file: 09-gauc
+  stage: features
+  title: 同一改动，看 GAUC
+  body: '同一个场景（+用户历史统计），换成 GAUC：每个用户内部的排序。
+
+    '
+  scenarios:
+  - f_user_stats
+  compare_to: baseline
+  question:
+    text: 加用户历史统计，验证 GAUC 涨多少？
+    options:
+    - 不到 0.5 个点
+    - 0.5 - 2 个点
+    - 2 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.valid.gauc
+    label: 验证 GAUC
+    fmt: .4f
+    delta: true
+  - path: summary.valid.gauc_row_cov
+    label: GAUC 覆盖行占比
+    fmt: .1%
+  charts:
+  - metrics
+  look: AUC 和 GAUC 的涨幅差几倍？
+- id: p_group
+  file: 10-group
+  stage: features
+  title: 收益落在哪类用户
+  body: '还是同一个场景。把验证行按"用户在训练集里有没有出现过"拆开。
+
+    '
+  scenarios:
+  - f_user_stats
+  compare_to: baseline
+  question:
+    text: 训练集没见过的用户这一组，AUC 涨多少？
+    options:
+    - 不到 0.5 个点
+    - 0.5 - 3 个点
+    - 3 个点以上
+  columns:
+  - path: summary.groups.valid.u_unseen.auc
+    label: 没见过的用户
+    fmt: .4f
+    delta: true
+  - path: summary.groups.valid.u_seen.auc
+    label: 见过的用户
+    fmt: .4f
+    delta: true
+  - path: summary.groups.valid.u_new.auc
+    label: 此前 0 次评分
+    fmt: .4f
+    delta: true
+  - path: summary.groups.valid.u_heavy.auc
+    label: 此前 400 次以上
+    fmt: .4f
+    delta: true
+  charts:
+  - metrics
+  look: 打开分组表：哪一组的行数最多、涨得最多？
+- id: p_item_stats
+  file: 11-item-stats
+  stage: features
+  title: 加电影历史统计
+  body: '对称地加电影侧：样本时刻之前被评了多少次、平滑喜欢率。时点正确。
+
+    '
+  scenarios:
+  - f_item_stats
+  compare_to: baseline
+  question:
+    text: 加电影历史统计，验证 AUC 会怎样？
+    options:
+    - 涨 0.3 个点以上
+    - 差不多（±0.3）
+    - 跌 0.3 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.valid.gauc
+    label: 验证 GAUC
+    fmt: .4f
+    delta: true
+  - path: summary.groups.valid.i_tail.auc
+    label: 长尾电影 AUC
+    fmt: .4f
+    delta: true
+  charts:
+  - metrics
+  look: 和"加用户统计"放在一起看，为什么两边不对称？
+- id: p_all
+  file: 12-all
+  stage: features
+  title: 5 组全加
+  body: 'ID + 画像 + 属性 + 用户统计 + 电影统计全部加上（5 个种子）。对照是"只加用户统计"——这是单变量对照：差的是画像、属性、电影统计三组。
+
+    '
+  scenarios:
+  - f_all
+  compare_to: f_user_stats
+  also:
+  - baseline
+  question:
+    text: 5 组全加，比只加用户统计又多多少？
+    options:
+    - 再涨 0.3 个点以上
+    - 差不多（±0.3）
+    - 反而跌 0.3 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.valid.gauc
+    label: 验证 GAUC
+    fmt: .4f
+    delta: true
+  - path: summary.test.auc
+    label: 留出 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.params.mlp_input_dim
+    label: MLP 输入维度
+    fmt: d
+  charts:
+  - metrics
+  look: 三个场景的留出 AUC 怎么排？
+- id: p_no_ids
+  file: 13-no-ids
+  stage: features
+  title: 去掉 ID
+  body: '在"全部特征"上只去掉用户 ID 和电影 ID 两张表，其余 4 组不变。embedding 参数少了九成以上。
+
+    '
+  scenarios:
+  - f_no_ids
+  compare_to: f_all
+  question:
+    text: 去掉 ID，验证 AUC 会怎样？
+    options:
+    - 涨 0.3 个点以上
+    - 差不多（±0.3）
+    - 跌 0.3 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.valid.gauc
+    label: 验证 GAUC
+    fmt: .4f
+    delta: true
+  - path: summary.test.auc
+    label: 留出 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.groups.valid.u_unseen.auc
+    label: 没见过的用户 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.params.embedding
+    label: embedding 参数
+    fmt: ','
+  charts:
+  - metrics
+  - params
+  look: AUC 和 GAUC 的方向一致吗？
+- id: p_dcn
+  file: 14-dcn
+  stage: features
+  title: 换成 DCN-v2
+  body: '特征不变（全部 5 组），结构从 MLP 换成"MLP 并联 3 层 DCN-v2 cross"：显式建模特征之间的交叉。
+
+    '
+  scenarios:
+  - dcn_all
+  compare_to: f_all
+  question:
+    text: 换成 DCN-v2，验证 AUC 会怎样？
+    options:
+    - 涨 0.3 个点以上
+    - 差不多（±0.3）
+    - 跌 0.3 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.valid.gauc
+    label: 验证 GAUC
+    fmt: .4f
+    delta: true
+  - path: summary.params.total
+    label: 总参数
+    fmt: ','
+  - path: summary.train.seconds
+    label: 训练秒数
+    fmt: .1f
+  charts:
+  - metrics
+  - params
+  look: 差值和"只换种子"的波动比呢？
+- id: p_daily
+  file: 15-daily
+  stage: timing
+  title: T+1 天级统计
+  body: '统计特征改成 T+1 天级：只用样本**前一天及更早**的评分（天级离线任务的产出）。不含未来，线上也能拿到——只是晚了一天。其余和"全部特征"相同。
+
+    '
+  scenarios:
+  - stats_daily
+  compare_to: f_all
+  question:
+    text: 改成天级统计，"训练集没见过的用户"这一组 AUC 掉多少？
+    options:
+    - 掉不到 0.5 个点
+    - 掉 0.5 - 2 个点
+    - 掉 2 个点以上
+  columns:
+  - path: summary.groups.valid.u_unseen.auc
+    label: 没见过的用户 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.groups.valid.u_seen.auc
+    label: 见过的用户 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.test.auc
+    label: 留出 AUC
+    fmt: .4f
+    delta: true
+  charts:
+  - metrics
+  look: 天级口径下，"全部特征"还比基线（只用 ID）好多少？
+- id: p_fault
+  file: 16-fault
+  stage: leak
+  title: 全量统计
+  body: '同事写特征的方式：先用全量评分日志按用户、按电影聚合出次数和喜欢率，再 join 回每一行样本——一条 SQL 搞定，比按时间算快得多。和"全部特征"只差这一个参数。离线训练、验证都用这份特征。
+
+    '
+  scenarios:
+  - fault_stats_full
+  compare_to: f_all
+  also:
+  - baseline
+  question:
+    text: 全量统计的验证 AUC，比时点正确的"全部特征"高多少？
+    options:
+    - 高不到 1 个点
+    - 高 1 - 3 个点
+    - 高 3 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.valid_serving.auc
+    label: 同一批行·线上口径
+    fmt: .4f
+    delta: true
+  - path: summary.test.auc
+    label: 留出 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.stats_check.user_rows_using_future_share
+    label: 含未来的行占比
+    fmt: .2f
+  charts:
+  - metrics
+  look: 验证 AUC 和留出 AUC 的方向一致吗？
+- id: diagnose
+  file: 17-diagnose
+  stage: leak
+  title: 诊断：全量统计的分数从哪来
+  body: '配置只差统计口径一个参数，验证 AUC 多涨了一两个点，所有分组都在涨。按需逐级点开线索，然后点选最主要的原因。
+
+    '
+  scenarios:
+  - fault_stats_full
+  compare_to: f_all
+  question:
+    text: 全量统计的验证 AUC 更高，最主要的原因是什么？
+    options:
+    - 统计量里含有本行的标签和未来的行为，线上拿不到（穿越）
+    - 全量统计样本多，估计更准
+    - 模型过拟合
+    - 验证集换了一批更容易的样本
+  clues:
+  - 线上回放：固定留出集（线上口径特征）上，时点正确 {{v:f_all:summary.test.auc:.4f}}，全量统计 {{v:fault_stats_full:summary.test.auc:.4f}}。离线涨，线上回放持平还是下跌？
+  - 口径体检：用户统计里数进了未来的行占比 {{v:fault_stats_full:summary.stats_check.user_rows_using_future_share:.2f}}（时点正确为 {{v:f_all:summary.stats_check.user_rows_using_future_share:.2f}}）。只用"用户喜欢率"排序的 AUC：训练集 {{v:fault_stats_full:summary.stats_check.single_auc.user_rate.train:.4f}}，同一批验证行换线上口径 {{v:fault_stats_full:summary.stats_check.single_auc.user_rate.valid_serving:.4f}}。
+  - 同一个模型、同一批验证行，只换特征口径：{{v:fault_stats_full:summary.valid.auc:.4f}} → {{v:fault_stats_full:summary.valid_serving.auc:.4f}}。样本之前没有任何历史的用户（u_new）：全量口径 {{v:fault_stats_full:summary.groups.valid.u_new.auc:.4f}}，时点正确 {{v:f_all:summary.groups.valid.u_new.auc:.4f}}。
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+  - path: summary.valid_serving.auc
+    label: 线上口径（同一批行）
+    fmt: .4f
+  - path: summary.test.auc
+    label: 留出 AUC
+    fmt: .4f
+  - path: summary.stats_check.user_rows_using_future_share
+    label: 含未来的行占比
+    fmt: .2f
+  - path: summary.groups.valid.u_new.auc
+    label: 此前 0 次评分的用户 AUC
+    fmt: .4f
+  charts:
+  - metrics
+- id: p_self
+  file: 18-self
+  stage: leak
+  title: 只多算了本行的标签
+  body: '更隐蔽的版本：统计严格按时间截断（没有未来），只是"截止到本行"时把本行也算进去了——比如用 `<=` 而不是 `<`，或者曝光日志和点击日志 join 时把当前这次点击也计入了历史点击。
+
+    '
+  scenarios:
+  - stats_incl_self
+  compare_to: f_all
+  also:
+  - fault_stats_full
+  question:
+    text: 同一批验证行，"场景口径 − 线上口径"的 AUC 差有多大？
+    options:
+    - 不到 0.3 个点
+    - 0.3 - 1 个点
+    - 1 个点以上
+  columns:
+  - path: summary.gap.valid_minus_serving_auc
+    label: 验证 − 线上口径
+    fmt: +.4f
+    delta: true
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+  - path: summary.valid_serving.auc
+    label: 线上口径（同一批行）
+    fmt: .4f
+  - path: summary.groups.valid.u_new.auc
+    label: 此前 0 次评分的用户 AUC
+    fmt: .4f
+  - path: summary.groups.valid.i_tail.auc
+    label: 长尾电影 AUC
+    fmt: .4f
+  charts:
+  - metrics
+  look: 分组表里，哪一组的"虚高"最大？
+- id: keycard
+  file: 19-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 种子噪声和 bootstrap 抽样噪声各回答什么问题？判断"A 比 B 好"用哪个？
+  - 为什么用户侧特征涨 AUC 不涨 GAUC？
+  - 实时统计的收益落在哪类用户？天级统计为什么对新用户是盲的？
+  - 去掉 ID 为什么 AUC 涨、GAUC 跌？OOV 行为什么从没训练过？
+  - 四种统计口径各是什么？哪两种上线时拿不到？
+  - 怎么用"同一批样本换线上口径"量出穿越？含本行标签的泄漏集中在哪？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。

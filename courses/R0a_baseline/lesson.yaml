@@ -1,0 +1,475 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: R0a
+profiles:
+  h20x8: H20 · MovieLens-1M 全量 · 用户 ID + 电影 ID 的 Embedding + MLP · 3 种子
+metric:
+  path: summary.valid.auc
+  label: 验证 AUC（越高越好；不同切分的验证集不是同一批样本）
+table:
+- path: summary.valid.auc
+  label: 验证 AUC
+- path: summary.valid.gauc
+  label: 验证 GAUC
+- path: summary.test.auc
+  label: 留出 AUC（固定未来）
+- path: summary.gap.valid_minus_test_auc
+  label: 验证 − 留出 AUC
+- path: summary.data.cold.valid.user_rows
+  label: 验证冷启动用户行占比
+- path: summary.params.embedding_share
+  label: embedding 占比
+- path: summary.best_epoch.epoch
+  label: 最好 epoch
+- path: summary.train.seconds
+  label: 训练秒数
+figures:
+  loss: []
+noise_note: AUC 差异小于 0.3 个百分点或小于种子间波动，都按“差不多”算。不同切分的验证 AUC 不能直接比，要看固定留出集。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: split
+  title: 切分与验证虚高
+- id: capacity
+  title: 容量与 epoch
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 离线 AUC 涨了 4 个点、线上不涨，问题出在模型还是评估？
+  body: '精排模型迭代时，最常见的事故不是模型写错，而是**评估口径变了却没发现**：
+
+
+    - 换了一种切分方式，验证集"换了一批题"——新用户少了、老用户多了，AUC 自然就高；
+
+    - 训练集里混进了同一个用户之后的行为，模型"预习"过答案；
+
+    - 只看整体 AUC，看不出提升来自哪一类用户、是不是来自"用户之间"的排序。
+
+
+    生成式推荐、内容理解特征上线前的离线评估，都要先过这一关。这一课先用最朴素的模型把链路走通，再换切分方式量一遍"评估口径"本身能造成多大的差。每个场景都已在 H20 上跑好（3 个种子）。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '一条样本从 CSV 走到 AUC。点击每个节点看代码。
+
+    '
+  nodes:
+  - id: raw
+    title: 读评分日志
+    shape: ratings.csv → 100 万行 (用户, 电影, 评分, 时间)
+    detail: timestamp 被引号包住还带换行，按字符串读再去空白转整数；按 (时间, 用户, 电影) 排序。
+    code:
+      file: recbase/data.py
+      region: load_raw
+  - id: split
+    title: 标签与切分
+    shape: 每行 0 = 训练 / 1 = 验证 / 2 = 留出
+    detail: 标签 = 评分 ≥ 4。留出集固定为时间 ≥ t90；切分方式只决定 t90 之前怎么分。
+    code:
+      file: recbase/data.py
+      region: split
+  - id: encode
+    title: 训练集词表编码
+    shape: 原始 ID → [0, V)，0 = 没见过
+    detail: 词表只用训练集建；验证 / 留出里新出现的用户编成 0。
+    code:
+      file: recbase/data.py
+      region: encode
+  - id: model
+    title: Embedding + MLP
+    shape: '[B] × 2 个 ID → [B, 2, 32] → [B, 64] → 256 → 128 → [B]'
+    detail: 每个字段一张 [V, d] 的表，拼接后过 MLP，输出一个 logit。
+    code:
+      file: recbase/model.py
+      region: model
+  - id: loss
+    title: BCE
+    shape: '[B] logit、[B] 标签 → 标量'
+    detail: with_logits 版本，batch 内平均。
+    code:
+      file: recbase/model.py
+      region: loss
+  - id: train
+    title: 训练循环
+    shape: 每 epoch 约 390 步 × 2048 行
+    detail: AdamW，embedding 不做 weight decay；每个 epoch 末评估验证和留出。
+    code:
+      file: recbase/train.py
+      region: train_loop
+  - id: eval
+    title: AUC / GAUC / 分组
+    shape: '[N] 分数 + [N] 标签 + [N] 用户 → 指标'
+    detail: AUC 并列取平均秩；GAUC 按用户算再按行数加权；按用户 bootstrap 估抽样误差。
+    code:
+      file: recbase/metrics.py
+      region: auc_gauc
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪一条样本
+  body: '基线运行的真实追踪：
+
+    - ratings.csv 开头的原文（引号里带换行的 timestamp）和解析结果；
+
+    - 训练第 1 个 batch 的第 1 条样本：原始字段、编码后的下标；
+
+    - 一条冷启动验证行：用户编码成 0，训练集里编码为 0 的行数；
+
+    - 第一步更新：用户表 V 行里有梯度的行数、被追踪那一行更新前后的值；
+
+    - 一个验证用户的 GAUC 怎么算：他的几行按分数排好，正例排在负例前面的比例。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: recbase/data.py
+    region: split
+    title: ① 三种切分共用一个未来留出集
+    note: 先按全局时间分位点取 t80、t90，test = ts ≥ t90 对所有模式都一样；random 用行号上的随机数取 1/9；user_last 在 pool 内按 (用户, 时间) 排序，取每个用户最后 k 条。
+  - file: recbase/data.py
+    region: encode
+    title: ② 训练集词表
+    note: np.unique 只作用在训练行上；searchsorted 查不到的就是 0。词表里多一个用户，embedding 表就多一行 d 个参数。
+  - file: recbase/data.py
+    region: checks
+    title: ③ 切分体检
+    note: train_has_future：训练集最晚时间是否晚于验证集最早时间；valid_rows_with_later_train_same_user：验证行里，有多少行的用户在训练集里还有更晚的评分；冷启动行占比。
+  - file: recbase/model.py
+    region: model
+    title: ④ Embedding + MLP
+    note: field_vectors 输出 [B, F, d]，flatten 成 [B, F·d] 再接 MLP。dcn / deepfm 是 R0b 用的变体，这一课只用 mlp。
+  - file: recbase/metrics.py
+    region: auc_gauc
+    title: ⑤ AUC 与 GAUC
+    note: AUC：按分数排序、并列分组，每个正例贡献"排在它前面的负例数 + 并列负例数 / 2"。GAUC：先按 (用户, 分数) 排序求用户内的秩，只算正负都有的用户，按行数加权。
+  - file: recbase/train.py
+    region: train_loop
+    title: ⑥ 训练循环
+    note: 全部张量一次放上 GPU，按打乱后的下标取 batch。只有本 batch 出现过的用户行有梯度。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答四个问题。基线：全局时间切分，训练集约 80 万行；用户 ID、电影 ID 各一张 32 维的表，MLP 64 → 256 → 128 → 1。
+
+    '
+  questions:
+  - text: embedding 表占模型总参数的多少？
+    options:
+    - 不到 30%
+    - 30% - 60%
+    - 60% - 90%
+    - 90% 以上
+  - text: 训练集约 80 万行、batch 2048，一个 epoch 大约多少步？
+    options:
+    - 约 40 步
+    - 约 400 步
+    - 约 4000 步
+  - text: 不训练模型，只按"这部电影在训练集里的平均喜欢率"排序，验证 AUC 大约多少？
+    options:
+    - 0.5 - 0.6
+    - 0.6 - 0.7
+    - 0.7 - 0.8
+    - 0.8 以上
+  - text: 按全局时间切分，验证集里有多少行的用户在训练集里从没出现过？
+    options:
+    - 不到 10%
+    - 10% - 40%
+    - 40% - 70%
+    - 70% 以上
+- id: p_user_last
+  file: 06-user-last
+  stage: split
+  title: leave-last-out：每个用户最后 5 条
+  body: '学术界序列推荐（SASRec、BERT4Rec）最常用的切分：每个用户按时间排，最后几条做验证 / 测试。这里在 t90 之前，每个用户（行数 ≥ 10 的）留最后 5 条进验证，其余进训练。留出集不变。
+
+    '
+  scenarios:
+  - split_user_last
+  compare_to: baseline
+  question:
+    text: 和全局时间切分比，验证 AUC 高多少？
+    options:
+    - 高不到 1 个点
+    - 高 1 - 3 个点
+    - 高 3 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.valid.gauc
+    label: 验证 GAUC
+    fmt: .4f
+    delta: true
+  - path: summary.test.auc
+    label: 留出 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.data.cold.valid.user_rows
+    label: 验证冷启动用户行
+    fmt: .1%
+  - path: summary.data.split_rows.valid
+    label: 验证行数
+    fmt: ','
+  charts:
+  - metrics
+  look: 验证 AUC 和留出 AUC 涨的幅度一样吗？GAUC 呢？
+- id: p_fault
+  file: 07-fault
+  stage: split
+  title: 随机切分
+  body: '同事觉得"时间切分让验证集太小、太偏"，把 t90 之前的行随机 8:1 分成训练和验证，其余代码不变。他的周报写的是"验证 AUC 提升 4 个点，建议上线"。留出集（t90 之后）没动。
+
+    '
+  scenarios:
+  - fault_random
+  compare_to: baseline
+  also:
+  - split_user_last
+  question:
+    text: 随机切分的"验证 − 留出"AUC 差，比基线的这个差大多少？
+    options:
+    - 大不到 1 个点
+    - 大 1 - 3 个点
+    - 大 3 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.test.auc
+    label: 留出 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.gap.valid_minus_test_auc
+    label: 验证 − 留出
+    fmt: +.4f
+  - path: summary.valid.gauc
+    label: 验证 GAUC
+    fmt: .4f
+    delta: true
+  - path: summary.data.cold.valid.user_rows
+    label: 验证冷启动用户行
+    fmt: .1%
+  charts:
+  - metrics
+  look: 三个场景的留出 AUC 差多少？验证 AUC 呢？
+- id: diagnose
+  file: 08-diagnose
+  stage: split
+  title: 诊断：4 个点从哪来
+  body: '随机切分让验证 AUC 涨了约 4 个点，固定留出集只涨了一点。按需逐级点开线索，然后点选最主要的原因。
+
+    '
+  scenarios:
+  - fault_random
+  compare_to: baseline
+  question:
+    text: 随机切分的验证 AUC 大涨，最主要的原因是什么？
+    options:
+    - 训练数据用到了 t90 之前，更新鲜，模型真的变强了
+    - 验证集换了一批题：几乎没有新用户，而且训练集里有同一用户之后的评分
+    - 种子噪声
+    - 验证集的正例率变了
+  clues:
+  - 看固定的未来留出集：验证 AUC 基线 {{v:baseline:summary.valid.auc:.4f}}、随机 {{v:fault_random:summary.valid.auc:.4f}}；留出 AUC 基线 {{v:baseline:summary.test.auc:.4f}}、随机 {{v:fault_random:summary.test.auc:.4f}}。验证 − 留出：{{v:baseline:summary.gap.valid_minus_test_auc:+.4f}} 对 {{v:fault_random:summary.gap.valid_minus_test_auc:+.4f}}。两个集合是一起涨的吗？
+  - 看切分体检：验证集冷启动用户行 {{v:baseline:summary.data.cold.valid.user_rows:.1%}} 对 {{v:fault_random:summary.data.cold.valid.user_rows:.1%}}；验证行里"同一用户在训练集有更晚评分"的占比 {{v:baseline:summary.data.leak.valid_rows_with_later_train_same_user:.1%}} 对 {{v:fault_random:summary.data.leak.valid_rows_with_later_train_same_user:.1%}}；训练集含未来：{{v:baseline:summary.data.leak.train_has_future}} 对 {{v:fault_random:summary.data.leak.train_has_future}}。
+  - 拆开看：GAUC 基线 {{v:baseline:summary.valid.gauc:.4f}}、随机 {{v:fault_random:summary.valid.gauc:.4f}}，几乎不变；只看见过的用户，AUC 基线 {{v:baseline:summary.groups.valid.u_seen.auc:.4f}}、随机 {{v:fault_random:summary.groups.valid.u_seen.auc:.4f}}。
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+  - path: summary.test.auc
+    label: 留出 AUC
+    fmt: .4f
+  - path: summary.valid.gauc
+    label: 验证 GAUC
+    fmt: .4f
+  - path: summary.data.cold.valid.user_rows
+    label: 冷启动用户行
+    fmt: .1%
+  - path: summary.data.leak.valid_rows_with_later_train_same_user
+    label: 用户在训练集有更晚行为
+    fmt: .1%
+  charts:
+  - metrics
+- id: p_emb
+  file: 09-emb
+  stage: capacity
+  title: embedding 维度 32 → 128
+  body: 'embedding 维度从 32 改成 128，embedding 参数翻 4 倍，MLP 输入从 64 维变成 256 维。另有一个 8 维的对照。其余不变，1 个 epoch。
+
+    '
+  scenarios:
+  - emb_128
+  - emb_8
+  compare_to: baseline
+  question:
+    text: d 从 32 到 128，验证 AUC（3 种子均值）会怎样？
+    options:
+    - 涨 0.3 个点以上
+    - 差不多（±0.3）
+    - 跌 0.3 个点以上
+  columns:
+  - path: summary.valid.auc
+    label: 验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.groups.valid.u_seen.auc
+    label: 见过的用户 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.groups.valid.u_unseen.auc
+    label: 没见过的用户 AUC
+    fmt: .4f
+  - path: summary.params.embedding
+    label: embedding 参数
+    fmt: ','
+  - path: summary.train.seconds
+    label: 训练秒数
+    fmt: .1f
+  charts:
+  - metrics
+  - params
+  look: 见过的用户和没见过的用户，两组的 AUC 随维度怎么变？
+- id: p_epochs
+  file: 10-epochs
+  stage: capacity
+  title: 训 8 个 epoch
+  body: '同一个模型训 8 遍，每遍结束在验证和留出上各评估一次。曲线是"验证 AUC 相对第 1 个 epoch 的变化（百分点）"。工业 CTR 模型通常只训 1 个 epoch。
+
+    '
+  scenarios:
+  - ep8
+  compare_to: baseline
+  question:
+    text: 验证 AUC 最高出现在第几个 epoch？（3 种子平均）
+    options:
+    - 第 1 个
+    - 第 2 - 3 个
+    - 第 4 个以后
+  columns:
+  - path: summary.best_epoch.epoch
+    label: 最好 epoch
+    fmt: d
+  - path: summary.best_epoch.valid_auc
+    label: 最好验证 AUC
+    fmt: .4f
+  - path: summary.valid.auc
+    label: 最后验证 AUC
+    fmt: .4f
+    delta: true
+  - path: summary.overfit.valid_auc_drop_from_best
+    label: 最后比最好低
+    fmt: .4f
+  - path: summary.overfit.train_valid_logloss_gap
+    label: 验证 − 训练 logloss
+    fmt: .4f
+  charts:
+  - metrics
+  - loss
+  curve: valid_auc_delta_pp
+  look: 切到 valid_logloss 曲线：它的最低点在第几个 epoch？
+- id: p_epochs_emb
+  file: 11-epochs-emb
+  stage: capacity
+  title: 8 个 epoch + 128 维
+  body: '容量加大：d = 128，同样训 8 遍。embedding 参数是 d = 32 的 4 倍，每个用户平均一百多条训练行，要拟合 128 个数。
+
+    '
+  scenarios:
+  - ep8_emb128
+  compare_to: ep8
+  question:
+    text: d = 128 时，最后一个 epoch 的验证 AUC 比最好的那个 epoch 低多少？
+    options:
+    - 不到 0.2 个点
+    - 0.2 - 1 个点
+    - 1 个点以上
+  columns:
+  - path: summary.best_epoch.epoch
+    label: 最好 epoch
+    fmt: d
+  - path: summary.overfit.valid_auc_drop_from_best
+    label: 最后比最好低（验证）
+    fmt: .4f
+    delta: true
+  - path: summary.overfit.test_auc_drop_from_best
+    label: 最后比最好低（留出）
+    fmt: .4f
+  - path: summary.overfit.train_valid_logloss_gap
+    label: 验证 − 训练 logloss
+    fmt: .4f
+  charts:
+  - metrics
+  - loss
+  curve: valid_auc_delta_pp
+  look: 两条曲线从第几个 epoch 开始分开？
+- id: p_epochs_warm
+  file: 12-epochs-warm
+  stage: capacity
+  title: 全是老用户时的过拟合
+  body: '换成 leave-last-out 切分训 8 遍：验证集里全是有训练历史的用户，用户 ID 向量对每一行都起作用。
+
+    '
+  scenarios:
+  - ep8_user_last
+  compare_to: ep8
+  question:
+    text: 和全局时间切分（d = 32、8 个 epoch）比，过拟合回落（最好 − 最后）更大吗？
+    options:
+    - 更大（多 0.2 个点以上）
+    - 差不多（±0.2）
+    - 更小（少 0.2 个点以上）
+  columns:
+  - path: summary.best_epoch.epoch
+    label: 最好 epoch
+    fmt: d
+  - path: summary.overfit.valid_auc_drop_from_best
+    label: 最后比最好低
+    fmt: .4f
+    delta: true
+  - path: summary.valid.auc
+    label: 最后验证 AUC
+    fmt: .4f
+  - path: summary.test.auc
+    label: 留出 AUC
+    fmt: .4f
+  charts:
+  - metrics
+  - loss
+  curve: valid_auc_delta_pp
+  look: 种子之间的回落差多少？
+- id: keycard
+  file: 13-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 一条样本从 CSV 到 AUC 经过哪几步？词表为什么只能用训练集建？
+  - AUC 和 GAUC 各衡量什么排序？对同一用户打同一分的特征，GAUC 是多少？
+  - 为什么不同切分的验证 AUC 不能直接比？用什么比？
+  - 随机切分的验证虚高从哪来？哪两个数字能一眼看出来？
+  - embedding 维度的收益为什么要按"见过的用户"分组看？
+  - LogLoss 和 AUC 谁先变坏？什么时候该看 LogLoss？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。
