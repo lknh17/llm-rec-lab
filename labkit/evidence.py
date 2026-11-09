@@ -102,7 +102,7 @@ def _bytes_per_param(dtype: str | None) -> int:
     return 2 if ("bfloat16" in d or "float16" in d) else 4
 
 
-def memory(meta: dict, resources: dict) -> dict:
+def memory(meta: dict, resources: dict, summary: dict | None = None) -> dict:
     """显存峰值（实测）+ 构成（估算）。LoRA：基础权重按模型 dtype；可训练参数、梯度按 fp32（PEFT 默认把适配器
     升到 fp32），AdamW 两份状态 fp32；峰值减去前三项记为"激活与其他"（含 logits、临时缓冲、分配器碎片）。"""
     model = meta.get("model") or {}
@@ -116,6 +116,17 @@ def memory(meta: dict, resources: dict) -> dict:
     for k in ("peak_allocated", "peak_reserved", "device_total"):
         if isinstance(resources.get(k + "_bytes"), (int, float)):
             out[k + "_gb"] = round(resources[k + "_bytes"] / GB, 2)
+    own = (summary or {}).get("memory") if isinstance((summary or {}).get("memory"), dict) else None
+    if own and isinstance(own.get("breakdown"), dict):        # 项目自报的构成（全参训练：参数 / 梯度 / 优化器 / 激活）
+        out["breakdown"] = {k: v for k, v in own["breakdown"].items() if isinstance(v, (int, float))}
+        out["breakdown_method"] = own.get("method")
+        for k in ("peak_allocated_gb", "peak_reserved_gb", "device_total_gb"):
+            if isinstance(own.get(k), (int, float)):
+                out[k] = own[k]
+        for k in ("oom", "oom_stage"):
+            if k in own:
+                out[k] = own[k]
+        return out
     if not isinstance(total, (int, float)):
         return out
     frozen = total - trainable
@@ -167,7 +178,7 @@ def build(run_dir: Path) -> dict:
            "lora": (meta.get("model") or {}).get("lora"),
            "data": {k: ((meta.get("data") or {}).get("tokenized") or {}).get(k)
                     for k in ("tokens_total", "supervised_tokens_total", "zero_supervision_examples", "prompt_tokens")},
-           "curves": curves(rows), "throughput": throughput(rows, meta), "memory": memory(meta, resources),
+           "curves": curves(rows), "throughput": throughput(rows, meta), "memory": memory(meta, resources, summary),
            "metrics": {"headline": summary.get("headline"), "dev": keep_dev, **_display(summary)}}
     pref = _pref(summary)
     if pref:

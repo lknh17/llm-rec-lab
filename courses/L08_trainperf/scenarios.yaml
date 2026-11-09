@@ -1,0 +1,148 @@
+course: L08
+title: L08 训练效率与 8 卡并行：MFU 与损失树、显存四部分、DDP 与 FSDP、重计算、mbs、精度、kernel、梯度累积，7B 单卡 OOM 与 8 卡 FSDP，数据管线在主进程做 CPU 分词的故障
+project: trainperf
+entry: trainperf.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每个运行独占整机 8 张卡（单卡场景只用第 0 张）。类 Qwen2.5 结构随机初始化、随机 token；1.5B 为主，7B 看真实规模；seq 2048、每卡 mbs 2、bf16、SDPA
+    base: {device: cuda, max_minutes: 30}
+    seeds: [0, 1, 2]
+    slots: {gpus_per_job: 8, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：tiny 形状、2 个进程（gloo，CPU）、seq 128、24 步，只验证流程能跑通（不检查断言；FSDP、compile、7B 不在 Mac 上跑）
+    base: {preset: tiny, world_size: 2, backend: gloo, device: cpu, seq_len: 128, mbs: 2, steps: 24, profile_steps: 0, bench_hw: false,
+           prep_passes: 2, max_minutes: 10}
+    seeds: [0]
+    skip_expect: true
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：1.5B，DDP 8 卡，seq 2048，mbs 2，bf16，SDPA，fused AdamW
+    params: {}
+    expect:
+      - "summary.parallel.world_size == 8"
+      - "summary.mfu.mfu > 0.2"
+      - "summary.time.data_frac < 0.05"
+      - "summary.comm.syncs_per_opt_step == 1"
+  - id: single
+    role: reference
+    title: 单卡（不并行）
+    params: {strategy: none, world_size: 1}
+    expect:
+      - "summary.parallel.world_size == 1"
+
+  # ---------- 显存 ----------
+  - id: fsdp_full
+    role: variant
+    title: FSDP2 FULL_SHARD（≈ ZeRO-3）
+    params: {strategy: fsdp_full}
+    profiles: [h20x8]
+    expect:
+      - "summary.memory.breakdown.optimizer_gb * 6 < base.summary.memory.breakdown.optimizer_gb"
+      - "summary.memory.peak_allocated_gb < base.summary.memory.peak_allocated_gb"
+  - id: fsdp_grad_op
+    role: variant
+    title: FSDP2 前向后不释放整份参数（≈ ZeRO-2）
+    params: {strategy: fsdp_grad_op}
+    profiles: [h20x8]
+    expect:
+      - "summary.memory.breakdown.optimizer_gb * 6 < base.summary.memory.breakdown.optimizer_gb"
+  - id: ckpt
+    role: variant
+    title: 全量激活重计算
+    params: {ckpt: full}
+    expect:
+      - "summary.memory.breakdown.activations_other_gb < base.summary.memory.breakdown.activations_other_gb * 0.6"
+      - "summary.throughput.tokens_per_s_per_gpu < base.summary.throughput.tokens_per_s_per_gpu"
+  - id: ckpt_mbs8
+    role: variant
+    title: 重计算 + mbs 8（省下的显存换更大的 batch）
+    params: {ckpt: full, mbs: 8}
+    expect:
+      - "summary.memory.oom == False"
+
+  # ---------- 吞吐 ----------
+  - id: mbs1
+    role: variant
+    title: mbs 1
+    params: {mbs: 1}
+  - id: mbs4
+    role: variant
+    title: mbs 4
+    params: {mbs: 4}
+  - id: fp32
+    role: variant
+    title: 全 fp32（不开 TF32）
+    params: {precision: fp32}
+    expect:
+      - "summary.throughput.tokens_per_s_per_gpu < base.summary.throughput.tokens_per_s_per_gpu * 0.6"
+  - id: naive_attn
+    role: variant
+    title: 手写 attention（显式 [B, H, T, T]）
+    params: {attn: naive}
+    expect:
+      - "summary.memory.peak_allocated_gb > base.summary.memory.peak_allocated_gb + 2"
+  - id: compile
+    role: variant
+    title: torch.compile 每个层
+    params: {compile: true}
+    profiles: [h20x8]
+    seeds_by_profile: {h20x8: [0]}
+  - id: adam_forloop
+    role: variant
+    title: AdamW 逐参数循环实现（不 fused、不 foreach）
+    params: {adam: forloop}
+    seeds_by_profile: {h20x8: [0]}
+
+  # ---------- 梯度累积 ----------
+  - id: gas8
+    role: variant
+    title: 梯度累积 8 步（no_sync）
+    params: {grad_accum: 8}
+    expect:
+      - "summary.comm.syncs_per_opt_step == 1"
+  - id: gas8_sync
+    role: variant
+    title: 梯度累积 8 步，每个 micro step 都同步
+    params: {grad_accum: 8, no_sync: false}
+    expect:
+      - "summary.comm.syncs_per_opt_step == 8"
+
+  # ---------- 7B ----------
+  - id: qwen7b_single
+    role: variant
+    title: 7B 单卡全参训练（mbs 1）
+    params: {preset: qwen7b, strategy: none, world_size: 1, mbs: 1}
+    profiles: [h20x8]
+    seeds_by_profile: {h20x8: [0]}
+    expect:
+      - "summary.memory.oom == True"
+      - "summary.memory.oom_need_gb_est > 96"
+  - id: qwen7b_fsdp8
+    role: variant
+    title: 7B FSDP2 FULL_SHARD 8 卡（mbs 2）
+    params: {preset: qwen7b, strategy: fsdp_full}
+    profiles: [h20x8]
+    seeds_by_profile: {h20x8: [0]}
+    expect:
+      - "summary.memory.oom == False"
+      - "summary.memory.peak_allocated_gb < 90"
+
+  # ---------- 故障与修复 ----------
+  - id: fault_dataloader
+    role: fault
+    title: 数据在每个 rank 的主进程里做 CPU 规范化 + 分词（num_workers 0）
+    params: {data: cpu_pipeline, num_workers: 0}
+    expect:
+      - "summary.time.data_frac > 0.3"
+      - "summary.mfu.mfu < base.summary.mfu.mfu * 0.7"
+  - id: fix_dataloader
+    role: fix
+    title: 同样的 CPU 预处理，4 个 worker + 锁页内存 + 预取
+    params: {data: cpu_pipeline, num_workers: 4, pin_memory: true}
+    expect:
+      - "summary.time.data_frac < 0.1"
+      - "summary.mfu.mfu > base.summary.mfu.mfu * 0.85"

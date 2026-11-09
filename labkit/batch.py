@@ -61,13 +61,21 @@ class Slot:
 
 
 def make_slots(profile: dict, max_slots: int | None = None) -> list[Slot]:
+    """gpus_per_job = 1：每张卡一个槽位（× jobs_per_device）；n > 1：每 n 张卡一组，一个运行独占一组（多卡训练）。"""
     sl = profile.get("slots", {})
     per = int(sl.get("jobs_per_device", 1))
-    if int(sl.get("gpus_per_job", 0)) > 0:
+    n = int(sl.get("gpus_per_job", 0))
+    if n > 0:
         gpus = detect_gpus()
         if not gpus:
             raise RuntimeError("该档位需要 GPU，但 torch.cuda.device_count() = 0。先运行 python -m labkit probe --compute 排查")
-        slots = [Slot(f"gpu{g}-{j}", g) for g in gpus for j in range(per)]
+        if n == 1:
+            slots = [Slot(f"gpu{g}-{j}", g) for g in gpus for j in range(per)]
+        else:
+            if len(gpus) < n:
+                raise RuntimeError(f"该档位每个运行要 {n} 张卡，本机只有 {len(gpus)} 张")
+            groups = [gpus[i:i + n] for i in range(0, len(gpus) - n + 1, n)]
+            slots = [Slot(f"gpu{grp[0]}-{grp[-1]}-{j}", ",".join(grp)) for grp in groups for j in range(per)]
     else:
         slots = [Slot(f"local-{j}", None) for j in range(per)]
     return slots[:max_slots] if max_slots else slots

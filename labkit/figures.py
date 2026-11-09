@@ -34,10 +34,13 @@ CURVE_TITLES = {"train_loss": "train loss", "dev_loss": "dev loss", "dpo_loss": 
                 "grpo_kl": "GRPO 相对参考模型的 KL", "grpo_resp_len": "GRPO 回答长度（token）",
                 "valid_loss": "验证集 每 token loss", "valid_bpb": "验证集 bits-per-byte"}
 LOSS_SCENES = {"adextract": ["baseline", "all_tokens", "fault_truncation", "lr_5e-5", "lr_1e-3"]}
-MEMORY_SCENES = {"adextract": ["base_model", "lora_qv", "lora_attn", "baseline", "lora_r64"]}
+MEMORY_SCENES = {"adextract": ["base_model", "lora_qv", "lora_attn", "baseline", "lora_r64"],
+                 "trainperf": ["single", "baseline", "fsdp_grad_op", "fsdp_full", "ckpt", "fp32", "naive_attn", "qwen7b_fsdp8"]}
 PARAM_SCENES = {"adextract": ["lora_qv", "lora_attn", "lora_r4", "lora_r8", "baseline", "lora_r64"]}
 MEM_PARTS = [("weights_gb", "冻结权重", C["muted"]), ("trainable_and_grads_gb", "LoRA 参数+梯度", C["primary"]),
              ("optimizer_gb", "AdamW 状态", C["blue"]), ("activations_other_gb", "激活与其他", C["orange"])]
+MEM_PARTS_FULL = [("params_gb", "参数", C["muted"]), ("grads_gb", "梯度", C["primary"]),
+                  ("optimizer_gb", "优化器状态", C["blue"]), ("activations_other_gb", "激活与其他", C["orange"])]
 
 
 def _get(d, dotted: str):
@@ -240,7 +243,9 @@ def course_figures(course: dict, got: dict[str, list[dict]], profile: str) -> di
         if evs:
             keys = evs[0]["breakdown"].keys()
             mem.append({"label": sid, "parts": {k: statistics.fmean(e["breakdown"].get(k) or 0 for e in evs) for k in keys}})
-    figs["memory"] = stacked(mem, MEM_PARTS, "峰值显存构成（实测峰值，分项为估算）", sub)
+    full = any("params_gb" in m["parts"] for m in mem)
+    figs["memory"] = stacked(mem, MEM_PARTS_FULL if full else MEM_PARTS,
+                             "峰值显存构成（rank0 实测快照）" if full else "峰值显存构成（实测峰值，分项为估算）", sub)
     prm = []
     for sid in param_scenes:
         vals = [v for r in got.get(sid) or [] if (v := _get(r["meta"], "model.params.trainable")) is not None]

@@ -1,0 +1,615 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: L08
+profiles:
+  h20x8: H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）
+metric:
+  path: summary.mfu.mfu
+  label: MFU（按 H20 标称 148 TFLOPS，越高越好）
+table:
+- path: summary.mfu.mfu
+  label: MFU
+- path: summary.throughput.tokens_per_s_per_gpu
+  label: 每卡 tokens/s
+- path: summary.memory.peak_allocated_gb
+  label: 峰值显存 GB
+- path: summary.throughput.step_ms_median
+  label: 步时 ms
+- path: summary.time.data_frac
+  label: 等数据占比
+- path: summary.prof.gpu_idle_frac
+  label: GPU 空闲占比
+figures:
+  loss: []
+noise_note: 性能测量的种子只影响随机输入；吞吐差小于 5% 或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: single
+  title: 单卡
+- id: parallel
+  title: 8 卡并行
+- id: efficiency
+  title: 算得划不划算
+- id: scale
+  title: 回到 7B
+- id: fault
+  title: 故障
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 7B 训练 MFU 只有 20%，时间到底花在哪？
+  body: '训练慢的时候，常见的反应是"加卡"或"换框架"。但 MFU 20% 意味着 80% 的算力没变成模型计算，原因可能在：
+
+
+    - **GPU 在等**：数据没准备好、每步一次 `.item()` 同步、梯度通信没被反向盖住；
+
+    - **算得不划算**：fp32、batch 太小让矩阵乘吃不饱、attention 没走 flash、优化器逐参数循环；
+
+    - **多算了**：重计算多做一遍前向。
+
+
+    显存也一样：7B 全参放不下一张卡，是参数、梯度、优化器状态还是激活？这一课在 8 张 H20 上逐项量出来。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '一步训练和测量方式。点击每个节点看代码。
+
+    '
+  nodes:
+  - id: spawn
+    title: 启动 8 个 rank
+    shape: rank0 在 labkit worker 里，rank 1-7 用 spawn
+    detail: NCCL，超时 3 分钟；结束时 gather 各 rank 统计。
+    code:
+      file: trainperf/train.py
+      region: spawn
+  - id: wrap
+    title: 包装
+    shape: none / DDP / FSDP2；重计算；compile
+    detail: DDP 用 gradient_as_bucket_view 省一份梯度。
+    code:
+      file: trainperf/train.py
+      region: wrap
+  - id: data
+    title: 取数据
+    shape: '[mbs, T + 1] token'
+    detail: 默认直接在 GPU 上生成；故障场景走 CPU 分词。
+    code:
+      file: trainperf/data.py
+      region: gpu_random
+  - id: step
+    title: 前向 → 反向 → 优化器
+    shape: logits [mbs, T, 151936]
+    detail: 吞吐窗口不插同步；逐阶段窗口每段前后同步。
+    code:
+      file: trainperf/train.py
+      region: step_timing
+  - id: mem
+    title: 显存快照
+    shape: 建模后 / 首个反向后 / 首次 step 后 / 峰值
+    detail: 差值就是参数、梯度、优化器状态、激活与其他。
+    code:
+      file: trainperf/measure.py
+      region: breakdown
+  - id: mfu
+    title: MFU
+    shape: 每卡 tokens/s × 每 token FLOPs ÷ 峰值
+    code:
+      file: trainperf/train.py
+      region: mfu
+  - id: prof
+    title: profiler
+    shape: CUDA kernel 区间求并集
+    detail: GPU 忙闲、NCCL 时间、暴露的通信（NCCL 区间减去计算区间）。
+    code:
+      file: trainperf/measure.py
+      region: prof
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪
+  body: '基线 rank0 的真实追踪：逐阶段计时窗口前 3 步的数据 / 前向 / 反向 / 优化器毫秒数；显存快照序列和解析估算对照。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: trainperf/train.py
+    region: spawn
+    title: ① 多卡启动
+    note: rank0 留在 labkit worker 进程里（持有 ctx、写 summary），其余 7 个 rank 用 spawn 起子进程，继承同一份代码快照。
+  - file: trainperf/train.py
+    region: wrap
+    title: ② DDP / FSDP2
+    note: FSDP2 先对每个层 fully_shard，再对整个模型；reshard_after_forward=True 是 FULL_SHARD（前向后立刻释放整份参数），False 近似 ZeRO-2。
+  - file: trainperf/train.py
+    region: step_timing
+    title: ③ 逐阶段计时
+    note: 只有 timed=True 时才在每段前后同步，否则同步本身就会拖慢训练；吞吐用不同步的那 15 步算。
+  - file: trainperf/measure.py
+    region: breakdown
+    title: ④ 显存构成
+    note: 估算：16 字节/参数 ÷（FSDP 时）N；实测：三个快照的差值，峰值减去它们是激活与其他。
+  - file: trainperf/train.py
+    region: mfu
+    title: ⑤ MFU
+    note: 每 token 训练 FLOPs = 6 × matmul 参数 + 6 × 层数 × T × d（因果 attention）；重计算时 HFU 再加一遍前向。
+  - file: trainperf/data.py
+    region: cpu_pipeline
+    title: ⑥ CPU 数据管线
+    note: 每条样本：规范化 → 贪心分词 → 400 轮在线 BPE 合并，全是 Python。num_workers=0 时在训练主进程里串行做。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答四个问题。1.5B = 15.4 亿参数；H20 bf16 标称 148 TFLOPS。
+
+    '
+  questions:
+  - text: 1.5B 全参 AdamW（混合精度）单卡的静态显存（不含激活）大约多少？
+    options:
+    - 约 3 GB
+    - 约 12 GB
+    - 约 25 GB
+    - 约 50 GB
+  - text: FSDP FULL_SHARD 8 卡，每卡的静态显存大约多少？
+    options:
+    - 约 0.4 GB
+    - 约 3 GB
+    - 约 12 GB
+    - 约 25 GB
+  - text: 7B、8 × H20、每卡 650 tokens/s，MFU 大约多少？
+    options:
+    - 不到 10%
+    - 15% - 25%
+    - 30% - 40%
+    - 50% 以上
+  - text: 1.5B DDP 8 卡，每步梯度 all-reduce 的数据量约 6 GB（fp32）。它大约占步时的多少？
+    options:
+    - 不到 5%
+    - 5% - 20%
+    - 20% 以上
+- id: p_single
+  file: 06-single
+  stage: single
+  title: 单卡 MFU
+  body: '1.5B 单卡（不并行），seq 2048，mbs 2，bf16 autocast，SDPA，fused AdamW，随机 token（数据成本为 0）。
+
+    '
+  scenarios:
+  - single
+  question:
+    text: 单卡的 MFU 大约多少？
+    options:
+    - 不到 30%
+    - 30% - 45%
+    - 45% - 60%
+    - 60% 以上
+  columns:
+  - path: summary.mfu.mfu
+    label: MFU
+    fmt: .1%
+  - path: summary.mfu.mfu_vs_measured_peak
+    label: 对实测峰值
+    fmt: .1%
+  - path: summary.throughput.tokens_per_s_per_gpu
+    label: 每卡 tokens/s
+    fmt: ',.0f'
+  - path: summary.time.opt_ms
+    label: 优化器 ms
+    fmt: .0f
+  charts:
+  - metrics
+  - memory
+- id: p_memory
+  file: 07-memory
+  stage: single
+  title: 单卡显存构成
+  body: '同一个单卡运行：峰值显存里，参数、梯度、优化器状态之外，"激活与其他"占多少？（激活随 mbs × T 线性增长；还包括 [2, 2048, 151936] 的 logits。）
+
+    '
+  scenarios:
+  - single
+  question:
+    text: 激活与其他占峰值显存的多少？
+    options:
+    - 不到 25%
+    - 25% - 50%
+    - 50% - 75%
+    - 75% 以上
+  columns:
+  - path: summary.memory.peak_allocated_gb
+    label: 峰值 GB
+    fmt: .1f
+  - path: summary.memory.breakdown.activations_other_gb
+    label: 激活与其他 GB
+    fmt: .1f
+  - path: summary.memory.est.static_gb
+    label: 静态估算 GB
+    fmt: .1f
+  charts:
+  - memory
+- id: p_ddp
+  file: 08-ddp
+  stage: parallel
+  title: DDP 8 卡
+  body: '同样的模型和 mbs，DDP 8 卡：每卡一份完整的模型，每步 all-reduce 梯度（约 6 GB，分桶、和反向重叠）。看每卡吞吐。
+
+    '
+  scenarios:
+  - baseline
+  compare_to: single
+  question:
+    text: DDP 8 卡的每卡吞吐是单卡的多少？
+    options:
+    - 不到 80%
+    - 80% - 95%
+    - 95% 以上
+  columns:
+  - path: summary.throughput.tokens_per_s_per_gpu
+    label: 每卡 tokens/s
+    fmt: ',.0f'
+    delta: true
+  - path: summary.time.bwd_ms
+    label: 反向 ms
+    fmt: .0f
+    delta: true
+  - path: summary.prof.nccl_exposed_ms_per_step
+    label: 暴露的通信 ms
+    fmt: .1f
+  - path: summary.memory.peak_allocated_gb
+    label: 峰值 GB
+    fmt: .1f
+  charts:
+  - metrics
+  - throughput
+- id: p_fsdp
+  file: 09-fsdp
+  stage: parallel
+  title: FSDP FULL_SHARD
+  body: '从 DDP 换成 FSDP2 FULL_SHARD：参数、梯度、优化器状态都切成 8 份，每层用之前 all-gather、用完释放。另有一个"前向后不释放"（≈ ZeRO-2）的对照。
+
+    '
+  scenarios:
+  - fsdp_full
+  compare_to: baseline
+  also:
+  - fsdp_grad_op
+  question:
+    text: FULL_SHARD 的每卡峰值显存比 DDP 少多少 GB？
+    options:
+    - 少 30 GB 以上
+    - 少 15 - 30 GB
+    - 少 3 - 15 GB
+    - 少不到 3 GB
+  columns:
+  - path: summary.memory.peak_allocated_gb
+    label: 峰值 GB
+    fmt: .1f
+    delta: true
+  - path: summary.memory.breakdown.optimizer_gb
+    label: 优化器 GB
+    fmt: .2f
+  - path: summary.throughput.tokens_per_s_per_gpu
+    label: 每卡 tokens/s
+    fmt: ',.0f'
+    delta: true
+  charts:
+  - memory
+  - throughput
+- id: p_gas
+  file: 10-gas
+  stage: parallel
+  title: 梯度累积不用 no_sync
+  body: '梯度累积 8 步。一种用 no_sync（只在第 8 个 micro step 同步），一种每个 micro step 都 all-reduce（多了 7 次 6 GB 的通信）。
+
+    '
+  scenarios:
+  - gas8_sync
+  compare_to: gas8
+  question:
+    text: 每个 micro step 都同步，步时是 no_sync 的几倍？
+    options:
+    - 不到 1.03 倍
+    - 1.03 - 1.15 倍
+    - 1.15 倍以上
+  columns:
+  - path: summary.throughput.step_ms_median
+    label: 步时 ms
+    fmt: .0f
+    delta: true
+  - path: summary.comm.syncs_per_opt_step
+    label: 每步同步次数
+    fmt: .0f
+  charts:
+  - metrics
+- id: p_ckpt
+  file: 11-ckpt
+  stage: efficiency
+  title: 激活重计算
+  body: 'DDP 8 卡基础上开全量重计算：每层只存输入，反向时重算这一层的前向。多算约 1/3 的 FLOPs。另有一个"重计算 + mbs 8"的对照。
+
+    '
+  scenarios:
+  - ckpt
+  compare_to: baseline
+  also:
+  - ckpt_mbs8
+  question:
+    text: 开重计算后每卡吞吐是原来的多少？
+    options:
+    - 不到 67%
+    - 67% - 80%
+    - 80% - 95%
+    - 95% 以上
+  columns:
+  - path: summary.throughput.tokens_per_s_per_gpu
+    label: 每卡 tokens/s
+    fmt: ',.0f'
+    delta: true
+  - path: summary.memory.breakdown.activations_other_gb
+    label: 激活与其他 GB
+    fmt: .1f
+    delta: true
+  - path: summary.mfu.hfu
+    label: HFU
+    fmt: .1%
+  charts:
+  - memory
+  - throughput
+- id: p_mbs
+  file: 12-mbs
+  stage: efficiency
+  title: mbs 2 → 1
+  body: '每卡 micro batch 从 2 条降到 1 条序列。矩阵乘的 M 维 = mbs × T：从 4096 降到 2048。另有 mbs 4 的对照。
+
+    '
+  scenarios:
+  - mbs1
+  compare_to: baseline
+  also:
+  - mbs4
+  question:
+    text: mbs 1 的 MFU 是 mbs 2 的多少？
+    options:
+    - 不到 80%
+    - 80% - 95%
+    - 95% 以上
+  columns:
+  - path: summary.mfu.mfu
+    label: MFU
+    fmt: .1%
+    delta: true
+  - path: summary.memory.peak_allocated_gb
+    label: 峰值 GB
+    fmt: .1f
+  - path: summary.time.opt_frac
+    label: 优化器占比
+    fmt: .1%
+  charts:
+  - metrics
+- id: p_precision
+  file: 13-precision
+  stage: efficiency
+  title: 全 fp32
+  body: '不开 autocast、不开 TF32：所有矩阵乘都是 fp32，走 CUDA core 而不是 Tensor Core。
+
+    '
+  scenarios:
+  - fp32
+  compare_to: baseline
+  question:
+    text: fp32 的每卡吞吐是 bf16 的多少？
+    options:
+    - 不到 25%
+    - 25% - 50%
+    - 50% - 80%
+    - 80% 以上
+  columns:
+  - path: summary.throughput.tokens_per_s_per_gpu
+    label: 每卡 tokens/s
+    fmt: ',.0f'
+    delta: true
+  - path: summary.memory.peak_allocated_gb
+    label: 峰值 GB
+    fmt: .1f
+    delta: true
+  charts:
+  - metrics
+  - memory
+  - throughput
+- id: p_kernels
+  file: 14-kernels
+  stage: efficiency
+  title: attention 实现
+  body: 'attention 从 SDPA（flash）换成手写：显式算 [mbs, 12, 2048, 2048] 的打分和 softmax，每层存下来给反向用。另有 torch.compile 和"AdamW 逐参数循环"两个对照。
+
+    '
+  scenarios:
+  - naive_attn
+  - compile
+  - adam_forloop
+  compare_to: baseline
+  question:
+    text: 手写 attention 的峰值显存比 SDPA 多多少 GB？
+    options:
+    - 不到 2 GB
+    - 2 - 10 GB
+    - 10 GB 以上
+  columns:
+  - path: summary.memory.peak_allocated_gb
+    label: 峰值 GB
+    fmt: .1f
+    delta: true
+  - path: summary.throughput.tokens_per_s_per_gpu
+    label: 每卡 tokens/s
+    fmt: ',.0f'
+    delta: true
+  - path: summary.time.opt_ms
+    label: 优化器 ms
+    fmt: .0f
+  charts:
+  - memory
+  - throughput
+- id: p_7b_oom
+  file: 15-7b-oom
+  stage: scale
+  title: 7B 单卡全参
+  body: '7B（76 亿参数）单卡全参训练，mbs 1。fp32 主参数 30.5 GB；AdamW 的 m、v 在第一次 optimizer.step() 时才分配。H20 有 96 GB。
+
+    '
+  scenarios:
+  - qwen7b_single
+  also:
+  - qwen7b_fsdp8
+  question:
+    text: 在哪一步 OOM？
+    options:
+    - 不会 OOM
+    - 建模或前向
+    - 反向
+    - 第一次 optimizer.step()
+  columns:
+  - path: summary.memory.oom_stage_idx
+    label: OOM 阶段序号
+    fmt: d
+  - path: summary.memory.oom_alloc_gb
+    label: OOM 时已分配 GB
+    fmt: .1f
+  - path: summary.memory.oom_need_gb_est
+    label: 估算需要 GB
+    fmt: .0f
+  charts:
+  - memory
+- id: p_7b_fsdp
+  file: 16-7b-fsdp
+  stage: scale
+  title: 7B FSDP 8 卡
+  body: '7B 用 FSDP2 FULL_SHARD 8 卡，mbs 2，seq 2048。每层前向、反向前都要 all-gather 这一层的整份参数（bf16，约 0.45 GB），通信量是 DDP 的约 1.5 倍。
+
+    '
+  scenarios:
+  - qwen7b_fsdp8
+  compare_to: baseline
+  question:
+    text: 7B FSDP 8 卡的 MFU 大约多少？
+    options:
+    - 不到 20%
+    - 20% - 35%
+    - 35% - 50%
+    - 50% 以上
+  columns:
+  - path: summary.mfu.mfu
+    label: MFU
+    fmt: .1%
+    delta: true
+  - path: summary.throughput.tokens_per_s_per_gpu
+    label: 每卡 tokens/s
+    fmt: ',.0f'
+  - path: summary.memory.peak_allocated_gb
+    label: 峰值 GB
+    fmt: .1f
+  - path: summary.prof.nccl_exposed_ms_per_step
+    label: 暴露的通信 ms
+    fmt: .0f
+  charts:
+  - metrics
+  - memory
+- id: p_fault
+  file: 17-fault
+  stage: fault
+  title: 换成在线分词
+  body: '同事把随机 token 换成"真实"的数据管线：每条样本在线做文本规范化、分词和 BPE 合并（纯 Python），DataLoader 的 num_workers 用默认的 0。训练正常，loss 正常，nvidia-smi 也间歇显示 GPU 在忙。
+
+    '
+  scenarios:
+  - fault_dataloader
+  compare_to: baseline
+  question:
+    text: MFU 是基线的多少？
+    options:
+    - 不到 50%
+    - 50% - 80%
+    - 80% 以上
+  columns:
+  - path: summary.mfu.mfu
+    label: MFU
+    fmt: .1%
+    delta: true
+  - path: summary.time.data_frac
+    label: 等数据占比
+    fmt: .1%
+  - path: summary.prof.gpu_idle_frac
+    label: GPU 空闲占比
+    fmt: .1%
+  charts:
+  - metrics
+- id: diagnose
+  file: 18-diagnose
+  stage: fault
+  title: 诊断：MFU 掉在哪
+  body: '模型、并行方式都没变，只换了数据来源。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - fault_dataloader
+  compare_to: baseline
+  also:
+  - fix_dataloader
+  question:
+    text: 根因是什么？
+    options:
+    - 梯度通信没有和计算重叠
+    - 数据在训练主进程里同步做 CPU 预处理，GPU 空等
+    - 显存碎片导致分配器反复整理
+    - mbs 太小，矩阵乘吃不饱
+  clues:
+  - 步时分解：数据 {{v:fault_dataloader:summary.time.data_ms:.0f}} ms（基线 {{v:baseline:summary.time.data_ms:.1f}}），前向 {{v:fault_dataloader:summary.time.fwd_ms:.0f}}、反向 {{v:fault_dataloader:summary.time.bwd_ms:.0f}} ms（基线 {{v:baseline:summary.time.fwd_ms:.0f}}、{{v:baseline:summary.time.bwd_ms:.0f}}）。
+  - profiler：每步 kernel 计算 {{v:fault_dataloader:summary.prof.compute_ms_per_step:.0f}} ms（基线 {{v:baseline:summary.prof.compute_ms_per_step:.0f}}），GPU 空闲占比 {{v:fault_dataloader:summary.prof.gpu_idle_frac:.0%}}（基线 {{v:baseline:summary.prof.gpu_idle_frac:.0%}}）。
+  - 配置：num_workers = 0；每个 rank 每步要处理 mbs 条样本；机器 CPU 核数 {{v:baseline:summary.hw.cpu_count}}。
+  columns:
+  - path: summary.time.data_ms
+    label: 数据 ms
+    fmt: .0f
+  - path: summary.time.bwd_ms
+    label: 反向 ms
+    fmt: .0f
+  - path: summary.prof.gpu_idle_frac
+    label: GPU 空闲
+    fmt: .1%
+  - path: summary.mfu.mfu
+    label: MFU
+    fmt: .1%
+  charts:
+  - metrics
+- id: keycard
+  file: 19-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 全参 AdamW 的静态显存是多少字节/参数？两种口径怎么对上？
+  - ZeRO-1/2/3（FSDP）各切什么？静态显存和通信量各是 DDP 的多少？
+  - MFU 和 HFU 怎么算？为什么要同时报"按标称"和"按实测峰值"？
+  - 重计算的代价和收益各是多少？什么时候不该开？
+  - 7B 单卡全参在哪一步 OOM？为什么"前几步能跑"不代表能训？
+  - MFU 低时按什么顺序排查？怎么证明 GPU 在等数据？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。
