@@ -1,0 +1,116 @@
+{
+  "sid": {
+    "collision_rate": 0.92805,
+    "combos": 1456473,
+    "capacity": 4294967296,
+    "max_bucket": 8243,
+    "uniform": 0.00233,
+    "levels": {
+      "L1": {
+        "used_frac": 1.0,
+        "ppl": 199.63,
+        "ppl_frac": 0.7798
+      },
+      "L2": {
+        "used_frac": 1.0,
+        "ppl": 137.55,
+        "ppl_frac": 0.5373
+      },
+      "L3": {
+        "used_frac": 1.0,
+        "ppl": 113.49,
+        "ppl_frac": 0.4433
+      },
+      "L4": {
+        "used_frac": 1.0,
+        "ppl": 113.52,
+        "ppl_frac": 0.4435
+      }
+    },
+    "by_depth": {
+      "d1": {
+        "collision_rate": 1.0,
+        "combos": 256,
+        "capacity": 256,
+        "max_bucket": 307901,
+        "uniform": 1.0
+      },
+      "d2": {
+        "collision_rate": 0.99989,
+        "combos": 20677,
+        "capacity": 65536,
+        "max_bucket": 38838,
+        "uniform": 1.0
+      },
+      "d3": {
+        "collision_rate": 0.98795,
+        "combos": 420945,
+        "capacity": 16777216,
+        "max_bucket": 18941,
+        "uniform": 0.44901
+      },
+      "d4": {
+        "collision_rate": 0.92805,
+        "combos": 1456473,
+        "capacity": 4294967296,
+        "max_bucket": 8243,
+        "uniform": 0.00233
+      }
+    },
+    "at_cap": {
+      "c16m": {
+        "depth": 3,
+        "collision_rate": 0.98795
+      }
+    },
+    "recon": {
+      "L1": 0.4197,
+      "L2": 0.3492,
+      "L3": 0.3169,
+      "L4": 0.2939
+    },
+    "nmi": {
+      "L1_L2": 0.3314,
+      "L2_L3": 0.1169,
+      "L3_L4": 0.067
+    },
+    "prefix_sim": {
+      "random": 0.0332,
+      "d1": 0.8162,
+      "d2": 0.9149,
+      "full": 0.9779
+    },
+    "cross": {
+      "true_top_purity": 0.9959,
+      "true_sub_purity": 0.781
+    },
+    "timing": {
+      "emb_s": 7.97,
+      "quantize_s": 8.1
+    }
+  },
+  "rqvae": {},
+  "headline": {
+    "collision_rate": 0.92805
+  },
+  "display": {
+    "碰撞率": 0.92805,
+    "均匀基准碰撞率": 0.00233,
+    "码组合数": 1456473,
+    "L1 困惑度 / K": 0.7798,
+    "L4 困惑度 / K": 0.4435,
+    "最低码字利用率": 1.0,
+    "最大桶": 8243,
+    "末层重建误差": 0.2939,
+    "NMI(L1, L2)": 0.3314,
+    "同前缀余弦（d1）": 0.8162
+  },
+  "display_pct": [
+    "碰撞率",
+    "均匀基准碰撞率",
+    "L1 困惑度 / K",
+    "L4 困惑度 / K",
+    "最低码字利用率",
+    "同 c1 相邻行为比例"
+  ]
+}

@@ -1,0 +1,7 @@
+[worker] 等待设备锁 gpu1-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R03/synth_k64/s1-c81263/code/genrec/experiment.py
+[01:01:48] ===== 阶段：prepare =====
+[01:01:52] 语义 ID：1,000,000 个物品、4 层 × 64 码；碰撞率 96.3%（均匀基准 5.8%），码组合 101,508；每层重建误差 {'L1': 0.5464, 'L2': 0.4637, 'L3': 0.4164, 'L4': 0.3844}
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

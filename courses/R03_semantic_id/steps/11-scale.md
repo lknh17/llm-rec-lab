@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 3 层碰撞率 | 4 层碰撞率 | 最大桶 | 量化秒数 | 3 层碰撞率：与 `synth` 差 | 3 层碰撞率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `synth` | 参照 | 91.5% ± 0.1% | 74.9% ± 0.4% | 919.3333333333334 ± 65.49300217071541 | 7 ± 0 | — | s0 91.6% / s1 91.3% / s2 91.5% | 通过 |
+| `synth_10m` | 候选改动 | 98.7% ± 0.1% | 92.8% ± 0.1% | 8,114.0 ± 401.36143312480834 | 8 ± 0 | +7.3% | s0 98.8% / s1 98.7% / s2 98.7% |  |
+
+![3 层碰撞率（均值，误差线为种子间最小到最大）](figures/h20x8-p_scale-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `synth` [s0](../../../results/h20x8/R03/synth/s0-5f8a12/) · [s1](../../../results/h20x8/R03/synth/s1-de2ed3/) · [s2](../../../results/h20x8/R03/synth/s2-1e6c0c/)
+- `synth_10m` [s0](../../../results/h20x8/R03/synth_10m/s0-bf1f92/) · [s1](../../../results/h20x8/R03/synth_10m/s1-388e91/) · [s2](../../../results/h20x8/R03/synth_10m/s2-d0b9df/)
 
 </details>
 

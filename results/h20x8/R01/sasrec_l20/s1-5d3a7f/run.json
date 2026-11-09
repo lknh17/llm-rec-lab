@@ -1,0 +1,155 @@
+{
+  "run_id": "h20x8.R01.sasrec_l20.s1-5d3a7f",
+  "course_id": "R01",
+  "project": "recseq",
+  "entry": "recseq.experiment",
+  "profile": "h20x8",
+  "scenario": "sasrec_l20",
+  "role": "variant",
+  "title": "SASRec，L = 20",
+  "seed": 1,
+  "variant": "sasrec_l20",
+  "config_hash": "5d3a7fa75d77",
+  "code_hash": "068f21297526",
+  "git": {
+    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "max_len": 20
+  },
+  "param_affects": {
+    "dataset": "data",
+    "max_len": "data",
+    "truncate": "data",
+    "len_scale": "data",
+    "synth_users": "data",
+    "synth_eval_users": "data",
+    "synth_clusters": "data",
+    "synth_items_per_cluster": "data",
+    "synth_len_min": "data",
+    "synth_len_max": "data",
+    "synth_period_min": "data",
+    "synth_period_max": "data",
+    "synth_burst": "data",
+    "synth_noise": "data",
+    "synth_stay": "data",
+    "synth_alpha": "data",
+    "synth_session_mean": "data",
+    "data_seed": "data",
+    "model": "model",
+    "d_model": "model",
+    "n_layer": "model",
+    "n_head": "model",
+    "dropout": "model",
+    "attn_impl": "model",
+    "attn_chunk": "model",
+    "mask": "model",
+    "pos_buckets": "model",
+    "time_bias": "model",
+    "time_buckets": "model",
+    "batch_size": "train",
+    "tokens_per_step": "train",
+    "steps": "train",
+    "lr": "train",
+    "warmup_frac": "train",
+    "weight_decay": "train",
+    "precision": "train",
+    "seed": "train",
+    "ckpt_every": "eval",
+    "valid_frac": "eval",
+    "sampled_negs": "eval",
+    "probe_lens": "eval",
+    "probe": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794241751.2515955,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794241751.3929725,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794241759.241983,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794241761.9042933,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794241791.7872875,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794241792.5496514,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794241751.2515955,
+  "budget": {
+    "max_minutes": 30
+  },
+  "expect": [],
+  "slot": "gpu0-0",
+  "started_at": 1794241751.392974,
+  "data": {
+    "kind": "MovieLens-1M 评分序列（leave-one-out）",
+    "users": 6040,
+    "n_items": 3707,
+    "rows": 1000209,
+    "len_median": 96.0,
+    "len_p90": 400.0,
+    "len_max": 2314,
+    "pad_token_waste": 0.0007,
+    "pad_attn_waste": 0.0014,
+    "max_len": 20,
+    "truncate": "recent"
+  },
+  "model": {
+    "arch": "SASRec 因果自注意力",
+    "params": {
+      "total": 337792,
+      "trainable": 337792,
+      "embedding": 237248,
+      "body": 100544,
+      "embedding_share": 0.7023,
+      "train_mode": "full"
+    },
+    "attn_impl": "sdpa",
+    "device": "cuda",
+    "dtype": "bf16 autocast"
+  },
+  "train": {
+    "steps": 4000,
+    "seconds": 25.09,
+    "samples_per_s": 20407.1,
+    "tokens_per_s": 343849.9,
+    "train_tokens": 8626942
+  },
+  "artifacts": {
+    "model.pt": {
+      "kind": "checkpoint",
+      "bytes": 1357240,
+      "note": "序列模型权重（验证最好的那一步）"
+    }
+  },
+  "ended_at": 1794241792.5496528,
+  "end_reason": "完成",
+  "expect_results": [],
+  "expect_ok": true,
+  "exported": true
+}

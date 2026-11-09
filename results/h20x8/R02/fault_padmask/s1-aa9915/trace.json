@@ -1,0 +1,323 @@
+{
+  "batch": {
+    "note": "训练窗口：左补齐（最近的行为在最右边），y 是每个位置的下一个物品",
+    "B": 6,
+    "L": 10240,
+    "x_shape": [
+      2,
+      10240
+    ],
+    "x_tail": [
+      2665,
+      2665,
+      2669,
+      2685,
+      2667,
+      2671,
+      2676,
+      809
+    ],
+    "y_tail": [
+      2665,
+      2669,
+      2685,
+      2667,
+      2671,
+      2676,
+      809,
+      809
+    ],
+    "pad_frac": 0.748
+  },
+  "synth_user": {
+    "note": "一个测试用户切点前的 12 个行为和它的目标",
+    "N": 1870,
+    "P": 454,
+    "burst_starts": [
+      526,
+      967,
+      1417,
+      1861
+    ],
+    "cut": 1813,
+    "target": 1622,
+    "target_kind": "newsess",
+    "dist": -1,
+    "tail": [
+      {
+        "item": 3417,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3417,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3402,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3401,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3408,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3405,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3405,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3407,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3401,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3402,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3405,
+        "kind": "背景",
+        "session_start": false
+      },
+      {
+        "item": 3403,
+        "kind": "背景",
+        "session_start": false
+      }
+    ]
+  },
+  "mask": {
+    "note": "6 个位置、左补 2 个 pad：1 = query（行）能看到 key（列）",
+    "causal+pad": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    ],
+    "causal_only": [
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    ]
+  },
+  "rab": {
+    "note": "相对时间 → 桶（⌊log2(1+Δt)⌋）；相对距离 → 桶（0-15 精确，之后对数）",
+    "dt_seconds": [
+      30,
+      120,
+      3600,
+      86400,
+      2592000,
+      31536000
+    ],
+    "time_bucket": [
+      4,
+      6,
+      11,
+      16,
+      21,
+      24
+    ],
+    "distance": [
+      1,
+      5,
+      15,
+      16,
+      100,
+      1000,
+      5000,
+      10000
+    ],
+    "pos_bucket": [
+      1,
+      5,
+      15,
+      16,
+      29,
+      46,
+      58,
+      63
+    ]
+  },
+  "probe": {
+    "note": "随机输入、每条序列单独测前向 + 反向（B = 1）",
+    "L512": {
+      "manual": {
+        "ms": 57.041,
+        "peak_gb": 0.061,
+        "est_gb": 0.016,
+        "oom": false
+      },
+      "chunked": {
+        "ms": 58.192,
+        "peak_gb": 0.05,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "L2048": {
+      "manual": {
+        "ms": 1136.799,
+        "peak_gb": 0.372,
+        "est_gb": 0.252,
+        "oom": false
+      },
+      "chunked": {
+        "ms": 504.954,
+        "peak_gb": 0.163,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "L8192": {
+      "manual": {
+        "ms": 18023.761,
+        "peak_gb": 5.286,
+        "est_gb": 4.027,
+        "oom": false
+      },
+      "chunked": {
+        "ms": 4914.958,
+        "peak_gb": 0.646,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "L10240": {
+      "manual": {
+        "ms": 28089.019,
+        "peak_gb": 8.227,
+        "est_gb": 6.291,
+        "oom": false
+      },
+      "chunked": {
+        "ms": 7880.441,
+        "peak_gb": 0.807,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "jagged": {
+      "lengths": [
+        1602,
+        2847,
+        3147,
+        5033,
+        8110,
+        8184
+      ],
+      "ms_padded": 23649.3,
+      "ms_jagged": 13909.75,
+      "speedup": 1.7
+    }
+  }
+}

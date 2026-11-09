@@ -1,0 +1,34 @@
+{
+  "quantize": {
+    "note": "《Toy Story》：每层选的码、减掉之后剩下的残差范数；同一个第 1 层码的电影；码完全相同（碰撞）的电影",
+    "title": "Toy Story (1995)",
+    "x_shape": [
+      3706,
+      64
+    ],
+    "x_norm": 1.0,
+    "codes": [
+      62,
+      226,
+      202
+    ],
+    "residual_norm_after_level": [
+      0.5182,
+      0.4076,
+      0.3623
+    ],
+    "same_c1": [
+      "Babe (1995)",
+      "Wallace & Gromit: The Best of Aardman Animation (1996)",
+      "Close Shave, A (1995)",
+      "Monty Python and the Holy Grail (1974)",
+      "Wrong Trousers, The (1993)"
+    ],
+    "same_bucket": [],
+    "codebook_shape": [
+      3,
+      256,
+      64
+    ]
+  }
+}

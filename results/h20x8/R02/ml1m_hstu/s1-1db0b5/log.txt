@@ -1,0 +1,12 @@
+[worker] 等待设备锁 gpu7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R02/ml1m_hstu/s1-1db0b5/code/recseq/experiment.py
+[00:35:18] ===== 阶段：prepare =====
+[00:35:25] 模型 hstu：279,872 参数；L = 200，B = 128，注意力实现 chunked
+[00:35:25] ===== 阶段：train =====
+[00:44:35] step 500/4000  loss 5.8933  验证 Recall@10 0.1736
+[00:53:45] step 1000/4000  loss 5.2871  验证 Recall@10 0.2429
+[01:02:55] step 1500/4000  loss 5.1528  验证 Recall@10 0.2614
+[01:12:05] step 2000/4000  loss 4.9625  验证 Recall@10 0.2895
+[worker] 结束：failed（budget: 超过时间预算 45.0 分钟）
+{"status": "failed"}

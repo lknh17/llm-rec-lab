@@ -1,0 +1,113 @@
+{
+  "test": {
+    "recall10": 0.12318,
+    "ndcg10": 0.07132,
+    "n": 6040,
+    "cands_per_user": 10.0,
+    "recall_at": {
+      "k1": 0.03079,
+      "k5": 0.08642,
+      "k10": 0.12318
+    },
+    "invalid_frac": 0.0,
+    "wrong_level_frac": 0.0,
+    "unique_per_user": 10.0,
+    "ms_per_user": 0.1116
+  },
+  "beam": {
+    "w1": {
+      "recall10": 0.02434,
+      "invalid_frac": 0.0,
+      "unique_per_user": 1.0,
+      "ms_per_user": 0.0468
+    },
+    "w5": {
+      "recall10": 0.08228,
+      "invalid_frac": 0.0,
+      "unique_per_user": 5.0,
+      "ms_per_user": 0.0682
+    },
+    "w10": {
+      "recall10": 0.12318,
+      "invalid_frac": 0.0,
+      "unique_per_user": 10.0,
+      "ms_per_user": 0.1116
+    },
+    "w20": {
+      "recall10": 0.12997,
+      "invalid_frac": 0.0,
+      "unique_per_user": 20.0,
+      "ms_per_user": 0.2036
+    }
+  },
+  "notrie": {
+    "w10": {
+      "recall10": 0.12318,
+      "ndcg10": 0.07132,
+      "n": 6040,
+      "cands_per_user": 10.0,
+      "recall_at": {
+        "k1": 0.03079,
+        "k5": 0.08642,
+        "k10": 0.12318
+      },
+      "invalid_frac": 0.0,
+      "wrong_level_frac": 0.0,
+      "unique_per_user": 10.0,
+      "ms_per_user": 0.1172
+    }
+  },
+  "pop": {
+    "recall10": 0.01639
+  },
+  "sid": {
+    "collision_rate": 0.00971,
+    "vocab": 196,
+    "tokens_per_item": 4,
+    "target_collided_frac": 0.0096
+  },
+  "trie": {
+    "nodes": 9995,
+    "mb": 7.836,
+    "branching": [
+      64.0,
+      39.62,
+      1.45,
+      1.0
+    ]
+  },
+  "train": {
+    "seconds": 617.81,
+    "best_step": 10000,
+    "best_valid_recall10": 0.13,
+    "steps": 12000,
+    "params": 1399108
+  },
+  "cost": {
+    "full_ms_1e7": 0.2127,
+    "item_table_gb_1e7": 2.56,
+    "beam_ms_w10": 0.1116,
+    "full_over_beam_1e7": 1.906,
+    "bench_n": 10000000
+  },
+  "headline": {
+    "recall10": 0.12318,
+    "ndcg10": 0.07132
+  },
+  "display": {
+    "Recall@10": 0.12318,
+    "NDCG@10": 0.07132,
+    "非法元组比例": 0.0,
+    "每用户不重复物品数": 10.0,
+    "解码 ms/用户": 0.1116,
+    "碰撞率": 0.00971,
+    "训练秒数": 617.81,
+    "参数量": 1399108
+  },
+  "display_pct": [
+    "Recall@10",
+    "NDCG@10",
+    "非法元组比例",
+    "碰撞率"
+  ]
+}

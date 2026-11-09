@@ -1,0 +1,197 @@
+{
+  "quantize": {
+    "note": "《Toy Story》：每层选的码、减掉之后剩下的残差范数；同一个第 1 层码的电影；码完全相同（碰撞）的电影",
+    "title": "Toy Story (1995)",
+    "x_shape": [
+      3706,
+      64
+    ],
+    "x_norm": 1.0,
+    "codes": [
+      33,
+      13,
+      26
+    ],
+    "residual_norm_after_level": [
+      0.9129,
+      0.8433,
+      0.7603
+    ],
+    "same_c1": [
+      "Othello (1995)",
+      "Juror, The (1996)",
+      "Bottle Rocket (1996)",
+      "Catwalk (1995)",
+      "To Wong Foo, Thanks for Everything! Julie Newmar (1995)"
+    ],
+    "same_bucket": [],
+    "codebook_shape": [
+      3,
+      64,
+      64
+    ]
+  },
+  "decode": {
+    "note": "一个测试用户：最近 5 部电影和它们的语义 ID token；beam 解码出的 token 元组、分数和对应电影",
+    "recent": [
+      {
+        "title": "Hunchback of Notre Dame, The (1996)",
+        "tokens": [
+          17,
+          91,
+          189,
+          194
+        ]
+      },
+      {
+        "title": "Antz (1998)",
+        "tokens": [
+          22,
+          76,
+          181,
+          194
+        ]
+      },
+      {
+        "title": "Bug's Life, A (1998)",
+        "tokens": [
+          28,
+          93,
+          157,
+          194
+        ]
+      },
+      {
+        "title": "Hercules (1997)",
+        "tokens": [
+          37,
+          96,
+          188,
+          194
+        ]
+      },
+      {
+        "title": "Mulan (1998)",
+        "tokens": [
+          17,
+          107,
+          148,
+          194
+        ]
+      }
+    ],
+    "encoder_input": [
+      1,
+      200,
+      4
+    ],
+    "root_allowed": 64,
+    "beams": [
+      {
+        "tokens": [
+          54,
+          92,
+          161,
+          194
+        ],
+        "score": -4.394,
+        "title": "Alice in Wonderland (1951)"
+      },
+      {
+        "tokens": [
+          56,
+          125,
+          147,
+          194
+        ],
+        "score": -4.462,
+        "title": "Lion King, The (1994)"
+      },
+      {
+        "tokens": [
+          21,
+          113,
+          192,
+          194
+        ],
+        "score": -4.507,
+        "title": "Cinderella (1950)"
+      },
+      {
+        "tokens": [
+          8,
+          70,
+          158,
+          194
+        ],
+        "score": -4.699,
+        "title": "Sleeping Beauty (1959)"
+      },
+      {
+        "tokens": [
+          55,
+          123,
+          173,
+          194
+        ],
+        "score": -4.781,
+        "title": "Aladdin (1992)"
+      },
+      {
+        "tokens": [
+          37,
+          96,
+          188,
+          194
+        ],
+        "score": -4.807,
+        "title": "Hercules (1997)"
+      },
+      {
+        "tokens": [
+          56,
+          74,
+          144,
+          194
+        ],
+        "score": -5.241,
+        "title": "Four Weddings and a Funeral (1994)"
+      },
+      {
+        "tokens": [
+          27,
+          99,
+          187,
+          194
+        ],
+        "score": -5.26,
+        "title": "Austin Powers: International Man of Mystery (1997)"
+      },
+      {
+        "tokens": [
+          55,
+          87,
+          191,
+          194
+        ],
+        "score": -5.277,
+        "title": "Anastasia (1997)"
+      },
+      {
+        "tokens": [
+          54,
+          78,
+          168,
+          194
+        ],
+        "score": -5.342,
+        "title": "Beauty and the Beast (1991)"
+      }
+    ],
+    "target": "Pocahontas (1995)",
+    "hit": false
+  },
+  "reload": {
+    "same_top10": true
+  }
+}

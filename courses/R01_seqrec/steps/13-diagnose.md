@@ -21,13 +21,13 @@
 
 <details><summary>线索 1</summary>
 
-按历史长度分组：历史 ≤ 50 的用户 Recall 〔待 H20 生成〕（基线 〔待 H20 生成〕）；历史 > 50 的用户 〔待 H20 生成〕（基线 〔待 H20 生成〕）。
+按历史长度分组：历史 ≤ 50 的用户 Recall 0.319 ± 0.005（基线 0.326 ± 0.008）；历史 > 50 的用户 0.015 ± 0.001（基线 0.193 ± 0.002）。
 
 </details>
 
 <details><summary>线索 2</summary>
 
-输入最后一个行为到目标隔了几步：〔待 H20 生成〕（基线 〔待 H20 生成〕）。目标类型和输入末尾 5 部电影类型的重合度：〔待 H20 生成〕（基线 〔待 H20 生成〕）。
+输入最后一个行为到目标隔了几步：121 ± 0（基线 1 ± 0）。目标类型和输入末尾 5 部电影类型的重合度：0.211 ± 0.000（基线 0.248 ± 0.000）。
 
 </details>
 
@@ -50,9 +50,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · MovieLens-1M · leave-one-out · 对全部 3706 部电影排序 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · MovieLens-1M · leave-one-out · 对全部 3706 部电影排序 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 历史 ≤ 50 | 历史 > 50 | 输入末尾到目标的距离 | 类型重合度 | 历史 ≤ 50：与 `baseline` 差 | 历史 ≤ 50：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.326 ± 0.008 | 0.193 ± 0.002 | 1.0 ± 0.0 | 0.248 ± 0.000 | — | s0 0.325 / s1 0.318 / s2 0.334 | 通过 |
+| `fault_earliest` | 教学故障 | 0.319 ± 0.005 | 0.015 ± 0.001 | 120.9 ± 0.0 | 0.211 ± 0.000 | -0.007 | s0 0.313 / s1 0.319 / s2 0.324 | 通过 |
+
+![历史 ≤ 50（均值，误差线为种子间最小到最大）](figures/h20x8-diagnose-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R01/baseline/s0-585a43/) · [s1](../../../results/h20x8/R01/baseline/s1-87e137/) · [s2](../../../results/h20x8/R01/baseline/s2-471d19/)
+- `fault_earliest` [s0](../../../results/h20x8/R01/fault_earliest/s0-341113/) · [s1](../../../results/h20x8/R01/fault_earliest/s1-9117fc/) · [s2](../../../results/h20x8/R01/fault_earliest/s2-ac5af4/)
 
 </details>
 

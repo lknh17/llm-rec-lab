@@ -1,0 +1,8 @@
+[worker] 等待设备锁 gpu7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R02/fault_padmask/s1-aa9915/code/recseq/experiment.py
+[23:20:31] ===== 阶段：prepare =====
+[23:20:31] 缓存 recseq_synth key=81766954143a: 命中，复用运行 s1-58b973 的产物
+[23:30:52] 模型 hstu：305,344 参数；L = 10240，B = 6，注意力实现 chunked
+[23:30:52] ===== 阶段：train =====
+[worker] 收到信号 15，将在下一个检查点停止

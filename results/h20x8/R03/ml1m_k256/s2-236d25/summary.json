@@ -1,0 +1,105 @@
+{
+  "sid": {
+    "collision_rate": 0.07609,
+    "combos": 3482,
+    "capacity": 16777216,
+    "max_bucket": 118,
+    "uniform": 0.00022,
+    "levels": {
+      "L1": {
+        "used_frac": 1.0,
+        "ppl": 192.31,
+        "ppl_frac": 0.7512
+      },
+      "L2": {
+        "used_frac": 1.0,
+        "ppl": 114.69,
+        "ppl_frac": 0.448
+      },
+      "L3": {
+        "used_frac": 1.0,
+        "ppl": 79.82,
+        "ppl_frac": 0.3118
+      }
+    },
+    "by_depth": {
+      "d1": {
+        "collision_rate": 0.99892,
+        "combos": 256,
+        "capacity": 256,
+        "max_bucket": 200,
+        "uniform": 1.0
+      },
+      "d2": {
+        "collision_rate": 0.32407,
+        "combos": 2922,
+        "capacity": 65536,
+        "max_bucket": 129,
+        "uniform": 0.05497
+      },
+      "d3": {
+        "collision_rate": 0.07609,
+        "combos": 3482,
+        "capacity": 16777216,
+        "max_bucket": 118,
+        "uniform": 0.00022
+      }
+    },
+    "at_cap": {
+      "c16m": {
+        "depth": 3,
+        "collision_rate": 0.07609
+      }
+    },
+    "recon": {
+      "L1": 0.5309,
+      "L2": 0.4276,
+      "L3": 0.3629
+    },
+    "nmi": {
+      "L1_L2": 0.4561,
+      "L2_L3": 0.318
+    },
+    "prefix_sim": {
+      "random": 0.1805,
+      "d1": 0.7132,
+      "d2": 0.8659,
+      "full": 0.9486
+    },
+    "cross": {
+      "cooc_same_c1": 0.0986,
+      "genre_jacc_c1": 0.5409,
+      "genre_jacc_rand": 0.168,
+      "pop_eta2_c1": 0.8725
+    },
+    "timing": {
+      "emb_s": 0.77,
+      "quantize_s": 0.75
+    }
+  },
+  "rqvae": {},
+  "headline": {
+    "collision_rate": 0.07609
+  },
+  "display": {
+    "碰撞率": 0.07609,
+    "均匀基准碰撞率": 0.00022,
+    "码组合数": 3482,
+    "L1 困惑度 / K": 0.7512,
+    "L3 困惑度 / K": 0.3118,
+    "最低码字利用率": 1.0,
+    "最大桶": 118,
+    "末层重建误差": 0.3629,
+    "NMI(L1, L2)": 0.4561,
+    "同前缀余弦（d1）": 0.7132,
+    "同 c1 相邻行为比例": 0.0986
+  },
+  "display_pct": [
+    "碰撞率",
+    "均匀基准碰撞率",
+    "L1 困惑度 / K",
+    "L3 困惑度 / K",
+    "最低码字利用率",
+    "同 c1 相邻行为比例"
+  ]
+}

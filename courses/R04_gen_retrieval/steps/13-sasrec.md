@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · ML-1M · 语义 ID 3 × 64 + 去重位 · encoder-decoder（4 + 2 层）· 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · ML-1M · 语义 ID 3 × 64 + 去重位 · encoder-decoder（4 + 2 层）· 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | Recall@10 | NDCG@10 | ms/用户 | Recall@10：与 `baseline` 差 | Recall@10：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.220 ± 0.002 | 0.124 ± 0.002 | 0.113 ± 0.000 | — | s0 0.222 / s1 0.220 / s2 0.219 | 通过 |
+| `sasrec` | 参照 | 0.237 ± 0.000 | 0.132 ± 0.000 | 0.019 ± 0.002 | +0.017 | s0 0.237 / s1 0.237 / s2 0.237 |  |
+
+![Recall@10（均值，误差线为种子间最小到最大）](figures/h20x8-p_sasrec-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R04/baseline/s0-1eaff1/) · [s1](../../../results/h20x8/R04/baseline/s1-e8343c/) · [s2](../../../results/h20x8/R04/baseline/s2-24d603/)
+- `sasrec` [s0](../../../results/h20x8/R04/sasrec/s0-68a873/) · [s1](../../../results/h20x8/R04/sasrec/s1-a8ce1a/) · [s2](../../../results/h20x8/R04/sasrec/s2-95389e/)
 
 </details>
 

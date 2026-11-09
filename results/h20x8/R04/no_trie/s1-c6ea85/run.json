@@ -1,0 +1,191 @@
+{
+  "run_id": "h20x8.R04.no_trie.s1-c6ea85",
+  "course_id": "R04",
+  "project": "genrec",
+  "entry": "genrec.experiment",
+  "profile": "h20x8",
+  "scenario": "no_trie",
+  "role": "variant",
+  "title": "不加 trie 约束",
+  "seed": 1,
+  "variant": "no_trie",
+  "config_hash": "c6ea85bb6033",
+  "code_hash": "0c476ecb2aed",
+  "git": {
+    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "constrained": false
+  },
+  "param_affects": {
+    "task": "data",
+    "items": "data",
+    "synth_n": "data",
+    "synth_dim": "data",
+    "data_seed": "data",
+    "item_repr": "data",
+    "normalize": "data",
+    "quantizer": "data",
+    "sid_levels": "data",
+    "sid_k": "data",
+    "residual": "data",
+    "kmeans_iters": "data",
+    "fit_sample": "data",
+    "rqvae_steps": "data",
+    "collision": "data",
+    "cf_d_model": "data",
+    "cf_steps": "data",
+    "method": "model",
+    "max_hist": "model",
+    "d_model": "model",
+    "enc_layers": "model",
+    "dec_layers": "model",
+    "n_head": "model",
+    "dropout": "model",
+    "batch_size": "train",
+    "lr": "train",
+    "max_steps": "train",
+    "eval_every": "train",
+    "weight_decay": "train",
+    "seed": "train",
+    "beam": "infer",
+    "beam_sweep": "infer",
+    "constrained": "infer",
+    "beam_init": "infer",
+    "infer_batch": "infer",
+    "eval_users": "infer",
+    "cost_bench_n": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794243953.0335903,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794243953.3650532,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794243961.4193347,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794243963.6741905,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794243963.809979,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794243977.630809,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794243953.0335903,
+  "budget": {
+    "max_minutes": 30
+  },
+  "expect": [],
+  "slot": "gpu5-0",
+  "started_at": 1794243953.3650544,
+  "cache": [
+    {
+      "stage": "genrec_cf_emb",
+      "key_hash": "ef755f944330",
+      "key": {
+        "v": 1,
+        "d": 64,
+        "steps": 4000
+      },
+      "hit": true,
+      "source_run": "s1-d942ef"
+    },
+    {
+      "stage": "genrec_tiger",
+      "key_hash": "0f4d2aabbfe3",
+      "key": {
+        "v": 1,
+        "batch_size": 512,
+        "cf_d_model": 64,
+        "cf_steps": 4000,
+        "collision": "suffix",
+        "d_model": 128,
+        "data_seed": 0,
+        "dec_layers": 2,
+        "dropout": 0.1,
+        "enc_layers": 4,
+        "eval_every": 1000,
+        "fit_sample": 1000000,
+        "item_repr": "sasrec",
+        "items": "ml1m",
+        "kmeans_iters": 30,
+        "lr": 0.001,
+        "max_hist": 200,
+        "max_steps": 12000,
+        "method": "tiger",
+        "n_head": 4,
+        "normalize": "l2",
+        "quantizer": "rq_kmeans",
+        "residual": true,
+        "rqvae_steps": 3000,
+        "seed": 1,
+        "sid_k": 64,
+        "sid_levels": 3,
+        "synth_dim": 128,
+        "synth_n": 1000000,
+        "task": "retrieval",
+        "weight_decay": 0.01
+      },
+      "hit": true,
+      "source_run": "s1-e8343c"
+    }
+  ],
+  "data": {
+    "kind": "MovieLens-1M 电影",
+    "items": 3706,
+    "dim": 64,
+    "source": "SASRec 物品 embedding（ML-1M，只用 seq[:-2] 训练）",
+    "cf_valid_recall10": 0.26041,
+    "normalize": "l2",
+    "quantizer": "rq_kmeans",
+    "levels": 3,
+    "k": 64
+  },
+  "model": {
+    "arch": "encoder-decoder（4 + 2 层，d = 128）逐个生成 4 个 token",
+    "params": {
+      "total": 1443826,
+      "trainable": 1443826
+    },
+    "device": "cuda"
+  },
+  "train": {
+    "seconds": 657.02,
+    "steps": 12000
+  },
+  "artifacts": {
+    "model.pt": {
+      "kind": "checkpoint",
+      "bytes": 5801936,
+      "note": "encoder-decoder 权重"
+    }
+  },
+  "ended_at": 1794243977.630811,
+  "end_reason": "完成",
+  "expect_results": [],
+  "expect_ok": true,
+  "exported": true
+}

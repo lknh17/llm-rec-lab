@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | L1 困惑度 / K | 热度 η²（c1） | 碰撞率 | L1 困惑度 / K：与 `baseline` 差 | L1 困惑度 / K：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.83 ± 0.01 | 0.82 ± 0.00 | 21.4% ± 0.7% | — | s0 0.83 / s1 0.83 / s2 0.85 | 通过 |
+| `unnorm` | 候选改动 | 0.92 ± 0.01 | 0.84 ± 0.00 | 16.4% ± 1.3% | +0.08 | s0 0.91 / s1 0.92 / s2 0.93 |  |
+
+![L1 困惑度 / K（均值，误差线为种子间最小到最大）](figures/h20x8-p_unnorm-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R03/baseline/s0-e593ca/) · [s1](../../../results/h20x8/R03/baseline/s1-d942ef/) · [s2](../../../results/h20x8/R03/baseline/s2-389446/)
+- `unnorm` [s0](../../../results/h20x8/R03/unnorm/s0-9cec49/) · [s1](../../../results/h20x8/R03/unnorm/s1-912ca6/) · [s2](../../../results/h20x8/R03/unnorm/s2-6776ab/)
 
 </details>
 

@@ -1,0 +1,199 @@
+{
+  "quantize": {
+    "note": "《Toy Story》：每层选的码、减掉之后剩下的残差范数；同一个第 1 层码的电影；码完全相同（碰撞）的电影",
+    "title": "Toy Story (1995)",
+    "x_shape": [
+      3706,
+      896
+    ],
+    "x_norm": 1.0,
+    "codes": [
+      50,
+      21,
+      31
+    ],
+    "residual_norm_after_level": [
+      0.1786,
+      0.1201,
+      0.11
+    ],
+    "same_c1": [
+      "Jumanji (1995)",
+      "Muppet Treasure Island (1996)",
+      "Nightmare Before Christmas, The (1993)",
+      "Aladdin (1992)",
+      "Space Jam (1996)"
+    ],
+    "same_bucket": [
+      "Toy Story 2 (1999)"
+    ],
+    "codebook_shape": [
+      3,
+      64,
+      896
+    ]
+  },
+  "decode": {
+    "note": "一个测试用户：最近 5 部电影和它们的语义 ID token；beam 解码出的 token 元组、分数和对应电影",
+    "recent": [
+      {
+        "title": "Hunchback of Notre Dame, The (1996)",
+        "tokens": [
+          54,
+          93,
+          181,
+          194
+        ]
+      },
+      {
+        "title": "Antz (1998)",
+        "tokens": [
+          57,
+          96,
+          154,
+          194
+        ]
+      },
+      {
+        "title": "Bug's Life, A (1998)",
+        "tokens": [
+          34,
+          120,
+          134,
+          194
+        ]
+      },
+      {
+        "title": "Hercules (1997)",
+        "tokens": [
+          52,
+          114,
+          144,
+          194
+        ]
+      },
+      {
+        "title": "Mulan (1998)",
+        "tokens": [
+          54,
+          96,
+          154,
+          194
+        ]
+      }
+    ],
+    "encoder_input": [
+      1,
+      200,
+      4
+    ],
+    "root_allowed": 64,
+    "beams": [
+      {
+        "tokens": [
+          57,
+          96,
+          154,
+          194
+        ],
+        "score": -3.087,
+        "title": "Antz (1998)"
+      },
+      {
+        "tokens": [
+          57,
+          127,
+          155,
+          195
+        ],
+        "score": -3.302,
+        "title": "101 Dalmatians (1961)"
+      },
+      {
+        "tokens": [
+          34,
+          120,
+          134,
+          194
+        ],
+        "score": -3.322,
+        "title": "Bug's Life, A (1998)"
+      },
+      {
+        "tokens": [
+          57,
+          115,
+          178,
+          194
+        ],
+        "score": -3.436,
+        "title": "Tarzan (1999)"
+      },
+      {
+        "tokens": [
+          54,
+          96,
+          154,
+          194
+        ],
+        "score": -3.556,
+        "title": "Mulan (1998)"
+      },
+      {
+        "tokens": [
+          54,
+          71,
+          134,
+          194
+        ],
+        "score": -3.582,
+        "title": "Little Mermaid, The (1989)"
+      },
+      {
+        "tokens": [
+          54,
+          93,
+          181,
+          194
+        ],
+        "score": -3.596,
+        "title": "Hunchback of Notre Dame, The (1996)"
+      },
+      {
+        "tokens": [
+          52,
+          123,
+          161,
+          194
+        ],
+        "score": -3.648,
+        "title": "Aladdin (1992)"
+      },
+      {
+        "tokens": [
+          54,
+          84,
+          170,
+          194
+        ],
+        "score": -3.933,
+        "title": "Bambi (1942)"
+      },
+      {
+        "tokens": [
+          47,
+          84,
+          171,
+          194
+        ],
+        "score": -4.445,
+        "title": "South Park: Bigger, Longer and Uncut (1999)"
+      }
+    ],
+    "target": "Pocahontas (1995)",
+    "hit": false
+  },
+  "reload": {
+    "same_top10": true
+  }
+}

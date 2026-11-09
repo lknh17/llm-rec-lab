@@ -1,0 +1,119 @@
+{
+  "run_id": "h20x8.R03.synth_10m.s0-bf1f92",
+  "course_id": "R03",
+  "project": "genrec",
+  "entry": "genrec.experiment",
+  "profile": "h20x8",
+  "scenario": "synth_10m",
+  "role": "variant",
+  "title": "合成 1000 万物品，4 层 × 256 码（码本在 100 万个样本上拟合，全部物品分块分配）",
+  "seed": 0,
+  "variant": "synth_10m",
+  "config_hash": "bf1f9279b7d7",
+  "code_hash": "0c476ecb2aed",
+  "git": {
+    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "items": "synth",
+    "synth_n": 10000000,
+    "sid_levels": 4,
+    "sid_k": 256
+  },
+  "param_affects": {
+    "task": "data",
+    "items": "data",
+    "synth_n": "data",
+    "synth_dim": "data",
+    "data_seed": "data",
+    "item_repr": "data",
+    "normalize": "data",
+    "quantizer": "data",
+    "sid_levels": "data",
+    "sid_k": "data",
+    "residual": "data",
+    "kmeans_iters": "data",
+    "fit_sample": "data",
+    "rqvae_steps": "data",
+    "collision": "data",
+    "cf_d_model": "data",
+    "cf_steps": "data",
+    "method": "model",
+    "max_hist": "model",
+    "d_model": "model",
+    "enc_layers": "model",
+    "dec_layers": "model",
+    "n_head": "model",
+    "dropout": "model",
+    "batch_size": "train",
+    "lr": "train",
+    "max_steps": "train",
+    "eval_every": "train",
+    "weight_decay": "train",
+    "seed": "train",
+    "beam": "infer",
+    "beam_sweep": "infer",
+    "constrained": "infer",
+    "beam_init": "infer",
+    "infer_batch": "infer",
+    "eval_users": "infer",
+    "cost_bench_n": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794241040.019827,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794241040.2038832,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794241047.7258801,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794241069.4975016,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794241040.019827,
+  "budget": {
+    "max_minutes": 20
+  },
+  "expect": [],
+  "slot": "gpu0-0",
+  "started_at": 1794241040.203885,
+  "data": {
+    "kind": "合成物品",
+    "items": 10000000,
+    "dim": 128,
+    "source": "合成三层高斯树",
+    "normalize": "l2",
+    "quantizer": "rq_kmeans",
+    "levels": 4,
+    "k": 256
+  },
+  "artifacts": {
+    "codes.npy": {
+      "kind": "data",
+      "bytes": 320000128,
+      "note": "每个物品的语义 ID [N, L]"
+    }
+  },
+  "ended_at": 1794241069.497503,
+  "end_reason": "完成",
+  "expect_results": [],
+  "expect_ok": true,
+  "exported": true
+}

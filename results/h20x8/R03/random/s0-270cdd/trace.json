@@ -1,0 +1,34 @@
+{
+  "quantize": {
+    "note": "《Toy Story》：每层选的码、减掉之后剩下的残差范数；同一个第 1 层码的电影；码完全相同（碰撞）的电影",
+    "title": "Toy Story (1995)",
+    "x_shape": [
+      3706,
+      64
+    ],
+    "x_norm": 1.0,
+    "codes": [
+      11,
+      12,
+      53
+    ],
+    "residual_norm_after_level": [
+      0.9297,
+      0.8711,
+      0.8222
+    ],
+    "same_c1": [
+      "Nick of Time (1995)",
+      "Scarlet Letter, The (1995)",
+      "Disclosure (1994)",
+      "French Kiss (1995)",
+      "Star Wars: Episode IV - A New Hope (1977)"
+    ],
+    "same_bucket": [],
+    "codebook_shape": [
+      3,
+      64,
+      64
+    ]
+  }
+}

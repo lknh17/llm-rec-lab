@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · MovieLens-1M · leave-one-out · 对全部 3706 部电影排序 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · MovieLens-1M · leave-one-out · 对全部 3706 部电影排序 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 训练 样本/秒 | 训练 token/秒 | 注意力占比 | 训练 样本/秒：与 `baseline` 差 | 训练 样本/秒：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 19,735 ± 487 | 645,820 ± 16,275 | 6.1% ± 0.0% | — | s0 20,285 / s1 19,563 / s2 19,356 | 通过 |
+| `sasrec_l200` | 候选改动 | 15,292 ± 205 | 987,945 ± 13,025 | 20.7% ± 0.0% | -4,443 | s0 15,516 / s1 15,114 / s2 15,245 | 通过 |
+
+![训练吞吐（tokens/s，中位数）](figures/h20x8-p_cost-throughput.svg)
+
+![峰值显存构成（实测峰值，分项为估算）](figures/h20x8-p_cost-memory.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R01/baseline/s0-585a43/) · [s1](../../../results/h20x8/R01/baseline/s1-87e137/) · [s2](../../../results/h20x8/R01/baseline/s2-471d19/)
+- `sasrec_l200` [s0](../../../results/h20x8/R01/sasrec_l200/s0-9de048/) · [s1](../../../results/h20x8/R01/sasrec_l200/s1-806689/) · [s2](../../../results/h20x8/R01/sasrec_l200/s2-0a2af4/)
 
 </details>
 

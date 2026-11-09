@@ -1,0 +1,140 @@
+{
+  "run_id": "h20x8.R03.baseline.s1-d942ef",
+  "course_id": "R03",
+  "project": "genrec",
+  "entry": "genrec.experiment",
+  "profile": "h20x8",
+  "scenario": "baseline",
+  "role": "baseline",
+  "title": "基线：ML-1M，SASRec 物品向量，L2 归一化，RQ-KMeans 3 层 × 64 码",
+  "seed": 1,
+  "variant": "baseline",
+  "config_hash": "d942ef2d237f",
+  "code_hash": "0c476ecb2aed",
+  "git": {
+    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "dirty": false
+  },
+  "changed_from_baseline": {},
+  "param_affects": {
+    "task": "data",
+    "items": "data",
+    "synth_n": "data",
+    "synth_dim": "data",
+    "data_seed": "data",
+    "item_repr": "data",
+    "normalize": "data",
+    "quantizer": "data",
+    "sid_levels": "data",
+    "sid_k": "data",
+    "residual": "data",
+    "kmeans_iters": "data",
+    "fit_sample": "data",
+    "rqvae_steps": "data",
+    "collision": "data",
+    "cf_d_model": "data",
+    "cf_steps": "data",
+    "method": "model",
+    "max_hist": "model",
+    "d_model": "model",
+    "enc_layers": "model",
+    "dec_layers": "model",
+    "n_head": "model",
+    "dropout": "model",
+    "batch_size": "train",
+    "lr": "train",
+    "max_steps": "train",
+    "eval_every": "train",
+    "weight_decay": "train",
+    "seed": "train",
+    "beam": "infer",
+    "beam_sweep": "infer",
+    "constrained": "infer",
+    "beam_init": "infer",
+    "infer_batch": "infer",
+    "eval_users": "infer",
+    "cost_bench_n": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794236905.7920048,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794236905.937471,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794236918.3916056,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794236951.9285104,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794236905.7920048,
+  "budget": {
+    "max_minutes": 20
+  },
+  "expect": [
+    "summary.sid.levels.L1.used_frac == 1.0",
+    "summary.sid.recon.L3 < summary.sid.recon.L1"
+  ],
+  "slot": "gpu6-0",
+  "started_at": 1794236905.9374723,
+  "cache": [
+    {
+      "stage": "genrec_cf_emb",
+      "key_hash": "ef755f944330",
+      "key": {
+        "v": 1,
+        "d": 64,
+        "steps": 4000
+      },
+      "hit": false,
+      "source_run": "s1-d942ef"
+    }
+  ],
+  "data": {
+    "kind": "MovieLens-1M 电影",
+    "items": 3706,
+    "dim": 64,
+    "source": "SASRec 物品 embedding（ML-1M，只用 seq[:-2] 训练）",
+    "cf_valid_recall10": 0.26041,
+    "normalize": "l2",
+    "quantizer": "rq_kmeans",
+    "levels": 3,
+    "k": 64
+  },
+  "artifacts": {
+    "codes.npy": {
+      "kind": "data",
+      "bytes": 89072,
+      "note": "每个物品的语义 ID [N, L]"
+    }
+  },
+  "ended_at": 1794236951.9285119,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.sid.levels.L1.used_frac == 1.0",
+      "ok": true
+    },
+    {
+      "expr": "summary.sid.recon.L3 < summary.sid.recon.L1",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

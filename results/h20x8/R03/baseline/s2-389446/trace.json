@@ -1,0 +1,36 @@
+{
+  "quantize": {
+    "note": "《Toy Story》：每层选的码、减掉之后剩下的残差范数；同一个第 1 层码的电影；码完全相同（碰撞）的电影",
+    "title": "Toy Story (1995)",
+    "x_shape": [
+      3706,
+      64
+    ],
+    "x_norm": 1.0,
+    "codes": [
+      57,
+      32,
+      26
+    ],
+    "residual_norm_after_level": [
+      0.7543,
+      0.5376,
+      0.476
+    ],
+    "same_c1": [
+      "Sense and Sensibility (1995)",
+      "Leaving Las Vegas (1995)",
+      "City of Lost Children, The (1995)",
+      "Twelve Monkeys (1995)",
+      "Babe (1995)"
+    ],
+    "same_bucket": [
+      "Toy Story 2 (1999)"
+    ],
+    "codebook_shape": [
+      3,
+      64,
+      64
+    ]
+  }
+}

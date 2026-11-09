@@ -1,0 +1,36 @@
+{
+  "quantize": {
+    "note": "《Toy Story》：每层选的码、减掉之后剩下的残差范数；同一个第 1 层码的电影；码完全相同（碰撞）的电影",
+    "title": "Toy Story (1995)",
+    "x_shape": [
+      3706,
+      896
+    ],
+    "x_norm": 1.0,
+    "codes": [
+      34,
+      12,
+      35
+    ],
+    "residual_norm_after_level": [
+      0.2076,
+      0.188,
+      0.1644
+    ],
+    "same_c1": [
+      "Jumanji (1995)",
+      "Pocahontas (1995)",
+      "Muppet Treasure Island (1996)",
+      "Goofy Movie, A (1995)",
+      "Gumby: The Movie (1995)"
+    ],
+    "same_bucket": [
+      "Toy Story 2 (1999)"
+    ],
+    "codebook_shape": [
+      3,
+      64,
+      896
+    ]
+  }
+}

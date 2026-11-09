@@ -1,0 +1,197 @@
+{
+  "quantize": {
+    "note": "《Toy Story》：每层选的码、减掉之后剩下的残差范数；同一个第 1 层码的电影；码完全相同（碰撞）的电影",
+    "title": "Toy Story (1995)",
+    "x_shape": [
+      3706,
+      64
+    ],
+    "x_norm": 1.0,
+    "codes": [
+      121,
+      223,
+      136
+    ],
+    "residual_norm_after_level": [
+      0.4988,
+      0.4462,
+      0.3994
+    ],
+    "same_c1": [
+      "Babe (1995)",
+      "Wallace & Gromit: The Best of Aardman Animation (1996)",
+      "Close Shave, A (1995)",
+      "Wrong Trousers, The (1993)",
+      "Shakespeare in Love (1998)"
+    ],
+    "same_bucket": [],
+    "codebook_shape": [
+      3,
+      256,
+      64
+    ]
+  },
+  "decode": {
+    "note": "一个测试用户：最近 5 部电影和它们的语义 ID token；beam 解码出的 token 元组、分数和对应电影",
+    "recent": [
+      {
+        "title": "Hunchback of Notre Dame, The (1996)",
+        "tokens": [
+          54,
+          290,
+          648,
+          770
+        ]
+      },
+      {
+        "title": "Antz (1998)",
+        "tokens": [
+          246,
+          261,
+          518,
+          770
+        ]
+      },
+      {
+        "title": "Bug's Life, A (1998)",
+        "tokens": [
+          21,
+          404,
+          606,
+          770
+        ]
+      },
+      {
+        "title": "Hercules (1997)",
+        "tokens": [
+          54,
+          305,
+          753,
+          770
+        ]
+      },
+      {
+        "title": "Mulan (1998)",
+        "tokens": [
+          246,
+          464,
+          760,
+          770
+        ]
+      }
+    ],
+    "encoder_input": [
+      1,
+      200,
+      4
+    ],
+    "root_allowed": 256,
+    "beams": [
+      {
+        "tokens": [
+          246,
+          261,
+          518,
+          770
+        ],
+        "score": -2.271,
+        "title": "Antz (1998)"
+      },
+      {
+        "tokens": [
+          88,
+          507,
+          569,
+          770
+        ],
+        "score": -2.673,
+        "title": "Anastasia (1997)"
+      },
+      {
+        "tokens": [
+          54,
+          305,
+          753,
+          770
+        ],
+        "score": -2.856,
+        "title": "Hercules (1997)"
+      },
+      {
+        "tokens": [
+          246,
+          410,
+          677,
+          770
+        ],
+        "score": -3.083,
+        "title": "Tarzan (1999)"
+      },
+      {
+        "tokens": [
+          246,
+          451,
+          609,
+          770
+        ],
+        "score": -3.271,
+        "title": "Rescuers Down Under, The (1990)"
+      },
+      {
+        "tokens": [
+          171,
+          388,
+          569,
+          770
+        ],
+        "score": -3.429,
+        "title": "Rescuers, The (1977)"
+      },
+      {
+        "tokens": [
+          246,
+          464,
+          760,
+          770
+        ],
+        "score": -3.458,
+        "title": "Mulan (1998)"
+      },
+      {
+        "tokens": [
+          126,
+          322,
+          530,
+          770
+        ],
+        "score": -3.548,
+        "title": "Pocahontas (1995)"
+      },
+      {
+        "tokens": [
+          171,
+          334,
+          544,
+          770
+        ],
+        "score": -3.742,
+        "title": "Secret of NIMH, The (1982)"
+      },
+      {
+        "tokens": [
+          88,
+          371,
+          708,
+          770
+        ],
+        "score": -3.798,
+        "title": "Beavis and Butt-head Do America (1996)"
+      }
+    ],
+    "target": "Pocahontas (1995)",
+    "hit": true
+  },
+  "reload": {
+    "same_top10": true
+  }
+}

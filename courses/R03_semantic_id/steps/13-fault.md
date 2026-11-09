@@ -27,9 +27,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 碰撞率 | 码组合数 | L2 利用率 | 碰撞率：与 `baseline` 差 | 碰撞率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 21.4% ± 0.7% | 3,165.0 ± 19.28730152198591 | 100% ± 0% | — | s0 21.2% / s1 22.1% / s2 20.8% | 通过 |
+| `fault_noresid` | 教学故障 | 88.4% ± 0.4% | 800.3333333333334 ± 18.14754345175493 | 100% ± 0% | +67.1% | s0 88.4% / s1 88.1% / s2 88.8% | 通过 |
+
+![碰撞率（均值，误差线为种子间最小到最大）](figures/h20x8-p_fault-metrics.svg)
+
+![kmeans_err（均值，阴影为种子间范围）](figures/h20x8-p_fault-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R03/baseline/s0-e593ca/) · [s1](../../../results/h20x8/R03/baseline/s1-d942ef/) · [s2](../../../results/h20x8/R03/baseline/s2-389446/)
+- `fault_noresid` [s0](../../../results/h20x8/R03/fault_noresid/s0-7918cb/) · [s1](../../../results/h20x8/R03/fault_noresid/s1-0e09cb/) · [s2](../../../results/h20x8/R03/fault_noresid/s2-f02286/)
 
 </details>
 

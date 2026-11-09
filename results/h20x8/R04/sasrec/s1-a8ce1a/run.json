@@ -1,0 +1,109 @@
+{
+  "run_id": "h20x8.R04.sasrec.s1-a8ce1a",
+  "course_id": "R04",
+  "project": "genrec",
+  "entry": "genrec.experiment",
+  "profile": "h20x8",
+  "scenario": "sasrec",
+  "role": "reference",
+  "title": "SASRec 对全部物品打分（和 R01 基线同一套代码）",
+  "seed": 1,
+  "variant": "sasrec",
+  "config_hash": "a8ce1acba819",
+  "code_hash": "0c476ecb2aed",
+  "git": {
+    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "method": "sasrec"
+  },
+  "param_affects": {
+    "task": "data",
+    "items": "data",
+    "synth_n": "data",
+    "synth_dim": "data",
+    "data_seed": "data",
+    "item_repr": "data",
+    "normalize": "data",
+    "quantizer": "data",
+    "sid_levels": "data",
+    "sid_k": "data",
+    "residual": "data",
+    "kmeans_iters": "data",
+    "fit_sample": "data",
+    "rqvae_steps": "data",
+    "collision": "data",
+    "cf_d_model": "data",
+    "cf_steps": "data",
+    "method": "model",
+    "max_hist": "model",
+    "d_model": "model",
+    "enc_layers": "model",
+    "dec_layers": "model",
+    "n_head": "model",
+    "dropout": "model",
+    "batch_size": "train",
+    "lr": "train",
+    "max_steps": "train",
+    "eval_every": "train",
+    "weight_decay": "train",
+    "seed": "train",
+    "beam": "infer",
+    "beam_sweep": "infer",
+    "constrained": "infer",
+    "beam_init": "infer",
+    "infer_batch": "infer",
+    "eval_users": "infer",
+    "cost_bench_n": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794237025.787298,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794237025.9469,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794237033.876829,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794237033.9754922,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794237068.0465622,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794237068.226886,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794237025.787298,
+  "budget": {
+    "max_minutes": 30
+  },
+  "expect": [],
+  "slot": "gpu4-0",
+  "started_at": 1794237025.9469013,
+  "ended_at": 1794237068.2268877,
+  "end_reason": "完成",
+  "expect_results": [],
+  "expect_ok": true,
+  "exported": true
+}

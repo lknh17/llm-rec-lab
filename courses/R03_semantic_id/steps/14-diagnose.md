@@ -21,19 +21,19 @@
 
 <details><summary>线索 1</summary>
 
-每层之后的重建误差：基线 〔待 H20 生成〕 → 〔待 H20 生成〕；故障 〔待 H20 生成〕 → 〔待 H20 生成〕。看 kmeans_err 曲线有没有阶梯。
+每层之后的重建误差：基线 0.620 ± 0.002 → 0.470 ± 0.003；故障 0.620 ± 0.002 → 1.496 ± 0.006。看 kmeans_err 曲线有没有阶梯。
 
 </details>
 
 <details><summary>线索 2</summary>
 
-利用率 / 困惑度：故障每层 〔待 H20 生成〕 / 〔待 H20 生成〕，和基线接近；但码组合数只有 〔待 H20 生成〕（基线 〔待 H20 生成〕）。
+利用率 / 困惑度：故障每层 100% ± 0% / 0.82 ± 0.04，和基线接近；但码组合数只有 800 ± 18（基线 3,165 ± 19）。
 
 </details>
 
 <details><summary>线索 3</summary>
 
-层间归一化互信息 NMI(L1, L2)：故障 〔待 H20 生成〕，基线 〔待 H20 生成〕。
+层间归一化互信息 NMI(L1, L2)：故障 0.72 ± 0.01，基线 0.24 ± 0.01。
 
 </details>
 
@@ -50,9 +50,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | L1 后重建误差 | L3 后重建误差 | NMI(L1 | 码组合数 | L1 后重建误差：与 `baseline` 差 | L1 后重建误差：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.620 ± 0.002 | 0.470 ± 0.003 | 0.24 ± 0.01 | 3,165.0 ± 19.28730152198591 | — | s0 0.619 / s1 0.622 / s2 0.618 | 通过 |
+| `fault_noresid` | 教学故障 | 0.620 ± 0.002 | 1.496 ± 0.006 | 0.72 ± 0.01 | 800.3333333333334 ± 18.14754345175493 | +0.000 | s0 0.619 / s1 0.622 / s2 0.618 | 通过 |
+
+![L1 后重建误差（均值，误差线为种子间最小到最大）](figures/h20x8-diagnose-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R03/baseline/s0-e593ca/) · [s1](../../../results/h20x8/R03/baseline/s1-d942ef/) · [s2](../../../results/h20x8/R03/baseline/s2-389446/)
+- `fault_noresid` [s0](../../../results/h20x8/R03/fault_noresid/s0-7918cb/) · [s1](../../../results/h20x8/R03/fault_noresid/s1-0e09cb/) · [s2](../../../results/h20x8/R03/fault_noresid/s2-f02286/)
 
 </details>
 

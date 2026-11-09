@@ -1,0 +1,10 @@
+[worker] 等待设备锁 gpu4-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R03/rqvae/s0-e0fb80/code/genrec/experiment.py
+[00:17:19] ===== 阶段：prepare =====
+<data>/batch/h20x8/R03/rqvae/s0-e0fb80/code/genrec/rqvae.py:51: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  ctx.metric("rqvae_loss", float(loss), step=s + 1)
+[00:17:51] 语义 ID：1,000,000 个物品、3 层 × 256 码；碰撞率 100.0%（均匀基准 5.8%），码组合 5；每层重建误差 {}
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

@@ -27,9 +27,20 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 3 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 长程题 | 近期题 | 新会话题 | 训练 token/秒 | 主体参数 | 长程题：与 `baseline` 差 | 长程题：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 〔待 H20 生成〕 | 〔待 H20 生成〕 | 〔待 H20 生成〕 | 〔待 H20 生成〕 | 〔待 H20 生成〕 |  | | |
+| `sasrec_10k` | 候选改动 | 0.013 ± 0.007 | 0.644 ± 0.001 | 0.052 ± 0.000 | 447,738 ± 3,496 | 754,624.0 ± 0.0 | — | s0 0.011 / s1 0.021 / s2 0.006 |  |
+
+![长程题（均值，误差线为种子间最小到最大）](figures/h20x8-p_softmax-metrics.svg)
+
+![valid_recall10（均值，阴影为种子间范围）](figures/h20x8-p_softmax-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `sasrec_10k` [s0](../../../results/h20x8/R02/sasrec_10k/s0-5dcb8f/) · [s1](../../../results/h20x8/R02/sasrec_10k/s1-e4f2b0/) · [s2](../../../results/h20x8/R02/sasrec_10k/s2-a96687/)
 
 </details>
 

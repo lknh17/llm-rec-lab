@@ -1,0 +1,18 @@
+[worker] 等待设备锁 gpu4-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R01/baseline/s2-471d19/code/recseq/experiment.py
+[23:09:25] ===== 阶段：prepare =====
+[23:09:28] 模型 sasrec：339,712 参数；L = 50，B = 128，注意力实现 sdpa
+[23:09:28] ===== 阶段：train =====
+[23:09:36] step 500/4000  loss 6.0994  验证 Recall@10 0.1450
+[23:09:40] step 1000/4000  loss 5.7282  验证 Recall@10 0.1947
+[23:09:43] step 1500/4000  loss 5.6396  验证 Recall@10 0.2198
+[23:09:46] step 2000/4000  loss 5.5267  验证 Recall@10 0.2308
+[23:09:49] step 2500/4000  loss 5.5301  验证 Recall@10 0.2449
+[23:09:52] step 3000/4000  loss 5.2920  验证 Recall@10 0.2494
+[23:09:56] step 3500/4000  loss 5.3152  验证 Recall@10 0.2499
+[23:09:59] step 4000/4000  loss 5.2290  验证 Recall@10 0.2569
+[23:09:59] ===== 阶段：evaluate =====
+[23:10:00] 测试 Recall@10 0.23775  NDCG@10 0.13103  采样 100 Recall@10 0.8005  热度参照 0.01639
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

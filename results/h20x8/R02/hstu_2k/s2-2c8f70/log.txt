@@ -1,0 +1,9 @@
+[worker] 等待设备锁 gpu5-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R02/hstu_2k/s2-2c8f70/code/recseq/experiment.py
+[01:19:06] ===== 阶段：prepare =====
+[01:19:06] 缓存 recseq_synth key=81766954143a: 命中，复用运行 s1-58b973 的产物
+[01:26:45] 模型 hstu：305,344 参数；L = 2048，B = 30，注意力实现 chunked
+[01:26:45] ===== 阶段：train =====
+[worker] 结束：failed（budget: 超过时间预算 45.0 分钟）
+{"status": "failed"}

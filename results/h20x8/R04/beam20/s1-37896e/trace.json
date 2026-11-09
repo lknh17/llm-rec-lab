@@ -1,0 +1,297 @@
+{
+  "quantize": {
+    "note": "《Toy Story》：每层选的码、减掉之后剩下的残差范数；同一个第 1 层码的电影；码完全相同（碰撞）的电影",
+    "title": "Toy Story (1995)",
+    "x_shape": [
+      3706,
+      64
+    ],
+    "x_norm": 1.0,
+    "codes": [
+      19,
+      8,
+      10
+    ],
+    "residual_norm_after_level": [
+      0.5858,
+      0.4837,
+      0.4677
+    ],
+    "same_c1": [
+      "Babe (1995)",
+      "Clerks (1994)",
+      "Forrest Gump (1994)",
+      "Close Shave, A (1995)",
+      "Wrong Trousers, The (1993)"
+    ],
+    "same_bucket": [],
+    "codebook_shape": [
+      3,
+      64,
+      64
+    ]
+  },
+  "decode": {
+    "note": "一个测试用户：最近 5 部电影和它们的语义 ID token；beam 解码出的 token 元组、分数和对应电影",
+    "recent": [
+      {
+        "title": "Hunchback of Notre Dame, The (1996)",
+        "tokens": [
+          54,
+          129,
+          150,
+          194
+        ]
+      },
+      {
+        "title": "Antz (1998)",
+        "tokens": [
+          54,
+          69,
+          150,
+          194
+        ]
+      },
+      {
+        "title": "Bug's Life, A (1998)",
+        "tokens": [
+          21,
+          85,
+          142,
+          194
+        ]
+      },
+      {
+        "title": "Hercules (1997)",
+        "tokens": [
+          54,
+          85,
+          131,
+          194
+        ]
+      },
+      {
+        "title": "Mulan (1998)",
+        "tokens": [
+          54,
+          85,
+          150,
+          194
+        ]
+      }
+    ],
+    "encoder_input": [
+      1,
+      200,
+      4
+    ],
+    "root_allowed": 64,
+    "beams": [
+      {
+        "tokens": [
+          54,
+          69,
+          150,
+          194
+        ],
+        "score": -2.665,
+        "title": "Antz (1998)"
+      },
+      {
+        "tokens": [
+          54,
+          85,
+          131,
+          194
+        ],
+        "score": -2.898,
+        "title": "Hercules (1997)"
+      },
+      {
+        "tokens": [
+          54,
+          119,
+          131,
+          194
+        ],
+        "score": -2.916,
+        "title": "Tarzan (1999)"
+      },
+      {
+        "tokens": [
+          54,
+          113,
+          186,
+          194
+        ],
+        "score": -3.003,
+        "title": "Little Mermaid, The (1989)"
+      },
+      {
+        "tokens": [
+          54,
+          85,
+          150,
+          194
+        ],
+        "score": -3.085,
+        "title": "Mulan (1998)"
+      },
+      {
+        "tokens": [
+          54,
+          80,
+          155,
+          194
+        ],
+        "score": -3.227,
+        "title": "101 Dalmatians (1961)"
+      },
+      {
+        "tokens": [
+          27,
+          120,
+          132,
+          194
+        ],
+        "score": -3.316,
+        "title": "Prince of Egypt, The (1998)"
+      },
+      {
+        "tokens": [
+          54,
+          105,
+          176,
+          194
+        ],
+        "score": -3.415,
+        "title": "Anastasia (1997)"
+      },
+      {
+        "tokens": [
+          54,
+          81,
+          150,
+          194
+        ],
+        "score": -3.603,
+        "title": "Rescuers Down Under, The (1990)"
+      },
+      {
+        "tokens": [
+          54,
+          81,
+          152,
+          194
+        ],
+        "score": -3.853,
+        "title": "Sleeping Beauty (1959)"
+      },
+      {
+        "tokens": [
+          21,
+          85,
+          142,
+          194
+        ],
+        "score": -3.865,
+        "title": "Bug's Life, A (1998)"
+      },
+      {
+        "tokens": [
+          57,
+          83,
+          183,
+          194
+        ],
+        "score": -3.955,
+        "title": "Pocahontas (1995)"
+      },
+      {
+        "tokens": [
+          54,
+          129,
+          150,
+          194
+        ],
+        "score": -3.977,
+        "title": "Hunchback of Notre Dame, The (1996)"
+      },
+      {
+        "tokens": [
+          54,
+          78,
+          130,
+          194
+        ],
+        "score": -4.01,
+        "title": "Beavis and Butt-head Do America (1996)"
+      },
+      {
+        "tokens": [
+          32,
+          103,
+          178,
+          194
+        ],
+        "score": -4.104,
+        "title": "Chicken Run (2000)"
+      },
+      {
+        "tokens": [
+          54,
+          76,
+          137,
+          194
+        ],
+        "score": -4.198,
+        "title": "Jungle Book, The (1967)"
+      },
+      {
+        "tokens": [
+          54,
+          107,
+          131,
+          194
+        ],
+        "score": -4.292,
+        "title": "Robin Hood (1973)"
+      },
+      {
+        "tokens": [
+          47,
+          107,
+          154,
+          194
+        ],
+        "score": -4.467,
+        "title": "Who Framed Roger Rabbit? (1988)"
+      },
+      {
+        "tokens": [
+          54,
+          121,
+          186,
+          194
+        ],
+        "score": -4.536,
+        "title": "Secret of NIMH, The (1982)"
+      },
+      {
+        "tokens": [
+          32,
+          120,
+          171,
+          194
+        ],
+        "score": -4.581,
+        "title": "Dinosaur (2000)"
+      }
+    ],
+    "target": "Pocahontas (1995)",
+    "hit": false
+  },
+  "reload": {
+    "same_top10": true
+  }
+}

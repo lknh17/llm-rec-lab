@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 碰撞率 | 同 c1 余弦 | 相邻行为同 c1 | L1 困惑度 / K | 碰撞率：与 `baseline` 差 | 碰撞率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 21.4% ± 0.7% | 0.65 ± 0.00 | 0.210 ± 0.004 | 0.83 ± 0.01 | — | s0 21.2% / s1 22.1% / s2 20.8% | 通过 |
+| `random` | 候选改动 | 1.1% ± 0.1% | 0.12 ± 0.00 | 0.016 ± 0.000 | 0.99 ± 0.00 | -20.3% | s0 1.0% / s1 1.2% / s2 1.0% | 通过 |
+
+![碰撞率（均值，误差线为种子间最小到最大）](figures/h20x8-p_random-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R03/baseline/s0-e593ca/) · [s1](../../../results/h20x8/R03/baseline/s1-d942ef/) · [s2](../../../results/h20x8/R03/baseline/s2-389446/)
+- `random` [s0](../../../results/h20x8/R03/random/s0-270cdd/) · [s1](../../../results/h20x8/R03/random/s1-2833b5/) · [s2](../../../results/h20x8/R03/random/s2-233d8e/)
 
 </details>
 

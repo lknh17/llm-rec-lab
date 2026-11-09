@@ -1,0 +1,105 @@
+{
+  "sid": {
+    "collision_rate": 0.01187,
+    "combos": 3684,
+    "capacity": 262144,
+    "max_bucket": 2,
+    "uniform": 0.01403,
+    "levels": {
+      "L1": {
+        "used_frac": 1.0,
+        "ppl": 63.54,
+        "ppl_frac": 0.9928
+      },
+      "L2": {
+        "used_frac": 1.0,
+        "ppl": 63.27,
+        "ppl_frac": 0.9886
+      },
+      "L3": {
+        "used_frac": 1.0,
+        "ppl": 63.08,
+        "ppl_frac": 0.9857
+      }
+    },
+    "by_depth": {
+      "d1": {
+        "collision_rate": 1.0,
+        "combos": 64,
+        "capacity": 64,
+        "max_bucket": 77,
+        "uniform": 1.0
+      },
+      "d2": {
+        "collision_rate": 0.57906,
+        "combos": 2511,
+        "capacity": 4096,
+        "max_bucket": 4,
+        "uniform": 0.59532
+      },
+      "d3": {
+        "collision_rate": 0.01187,
+        "combos": 3684,
+        "capacity": 262144,
+        "max_bucket": 2,
+        "uniform": 0.01403
+      }
+    },
+    "at_cap": {
+      "c16m": {
+        "depth": 4,
+        "collision_rate": null
+      }
+    },
+    "recon": {
+      "L1": 0.9309,
+      "L2": 0.8661,
+      "L3": 0.8054
+    },
+    "nmi": {
+      "L1_L2": 0.1364,
+      "L2_L3": 0.1334
+    },
+    "prefix_sim": {
+      "random": -0.0003,
+      "d1": 0.1151,
+      "d2": 0.2201,
+      "full": 0.2883
+    },
+    "cross": {
+      "cooc_same_c1": 0.0158,
+      "genre_jacc_c1": 0.1835,
+      "genre_jacc_rand": 0.1732,
+      "pop_eta2_c1": 0.0156
+    },
+    "timing": {
+      "emb_s": 0.83,
+      "quantize_s": 0.59
+    }
+  },
+  "rqvae": {},
+  "headline": {
+    "collision_rate": 0.01187
+  },
+  "display": {
+    "碰撞率": 0.01187,
+    "均匀基准碰撞率": 0.01403,
+    "码组合数": 3684,
+    "L1 困惑度 / K": 0.9928,
+    "L3 困惑度 / K": 0.9857,
+    "最低码字利用率": 1.0,
+    "最大桶": 2,
+    "末层重建误差": 0.8054,
+    "NMI(L1, L2)": 0.1364,
+    "同前缀余弦（d1）": 0.1151,
+    "同 c1 相邻行为比例": 0.0158
+  },
+  "display_pct": [
+    "碰撞率",
+    "均匀基准碰撞率",
+    "L1 困惑度 / K",
+    "L3 困惑度 / K",
+    "最低码字利用率",
+    "同 c1 相邻行为比例"
+  ]
+}

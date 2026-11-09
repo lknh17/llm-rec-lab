@@ -1,0 +1,175 @@
+{
+  "test": {
+    "recall10": 0.2144,
+    "ndcg10": 0.1191,
+    "n": 6040,
+    "sampled100": {
+      "recall10": 0.78659,
+      "ndcg10": 0.59038,
+      "n": 6040
+    },
+    "pop": {
+      "recall10": 0.01639,
+      "ndcg10": 0.00873,
+      "n": 6040
+    },
+    "by_hist": {
+      "le_L": {
+        "recall10": 0.36723,
+        "ndcg10": 0.1972,
+        "n": 177
+      },
+      "gt_L": {
+        "recall10": 0.20979,
+        "ndcg10": 0.11674,
+        "n": 5863
+      }
+    }
+  },
+  "valid": {
+    "recall10": 0.2452,
+    "ndcg10": 0.13281,
+    "n": 6040
+  },
+  "diag": {
+    "gap_mean": 1.0,
+    "gap_days_median": 0.0,
+    "recent_genre_overlap": 0.2484
+  },
+  "data": {
+    "users": 6040,
+    "n_items": 3707,
+    "rows": 1000209,
+    "len_median": 96.0,
+    "len_p90": 400.0,
+    "len_max": 2314,
+    "pad_token_waste": 0.0007,
+    "pad_attn_waste": 0.0014
+  },
+  "train": {
+    "steps": 4000,
+    "seconds": 25.09,
+    "best_step": 4000,
+    "best_valid_recall10": 0.23984,
+    "samples_per_s": 20407.1,
+    "tokens_per_s": 343849.9,
+    "train_tokens": 8626942,
+    "final_loss": 5.48143,
+    "batch_size": 128,
+    "peak_gb": 0.133
+  },
+  "cost": {
+    "flops": {
+      "linear_per_token": 98304,
+      "attn_per_token": 2560,
+      "attn_share": 0.0254
+    },
+    "infer_macs_per_user": 2254528,
+    "sdpa_backend": "flash",
+    "L20": {
+      "manual": {
+        "ms": 3.732,
+        "peak_gb": 0.036,
+        "est_gb": 0.0,
+        "oom": false
+      },
+      "sdpa": {
+        "ms": 2.896,
+        "peak_gb": 0.036,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "L50": {
+      "manual": {
+        "ms": 3.374,
+        "peak_gb": 0.037,
+        "est_gb": 0.0,
+        "oom": false
+      },
+      "sdpa": {
+        "ms": 3.011,
+        "peak_gb": 0.037,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "L200": {
+      "manual": {
+        "ms": 3.778,
+        "peak_gb": 0.041,
+        "est_gb": 0.001,
+        "oom": false
+      },
+      "sdpa": {
+        "ms": 3.244,
+        "peak_gb": 0.04,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "L1000": {
+      "manual": {
+        "ms": 3.82,
+        "peak_gb": 0.101,
+        "est_gb": 0.024,
+        "oom": false
+      },
+      "sdpa": {
+        "ms": 2.932,
+        "peak_gb": 0.075,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "jagged": {
+      "lengths": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "ms_padded": 2.93,
+      "ms_jagged": 17.73,
+      "speedup": 0.17
+    }
+  },
+  "checks": {
+    "causal_max_dlogit": 0.0,
+    "pad_invariance_max_dlogit": 0.0,
+    "pad_attn_mass_short": null
+  },
+  "params": {
+    "total": 337792,
+    "trainable": 337792,
+    "embedding": 237248,
+    "body": 100544,
+    "embedding_share": 0.7023,
+    "train_mode": "full"
+  },
+  "config_eff": {
+    "max_len": 20,
+    "batch_size": 128,
+    "attn_impl": "sdpa"
+  },
+  "headline": {
+    "recall10": 0.2144,
+    "ndcg10": 0.1191,
+    "sampled100_recall10": 0.78659
+  },
+  "display": {
+    "Recall@10": 0.2144,
+    "NDCG@10": 0.1191,
+    "采样 100 Recall@10": 0.78659,
+    "热度参照 Recall@10": 0.01639,
+    "训练 tokens/s（千）": 343.8,
+    "训练峰值 GB": 0.133
+  },
+  "display_pct": [
+    "Recall@10",
+    "采样 100 Recall@10",
+    "热度参照 Recall@10"
+  ]
+}

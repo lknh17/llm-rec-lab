@@ -1,0 +1,17 @@
+[worker] 等待设备锁 gpu4-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R02/sasrec_10k/s2-a96687/code/recseq/experiment.py
+[01:22:45] ===== 阶段：prepare =====
+[01:22:45] 缓存 recseq_synth key=81766954143a: 命中，复用运行 s1-58b973 的产物
+[01:22:50] 模型 sasrec：1,017,344 参数；L = 10240，B = 6，注意力实现 sdpa
+[01:22:50] ===== 阶段：train =====
+[01:23:11] step 500/3000  loss 4.0539  验证 Recall@10 0.2910
+[01:23:24] step 1000/3000  loss 4.0363  验证 Recall@10 0.2930
+[01:23:37] step 1500/3000  loss 3.9459  验证 Recall@10 0.2969
+[01:23:50] step 2000/3000  loss 3.9517  验证 Recall@10 0.2969
+[01:24:03] step 2500/3000  loss 3.9281  验证 Recall@10 0.3008
+[01:24:15] step 3000/3000  loss 3.8724  验证 Recall@10 0.3047
+[01:24:16] ===== 阶段：evaluate =====
+[01:24:33] 测试 Recall@10 0.27295  NDCG@10 0.1746  采样 100 Recall@10 0.64648  热度参照 0.0166
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

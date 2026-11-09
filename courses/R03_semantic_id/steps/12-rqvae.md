@@ -27,9 +27,21 @@ TIGER 原文用 RQ-VAE：编码器把物品向量压到 64 维，3 层 × 256 �
 
 ## 实测
 
-<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · ML-1M 3706 部电影 + 合成 100 万 / 1000 万物品 · RQ-KMeans / RQ-VAE · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | L1 利用率 | L1 困惑度 / K | 碰撞率 | L1 死码比例 | L1 利用率：与 `synth` 差 | L1 利用率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `synth` | 参照 | 100.0% ± 0.0% | 0.82 ± 0.03 | 74.9% ± 0.4% | — | — | s0 100.0% / s1 100.0% / s2 100.0% | 通过 |
+| `rqvae` | 候选改动 | 0.8% ± 0.4% | 0.01 ± 0.00 | 100.0% ± 0.0% | 99.2% ± 0.4% | -99.2% | s0 0.8% / s1 0.4% / s2 1.2% |  |
+
+![L1 利用率（均值，误差线为种子间最小到最大）](figures/h20x8-p_rqvae-metrics.svg)
+
+![rqvae_ppl_L1（均值，阴影为种子间范围）](figures/h20x8-p_rqvae-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `synth` [s0](../../../results/h20x8/R03/synth/s0-5f8a12/) · [s1](../../../results/h20x8/R03/synth/s1-de2ed3/) · [s2](../../../results/h20x8/R03/synth/s2-1e6c0c/)
+- `rqvae` [s0](../../../results/h20x8/R03/rqvae/s0-e0fb80/) · [s1](../../../results/h20x8/R03/rqvae/s1-ca54b0/) · [s2](../../../results/h20x8/R03/rqvae/s2-3d130a/)
 
 </details>
 

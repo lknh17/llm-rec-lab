@@ -1,0 +1,182 @@
+{
+  "quantize": {
+    "note": "《Toy Story》：每层选的码、减掉之后剩下的残差范数；同一个第 1 层码的电影；码完全相同（碰撞）的电影",
+    "title": "Toy Story (1995)",
+    "x_shape": [
+      3706,
+      64
+    ],
+    "x_norm": 1.0,
+    "codes": [
+      19,
+      8,
+      10
+    ],
+    "residual_norm_after_level": [
+      0.5858,
+      0.4837,
+      0.4677
+    ],
+    "same_c1": [
+      "Babe (1995)",
+      "Clerks (1994)",
+      "Forrest Gump (1994)",
+      "Close Shave, A (1995)",
+      "Wrong Trousers, The (1993)"
+    ],
+    "same_bucket": [],
+    "codebook_shape": [
+      3,
+      64,
+      64
+    ]
+  },
+  "decode": {
+    "note": "一个测试用户：最近 5 部电影和它们的语义 ID token；beam 解码出的 token 元组、分数和对应电影",
+    "recent": [
+      {
+        "title": "Hunchback of Notre Dame, The (1996)",
+        "tokens": [
+          54,
+          129,
+          150
+        ]
+      },
+      {
+        "title": "Antz (1998)",
+        "tokens": [
+          54,
+          69,
+          150
+        ]
+      },
+      {
+        "title": "Bug's Life, A (1998)",
+        "tokens": [
+          21,
+          85,
+          142
+        ]
+      },
+      {
+        "title": "Hercules (1997)",
+        "tokens": [
+          54,
+          85,
+          131
+        ]
+      },
+      {
+        "title": "Mulan (1998)",
+        "tokens": [
+          54,
+          85,
+          150
+        ]
+      }
+    ],
+    "encoder_input": [
+      1,
+      200,
+      3
+    ],
+    "root_allowed": 64,
+    "beams": [
+      {
+        "tokens": [
+          54,
+          85,
+          150
+        ],
+        "score": -2.357,
+        "title": "Mulan (1998)"
+      },
+      {
+        "tokens": [
+          54,
+          69,
+          150
+        ],
+        "score": -2.712,
+        "title": "Antz (1998)"
+      },
+      {
+        "tokens": [
+          54,
+          119,
+          131
+        ],
+        "score": -2.838,
+        "title": "Tarzan (1999)"
+      },
+      {
+        "tokens": [
+          54,
+          113,
+          186
+        ],
+        "score": -2.944,
+        "title": "Little Mermaid, The (1989)"
+      },
+      {
+        "tokens": [
+          54,
+          81,
+          152
+        ],
+        "score": -3.256,
+        "title": "Sleeping Beauty (1959)"
+      },
+      {
+        "tokens": [
+          54,
+          85,
+          131
+        ],
+        "score": -3.294,
+        "title": "Hercules (1997)"
+      },
+      {
+        "tokens": [
+          54,
+          105,
+          176
+        ],
+        "score": -3.525,
+        "title": "Anastasia (1997)"
+      },
+      {
+        "tokens": [
+          54,
+          113,
+          135
+        ],
+        "score": -3.756,
+        "title": "Peter Pan (1953)"
+      },
+      {
+        "tokens": [
+          27,
+          120,
+          132
+        ],
+        "score": -3.778,
+        "title": "Prince of Egypt, The (1998)"
+      },
+      {
+        "tokens": [
+          54,
+          104,
+          157
+        ],
+        "score": -3.806,
+        "title": "Bambi (1942)"
+      }
+    ],
+    "target": "Pocahontas (1995)",
+    "hit": false
+  },
+  "reload": {
+    "same_top10": true
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "run_id": "h20x8.R03.random.s0-270cdd",
+  "course_id": "R03",
+  "project": "genrec",
+  "entry": "genrec.experiment",
+  "profile": "h20x8",
+  "scenario": "random",
+  "role": "variant",
+  "title": "随机向量（没有任何语义）",
+  "seed": 0,
+  "variant": "random",
+  "config_hash": "270cdd22dc11",
+  "code_hash": "0c476ecb2aed",
+  "git": {
+    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item_repr": "random"
+  },
+  "param_affects": {
+    "task": "data",
+    "items": "data",
+    "synth_n": "data",
+    "synth_dim": "data",
+    "data_seed": "data",
+    "item_repr": "data",
+    "normalize": "data",
+    "quantizer": "data",
+    "sid_levels": "data",
+    "sid_k": "data",
+    "residual": "data",
+    "kmeans_iters": "data",
+    "fit_sample": "data",
+    "rqvae_steps": "data",
+    "collision": "data",
+    "cf_d_model": "data",
+    "cf_steps": "data",
+    "method": "model",
+    "max_hist": "model",
+    "d_model": "model",
+    "enc_layers": "model",
+    "dec_layers": "model",
+    "n_head": "model",
+    "dropout": "model",
+    "batch_size": "train",
+    "lr": "train",
+    "max_steps": "train",
+    "eval_every": "train",
+    "weight_decay": "train",
+    "seed": "train",
+    "beam": "infer",
+    "beam_sweep": "infer",
+    "constrained": "infer",
+    "beam_init": "infer",
+    "infer_batch": "infer",
+    "eval_users": "infer",
+    "cost_bench_n": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794241026.9335985,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794241027.0880404,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794241034.568189,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794241036.1705964,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794241026.9335985,
+  "budget": {
+    "max_minutes": 20
+  },
+  "expect": [
+    "summary.sid.cross.cooc_same_c1 < base.summary.sid.cross.cooc_same_c1"
+  ],
+  "slot": "gpu0-0",
+  "started_at": 1794241027.088042,
+  "data": {
+    "kind": "MovieLens-1M 电影",
+    "items": 3706,
+    "dim": 64,
+    "source": "随机高斯向量",
+    "normalize": "l2",
+    "quantizer": "rq_kmeans",
+    "levels": 3,
+    "k": 64
+  },
+  "artifacts": {
+    "codes.npy": {
+      "kind": "data",
+      "bytes": 89072,
+      "note": "每个物品的语义 ID [N, L]"
+    }
+  },
+  "ended_at": 1794241036.1705978,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.sid.cross.cooc_same_c1 < base.summary.sid.cross.cooc_same_c1",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

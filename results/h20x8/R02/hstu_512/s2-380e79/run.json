@@ -1,0 +1,173 @@
+{
+  "run_id": "h20x8.R02.hstu_512.s2-380e79",
+  "course_id": "R02",
+  "project": "recseq",
+  "entry": "recseq.experiment",
+  "profile": "h20x8",
+  "scenario": "hstu_512",
+  "role": "variant",
+  "title": "HSTU，L = 512",
+  "seed": 2,
+  "variant": "hstu_512",
+  "config_hash": "380e793753a5",
+  "code_hash": "068f21297526",
+  "git": {
+    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "max_len": 512
+  },
+  "param_affects": {
+    "dataset": "data",
+    "max_len": "data",
+    "truncate": "data",
+    "len_scale": "data",
+    "synth_users": "data",
+    "synth_eval_users": "data",
+    "synth_clusters": "data",
+    "synth_items_per_cluster": "data",
+    "synth_len_min": "data",
+    "synth_len_max": "data",
+    "synth_period_min": "data",
+    "synth_period_max": "data",
+    "synth_burst": "data",
+    "synth_noise": "data",
+    "synth_stay": "data",
+    "synth_alpha": "data",
+    "synth_session_mean": "data",
+    "data_seed": "data",
+    "model": "model",
+    "d_model": "model",
+    "n_layer": "model",
+    "n_head": "model",
+    "dropout": "model",
+    "attn_impl": "model",
+    "attn_chunk": "model",
+    "mask": "model",
+    "pos_buckets": "model",
+    "time_bias": "model",
+    "time_buckets": "model",
+    "batch_size": "train",
+    "tokens_per_step": "train",
+    "steps": "train",
+    "lr": "train",
+    "warmup_frac": "train",
+    "weight_decay": "train",
+    "precision": "train",
+    "seed": "train",
+    "ckpt_every": "eval",
+    "valid_frac": "eval",
+    "sampled_negs": "eval",
+    "probe_lens": "eval",
+    "probe": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "failed",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794244757.1822526,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794244757.3496873,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794244764.6276658,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794245206.0162241,
+      "note": "阶段 train"
+    },
+    {
+      "status": "failed",
+      "time": 1794247513.3990362,
+      "note": "budget: 超过时间预算 45.0 分钟"
+    }
+  ],
+  "created_at": 1794244757.1822526,
+  "budget": {
+    "max_minutes": 45
+  },
+  "expect": [],
+  "slot": "gpu0-0",
+  "started_at": 1794244757.3496885,
+  "cache": [
+    {
+      "stage": "recseq_synth",
+      "key_hash": "81766954143a",
+      "key": {
+        "v": 3,
+        "synth_users": 16384,
+        "synth_eval_users": 2048,
+        "synth_clusters": 128,
+        "synth_items_per_cluster": 32,
+        "synth_len_min": 1024,
+        "synth_len_max": 10240,
+        "synth_period_min": 256,
+        "synth_period_max": 9500,
+        "synth_burst": 8,
+        "synth_noise": 0.0,
+        "synth_stay": 0.9,
+        "synth_alpha": 0.1,
+        "synth_session_mean": 20,
+        "data_seed": 0,
+        "len_scale": 1.0
+      },
+      "hit": true,
+      "source_run": "s1-58b973"
+    }
+  ],
+  "data": {
+    "kind": "合成长序列",
+    "users": 16384,
+    "eval_users": 2048,
+    "n_items": 4105,
+    "rows": 75839539,
+    "len_median": 3149.0,
+    "len_p90": 8040.0,
+    "len_max": 10225,
+    "period_median": 847.0,
+    "long_cover": {
+      "L512": 0.3065,
+      "L2048": 0.8254,
+      "L8192": 0.9902,
+      "L10240": 0.9939
+    },
+    "type_share": {
+      "long": 0.3999,
+      "recent": 0.4033,
+      "newsess": 0.1968
+    },
+    "pad_token_waste": 0.0,
+    "pad_attn_waste": 0.0,
+    "max_len": 512,
+    "truncate": "recent"
+  },
+  "model": {
+    "arch": "HSTU（逐点 SiLU 注意力 + 相对位置 / 时间偏置）",
+    "params": {
+      "total": 305344,
+      "trainable": 305344,
+      "embedding": 262720,
+      "body": 42624,
+      "embedding_share": 0.8604,
+      "train_mode": "full"
+    },
+    "attn_impl": "chunked",
+    "device": "cuda",
+    "dtype": "bf16 autocast"
+  },
+  "ended_at": 1794247513.3990378,
+  "end_reason": "budget: 超过时间预算 45.0 分钟",
+  "exported": true
+}

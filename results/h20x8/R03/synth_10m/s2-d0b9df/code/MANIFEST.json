@@ -1,0 +1,20 @@
+{
+  "files": {
+    "__init__.py": "e3b0c44298fc1c14",
+    "cost.py": "b824abad92193d72",
+    "deps.txt": "1f8da708c3142ff2",
+    "experiment.py": "a59f49d73231368f",
+    "items.py": "67e7896ab1a2a23a",
+    "model.py": "90d6ee5cab1949e6",
+    "params.py": "4b51c745dd1afa79",
+    "rqvae.py": "9699e024ce2d3fc6",
+    "sid.py": "812ec4069b4990dc",
+    "train.py": "62f7f396cf2f037c"
+  },
+  "deps": {
+    "recbase": "1677f61f004b",
+    "recseq": "f1bd08a6c7ce"
+  },
+  "code_hash": "0c476ecb2aed",
+  "project": "genrec"
+}

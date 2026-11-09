@@ -1,0 +1,24 @@
+[worker] 等待设备锁 gpu4-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R04/sid_content/s0-30b80b/code/genrec/experiment.py
+[00:19:12] ===== 阶段：prepare =====
+[00:19:13] 缓存 genrec_content_emb key=d8a671f479f8: 命中，复用运行 s0-7f9694 的产物
+[00:19:13] 语义 ID：3,706 个物品、3 层 × 64 码；碰撞率 14.6%（均匀基准 1.4%），码组合 3,418；每层重建误差 {'L1': 0.1542, 'L2': 0.1382, 'L3': 0.1279}
+[00:19:14] ===== 阶段：train =====
+[00:20:11] step 1000/12000  loss 1.9143  验证 Recall@10（beam 10）0.0510
+[00:21:01] step 2000/12000  loss 1.7272  验证 Recall@10（beam 10）0.0710
+[00:21:52] step 3000/12000  loss 1.6386  验证 Recall@10（beam 10）0.0930
+[00:22:42] step 4000/12000  loss 1.6266  验证 Recall@10（beam 10）0.1130
+[00:23:32] step 5000/12000  loss 1.5539  验证 Recall@10（beam 10）0.1220
+[00:24:23] step 6000/12000  loss 1.5179  验证 Recall@10（beam 10）0.1320
+[00:25:13] step 7000/12000  loss 1.5098  验证 Recall@10（beam 10）0.1430
+[00:26:03] step 8000/12000  loss 1.4684  验证 Recall@10（beam 10）0.1510
+[00:26:53] step 9000/12000  loss 1.4432  验证 Recall@10（beam 10）0.1650
+[00:27:43] step 10000/12000  loss 1.4164  验证 Recall@10（beam 10）0.1660
+[00:28:34] step 11000/12000  loss 1.4219  验证 Recall@10（beam 10）0.1610
+[00:29:24] step 12000/12000  loss 1.3737  验证 Recall@10（beam 10）0.1560
+[00:29:24] 缓存 genrec_tiger key=8941a65df3f9: 未命中，重新生成
+[00:29:25] ===== 阶段：evaluate =====
+[00:29:34] 测试 Recall@10 0.15546（beam 10，trie True，初始化 one_root）；不重复物品 10.0；热度参照 0.01639
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

@@ -1,0 +1,12 @@
+[worker] 等待设备锁 gpu6-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R04/fault_beamdup/s1-066075/code/genrec/experiment.py
+[23:21:04] ===== 阶段：prepare =====
+[23:21:05] 缓存 genrec_cf_emb key=ef755f944330: 命中，复用运行 s1-d942ef 的产物
+[23:21:06] 语义 ID：3,706 个物品、3 层 × 64 码；碰撞率 21.2%（均匀基准 1.4%），码组合 3,173；每层重建误差 {'L1': 0.6189, 'L2': 0.5218, 'L3': 0.467}
+[23:21:06] ===== 阶段：train =====
+[23:21:06] 缓存 genrec_tiger key=0f4d2aabbfe3: 命中，复用运行 s1-e8343c 的产物
+[23:21:06] ===== 阶段：evaluate =====
+[23:21:19] 测试 Recall@10 0.04238（beam 10，trie True，初始化 all_zero）；不重复物品 1.1；热度参照 0.01639
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

@@ -11,7 +11,13 @@
 - 训练 batch：x、y 的形状、末尾几个值，padding 占比；
 - 成本探针：不同长度下一条序列前向 + 反向的毫秒数。
 
-〔待 H20 生成〕
+来源：H20 · MovieLens-1M · leave-one-out · 对全部 3706 部电影排序 · 3 种子，`baseline` s0 的 [`trace.json`](../../../results/h20x8/R01/baseline/s0-585a43/trace.json)。
+
+### 样本
+
+- 文案：
+- 标注：`null`
+
 ---
 
 [← 流程结构](02-flow.md) · [课程首页](../README.md) · [代码导读 →](04-code.md)

@@ -1,0 +1,172 @@
+{
+  "run_id": "h20x8.R01.fault_earliest.s0-341113",
+  "course_id": "R01",
+  "project": "recseq",
+  "entry": "recseq.experiment",
+  "profile": "h20x8",
+  "scenario": "fault_earliest",
+  "role": "fault",
+  "title": "超过 L 时保留最早的 50 个（seq[:L]）",
+  "seed": 0,
+  "variant": "fault_earliest",
+  "config_hash": "3411131f9e5a",
+  "code_hash": "068f21297526",
+  "git": {
+    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "truncate": "earliest"
+  },
+  "param_affects": {
+    "dataset": "data",
+    "max_len": "data",
+    "truncate": "data",
+    "len_scale": "data",
+    "synth_users": "data",
+    "synth_eval_users": "data",
+    "synth_clusters": "data",
+    "synth_items_per_cluster": "data",
+    "synth_len_min": "data",
+    "synth_len_max": "data",
+    "synth_period_min": "data",
+    "synth_period_max": "data",
+    "synth_burst": "data",
+    "synth_noise": "data",
+    "synth_stay": "data",
+    "synth_alpha": "data",
+    "synth_session_mean": "data",
+    "data_seed": "data",
+    "model": "model",
+    "d_model": "model",
+    "n_layer": "model",
+    "n_head": "model",
+    "dropout": "model",
+    "attn_impl": "model",
+    "attn_chunk": "model",
+    "mask": "model",
+    "pos_buckets": "model",
+    "time_bias": "model",
+    "time_buckets": "model",
+    "batch_size": "train",
+    "tokens_per_step": "train",
+    "steps": "train",
+    "lr": "train",
+    "warmup_frac": "train",
+    "weight_decay": "train",
+    "precision": "train",
+    "seed": "train",
+    "ckpt_every": "eval",
+    "valid_frac": "eval",
+    "sampled_negs": "eval",
+    "probe_lens": "eval",
+    "probe": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794237072.4122853,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794237072.554843,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794237079.8547738,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794237082.6898432,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794237112.6540244,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794237113.4563158,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794237072.4122853,
+  "budget": {
+    "max_minutes": 30
+  },
+  "expect": [
+    "summary.test.recall10 < base.summary.test.recall10 - 0.05",
+    "summary.diag.gap_mean > 20",
+    "summary.test.by_hist.gt_L.recall10 < base.summary.test.by_hist.gt_L.recall10 - 0.1"
+  ],
+  "slot": "gpu4-0",
+  "started_at": 1794237072.5548444,
+  "data": {
+    "kind": "MovieLens-1M 评分序列（leave-one-out）",
+    "users": 6040,
+    "n_items": 3707,
+    "rows": 1000209,
+    "len_median": 96.0,
+    "len_p90": 400.0,
+    "len_max": 2314,
+    "pad_token_waste": 0.1066,
+    "pad_attn_waste": 0.1653,
+    "max_len": 50,
+    "truncate": "earliest"
+  },
+  "model": {
+    "arch": "SASRec 因果自注意力",
+    "params": {
+      "total": 339712,
+      "trainable": 339712,
+      "embedding": 237248,
+      "body": 102464,
+      "embedding_share": 0.6984,
+      "train_mode": "full"
+    },
+    "attn_impl": "sdpa",
+    "device": "cuda",
+    "dtype": "bf16 autocast"
+  },
+  "train": {
+    "steps": 4000,
+    "seconds": 25.33,
+    "samples_per_s": 20216.8,
+    "tokens_per_s": 661966.2,
+    "train_tokens": 16764626
+  },
+  "artifacts": {
+    "model.pt": {
+      "kind": "checkpoint",
+      "bytes": 1364920,
+      "note": "序列模型权重（验证最好的那一步）"
+    }
+  },
+  "ended_at": 1794237113.4563172,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.test.recall10 < base.summary.test.recall10 - 0.05",
+      "ok": true
+    },
+    {
+      "expr": "summary.diag.gap_mean > 20",
+      "ok": true
+    },
+    {
+      "expr": "summary.test.by_hist.gt_L.recall10 < base.summary.test.by_hist.gt_L.recall10 - 0.1",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

@@ -1,0 +1,40 @@
+{
+  "quantize": {
+    "note": "《Toy Story》：每层选的码、减掉之后剩下的残差范数；同一个第 1 层码的电影；码完全相同（碰撞）的电影",
+    "title": "Toy Story (1995)",
+    "x_shape": [
+      3706,
+      64
+    ],
+    "x_norm": 1.0,
+    "codes": [
+      62,
+      18,
+      30
+    ],
+    "residual_norm_after_level": [
+      0.898,
+      1.1472,
+      1.415
+    ],
+    "same_c1": [
+      "Usual Suspects, The (1995)",
+      "Taxi Driver (1976)",
+      "Hoop Dreams (1994)",
+      "Star Wars: Episode IV - A New Hope (1977)",
+      "Pulp Fiction (1994)"
+    ],
+    "same_bucket": [
+      "Usual Suspects, The (1995)",
+      "Hoop Dreams (1994)",
+      "Pulp Fiction (1994)",
+      "Shawshank Redemption, The (1994)",
+      "Schindler's List (1993)"
+    ],
+    "codebook_shape": [
+      3,
+      64,
+      64
+    ]
+  }
+}

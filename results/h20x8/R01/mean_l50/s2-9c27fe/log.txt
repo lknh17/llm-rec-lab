@@ -1,0 +1,18 @@
+[worker] 等待设备锁 gpu5-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R01/mean_l50/s2-9c27fe/code/recseq/experiment.py
+[01:17:50] ===== 阶段：prepare =====
+[01:17:51] 模型 mean：241,536 参数；L = 50，B = 128，注意力实现 none
+[01:17:51] ===== 阶段：train =====
+[01:17:58] step 500/4000  loss 6.4603  验证 Recall@10 0.0527
+[01:18:00] step 1000/4000  loss 6.1045  验证 Recall@10 0.0637
+[01:18:02] step 1500/4000  loss 5.9823  验证 Recall@10 0.0818
+[01:18:04] step 2000/4000  loss 5.9477  验证 Recall@10 0.0843
+[01:18:05] step 2500/4000  loss 5.9035  验证 Recall@10 0.0848
+[01:18:07] step 3000/4000  loss 5.6923  验证 Recall@10 0.0873
+[01:18:09] step 3500/4000  loss 5.6896  验证 Recall@10 0.0868
+[01:18:11] step 4000/4000  loss 5.6594  验证 Recall@10 0.0863
+[01:18:11] ===== 阶段：evaluate =====
+[01:18:11] 测试 Recall@10 0.08278  NDCG@10 0.04195  采样 100 Recall@10 0.69156  热度参照 0.01639
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

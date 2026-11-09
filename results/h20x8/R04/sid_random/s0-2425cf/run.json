@@ -1,0 +1,179 @@
+{
+  "run_id": "h20x8.R04.sid_random.s0-2425cf",
+  "course_id": "R04",
+  "project": "genrec",
+  "entry": "genrec.experiment",
+  "profile": "h20x8",
+  "scenario": "sid_random",
+  "role": "variant",
+  "title": "用随机向量做语义 ID（码没有语义）",
+  "seed": 0,
+  "variant": "sid_random",
+  "config_hash": "2425cfc23213",
+  "code_hash": "0c476ecb2aed",
+  "git": {
+    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item_repr": "random"
+  },
+  "param_affects": {
+    "task": "data",
+    "items": "data",
+    "synth_n": "data",
+    "synth_dim": "data",
+    "data_seed": "data",
+    "item_repr": "data",
+    "normalize": "data",
+    "quantizer": "data",
+    "sid_levels": "data",
+    "sid_k": "data",
+    "residual": "data",
+    "kmeans_iters": "data",
+    "fit_sample": "data",
+    "rqvae_steps": "data",
+    "collision": "data",
+    "cf_d_model": "data",
+    "cf_steps": "data",
+    "method": "model",
+    "max_hist": "model",
+    "d_model": "model",
+    "enc_layers": "model",
+    "dec_layers": "model",
+    "n_head": "model",
+    "dropout": "model",
+    "batch_size": "train",
+    "lr": "train",
+    "max_steps": "train",
+    "eval_every": "train",
+    "weight_decay": "train",
+    "seed": "train",
+    "beam": "infer",
+    "beam_sweep": "infer",
+    "constrained": "infer",
+    "beam_init": "infer",
+    "infer_batch": "infer",
+    "eval_users": "infer",
+    "cost_bench_n": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794241463.9561057,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794241464.1137924,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794241472.1937022,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794241474.353435,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794242097.4573123,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794242107.3545246,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794241463.9561057,
+  "budget": {
+    "max_minutes": 30
+  },
+  "expect": [],
+  "slot": "gpu7-0",
+  "started_at": 1794241464.113794,
+  "data": {
+    "kind": "MovieLens-1M 电影",
+    "items": 3706,
+    "dim": 64,
+    "source": "随机高斯向量",
+    "normalize": "l2",
+    "quantizer": "rq_kmeans",
+    "levels": 3,
+    "k": 64
+  },
+  "cache": [
+    {
+      "stage": "genrec_tiger",
+      "key_hash": "bc6943f0dcd8",
+      "key": {
+        "v": 1,
+        "batch_size": 512,
+        "cf_d_model": 64,
+        "cf_steps": 4000,
+        "collision": "suffix",
+        "d_model": 128,
+        "data_seed": 0,
+        "dec_layers": 2,
+        "dropout": 0.1,
+        "enc_layers": 4,
+        "eval_every": 1000,
+        "fit_sample": 1000000,
+        "item_repr": "random",
+        "items": "ml1m",
+        "kmeans_iters": 30,
+        "lr": 0.001,
+        "max_hist": 200,
+        "max_steps": 12000,
+        "method": "tiger",
+        "n_head": 4,
+        "normalize": "l2",
+        "quantizer": "rq_kmeans",
+        "residual": true,
+        "rqvae_steps": 3000,
+        "seed": 0,
+        "sid_k": 64,
+        "sid_levels": 3,
+        "synth_dim": 128,
+        "synth_n": 1000000,
+        "task": "retrieval",
+        "weight_decay": 0.01
+      },
+      "hit": false,
+      "source_run": "s0-2425cf"
+    }
+  ],
+  "model": {
+    "arch": "encoder-decoder（4 + 2 层，d = 128）逐个生成 4 个 token",
+    "params": {
+      "total": 1399108,
+      "trainable": 1399108
+    },
+    "device": "cuda"
+  },
+  "train": {
+    "seconds": 617.81,
+    "steps": 12000
+  },
+  "artifacts": {
+    "model.pt": {
+      "kind": "checkpoint",
+      "bytes": 5623056,
+      "note": "encoder-decoder 权重"
+    }
+  },
+  "ended_at": 1794242107.3545263,
+  "end_reason": "完成",
+  "expect_results": [],
+  "expect_ok": true,
+  "exported": true
+}

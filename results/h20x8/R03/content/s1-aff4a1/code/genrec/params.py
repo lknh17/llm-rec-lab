@@ -1,0 +1,62 @@
+"""语义 ID（R03）与生成式召回（R04）的全部可调参数。默认值 = R03 基线：ML-1M、SASRec 物品向量、RQ-KMeans 3 层 × 64 码。"""
+
+from labkit.params import Param, ParamSpace
+
+PARAMS = ParamSpace([
+    Param("task", "choice", "sid", "做什么", affects="data", choices=("sid", "retrieval"),
+          choice_notes={"sid": "只做量化和统计（R03）", "retrieval": "语义 ID → trie → 训练 encoder-decoder → beam 解码召回（R04）"}),
+    # ---------- 物品与表示 ----------
+    Param("items", "choice", "ml1m", "物品集合", affects="data", choices=("ml1m", "synth"),
+          choice_notes={"ml1m": "MovieLens-1M 的 3706 部电影", "synth": "合成物品：三层高斯树（100 个顶簇 × 50 个子簇 × 20 个微簇）"}),
+    Param("synth_n", "int", 1_000_000, "合成物品数", affects="data", min=100, max=100_000_000, cost_note="1e7 时物品表约 5 GB（fp32）"),
+    Param("synth_dim", "int", 128, "合成物品向量维度", affects="data", min=4, max=4096),
+    Param("data_seed", "int", 0, "合成物品的种子", affects="data", min=0, max=1_000_000),
+    Param("item_repr", "choice", "sasrec", "物品向量从哪来", affects="data", choices=("sasrec", "qwen", "random"),
+          choice_notes={"sasrec": "协同：在 ML-1M 上训一个 SASRec，取物品 embedding（和 R01 同一套代码）",
+                        "qwen": "内容：Qwen2.5-0.5B 读\"片名 + 类型\"，末层 mean pooling（896 维）",
+                        "random": "随机高斯向量（对照：没有任何语义）"}),
+    Param("normalize", "choice", "l2", "量化前是否 L2 归一化", affects="data", choices=("l2", "none")),
+    Param("quantizer", "choice", "rq_kmeans", "量化方法", affects="data", choices=("rq_kmeans", "rqvae"),
+          choice_notes={"rq_kmeans": "逐层对残差做 k-means（OneRec 一类工业做法）",
+                        "rqvae": "小 RQ-VAE：编码器 + 残差码本端到端训练（TIGER 原文），不重置死码"}),
+    Param("sid_levels", "int", 3, "语义 ID 层数 L", affects="data", min=1, max=8),
+    Param("sid_k", "int", 64, "每层码本大小 K", affects="data", min=2, max=4096),
+    Param("residual", "bool", True, "每层是否对上一层的残差聚类", affects="data",
+          cost_note="false 是教学故障：每层都对原向量聚类"),
+    Param("kmeans_iters", "int", 30, "每层 k-means 迭代次数", affects="data", min=1, max=1000),
+    Param("fit_sample", "int", 1_000_000, "拟合码本用多少个样本（其余只做分配）", affects="data", min=100, max=100_000_000),
+    Param("rqvae_steps", "int", 3000, "RQ-VAE 训练步数", affects="data", min=1, max=1_000_000),
+    Param("collision", "choice", "suffix", "码完全相同的物品怎么办", affects="data", choices=("suffix", "none"),
+          choice_notes={"suffix": "追加一位去重码（TIGER）", "none": "不去重：解出一个码组合后，按热度把桶里的物品依次填进结果"}),
+    Param("cf_d_model", "int", 64, "协同向量用的 SASRec 维度", affects="data", min=8, max=1024),
+    Param("cf_steps", "int", 4000, "协同向量用的 SASRec 训练步数", affects="data", min=1, max=1_000_000),
+    # ---------- 生成式召回模型 ----------
+    Param("method", "choice", "tiger", "召回方法", affects="model", choices=("tiger", "sasrec"),
+          choice_notes={"tiger": "encoder-decoder 逐层生成语义 ID（TIGER）", "sasrec": "SASRec 对全部物品打分（参照）"}),
+    Param("max_hist", "int", 200, "encoder 最多看几个历史物品", affects="model", min=2, max=4096),
+    Param("d_model", "int", 128, "隐藏维度", affects="model", min=8, max=4096),
+    Param("enc_layers", "int", 4, "encoder 层数", affects="model", min=1, max=48),
+    Param("dec_layers", "int", 2, "decoder 层数", affects="model", min=1, max=48),
+    Param("n_head", "int", 4, "头数", affects="model", min=1, max=64),
+    Param("dropout", "float", 0.1, "dropout", affects="model", min=0.0, max=0.9),
+    # ---------- 训练 ----------
+    Param("batch_size", "int", 512, "每步用户数", affects="train", min=1, max=100_000),
+    Param("lr", "float", 1e-3, "学习率（AdamW，warmup 后余弦）", affects="train", min=1e-6, max=1.0),
+    Param("max_steps", "int", 12000, "训练步数", affects="train", min=1, max=10_000_000),
+    Param("eval_every", "int", 1000, "每隔几步在验证用户上用 beam 10 评估、取最好的权重", affects="train", min=1, max=1_000_000),
+    Param("weight_decay", "float", 0.01, "权重衰减", affects="train", min=0.0, max=1.0),
+    Param("seed", "int", 0, "种子（模型初始化、训练顺序；也决定量化的种子）", affects="train", min=0, max=1_000_000),
+    # ---------- 推理 ----------
+    Param("beam", "int", 10, "beam 宽度 W", affects="infer", min=1, max=1024),
+    Param("beam_sweep", "str", "1,5,10,20", "一次运行里扫哪些 beam 宽度（逗号分隔）", affects="infer"),
+    Param("constrained", "bool", True, "解码时用 trie 限制只生成存在的语义 ID", affects="infer"),
+    Param("beam_init", "choice", "one_root", "beam 的初始分数", affects="infer", choices=("one_root", "all_zero"),
+          choice_notes={"one_root": "只有第 0 条 beam 分数为 0，其余 −∞（正确）",
+                        "all_zero": "所有 beam 初始分数都是 0（教学故障：W 条 beam 完全相同）"}),
+    Param("infer_batch", "int", 256, "解码时每批用户数", affects="infer", min=1, max=100_000),
+    Param("eval_users", "int", 0, "评估用多少测试用户（0 = 全部 6040）", affects="infer", min=0, max=1_000_000),
+    Param("cost_bench_n", "int", 10_000_000, "成本基准：全量打分的物品表有多少行", affects="eval", min=1000, max=1_000_000_000),
+    # ---------- 运行 ----------
+    Param("device", "choice", "auto", "设备", affects="runtime", choices=("auto", "cuda", "mps", "cpu")),
+    Param("max_minutes", "int", 20, "超时（分钟）", affects="runtime", min=1, max=1440),
+])
