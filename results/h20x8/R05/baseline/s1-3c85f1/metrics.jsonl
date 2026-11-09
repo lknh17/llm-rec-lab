@@ -1,0 +1,10 @@
+{"name": "emb_eff_gbs", "value": 164.5, "step": 1, "split": "uniform", "time": 4.581, "stage": "evaluate"}
+{"name": "emb_eff_gbs", "value": 180.4, "step": 1, "split": "zipf", "time": 7.58, "stage": "evaluate"}
+{"name": "emb_eff_gbs", "value": 718.3, "step": 10, "split": "uniform", "time": 10.372, "stage": "evaluate"}
+{"name": "emb_eff_gbs", "value": 895.5, "step": 10, "split": "zipf", "time": 13.388, "stage": "evaluate"}
+{"name": "emb_eff_gbs", "value": 1105.4, "step": 50, "split": "uniform", "time": 16.199, "stage": "evaluate"}
+{"name": "emb_eff_gbs", "value": 1445.4, "step": 50, "split": "zipf", "time": 19.345, "stage": "evaluate"}
+{"name": "stage_ms", "value": 0.121, "step": null, "split": "wait_data", "time": 47.451, "stage": "evaluate"}
+{"name": "stage_ms", "value": 0.12, "step": null, "split": "h2d", "time": 47.456, "stage": "evaluate"}
+{"name": "stage_ms", "value": 3.675, "step": null, "split": "forward_backward", "time": 47.459, "stage": "evaluate"}
+{"name": "stage_ms", "value": 12.063, "step": null, "split": "optimizer", "time": 47.46, "stage": "evaluate"}

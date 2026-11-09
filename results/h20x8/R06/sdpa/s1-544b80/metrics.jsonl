@@ -1,0 +1,8 @@
+{"name": "attn_ms", "value": 0.02678, "step": 512, "split": "softmax_D64", "time": 2.213, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.16573, "step": 2048, "split": "softmax_D64", "time": 2.499, "stage": "evaluate"}
+{"name": "attn_ms", "value": 2.08074, "step": 8192, "split": "softmax_D64", "time": 3.173, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.16662, "step": 2000, "split": "softmax_D64", "time": 3.499, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.04298, "step": 512, "split": "softmax_D128", "time": 3.66, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.31555, "step": 2048, "split": "softmax_D128", "time": 4.076, "stage": "evaluate"}
+{"name": "attn_ms", "value": 4.10318, "step": 8192, "split": "softmax_D128", "time": 5.032, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.31686, "step": 2000, "split": "softmax_D128", "time": 5.518, "stage": "evaluate"}

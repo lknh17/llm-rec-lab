@@ -21,13 +21,13 @@
 
 <details><summary>线索 1</summary>
 
-误差的量级：正确的 kernel 〔待 H20 生成〕（bf16 噪声），故障 〔待 H20 生成〕。
+误差的量级：正确的 kernel 0.0024 ± 0.0000（bf16 噪声），故障 0.718 ± 0.003。
 
 </details>
 
 <details><summary>线索 2</summary>
 
-是不是只在尾块出错：L = 2000（不是 64 的倍数）〔待 H20 生成〕，L = 2048 〔待 H20 生成〕。两种打分：逐点 〔待 H20 生成〕，softmax 〔待 H20 生成〕。
+是不是只在尾块出错：L = 2000（不是 64 的倍数）0.160 ± 0.017，L = 2048 0.159 ± 0.017。两种打分：逐点 0.316 ± 0.022，softmax 0.717 ± 0.003。
 
 </details>
 
@@ -50,9 +50,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 最大误差 | L=2000 | L=2048 | softmax L=512 | 最大误差：与 `triton` 差 | 最大误差：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `triton` | 修复 | 0.002 ± 0.000 | 0.0024 ± 0.0000 | 0.0024 ± 0.0000 | 0.0020 ± 0.0000 | — | s0 0.002 / s1 0.002 / s2 0.002 | 通过 |
+| `fault_diag` | 教学故障 | 0.718 ± 0.003 | 0.1601 ± 0.0173 | 0.1588 ± 0.0168 | 0.7170 ± 0.0027 | +0.716 | s0 0.715 / s1 0.721 / s2 0.717 | 通过 |
+
+![最大误差（均值，误差线为种子间最小到最大）](figures/h20x8-diagnose-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `triton` [s0](../../../results/h20x8/R06/triton/s0-5ec4eb/) · [s1](../../../results/h20x8/R06/triton/s1-03f178/) · [s2](../../../results/h20x8/R06/triton/s2-03ccb8/)
+- `fault_diag` [s0](../../../results/h20x8/R06/fault_diag/s0-bf2daf/) · [s1](../../../results/h20x8/R06/fault_diag/s1-f137de/) · [s2](../../../results/h20x8/R06/fault_diag/s2-030c6d/)
 
 </details>
 

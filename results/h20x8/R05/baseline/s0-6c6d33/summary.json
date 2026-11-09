@@ -1,0 +1,199 @@
+{
+  "hw": {
+    "device": "cuda",
+    "torch": "2.15.0+cu132",
+    "cpu_count": 384,
+    "triton": "3.9.0",
+    "gpu": "NVIDIA H20",
+    "sms": 78,
+    "l2_mb": 60.0,
+    "mem_gb": 102.0,
+    "sm_clock": 1980.0,
+    "sm_clock_max": 1980.0,
+    "temp_c": 49.0,
+    "power_w": 195.42,
+    "ref_copy_gbs": 3324.5,
+    "ref_matmul_tflops": 138.7
+  },
+  "emb": {
+    "bag1_uniform": {
+      "rows": 10000000,
+      "dim": 64,
+      "dtype": "fp32",
+      "bag": 1,
+      "dist": "uniform",
+      "oom": false,
+      "table_gb": 2.56,
+      "median_ms": 0.02669,
+      "p10_ms": 0.02634,
+      "p90_ms": 0.0271,
+      "cv": 0.0288,
+      "n": 500,
+      "eff_gbs": 162.1,
+      "floor_ms": 0.0011,
+      "unique_frac": 0.999
+    },
+    "bag1_zipf": {
+      "rows": 10000000,
+      "dim": 64,
+      "dtype": "fp32",
+      "bag": 1,
+      "dist": "zipf",
+      "oom": false,
+      "table_gb": 2.56,
+      "median_ms": 0.02429,
+      "p10_ms": 0.02403,
+      "p90_ms": 0.02461,
+      "cv": 0.0237,
+      "n": 500,
+      "eff_gbs": 178.1,
+      "floor_ms": 0.0011,
+      "unique_frac": 0.3011
+    },
+    "bag10_uniform": {
+      "rows": 10000000,
+      "dim": 64,
+      "dtype": "fp32",
+      "bag": 10,
+      "dist": "uniform",
+      "oom": false,
+      "table_gb": 2.56,
+      "median_ms": 0.06064,
+      "p10_ms": 0.06016,
+      "p90_ms": 0.06115,
+      "cv": 0.0164,
+      "n": 500,
+      "eff_gbs": 713.3,
+      "floor_ms": 0.0108,
+      "unique_frac": 0.9916
+    },
+    "bag10_zipf": {
+      "rows": 10000000,
+      "dim": 64,
+      "dtype": "fp32",
+      "bag": 10,
+      "dist": "zipf",
+      "oom": false,
+      "table_gb": 2.56,
+      "median_ms": 0.04835,
+      "p10_ms": 0.04797,
+      "p90_ms": 0.04877,
+      "cv": 0.0165,
+      "n": 500,
+      "eff_gbs": 894.6,
+      "floor_ms": 0.0108,
+      "unique_frac": 0.2205
+    },
+    "bag50_uniform": {
+      "rows": 10000000,
+      "dim": 64,
+      "dtype": "fp32",
+      "bag": 50,
+      "dist": "uniform",
+      "oom": false,
+      "table_gb": 2.56,
+      "median_ms": 0.19618,
+      "p10_ms": 0.19549,
+      "p90_ms": 0.19712,
+      "cv": 0.0083,
+      "n": 500,
+      "eff_gbs": 1102.4,
+      "floor_ms": 0.0541,
+      "unique_frac": 0.9605
+    },
+    "bag50_zipf": {
+      "rows": 10000000,
+      "dim": 64,
+      "dtype": "fp32",
+      "bag": 50,
+      "dist": "zipf",
+      "oom": false,
+      "table_gb": 2.56,
+      "median_ms": 0.15027,
+      "p10_ms": 0.14931,
+      "p90_ms": 0.15146,
+      "cv": 0.0143,
+      "n": 500,
+      "eff_gbs": 1439.2,
+      "floor_ms": 0.0541,
+      "unique_frac": 0.1698
+    },
+    "ratio": {
+      "bag50_over_bag1_gbs": 6.801,
+      "zipf_over_uniform_ms": 0.797
+    }
+  },
+  "optim": {
+    "sparse_adam": {
+      "median_ms": 1.1672,
+      "p10_ms": 1.16443,
+      "p90_ms": 1.17618,
+      "cv": 0.0101,
+      "n": 150,
+      "peak_delta_gb": 0.2509,
+      "state_gb": 5.12,
+      "table_gb": 2.56,
+      "oom": false
+    },
+    "adam": {
+      "median_ms": 15.23245,
+      "p10_ms": 15.22678,
+      "p90_ms": 32.09439,
+      "cv": 1.1073,
+      "n": 50,
+      "peak_delta_gb": 2.5606,
+      "state_gb": 5.12,
+      "table_gb": 2.56,
+      "oom": false
+    },
+    "dense_over_sparse": 13.05
+  },
+  "loader": {
+    "workers": 2,
+    "batches_per_s": 455.99,
+    "samples_per_s": 1867755.3,
+    "proc_ms_per_batch": 5.66
+  },
+  "e2e": {
+    "samples_per_s": 184006.2,
+    "steps_measured": 300,
+    "seconds": 6.68,
+    "stage_ms": {
+      "wait_data": 0.125,
+      "h2d": 0.122,
+      "forward_backward": 3.683,
+      "optimizer": 12.228
+    },
+    "stage_share": {
+      "wait_data": 0.0077,
+      "h2d": 0.0076,
+      "forward_backward": 0.2279,
+      "optimizer": 0.7568
+    },
+    "workers": 2,
+    "peak_gb": 22.17,
+    "emb_gb": 7.17,
+    "opt_state_gb": 14.34,
+    "params": 1792527681
+  },
+  "headline": {
+    "查表有效带宽 GB/s（bag 10 均匀）": 713.3,
+    "稠密 Adam ÷ SparseAdam 每步耗时": 13.05,
+    "端到端 样本/秒": 184006.2,
+    "等数据占比": 0.0077,
+    "优化器占比": 0.7568,
+    "数据管线 样本/秒": 1867755.3
+  },
+  "display": {
+    "查表有效带宽 GB/s（bag 10 均匀）": 713.3,
+    "稠密 Adam ÷ SparseAdam 每步耗时": 13.05,
+    "端到端 样本/秒": 184006.2,
+    "等数据占比": 0.0077,
+    "优化器占比": 0.7568,
+    "数据管线 样本/秒": 1867755.3
+  },
+  "display_pct": [
+    "等数据占比",
+    "优化器占比"
+  ]
+}

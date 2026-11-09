@@ -1,0 +1,138 @@
+{
+  "run_id": "h20x8.R05.baseline.s2-de361b",
+  "course_id": "R05",
+  "project": "recops",
+  "entry": "recops.experiment",
+  "profile": "h20x8",
+  "scenario": "baseline",
+  "role": "baseline",
+  "title": "基线：查表微基准（1000 万 × 64 fp32，bag 1 / 10 / 50，均匀与 Zipf）、SparseAdam 与 Adam、数据管线、端到端 DLRM",
+  "seed": 2,
+  "variant": "baseline",
+  "config_hash": "de361bea3399",
+  "code_hash": "b57783f017c6",
+  "git": {
+    "commit": "bb45bd038287c8d6da0c687068d76cc09cde1899",
+    "dirty": false
+  },
+  "changed_from_baseline": {},
+  "param_affects": {
+    "suite": "data",
+    "parts": "eval",
+    "warmup": "eval",
+    "iters": "eval",
+    "min_time_ms": "eval",
+    "l2_flush": "eval",
+    "hw_peak_tflops": "eval",
+    "hw_hbm_gbs": "eval",
+    "emb_rows": "model",
+    "emb_dim": "model",
+    "emb_dtype": "model",
+    "id_dist": "data",
+    "zipf_alpha": "data",
+    "emb_batch": "eval",
+    "bag_lens": "eval",
+    "grid_rows": "eval",
+    "grid_dims": "eval",
+    "grid_dtypes": "eval",
+    "emb_optim": "train",
+    "n_tables": "data",
+    "multi_hot_len": "data",
+    "e2e_rows": "model",
+    "feature_proc": "data",
+    "num_workers": "train",
+    "pin_memory": "train",
+    "non_blocking": "train",
+    "prefetch_factor": "train",
+    "batch_size": "train",
+    "e2e_steps": "train",
+    "e2e_max_seconds": "train",
+    "e2e_profile_steps": "train",
+    "attn_impl": "model",
+    "attn_kinds": "eval",
+    "seq_lens": "eval",
+    "ragged_len": "eval",
+    "head_dims": "eval",
+    "attn_batch": "eval",
+    "attn_heads": "eval",
+    "attn_dtype": "eval",
+    "block_m": "model",
+    "block_n": "model",
+    "num_warps": "model",
+    "num_stages": "model",
+    "diag_causal": "model",
+    "rab_buckets": "model",
+    "layer_len": "eval",
+    "layer_d_model": "eval",
+    "check_ref": "eval",
+    "seed": "train",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794249769.6916497,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794249769.8278975,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794249784.2362823,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794249785.7969835,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794249831.8154104,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794249769.6916497,
+  "budget": {
+    "max_minutes": 15
+  },
+  "expect": [
+    "summary.emb.bag10_uniform.eff_gbs > 100",
+    "summary.optim.dense_over_sparse > 3",
+    "summary.e2e.stage_share.wait_data < 0.3"
+  ],
+  "slot": "gpu4-0",
+  "started_at": 1794249769.8278995,
+  "data": {
+    "kind": "微基准（随机输入）",
+    "suite": "r05",
+    "gpu": "NVIDIA H20",
+    "sms": 78,
+    "l2_mb": 60.0
+  },
+  "ended_at": 1794249831.8154142,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.emb.bag10_uniform.eff_gbs > 100",
+      "ok": true
+    },
+    {
+      "expr": "summary.optim.dense_over_sparse > 3",
+      "ok": true
+    },
+    {
+      "expr": "summary.e2e.stage_share.wait_data < 0.3",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

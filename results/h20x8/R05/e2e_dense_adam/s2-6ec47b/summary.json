@@ -1,0 +1,54 @@
+{
+  "hw": {
+    "device": "cuda",
+    "torch": "2.15.0+cu132",
+    "cpu_count": 384,
+    "triton": "3.9.0",
+    "gpu": "NVIDIA H20",
+    "sms": 78,
+    "l2_mb": 60.0,
+    "mem_gb": 102.0,
+    "sm_clock": 1980.0,
+    "sm_clock_max": 1980.0,
+    "temp_c": 50.0,
+    "power_w": 250.72,
+    "ref_copy_gbs": 3325.6,
+    "ref_matmul_tflops": 138.9
+  },
+  "e2e": {
+    "samples_per_s": 73138.5,
+    "steps_measured": 300,
+    "seconds": 16.8,
+    "stage_ms": {
+      "wait_data": 0.246,
+      "h2d": 0.186,
+      "forward_backward": 8.628,
+      "optimizer": 40.294
+    },
+    "stage_share": {
+      "wait_data": 0.005,
+      "h2d": 0.0038,
+      "forward_backward": 0.1748,
+      "optimizer": 0.8164
+    },
+    "workers": 2,
+    "peak_gb": 35.98,
+    "emb_gb": 7.17,
+    "opt_state_gb": 14.34,
+    "params": 1792527681
+  },
+  "headline": {
+    "端到端 样本/秒": 73138.5,
+    "等数据占比": 0.005,
+    "优化器占比": 0.8164
+  },
+  "display": {
+    "端到端 样本/秒": 73138.5,
+    "等数据占比": 0.005,
+    "优化器占比": 0.8164
+  },
+  "display_pct": [
+    "等数据占比",
+    "优化器占比"
+  ]
+}

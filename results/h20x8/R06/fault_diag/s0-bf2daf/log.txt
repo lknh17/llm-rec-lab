@@ -1,0 +1,10 @@
+[worker] 等待设备锁 gpu3-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R06/fault_diag/s0-bf2daf/code/recops/experiment.py
+[02:43:40] ===== 阶段：prepare =====
+[02:43:41] 硬件：NVIDIA H20；拷贝带宽实测 3326.1 GB/s，bf16 矩阵乘实测 137.6 TFLOPS
+[02:43:41] ===== 阶段：evaluate =====
+<repo>/.venv/lib/python3.12/site-packages/triton/knobs.py:504: UserWarning: TRITON_DEFAULT_FP_FUSION is unset: defaulting to FP fusion ENABLED for backward compatibility in Triton 3.9. The default will change to DISABLED in Triton 3.10; set TRITON_DEFAULT_FP_FUSION=1 to keep fusion enabled or =0 to adopt the new default early and silence this warning.
+  warn_once(FP_FUSION_DEFAULT_WARNING)
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

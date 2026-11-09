@@ -36,15 +36,15 @@
 | 3 | 理解任务 | [追踪](steps/03-trace.md) |  | — | — |
 | 4 | 理解任务 | [代码导读](steps/04-code.md) |  | — | — |
 | 5 | 先估算 | [先估算](steps/05-estimate.md) | L = 8192 时，naive 实现的一个 [B, H, L, L] bf16 中间张量多大？ | — | — |
-| 6 | 四种实现 | [naive 的显存](steps/06-naive-mem.md) | L = 8192 时 naive 逐点 attention 的增量峰值显存大约多少？ | `baseline` | 0 / 3 |
-| 7 | 四种实现 | [SDPA](steps/07-sdpa.md) | L = 8192 时 SDPA 比 naive softmax 快几倍？ | `sdpa` | 0 / 3 |
-| 8 | 四种实现 | [torch.compile](steps/08-compile.md) | L = 8192 逐点打分，torch.compile 的增量显存比 naive 少多少？ | `compiled` | 0 / 3 |
-| 9 | 四种实现 | [手写 Triton](steps/09-triton.md) | L = 8192 逐点打分，Triton 比 naive 快几倍？ | `triton` | 0 / 3 |
-| 10 | 块大小与 roofline | [块大小](steps/10-block.md) | L = 8192 逐点打分，BLOCK_M = 128 比 64 快多少？ | `triton_b128` | 0 / 3 |
-| 11 | 块大小与 roofline | [离 roofline 多远](steps/11-roofline.md) | 它达到了 roofline 上限的多少？ | `triton` | 0 / 3 |
-| 12 | 块大小与 roofline | [attention 在整层里占多少](steps/12-layer.md) | 用 Triton kernel 时，attention 占整层前向耗时的多少？ | `triton` | 0 / 3 |
-| 13 | 故障 | [同事改了 kernel](steps/13-fault.md) | 和 fp32 参照比，最大相对误差会是多少？ | `fault_diag` | 0 / 3 |
-| 14 | 故障 | [诊断：哪里看到了未来](steps/14-diagnose.md) | 根因是什么？ | `fault_diag` | 0 / 3 |
+| 6 | 四种实现 | [naive 的显存](steps/06-naive-mem.md) | L = 8192 时 naive 逐点 attention 的增量峰值显存大约多少？ | `baseline` | 3 / 3 |
+| 7 | 四种实现 | [SDPA](steps/07-sdpa.md) | L = 8192 时 SDPA 比 naive softmax 快几倍？ | `sdpa` | 3 / 3 |
+| 8 | 四种实现 | [torch.compile](steps/08-compile.md) | L = 8192 逐点打分，torch.compile 的增量显存比 naive 少多少？ | `compiled` | 3 / 3 |
+| 9 | 四种实现 | [手写 Triton](steps/09-triton.md) | L = 8192 逐点打分，Triton 比 naive 快几倍？ | `triton` | 3 / 3 |
+| 10 | 块大小与 roofline | [块大小](steps/10-block.md) | L = 8192 逐点打分，BLOCK_M = 128 比 64 快多少？ | `triton_b128` | 3 / 3 |
+| 11 | 块大小与 roofline | [离 roofline 多远](steps/11-roofline.md) | 它达到了 roofline 上限的多少？ | `triton` | 3 / 3 |
+| 12 | 块大小与 roofline | [attention 在整层里占多少](steps/12-layer.md) | 用 Triton kernel 时，attention 占整层前向耗时的多少？ | `triton` | 3 / 3 |
+| 13 | 故障 | [同事改了 kernel](steps/13-fault.md) | 和 fp32 参照比，最大相对误差会是多少？ | `fault_diag` | 3 / 3 |
+| 14 | 故障 | [诊断：哪里看到了未来](steps/14-diagnose.md) | 根因是什么？ | `fault_diag` | 3 / 3 |
 | 15 | 带走 | [回顾](steps/15-keycard.md) |  | — | — |
 <!-- /labkit:path -->
 
@@ -53,9 +53,17 @@
 <!-- labkit:results -->
 <details><summary>展开结果（先自己预测，再看）</summary>
 
-**h20x8**：8 × NVIDIA H20，每张卡一个运行。随机输入 B = 4、H = 8，L = 512 / 2048 / 8192 和 2000（非块倍数），D = 64 / 128，bf16；每次计时前冲刷 L2，取中位数（已有 0 / 21 个运行）
+**h20x8**：8 × NVIDIA H20，每张卡一个运行。随机输入 B = 4、H = 8，L = 512 / 2048 / 8192 和 2000（非块倍数），D = 64 / 128，bf16；每次计时前冲刷 L2，取中位数（已有 21 / 21 个运行）
 
-_还没有结果：等待批量运行。_
+| 场景 | 类型 | softmax L=8192 ms | 逐点 L=8192 ms | 逐点 L=8192 增量显存 GB | 逐点 L=8192 占 roofline | 最大相对误差 | HSTU 层里 attention 占比 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 42.4938 ± 0.0155 (n=3) | 47.4615 ± 0.0323 (n=3) | 22.0789 ± 0.0000 (n=3) | 0.0912 ± 0.0001 (n=3) | 0.0049 ± 0.0000 (n=3) | 0.9063 ± 0.0003 (n=3) | 通过 |
+| `sdpa` | 候选改动 | 2.0888 ± 0.0071 (n=3) | — | — | — | 0.0021 ± 0.0000 (n=3) | 0.9059 ± 0.0002 (n=3) | 通过 |
+| `compiled` | 候选改动 | 9.7755 ± 0.0118 (n=3) | 47.4698 ± 0.0382 (n=3) | 22.0789 ± 0.0000 (n=3) | 0.0912 ± 0.0001 (n=3) | 0.0043 ± 0.0003 (n=3) | 0.9057 ± 0.0003 (n=3) |  |
+| `triton` | 修复 | 2.2107 ± 0.0124 (n=3) | 10.1445 ± 0.0338 (n=3) | 0.0336 ± 0.0000 (n=3) | 0.1831 ± 0.0006 (n=3) | 0.0024 ± 0.0000 (n=3) | 0.7005 ± 0.0013 (n=3) | 通过 |
+| `triton_b128` | 候选改动 | 2.2762 ± 0.0114 (n=3) | 10.3898 ± 0.0188 (n=3) | 0.0336 ± 0.0000 (n=3) | 0.1788 ± 0.0003 (n=3) | 0.0024 ± 0.0000 (n=3) | 0.7201 ± 0.0016 (n=3) | 通过 |
+| `triton_b32` | 候选改动 | 4.9246 ± 0.0207 (n=3) | 12.0982 ± 0.0724 (n=3) | 0.0336 ± 0.0000 (n=3) | 0.1535 ± 0.0009 (n=3) | 0.0024 ± 0.0000 (n=3) | 0.7207 ± 0.0019 (n=3) | 通过 |
+| `fault_diag` | 教学故障 | 2.1137 ± 0.0097 (n=3) | 10.1802 ± 0.0401 (n=3) | 0.0336 ± 0.0000 (n=3) | 0.1824 ± 0.0007 (n=3) | 0.7179 ± 0.0027 (n=3) | 0.7036 ± 0.0018 (n=3) | 通过 |
 
 </details>
 <!-- /labkit:results -->
@@ -65,7 +73,9 @@ _还没有结果：等待批量运行。_
 <!-- labkit:figures -->
 <details><summary>展开证据图（先自己预测，再看）</summary>
 
-- **h20x8**：还没有结果，图在结果推回后自动生成。
+- **h20x8**：[主指标](figures/h20x8-metrics.svg)
+
+  ![h20x8 主指标](figures/h20x8-metrics.svg)
 
 </details>
 <!-- /labkit:figures -->

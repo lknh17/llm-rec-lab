@@ -1,0 +1,34 @@
+{
+  "kernel": {
+    "note": "一次调用的形状、grid 和每个 program 读写的量（Triton 实现）",
+    "q_shape": [
+      4,
+      8,
+      512,
+      64
+    ],
+    "impl": "sdpa",
+    "grid": [
+      8,
+      32
+    ],
+    "block": [
+      64,
+      64
+    ],
+    "first_result": {
+      "oom": false,
+      "rel_err": 0.001972,
+      "peak_delta_gb": 0.0021,
+      "median_ms": 0.0265,
+      "p10_ms": 0.02598,
+      "p90_ms": 0.02723,
+      "cv": 0.0471,
+      "n": 500,
+      "tflops": 40.519,
+      "ai": 128.0,
+      "bound_tflops": 148.0,
+      "roofline_frac": 0.2738
+    }
+  }
+}

@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | attention 占比 | attention ms | 整层 ms | attention 占比：与 `baseline` 差 | attention 占比：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 90.6% ± 0.0% | 2.95 ± 0.00 | 3.26 ± 0.00 | — | s0 90.6% / s1 90.6% / s2 90.6% | 通过 |
+| `triton` | 修复 | 70.0% ± 0.1% | 0.72 ± 0.00 | 1.02 ± 0.00 | -20.6% | s0 70.0% / s1 70.2% / s2 69.9% | 通过 |
+
+![attention 占比（均值，误差线为种子间最小到最大）](figures/h20x8-p_layer-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R06/baseline/s0-40f189/) · [s1](../../../results/h20x8/R06/baseline/s1-1f0960/) · [s2](../../../results/h20x8/R06/baseline/s2-db5062/)
+- `triton` [s0](../../../results/h20x8/R06/triton/s0-5ec4eb/) · [s1](../../../results/h20x8/R06/triton/s1-03f178/) · [s2](../../../results/h20x8/R06/triton/s2-03ccb8/)
 
 </details>
 

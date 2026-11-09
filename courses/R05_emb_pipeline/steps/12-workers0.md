@@ -27,9 +27,19 @@ DataLoader 的 num_workers 设成 0：主进程自己取数和处理，取数时
 
 ## 实测
 
-<details><summary>展开实测：H20 · 微基准 + 28 张表的 DLRM · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 微基准 + 28 张表的 DLRM · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 样本/秒 | 等数据 ms | 处理一批 ms | 样本/秒：与 `baseline` 差 | 样本/秒：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 188,641 ± 4,302 | 0.12 ± 0.00 | 5.08 ± 0.90 | — | s0 184,006 / s1 192,506 / s2 189,410 | 通过 |
+| `e2e_workers0` | 候选改动 | 148,828 ± 7,186 | 11.23 ± 12.19 | 3.80 ± 0.16 | -39,813 | s0 148,665 / s1 156,095 / s2 141,725 |  |
+
+![样本/秒（均值，误差线为种子间最小到最大）](figures/h20x8-p_workers0-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R05/baseline/s0-6c6d33/) · [s1](../../../results/h20x8/R05/baseline/s1-3c85f1/) · [s2](../../../results/h20x8/R05/baseline/s2-de361b/)
+- `e2e_workers0` [s0](../../../results/h20x8/R05/e2e_workers0/s0-0d9e3b/) · [s1](../../../results/h20x8/R05/e2e_workers0/s1-12776f/) · [s2](../../../results/h20x8/R05/e2e_workers0/s2-84d631/)
 
 </details>
 

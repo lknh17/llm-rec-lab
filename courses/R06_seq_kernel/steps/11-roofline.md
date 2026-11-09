@@ -27,9 +27,19 @@ Triton 逐点 kernel 在 L = 8192、D = 64 时，算术强度约 2048 FLOP/B，�
 
 ## 实测
 
-<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 逐点 TFLOPS | softmax TFLOPS | 逐点占 roofline | 本机矩阵乘 TFLOPS | 逐点 TFLOPS：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `sdpa` | 候选改动 | — | 131.6 ± 0.4 | — | 139 ± 0 | — | 通过 |
+| `triton` | 修复 | 27.1 ± 0.1 | 124.3 ± 0.7 | 18.3% ± 0.1% | 138 ± 1 | s0 27.1 / s1 27.0 / s2 27.2 | 通过 |
+
+![逐点 TFLOPS（均值，误差线为种子间最小到最大）](figures/h20x8-p_roofline-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `sdpa` [s0](../../../results/h20x8/R06/sdpa/s0-5091ca/) · [s1](../../../results/h20x8/R06/sdpa/s1-544b80/) · [s2](../../../results/h20x8/R06/sdpa/s2-a59ffe/)
+- `triton` [s0](../../../results/h20x8/R06/triton/s0-5ec4eb/) · [s1](../../../results/h20x8/R06/triton/s1-03f178/) · [s2](../../../results/h20x8/R06/triton/s2-03ccb8/)
 
 </details>
 

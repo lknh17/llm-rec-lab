@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 微基准 + 28 张表的 DLRM · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 微基准 + 28 张表的 DLRM · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 拷贝 ms | 样本/秒 | 拷贝 ms：与 `baseline` 差 | 拷贝 ms：各种子 | 断言 |
+| - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.121 ± 0.001 | 188,641 ± 4,302 | — | s0 0.122 / s1 0.120 / s2 0.120 | 通过 |
+| `e2e_nopin` | 候选改动 | 0.599 ± 0.035 | 172,548 ± 8,246 | +0.479 | s0 0.571 / s1 0.638 / s2 0.589 |  |
+
+![拷贝 ms（均值，误差线为种子间最小到最大）](figures/h20x8-p_nopin-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R05/baseline/s0-6c6d33/) · [s1](../../../results/h20x8/R05/baseline/s1-3c85f1/) · [s2](../../../results/h20x8/R05/baseline/s2-de361b/)
+- `e2e_nopin` [s0](../../../results/h20x8/R05/e2e_nopin/s0-1c194f/) · [s1](../../../results/h20x8/R05/e2e_nopin/s1-723f31/) · [s2](../../../results/h20x8/R05/e2e_nopin/s2-a15d94/)
 
 </details>
 

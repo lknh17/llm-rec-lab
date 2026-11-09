@@ -26,9 +26,17 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 微基准 + 28 张表的 DLRM · 3 种子（已有 0 / 3 个运行）</summary>
+<details><summary>展开实测：H20 · 微基准 + 28 张表的 DLRM · 3 种子（已有 3 / 3 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 1 亿×128 fp32 GB | 1 亿×128 fp32 ms | 1 亿×128 bf16 ms | 100 万×128 fp32 ms | 1 亿×128 fp32 GB：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `grid` | 参照 | 51.2 ± 0.0 | 0.1093 ± 0.0000 | 0.1003 ± 0.0001 | 0.1077 ± 0.0001 | s0 51.2 / s1 51.2 / s2 51.2 |  |
+
+![1 亿×128 fp32 GB（均值，误差线为种子间最小到最大）](figures/h20x8-p_grid-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `grid` [s0](../../../results/h20x8/R05/grid/s0-f22ee9/) · [s1](../../../results/h20x8/R05/grid/s1-478ed6/) · [s2](../../../results/h20x8/R05/grid/s2-e1829d/)
 
 </details>
 

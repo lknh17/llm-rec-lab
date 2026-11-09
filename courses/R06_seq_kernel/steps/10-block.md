@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | D=64 ms | D=128 ms | 最大相对误差 | D=64 ms：与 `triton` 差 | D=64 ms：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `triton` | 修复 | 10.14 ± 0.03 | 11.63 ± 0.04 | 0.0024 ± 0.0000 | — | s0 10.13 / s1 10.18 / s2 10.12 | 通过 |
+| `triton_b32` | 候选改动 | 12.10 ± 0.07 | 14.38 ± 0.06 | 0.0024 ± 0.0000 | +1.95 | s0 12.15 / s1 12.13 / s2 12.01 | 通过 |
+| `triton_b128` | 候选改动 | 10.39 ± 0.02 | 15.02 ± 0.02 | 0.0024 ± 0.0000 | +0.25 | s0 10.41 / s1 10.38 / s2 10.38 | 通过 |
+
+![D=64 ms（均值，误差线为种子间最小到最大）](figures/h20x8-p_block-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `triton` [s0](../../../results/h20x8/R06/triton/s0-5ec4eb/) · [s1](../../../results/h20x8/R06/triton/s1-03f178/) · [s2](../../../results/h20x8/R06/triton/s2-03ccb8/)
+- `triton_b32` [s0](../../../results/h20x8/R06/triton_b32/s0-73c426/) · [s1](../../../results/h20x8/R06/triton_b32/s1-15f1be/) · [s2](../../../results/h20x8/R06/triton_b32/s2-d322f3/)
+- `triton_b128` [s0](../../../results/h20x8/R06/triton_b128/s0-a925d8/) · [s1](../../../results/h20x8/R06/triton_b128/s1-0c3527/) · [s2](../../../results/h20x8/R06/triton_b128/s2-e7afa1/)
 
 </details>
 

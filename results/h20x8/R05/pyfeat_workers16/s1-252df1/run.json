@@ -1,0 +1,125 @@
+{
+  "run_id": "h20x8.R05.pyfeat_workers16.s1-252df1",
+  "course_id": "R05",
+  "project": "recops",
+  "entry": "recops.experiment",
+  "profile": "h20x8",
+  "scenario": "pyfeat_workers16",
+  "role": "variant",
+  "title": "Python 特征处理，worker 加到 16",
+  "seed": 1,
+  "variant": "pyfeat_workers16",
+  "config_hash": "252df1e397e7",
+  "code_hash": "b57783f017c6",
+  "git": {
+    "commit": "bb45bd038287c8d6da0c687068d76cc09cde1899",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "parts": "loader,e2e",
+    "feature_proc": "python",
+    "num_workers": 16
+  },
+  "param_affects": {
+    "suite": "data",
+    "parts": "eval",
+    "warmup": "eval",
+    "iters": "eval",
+    "min_time_ms": "eval",
+    "l2_flush": "eval",
+    "hw_peak_tflops": "eval",
+    "hw_hbm_gbs": "eval",
+    "emb_rows": "model",
+    "emb_dim": "model",
+    "emb_dtype": "model",
+    "id_dist": "data",
+    "zipf_alpha": "data",
+    "emb_batch": "eval",
+    "bag_lens": "eval",
+    "grid_rows": "eval",
+    "grid_dims": "eval",
+    "grid_dtypes": "eval",
+    "emb_optim": "train",
+    "n_tables": "data",
+    "multi_hot_len": "data",
+    "e2e_rows": "model",
+    "feature_proc": "data",
+    "num_workers": "train",
+    "pin_memory": "train",
+    "non_blocking": "train",
+    "prefetch_factor": "train",
+    "batch_size": "train",
+    "e2e_steps": "train",
+    "e2e_max_seconds": "train",
+    "e2e_profile_steps": "train",
+    "attn_impl": "model",
+    "attn_kinds": "eval",
+    "seq_lens": "eval",
+    "ragged_len": "eval",
+    "head_dims": "eval",
+    "attn_batch": "eval",
+    "attn_heads": "eval",
+    "attn_dtype": "eval",
+    "block_m": "model",
+    "block_n": "model",
+    "num_warps": "model",
+    "num_stages": "model",
+    "diag_causal": "model",
+    "rab_buckets": "model",
+    "layer_len": "eval",
+    "layer_d_model": "eval",
+    "check_ref": "eval",
+    "seed": "train",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794249948.4134052,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794249948.5442297,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794249955.3028717,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794249956.3656569,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794249977.7290828,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794249948.4134052,
+  "budget": {
+    "max_minutes": 15
+  },
+  "expect": [],
+  "slot": "gpu3-0",
+  "started_at": 1794249948.5442312,
+  "data": {
+    "kind": "微基准（随机输入）",
+    "suite": "r05",
+    "gpu": "NVIDIA H20",
+    "sms": 78,
+    "l2_mb": 60.0
+  },
+  "ended_at": 1794249977.7290864,
+  "end_reason": "完成",
+  "expect_results": [],
+  "expect_ok": true,
+  "exported": true
+}

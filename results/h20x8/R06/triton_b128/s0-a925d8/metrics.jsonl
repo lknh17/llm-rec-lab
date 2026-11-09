@@ -1,0 +1,16 @@
+{"name": "attn_ms", "value": 0.0303, "step": 512, "split": "softmax_D64", "time": 3.634, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.20029, "step": 2048, "split": "softmax_D64", "time": 3.936, "stage": "evaluate"}
+{"name": "attn_ms", "value": 2.28941, "step": 8192, "split": "softmax_D64", "time": 4.598, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.20051, "step": 2000, "split": "softmax_D64", "time": 4.88, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.06118, "step": 512, "split": "softmax_D128", "time": 5.625, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.48454, "step": 2048, "split": "softmax_D128", "time": 6.006, "stage": "evaluate"}
+{"name": "attn_ms", "value": 6.28634, "step": 8192, "split": "softmax_D128", "time": 7.038, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.48397, "step": 2000, "split": "softmax_D128", "time": 7.517, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.08968, "step": 512, "split": "pointwise_D64", "time": 8.203, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.78862, "step": 2048, "split": "pointwise_D64", "time": 8.573, "stage": "evaluate"}
+{"name": "attn_ms", "value": 10.41144, "step": 8192, "split": "pointwise_D64", "time": 9.701, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.78214, "step": 2000, "split": "pointwise_D64", "time": 10.08, "stage": "evaluate"}
+{"name": "attn_ms", "value": 0.11462, "step": 512, "split": "pointwise_D128", "time": 11.061, "stage": "evaluate"}
+{"name": "attn_ms", "value": 1.09699, "step": 2048, "split": "pointwise_D128", "time": 11.428, "stage": "evaluate"}
+{"name": "attn_ms", "value": 15.04466, "step": 8192, "split": "pointwise_D128", "time": 13.127, "stage": "evaluate"}
+{"name": "attn_ms", "value": 1.09539, "step": 2000, "split": "pointwise_D128", "time": 13.561, "stage": "evaluate"}

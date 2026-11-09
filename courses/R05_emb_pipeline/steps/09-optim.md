@@ -26,9 +26,17 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 微基准 + 28 张表的 DLRM · 3 种子（已有 0 / 3 个运行）</summary>
+<details><summary>展开实测：H20 · 微基准 + 28 张表的 DLRM · 3 种子（已有 3 / 3 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | SparseAdam ms | 稠密 Adam ms | 稠密 增量峰值 GB | SparseAdam ms：各种子 | 断言 |
+| - | - | - | - | - | - | - |
+| `baseline` | 基线 | 1.162 ± 0.005 | 15.235 ± 0.011 | 2.56 ± 0.00 | s0 1.167 / s1 1.156 / s2 1.163 | 通过 |
+
+![SparseAdam ms（均值，误差线为种子间最小到最大）](figures/h20x8-p_optim-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R05/baseline/s0-6c6d33/) · [s1](../../../results/h20x8/R05/baseline/s1-3c85f1/) · [s2](../../../results/h20x8/R05/baseline/s2-de361b/)
 
 </details>
 

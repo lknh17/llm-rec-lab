@@ -36,17 +36,17 @@
 | 3 | 理解任务 | [追踪](steps/03-trace.md) |  | — | — |
 | 4 | 理解任务 | [代码导读](steps/04-code.md) |  | — | — |
 | 5 | 先估算 | [先估算](steps/05-estimate.md) | EmbeddingBag 求和（每个 id 读 64 个 fp32、做 64 次加法），算术强度大约多少 FLOP/B？ | — | — |
-| 6 | 查表 | [bag 长度与有效带宽](steps/06-bw.md) | bag 50 的有效带宽是 bag 1 的几倍？ | `baseline` | 0 / 3 |
-| 7 | 查表 | [Zipf 热点](steps/07-zipf.md) | Zipf 分布下查表耗时是均匀分布的多少？ | `baseline` | 0 / 3 |
-| 8 | 查表 | [表规模与精度](steps/08-grid.md) | 1 亿 × 128 × fp32 的表能放进 H20 吗？ | `grid` | 0 / 3 |
-| 9 | 优化器 | [SparseAdam 对稠密 Adam](steps/09-optim.md) | 稠密 Adam 每步耗时是 SparseAdam 的几倍？ | `baseline` | 0 / 3 |
-| 10 | 优化器 | [端到端换稠密 Adam](steps/10-e2e-dense.md) | 端到端吞吐（样本/秒）是 SparseAdam 的多少？ | `e2e_dense_adam` | 0 / 3 |
-| 11 | 数据管线 | [一步的时间花在哪](steps/11-stages.md) | 哪个阶段占比最大？ | `baseline` | 0 / 3 |
-| 12 | 数据管线 | [不开 worker](steps/12-workers0.md) | 端到端吞吐是基线的多少？ | `e2e_workers0` | 0 / 3 |
-| 13 | 数据管线 | [不锁页、阻塞拷贝](steps/13-nopin.md) | 拷到 GPU 这一阶段的耗时是基线的几倍？ | `e2e_nopin` | 0 / 3 |
-| 14 | 故障 | [同事改了特征处理](steps/14-fault.md) | 端到端吞吐是基线的多少？ | `fault_pyfeat` | 0 / 3 |
-| 15 | 故障 | [诊断：GPU 在等什么](steps/15-diagnose.md) | 根因是什么？ | `fault_pyfeat` | 0 / 3 |
-| 16 | 故障 | [加 worker 能救吗](steps/16-fix.md) | 端到端吞吐能恢复到基线的多少？ | `pyfeat_workers16` | 0 / 3 |
+| 6 | 查表 | [bag 长度与有效带宽](steps/06-bw.md) | bag 50 的有效带宽是 bag 1 的几倍？ | `baseline` | 3 / 3 |
+| 7 | 查表 | [Zipf 热点](steps/07-zipf.md) | Zipf 分布下查表耗时是均匀分布的多少？ | `baseline` | 3 / 3 |
+| 8 | 查表 | [表规模与精度](steps/08-grid.md) | 1 亿 × 128 × fp32 的表能放进 H20 吗？ | `grid` | 3 / 3 |
+| 9 | 优化器 | [SparseAdam 对稠密 Adam](steps/09-optim.md) | 稠密 Adam 每步耗时是 SparseAdam 的几倍？ | `baseline` | 3 / 3 |
+| 10 | 优化器 | [端到端换稠密 Adam](steps/10-e2e-dense.md) | 端到端吞吐（样本/秒）是 SparseAdam 的多少？ | `e2e_dense_adam` | 3 / 3 |
+| 11 | 数据管线 | [一步的时间花在哪](steps/11-stages.md) | 哪个阶段占比最大？ | `baseline` | 3 / 3 |
+| 12 | 数据管线 | [不开 worker](steps/12-workers0.md) | 端到端吞吐是基线的多少？ | `e2e_workers0` | 3 / 3 |
+| 13 | 数据管线 | [不锁页、阻塞拷贝](steps/13-nopin.md) | 拷到 GPU 这一阶段的耗时是基线的几倍？ | `e2e_nopin` | 3 / 3 |
+| 14 | 故障 | [同事改了特征处理](steps/14-fault.md) | 端到端吞吐是基线的多少？ | `fault_pyfeat` | 3 / 3 |
+| 15 | 故障 | [诊断：GPU 在等什么](steps/15-diagnose.md) | 根因是什么？ | `fault_pyfeat` | 3 / 3 |
+| 16 | 故障 | [加 worker 能救吗](steps/16-fix.md) | 端到端吞吐能恢复到基线的多少？ | `pyfeat_workers16` | 3 / 3 |
 | 17 | 带走 | [回顾](steps/17-keycard.md) |  | — | — |
 <!-- /labkit:path -->
 
@@ -55,9 +55,17 @@
 <!-- labkit:results -->
 <details><summary>展开结果（先自己预测，再看）</summary>
 
-**h20x8**：8 × NVIDIA H20，每张卡一个运行（同一张卡上不并发，避免互相抢带宽）。微基准用随机输入；端到端是 26 + 2 张表（每张 100 万 × 64）的 DLRM（已有 0 / 21 个运行）
+**h20x8**：8 × NVIDIA H20，每张卡一个运行（同一张卡上不并发，避免互相抢带宽）。微基准用随机输入；端到端是 26 + 2 张表（每张 100 万 × 64）的 DLRM（已有 21 / 21 个运行）
 
-_还没有结果：等待批量运行。_
+| 场景 | 类型 | 端到端 样本/秒 | 等数据占比 | 优化器占比 | 查表有效带宽 GB/s | 稠密 ÷ 稀疏 每步耗时 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 188640.6333 ± 4301.8086 (n=3) | 0.0078 ± 0.0002 (n=3) | 0.7564 ± 0.0013 (n=3) | 715.4667 ± 2.5658 (n=3) | 13.1100 ± 0.0600 (n=3) | 通过 |
+| `grid` | 参照 | — | — | — | — | — |  |
+| `e2e_dense_adam` | 候选改动 | 73377.7000 ± 568.7658 (n=3) | 0.0046 ± 0.0004 (n=3) | 0.8187 ± 0.0029 (n=3) | — | — |  |
+| `e2e_workers0` | 候选改动 | 148828.0333 ± 7186.3888 (n=3) | 0.3381 ± 0.2289 (n=3) | 0.4709 ± 0.1606 (n=3) | — | — |  |
+| `e2e_nopin` | 候选改动 | 172547.9333 ± 8245.5343 (n=3) | 0.0835 ± 0.0084 (n=3) | 0.6583 ± 0.0091 (n=3) | — | — |  |
+| `fault_pyfeat` | 教学故障 | 57079.8333 ± 5849.8724 (n=3) | 0.4751 ± 0.3997 (n=3) | 0.3762 ± 0.2910 (n=3) | — | — | 未通过 |
+| `pyfeat_workers16` | 候选改动 | 187788.2000 ± 11348.7087 (n=3) | 0.0104 ± 0.0011 (n=3) | 0.7263 ± 0.0228 (n=3) | — | — |  |
 
 </details>
 <!-- /labkit:results -->
@@ -67,7 +75,9 @@ _还没有结果：等待批量运行。_
 <!-- labkit:figures -->
 <details><summary>展开证据图（先自己预测，再看）</summary>
 
-- **h20x8**：还没有结果，图在结果推回后自动生成。
+- **h20x8**：[主指标](figures/h20x8-metrics.svg)
+
+  ![h20x8 主指标](figures/h20x8-metrics.svg)
 
 </details>
 <!-- /labkit:figures -->

@@ -1,0 +1,4 @@
+{"name": "stage_ms", "value": 4.912, "step": null, "split": "wait_data", "time": 22.004, "stage": "evaluate"}
+{"name": "stage_ms", "value": 0.199, "step": null, "split": "h2d", "time": 22.007, "stage": "evaluate"}
+{"name": "stage_ms", "value": 4.003, "step": null, "split": "forward_backward", "time": 22.01, "stage": "evaluate"}
+{"name": "stage_ms", "value": 11.438, "step": null, "split": "optimizer", "time": 22.011, "stage": "evaluate"}

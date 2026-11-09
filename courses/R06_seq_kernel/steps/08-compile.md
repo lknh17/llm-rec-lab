@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 逐点 L=8192 GB | 逐点 L=8192 ms | 逐点 L=8192 GB：与 `baseline` 差 | 逐点 L=8192 GB：各种子 | 断言 |
+| - | - | - | - | - | - | - |
+| `baseline` | 基线 | 22.08 ± 0.00 | 47.5 ± 0.0 | — | s0 22.08 / s1 22.08 / s2 22.08 | 通过 |
+| `compiled` | 候选改动 | 22.08 ± 0.00 | 47.5 ± 0.0 | +0.00 | s0 22.08 / s1 22.08 / s2 22.08 |  |
+
+![逐点 L=8192 GB（均值，误差线为种子间最小到最大）](figures/h20x8-p_compile-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R06/baseline/s0-40f189/) · [s1](../../../results/h20x8/R06/baseline/s1-1f0960/) · [s2](../../../results/h20x8/R06/baseline/s2-db5062/)
+- `compiled` [s0](../../../results/h20x8/R06/compiled/s0-089e64/) · [s1](../../../results/h20x8/R06/compiled/s1-388c07/) · [s2](../../../results/h20x8/R06/compiled/s2-6eb699/)
 
 </details>
 

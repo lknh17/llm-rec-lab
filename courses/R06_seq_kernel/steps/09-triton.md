@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · B=4、H=8、L 512-8192、D 64/128、bf16 · 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 逐点 L=8192 ms | 增量显存 GB | L=2000 相对误差 | 最大相对误差 | 逐点 L=8192 ms：与 `baseline` 差 | 逐点 L=8192 ms：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 47.46 ± 0.03 | 22.079 ± 0.000 | 0.0038 ± 0.0004 | 0.0049 ± 0.0000 | — | s0 47.43 / s1 47.45 / s2 47.50 | 通过 |
+| `compiled` | 候选改动 | 47.47 ± 0.04 | 22.079 ± 0.000 | 0.0038 ± 0.0004 | 0.0043 ± 0.0003 | +0.01 | s0 47.51 / s1 47.46 / s2 47.44 |  |
+| `triton` | 修复 | 10.14 ± 0.03 | 0.034 ± 0.000 | 0.0024 ± 0.0000 | 0.0024 ± 0.0000 | -37.32 | s0 10.13 / s1 10.18 / s2 10.12 | 通过 |
+
+![逐点 L=8192 ms（均值，误差线为种子间最小到最大）](figures/h20x8-p_triton-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R06/baseline/s0-40f189/) · [s1](../../../results/h20x8/R06/baseline/s1-1f0960/) · [s2](../../../results/h20x8/R06/baseline/s2-db5062/)
+- `compiled` [s0](../../../results/h20x8/R06/compiled/s0-089e64/) · [s1](../../../results/h20x8/R06/compiled/s1-388c07/) · [s2](../../../results/h20x8/R06/compiled/s2-6eb699/)
+- `triton` [s0](../../../results/h20x8/R06/triton/s0-5ec4eb/) · [s1](../../../results/h20x8/R06/triton/s1-03f178/) · [s2](../../../results/h20x8/R06/triton/s2-03ccb8/)
 
 </details>
 

@@ -21,19 +21,19 @@
 
 <details><summary>线索 1</summary>
 
-逐阶段耗时：等数据 〔待 H20 生成〕 ms（基线 〔待 H20 生成〕），前向反向 〔待 H20 生成〕 ms（基线 〔待 H20 生成〕）。
+逐阶段耗时：等数据 25.5 ± 21.9 ms（基线 0.12 ± 0.00），前向反向 4.3 ± 0.2 ms（基线 3.6 ± 0.1）。
 
 </details>
 
 <details><summary>线索 2</summary>
 
-只取数不训练：管线每秒 〔待 H20 生成〕 个样本（基线 〔待 H20 生成〕）；处理一批 〔待 H20 生成〕 ms（基线 〔待 H20 生成〕）。
+只取数不训练：管线每秒 74,174 ± 400 个样本（基线 1,909,221 ± 36,205）；处理一批 174 ± 5 ms（基线 5.1 ± 0.9）。
 
 </details>
 
 <details><summary>线索 3</summary>
 
-worker 数 〔待 H20 生成〕：每批平均要多久才能产出？和 GPU 一步比呢？
+worker 数 2 ± 0：每批平均要多久才能产出？和 GPU 一步比呢？
 
 </details>
 
@@ -50,9 +50,19 @@ worker 数 〔待 H20 生成〕：每批平均要多久才能产出？和 GPU �
 
 ## 实测
 
-<details><summary>展开实测：H20 · 微基准 + 28 张表的 DLRM · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 微基准 + 28 张表的 DLRM · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 等数据 ms | 前向反向 ms | 管线 样本/秒 | 处理一批 ms | 等数据 ms：与 `baseline` 差 | 等数据 ms：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.1 ± 0.0 | 3.6 ± 0.1 | 1,909,221 ± 36,205 | 5.1 ± 0.9 | — | s0 0.1 / s1 0.1 / s2 0.1 | 通过 |
+| `fault_pyfeat` | 教学故障 | 25.5 ± 21.9 | 4.3 ± 0.2 | 74,174 ± 400 | 173.6 ± 4.6 | +25.4 | s0 39.0 / s1 37.3 / s2 0.2 | 未通过 |
+
+![等数据 ms（均值，误差线为种子间最小到最大）](figures/h20x8-diagnose-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R05/baseline/s0-6c6d33/) · [s1](../../../results/h20x8/R05/baseline/s1-3c85f1/) · [s2](../../../results/h20x8/R05/baseline/s2-de361b/)
+- `fault_pyfeat` [s0](../../../results/h20x8/R05/fault_pyfeat/s0-f862e9/) · [s1](../../../results/h20x8/R05/fault_pyfeat/s1-9ed8f1/) · [s2](../../../results/h20x8/R05/fault_pyfeat/s2-16aee2/)
 
 </details>
 
