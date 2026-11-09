@@ -53,6 +53,10 @@ def run_r05(ctx, cfg, device, hw) -> None:
                 if r.get("eff_gbs") is not None:
                     ctx.metric("emb_eff_gbs", r["eff_gbs"], step=bag, split=dist)
                 ctx.check()
+        def ratio(a, b):
+            return round(a / b, 3) if a and b else None
+        emb["ratio"] = {"bag50_over_bag1_gbs": ratio(emb.get("bag50_uniform", {}).get("eff_gbs"), emb.get("bag1_uniform", {}).get("eff_gbs")),
+                        "zipf_over_uniform_ms": ratio(emb.get("bag10_zipf", {}).get("median_ms"), emb.get("bag10_uniform", {}).get("median_ms"))}
         out["emb"] = emb
         b10 = emb.get("bag10_uniform", {})
         ctx.trace("emb", {"note": "EmbeddingBag 查表：10M × 64 fp32 表，16384 个样本 × 每个 10 个 id（均匀）",
