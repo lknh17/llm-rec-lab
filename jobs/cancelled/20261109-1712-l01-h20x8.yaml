@@ -10,3 +10,5 @@ seeds:
 requested_commit: 0a243a1118f317693db4007cdfacd47ab227b80d
 note: 补跑 L01 fault_nodedup s1（上次因缓存并发竞态失败，已在 ca5c974 修复）
 how_to_run: python -m labkit jobs run 20261109-1712-l01-h20x8
+cancelled_at: '2026-11-09T09:25:27Z'
+cancel_reason: 重复：fault_nodedup s1 已由 20261109-1637 补跑成功
