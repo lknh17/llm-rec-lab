@@ -39,6 +39,12 @@ def stage_cache(ctx, stage: str, key: dict, build: Callable[[Path], None]) -> Pa
     if final.exists():  # 并发情况下别人先建好了，用别人的
         shutil.rmtree(tmp)
     else:
-        tmp.rename(final)
+        try:
+            tmp.rename(final)
+        except OSError:
+            # 检查和改名之间别的进程抢先建好了（rename 到非空目录会报 ENOTEMPTY / EEXIST）：用别人的
+            if not (final / "_cache_meta.json").exists():
+                raise
+            shutil.rmtree(tmp, ignore_errors=True)
     ctx.note_cache(stage, digest, key, hit=False, source_run=ctx.run_id)
     return final

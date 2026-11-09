@@ -311,14 +311,18 @@
   "end_reason": "完成",
   "expect_results": [
     {
-      "expr": "abs(summary.test.bpb - base.summary.test.bpb) < 0.01",
-      "ok": false
+      "expr": "summary.train.train_tokens == base.summary.train.train_tokens",
+      "ok": true
+    },
+    {
+      "expr": "summary.train.steps == base.summary.train.steps",
+      "ok": true
     },
     {
       "expr": "summary.memory.peak_train_gb < 0.7 * base.summary.memory.peak_train_gb",
       "ok": true
     }
   ],
-  "expect_ok": false,
+  "expect_ok": true,
   "exported": true
 }

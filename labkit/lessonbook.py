@@ -132,6 +132,8 @@ def fmt(v: float, spec: str | None = None, pct: bool = False, signed: bool = Fal
         s = f"{v / 1e8:{sign}.2f} 亿" if a >= 1e8 else f"{v / 1e4:{sign},.0f} 万" if a >= 1e4 else f"{v:{sign},.0f}"
         return s
     if spec:
+        if spec[:1] in "+- ":  # 讲义里的格式已经自带符号（例如 +.3f），不再重复加
+            sign = ""
         if spec.endswith("d"):
             return format(int(round(v)), sign + spec)
         return format(v, sign + spec)

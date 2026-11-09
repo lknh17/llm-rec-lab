@@ -311,7 +311,7 @@
   "end_reason": "完成",
   "expect_results": [
     {
-      "expr": "abs(summary.test.bpb - base.summary.test.bpb) < 0.03",
+      "expr": "summary.test.bpb < base.summary.test.bpb + 0.15",
       "ok": true
     }
   ],

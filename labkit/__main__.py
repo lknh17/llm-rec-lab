@@ -12,6 +12,7 @@
     python -m labkit evidence [results/] [--check]           给已有结果补 evidence.json（网页和 README 的证据图）
     python -m labkit publish -m "说明"                        检查 + 提交 results/ jobs/ status/ 和课程 README/图 + 推送
     python -m labkit docs [--check]                          重新生成课程 README（代码链接、步骤目录、结果表、证据图）和一步一页的 steps/
+    python -m labkit recheck L04 --profile h20x8             场景清单的断言改了以后，对 results/ 里的已有结果重新求值（不重跑）
 """
 
 from __future__ import annotations
@@ -100,6 +101,17 @@ def cmd_batch(a) -> None:
     if a.report:
         with open(a.report, "w") as f:
             json.dump(report, f, ensure_ascii=False, indent=2)
+
+
+def cmd_recheck(a) -> None:
+    from . import batch
+
+    rows = batch.recheck(_courses(a.courses, a.all), a.profile)
+    changed = [r for r in rows if r["before"] != r["after"]]
+    for r in changed:
+        print(f"{r['course']}/{r['scenario']} s{r['seed']}: {r['before']} → {r['after']}")
+    bad = [r for r in rows if r["after"] is False]
+    print(f"重新求值 {len(rows)} 个运行，变化 {len(changed)} 个，仍未通过 {len(bad)} 个")
 
 
 def cmd_export(a) -> None:
@@ -285,6 +297,12 @@ def main() -> None:
     p.add_argument("--check", action="store_true", help="只检查课程 README、steps/ 和图是否最新")
     p.add_argument("--board", action="store_true", help="同时生成作业看板 jobs/README.md（由 GitHub Actions 调用）")
     p.set_defaults(fn=cmd_docs)
+
+    p = sub.add_parser("recheck", help="断言改了以后，对 results/ 里已有的结果按当前场景清单重新求值")
+    p.add_argument("courses", nargs="*")
+    p.add_argument("--all", action="store_true")
+    p.add_argument("--profile", required=True)
+    p.set_defaults(fn=cmd_recheck)
 
     a = ap.parse_args()
     a.fn(a)

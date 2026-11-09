@@ -6,3 +6,6 @@ __pycache__/
 *.part
 # Mac 冒烟只验证流程，结果不进公开结果表
 results/mac-smoke/
+
+# Run.update 的文件锁（本机重算断言时会生成）
+run.lock

@@ -59,7 +59,9 @@ scenarios:
     title: 12 层 Pre-Norm
     params: {n_layer: 12}
     expect:
-      - "summary.test.bpb < base.summary.test.bpb + 0.02"
+      # 同种子对比只断言远大于种子噪声（基线 3 种子的 bpb 标准差约 0.05）的事：12 层 Pre-Norm 正常收敛、没有发散
+      - "summary.test.bpb < base.summary.test.bpb + 0.3"
+      - "summary.train.loss_spikes == 0"
   - id: post12
     role: variant
     title: 12 层 Post-Norm（其余同 pre12）

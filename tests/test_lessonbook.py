@@ -98,3 +98,13 @@ def test_jobs_board(tmp_path, monkeypatch):
     row = next(line for line in text.splitlines() if line.startswith("| `lora_r4`"))
     assert row.count("⏳") == 3  # j2 是全量作业，还在跑：失败的 s2 也重新排上了
     assert lessonbook.write_jobs_board() is True and lessonbook.write_jobs_board() is False
+
+
+def test_fmt_signed_with_explicit_sign_spec():
+    """讲义里差值列写成 fmt: +.3f 时，fmt_delta 不能再加一个 +（H20 作业 20261109-1317 因 '++.3f' 失败）。"""
+    from labkit.lessonbook import fmt, fmt_delta
+
+    assert fmt(0.0123, "+.3f", signed=True) == "+0.012"
+    assert fmt_delta(-0.0123, {"fmt": "+.3f"}) == "-0.012"
+    assert fmt_delta(0.5, {"fmt": ".2f"}) == "+0.50"
+    assert fmt_delta(3, {"fmt": "d"}) == "+3"

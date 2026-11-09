@@ -187,6 +187,22 @@ def check_expect(run: Run, spec: scenarios.RunSpec, allow_missing_base: bool) ->
     return ok
 
 
+def recheck(courses: list[str], profile: str, root: Path | None = None) -> list[dict]:
+    """场景清单里的断言改了之后，对已有结果（默认 results/）按当前清单重新求值，写回 run.json。
+    只重算断言，不动任何测量值；没有结果或运行失败的跳过。"""
+    root = root or paths.RESULTS_DIR
+    out = []
+    for spec in plan(courses, profile):
+        d = root / spec.rel_dir
+        meta = read_json(d / "run.json") or {}
+        if meta.get("status") != "succeeded":
+            continue
+        before = meta.get("expect_ok")
+        after = check_expect(Run(d), spec, allow_missing_base=False)
+        out.append({"course": spec.course, "scenario": spec.scenario, "seed": spec.seed, "before": before, "after": after})
+    return out
+
+
 # ------------------------------------------------------------------ 主流程
 def plan(courses: list[str], profile: str, only: list[str] | None = None, seeds: list[int] | None = None) -> list:
     specs = []
