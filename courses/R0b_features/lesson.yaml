@@ -565,7 +565,7 @@ steps:
     - 验证集换了一批更容易的样本
   clues:
   - 线上回放：固定留出集（线上口径特征）上，时点正确 {{v:f_all:summary.test.auc:.4f}}，全量统计 {{v:fault_stats_full:summary.test.auc:.4f}}。离线涨，线上回放持平还是下跌？
-  - 口径体检：用户统计里数进了未来的行占比 {{v:fault_stats_full:summary.stats_check.user_rows_using_future_share:.2f}}（时点正确为 {{v:f_all:summary.stats_check.user_rows_using_future_share:.2f}}）。只用"用户喜欢率"排序的 AUC：训练集 {{v:fault_stats_full:summary.stats_check.single_auc.user_rate.train:.4f}}，同一批验证行换线上口径 {{v:fault_stats_full:summary.stats_check.single_auc.user_rate.valid_serving:.4f}}。
+  - 口径体检：用户统计里数进了未来的行占比 {{v:fault_stats_full:summary.stats_check.user_rows_using_future_share:.2f}}（时点正确为 {{v:f_all:summary.stats_check.user_rows_using_future_share:.2f}}）。只用"用户喜欢率"排序的 AUC：同一批验证行，全量口径 {{v:fault_stats_full:summary.stats_check.single_auc.user_rate.valid:.4f}}，换线上口径 {{v:fault_stats_full:summary.stats_check.single_auc.user_rate.valid_serving:.4f}}。
   - 同一个模型、同一批验证行，只换特征口径：{{v:fault_stats_full:summary.valid.auc:.4f}} → {{v:fault_stats_full:summary.valid_serving.auc:.4f}}。样本之前没有任何历史的用户（u_new）：全量口径 {{v:fault_stats_full:summary.groups.valid.u_new.auc:.4f}}，时点正确 {{v:f_all:summary.groups.valid.u_new.auc:.4f}}。
   columns:
   - path: summary.valid.auc

@@ -25,7 +25,7 @@ table:
   label: 训练秒数
 figures:
   loss: []
-noise_note: bpb 差异小于 0.02 或小于种子间波动，都按“差不多”算。
+noise_note: bpb 差异小于 0.05（H20 上 3 种子均值之差的噪声量级）或小于种子间波动，都按“差不多”算。
 stages:
 - id: understand
   title: 理解任务
@@ -190,9 +190,9 @@ steps:
   question:
     text: 和 MHA 比，GQA（2 组）的留出集 bpb 怎样？
     options:
-    - 更好（低 0.02 以上）
-    - 差不多（±0.02）
-    - 更差（高 0.02 以上）
+    - 更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - 更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -228,9 +228,9 @@ steps:
   question:
     text: 和 MHA 比，MQA 的留出集 bpb 怎样？
     options:
-    - 更好（低 0.02 以上）
-    - 差不多（±0.02）
-    - 更差（高 0.02 以上）
+    - 更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - 更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -263,9 +263,9 @@ steps:
   question:
     text: 同样的 KV cache 字节，MLA 和 MQA 比，留出集 bpb 怎样？
     options:
-    - MLA 更好（低 0.02 以上）
-    - 差不多（±0.02）
-    - MLA 更差（高 0.02 以上）
+    - MLA 更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - MLA 更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -299,8 +299,8 @@ steps:
   question:
     text: 去掉 RoPE，留出集 bpb 会差多少？
     options:
-    - 差不到 0.02
-    - 差 0.02 - 0.1
+    - 差不到 0.05
+    - 差 0.05 - 0.1
     - 差 0.1 以上
   columns:
   - path: summary.test.bpb
@@ -333,8 +333,8 @@ steps:
   question:
     text: 12 层 Post-Norm 和 12 层 Pre-Norm 比，留出集 bpb 怎样？
     options:
-    - 差不多（差 0.02 以内）
-    - 明显更差（差 0.02 - 0.2）
+    - 差不多（差 0.05 以内）
+    - 明显更差（差 0.05 - 0.2）
     - 很差或发散（差 0.2 以上）
   columns:
   - path: summary.test.bpb
@@ -354,7 +354,7 @@ steps:
   - metrics
   - loss
   curve: grad_norm
-  look: 12 层 Pre-Norm 比 6 层好了多少？Post-Norm 吃到了加深的收益吗？
+  look: 12 层 Pre-Norm 比 6 层好还是差？只有 100 MB 数据、学习率不变时，加深为什么没收益？
 - id: p_moe
   file: 11-moe
   stage: moe
@@ -368,9 +368,9 @@ steps:
   question:
     text: 和 Dense 基线比，MoE 的留出集 bpb 怎样？
     options:
-    - 更好（低 0.02 以上）
-    - 差不多（±0.02）
-    - 更差（高 0.02 以上）
+    - 更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - 更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -409,9 +409,9 @@ steps:
   question:
     text: MoE 比同总参数的宽 Dense 差多少？
     options:
-    - 差不到 0.02：几乎追平
-    - 差 0.02 - 0.06
-    - 差 0.06 以上
+    - 差不到 0.05：几乎追平
+    - 差 0.05 - 0.15
+    - 差 0.15 以上
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -431,7 +431,7 @@ steps:
   - params
   - loss
   curve: valid_bpb
-  look: 按"每 token FLOPs"横轴摆这三个点，MoE 在不在两个 Dense 连线的下方？
+  look: 三条验证曲线的种子带有多宽？和曲线之间的距离比，哪个大？
 - id: p_fault
   file: 13-fault
   stage: moe

@@ -23,7 +23,7 @@ table:
   label: logits 梯度为 0 的比例
 figures:
   loss: []
-noise_note: bpb 差异小于 0.02 或小于种子间波动，都按“差不多”算。
+noise_note: bpb 差异小于 0.05（H20 上 3 种子均值之差的噪声量级）或小于种子间波动，都按“差不多”算。
 stages:
 - id: understand
   title: 理解任务
@@ -182,9 +182,9 @@ steps:
   question:
     text: 和基线比，留出集 bpb 怎样？
     options:
-    - 更好（低 0.02 以上）
-    - 差不多（±0.02）
-    - 更差（高 0.02 以上）
+    - 更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - 更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -200,7 +200,7 @@ steps:
   - metrics
   - loss
   curve: valid_bpb
-  look: 两条验证曲线的差距是越来越大还是越来越小？
+  look: 两组种子带有没有重叠？哪一组的带更窄？
 - id: p_lr_hi
   file: 07-lr-hi
   stage: lr
@@ -216,9 +216,9 @@ steps:
   question:
     text: 和基线比，留出集 bpb 怎样？
     options:
-    - 更好（低 0.02 以上）
-    - 差不多（±0.02）
-    - 更差（高 0.02 以上）
+    - 更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - 更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -270,7 +270,7 @@ steps:
   - metrics
   - loss
   curve: grad_norm
-  look: grad_norm 曲线上，大学习率的尖刺出现在什么时候？
+  look: grad_norm 曲线上，大学习率和基线差在哪个阶段？loss 曲线是发散了，还是降得慢？
 - id: p_warmup
   file: 09-warmup
   stage: lr
@@ -286,8 +286,8 @@ steps:
   question:
     text: 去掉 warmup，留出集 bpb 比有 warmup 时差多少？
     options:
-    - 差不多（差 0.02 以内）
-    - 差 0.02 - 0.1
+    - 差不多（差 0.05 以内）
+    - 差 0.05 - 0.1
     - 差 0.1 以上
   columns:
   - path: summary.test.bpb
@@ -304,7 +304,7 @@ steps:
   - metrics
   - loss
   curve: grad_norm
-  look: 训练前 50 步的 loss 曲线，两者差在哪？
+  look: 训练前 50 步的 loss 曲线，两者差在哪？到训练结束还看得出来吗？
 - id: p_accum
   file: 10-accum
   stage: memory
@@ -318,9 +318,9 @@ steps:
   question:
     text: 和基线比，留出集 bpb 差多少？
     options:
-    - 更好（低 0.01 以上）
-    - 几乎一样（±0.01）
-    - 更差（高 0.01 以上）
+    - 更好（低 0.05 以上）
+    - 几乎一样（±0.05）
+    - 更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -385,9 +385,9 @@ steps:
   question:
     text: 加文档 mask 后，留出集 bpb 怎样？
     options:
-    - 更好（低 0.01 以上）
-    - 差不多（±0.01）
-    - 更差（高 0.01 以上）
+    - 更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - 更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -420,8 +420,8 @@ steps:
   question:
     text: 和 bf16 基线比，留出集 bpb 怎样？
     options:
-    - 差不多（差 0.02 以内）
-    - 差 0.02 - 0.1
+    - 差不多（差 0.05 以内）
+    - 差 0.05 - 0.1
     - 差 0.1 以上
   columns:
   - path: summary.test.bpb
@@ -456,7 +456,7 @@ steps:
     - 梯度上溢成 inf，这些步被跳过了
     - fp16 要配更小的学习率
   clues:
-  - 看 loss 曲线和梯度范数：梯度范数中位数 bf16 {{v:baseline:summary.train.grad_norm_median:.4f}}，fp16 {{v:fault_fp16:summary.train.grad_norm_median:.4f}}。没有出现 NaN。
+  - 看 loss 曲线和梯度范数：梯度范数中位数 bf16 {{v:baseline:summary.train.grad_norm_median:.4f}}，fp16 {{v:fault_fp16:summary.train.grad_norm_median:.4f}}（fp16 的反而大）。没有出现 NaN。范数大说明梯度没问题吗？
   - 统计 logits 梯度里恰好为 0 的比例：bf16 {{v:baseline:summary.precision.dlogits_zero_frac:.1%}}，fp16 {{v:fault_fp16:summary.precision.dlogits_zero_frac:.1%}}。交叉熵的梯度要除以 32768 个 token。
   - 加上 GradScaler 之后：bpb {{v:fp16_scaler:summary.test.bpb:.3f}}（bf16 {{v:baseline:summary.test.bpb:.3f}}），零梯度比例 {{v:fp16_scaler:summary.precision.dlogits_zero_frac:.1%}}，最终 scale {{v:fp16_scaler:summary.precision.scaler_scale_final}}。
   columns:
@@ -487,9 +487,9 @@ steps:
   question:
     text: 加上 GradScaler 后，fp16 和 bf16 基线比怎样？
     options:
-    - 比 bf16 更好（低 0.02 以上）
-    - 和 bf16 差不多（±0.02）
-    - 仍然更差（高 0.02 以上）
+    - 比 bf16 更好（低 0.05 以上）
+    - 和 bf16 差不多（±0.05）
+    - 仍然更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -515,7 +515,7 @@ steps:
   selfcheck:
   - 哪些参数影响质量，哪些只影响显存和吞吐？
   - 学习率太大时，loss 曲线和梯度范数各是什么样？梯度裁剪为什么挡不住？
-  - warmup 解决什么问题？代价是什么？
+  - warmup 解决什么问题？为什么这个小模型上量不出来？什么时候它关键？
   - 梯度累积为什么数学等价？什么情况下不等价？
   - 序列变长，注意力占比、吞吐、显存各怎么变？比较不同序列长度的模型要注意什么？
   - SFT 的 packing 为什么必须加文档 mask？生产里怎么实现才没有开销？

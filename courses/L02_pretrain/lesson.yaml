@@ -25,7 +25,7 @@ table:
   label: 训练秒数
 figures:
   loss: []
-noise_note: bpb 差异小于 0.02 或小于种子间波动，都按“差不多”算。
+noise_note: bpb 差异小于 0.05（H20 上 3 种子均值之差的噪声量级）或小于种子间波动，都按“差不多”算。
 stages:
 - id: understand
   title: 理解任务
@@ -197,9 +197,9 @@ steps:
   question:
     text: 和基线（100 MB）比，干净留出集 bpb（3 种子均值）会差多少？
     options:
-    - 差不多（差 0.02 以内）
-    - 差 0.02 - 0.08
-    - 差 0.08 以上
+    - 差不多（差 0.05 以内）
+    - 差 0.05 - 0.15
+    - 差 0.15 以上
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -267,9 +267,9 @@ steps:
   question:
     text: 完整跑完的 25 MB 预算，和基线训练到 25 MB 时相比，验证集 bpb 怎样？
     options:
-    - 跑完的更好（低 0.02 以上）
-    - 差不多
-    - 跑完的更差
+    - 跑完的更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - 跑完的更差（高 0.05 以上）
   columns:
   - path: summary.valid_at.f025
     label: 25 MB 处验证 bpb
@@ -284,7 +284,7 @@ steps:
   charts:
   - loss
   curve: valid_bpb
-  look: 验证集曲线上，data_25 的终点落在基线曲线的上方还是下方？
+  look: 验证集曲线上，data_25 的终点落在基线曲线的上方还是下方？基线在 25 MB 时的学习率是多少？
 - id: p_repeat4
   file: 09-repeat4
   stage: repeat
@@ -300,9 +300,9 @@ steps:
   question:
     text: 和 100 MB 不重复的基线比，留出集 bpb 差多少？
     options:
-    - 差不多（差 0.02 以内）
-    - 差 0.02 - 0.08
-    - 差 0.08 以上
+    - 差不多（差 0.05 以内）
+    - 差 0.05 - 0.15
+    - 差 0.15 以上
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -370,11 +370,11 @@ steps:
   - const_lr
   compare_to: baseline
   question:
-    text: 和余弦退火比，留出集 bpb 差多少？
+    text: 和余弦退火比，留出集 bpb 怎样？
     options:
-    - 差不多（差 0.02 以内）
-    - 差 0.02 - 0.06
-    - 差 0.06 以上
+    - 恒定学习率更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - 恒定学习率更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -390,7 +390,7 @@ steps:
   - metrics
   - loss
   curve: valid_bpb
-  look: 两条曲线是从什么时候开始分开的？
+  look: 两条曲线是从什么时候开始分开的？那时余弦的学习率降到了多少？
 - id: p_iso_small
   file: 12-iso-small
   stage: chinchilla
@@ -406,9 +406,9 @@ steps:
   question:
     text: 等算力下，小模型 vs 中模型（data_50），留出集 bpb 怎样？
     options:
-    - 小模型更好（低 0.02 以上）
-    - 差不多
-    - 小模型更差
+    - 小模型更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - 小模型更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -443,9 +443,9 @@ steps:
   question:
     text: 等算力下，大模型 vs 中模型（data_50），留出集 bpb 怎样？
     options:
-    - 大模型更好（低 0.02 以上）
-    - 差不多
-    - 大模型更差
+    - 大模型更好（低 0.05 以上）
+    - 差不多（±0.05）
+    - 大模型更差（高 0.05 以上）
   columns:
   - path: summary.test.bpb
     label: 留出集 bpb
@@ -545,7 +545,7 @@ steps:
   - 给你模型大小、token 数、卡数和 MFU，怎么估训练天数？
   - 为什么比较 token 预算时不能用一次长训练的中间点？
   - 数据不够时重复几遍还划算？看哪个信号决定停？
-  - 余弦退火的收益集中在哪一段？WSD 调度解决什么问题？
+  - 退火什么时候有收益、什么时候反而减速？WSD 调度解决什么问题？
   - 等算力下模型该大还是该小？推理成本怎么改变这个答案？
   - loss 好得不可能时，第一步查什么？
   body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。

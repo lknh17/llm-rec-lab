@@ -46,7 +46,7 @@
 | 8 | token 预算 | [跑完的 25 MB vs 途中的 25 MB](steps/08-anneal.md) | 完整跑完的 25 MB 预算，和基线训练到 25 MB 时相比，验证集 bpb 怎样？ | `data_25` | 3 / 3 |
 | 9 | 数据重复 | [25 MB × 4 遍 vs 100 MB × 1 遍](steps/09-repeat4.md) | 和 100 MB 不重复的基线比，留出集 bpb 差多少？ | `repeat_4x` | 3 / 3 |
 | 10 | 数据重复 | [6 MB × 16 遍：背下来多少](steps/10-repeat16.md) | 重复 16 遍后，"验证集 bpb − 已见数据 bpb"大约是多少？ | `repeat_16x` | 3 / 3 |
-| 11 | 学习率调度 | [不做余弦退火](steps/11-const.md) | 和余弦退火比，留出集 bpb 差多少？ | `const_lr` | 3 / 3 |
+| 11 | 学习率调度 | [不做余弦退火](steps/11-const.md) | 和余弦退火比，留出集 bpb 怎样？ | `const_lr` | 3 / 3 |
 | 12 | 等算力下的模型大小 | [同样算力，换小模型多看数据](steps/12-iso-small.md) | 等算力下，小模型 vs 中模型（data_50），留出集 bpb 怎样？ | `iso_s` | 3 / 3 |
 | 13 | 等算力下的模型大小 | [同样算力，换大模型少看数据](steps/13-iso-large.md) | 等算力下，大模型 vs 中模型（data_50），留出集 bpb 怎样？ | `iso_l` | 3 / 3 |
 | 14 | 故障诊断 | [同事重构了数据代码](steps/14-fault.md) | 重构后，干净留出集 bpb 和基线比怎样？ | `fault_noshift` | 3 / 3 |
