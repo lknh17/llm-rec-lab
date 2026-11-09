@@ -267,7 +267,8 @@ def run_batch(courses: list[str], profile: str, only: list[str] | None = None, s
     for s in specs:
         st = None if force else existing_status(s, code_hash[s.project])
         if st:
-            report.append(row(s, "skipped", note="已有结果（同配置、同代码）" if st == "published" else "已跑完，待导出"))
+            report.append(row(s, "skipped", minutes=0,  # 本次作业没花时间；作业单要求每个运行都有 minutes
+                              note="已有结果（同配置、同代码）" if st == "published" else "已跑完，待导出"))
             continue
         same = None if force else find_same_config(s, code_hash[s.project])
         if same:

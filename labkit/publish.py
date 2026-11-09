@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import subprocess
+import time
 
 from . import paths, redact
 
@@ -46,9 +47,16 @@ def publish(message: str, paths_to_add: list[str] | None = None, push: bool = Tr
     _git("commit", "-m", message)
     if not push:
         return {"committed": True, "pushed": False, "files": len(staged)}
-    r = _git("pull", "--rebase", "--autostash", check=False)
-    if r.returncode != 0:
-        raise SystemExit(f"pull --rebase 冲突，停止推送，请人工处理：\n{r.stderr or r.stdout}")
-    _git("push")
+    # 远端常有并发推送（Mac 端、pages 工作流），push 被拒时重新 pull --rebase 再推，最多 3 次
+    for attempt in range(3):
+        r = _git("pull", "--rebase", "--autostash", check=False)
+        if r.returncode != 0:
+            raise SystemExit(f"pull --rebase 冲突，停止推送，请人工处理：\n{r.stderr or r.stdout}")
+        r = _git("push", check=False)
+        if r.returncode == 0:
+            break
+        if attempt == 2:
+            raise RuntimeError(f"git push 失败：{r.stderr.strip() or r.stdout.strip()}")
+        time.sleep(5 * (attempt + 1))
     print(f"已推送 {len(staged)} 个文件")
     return {"committed": True, "pushed": True, "files": len(staged)}
