@@ -1,0 +1,73 @@
+course: R01
+title: R01 行为序列建模：mean pooling、DIN、SASRec，序列长度与截断方向，全量排序和采样评估，保留最早 N 个的故障
+project: recseq
+entry: recseq.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。MovieLens-1M 评分序列，leave-one-out（倒数第 2 个验证、最后 1 个测试），对全部 3706 部电影排序；d=64、2 层、2 头，4000 步 × 128 条序列
+    base: {device: cuda, max_minutes: 30}
+    seeds: [0, 1, 2]
+    assets: [ml-1m]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：60 步、CPU，只验证流程能跑通（结果没有教学意义，不检查断言）
+    base: {device: cpu, steps: 60, batch_size: 32, ckpt_every: 30, valid_frac: 0.05, probe_lens: "20,50", max_minutes: 10}
+    seeds: [0]
+    skip_expect: true
+    assets: [ml-1m]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：SASRec，保留最近 50 个行为
+    params: {}
+    expect:
+      - "summary.test.recall10 > 0.15"
+      - "summary.test.sampled100.recall10 > summary.test.recall10 + 0.25"
+      - "summary.diag.gap_mean < 1.01"
+      - "summary.checks.causal_max_dlogit < 0.001"
+      - "summary.checks.pad_invariance_max_dlogit < 0.01"
+
+  # ---------- 模型 ----------
+  - id: mean_l50
+    role: variant
+    title: 历史 embedding 求平均（mean pooling），L = 50
+    params: {model: mean}
+  - id: din_l50
+    role: variant
+    title: DIN（按候选 target attention），L = 50
+    params: {model: din}
+
+  # ---------- 长度 ----------
+  - id: sasrec_l20
+    role: variant
+    title: SASRec，L = 20
+    params: {max_len: 20}
+  - id: sasrec_l200
+    role: variant
+    title: SASRec，L = 200
+    params: {max_len: 200}
+    expect:
+      - "summary.cost.flops.attn_share > 0.15"
+  - id: mean_l200
+    role: variant
+    title: mean pooling，L = 200
+    params: {model: mean, max_len: 200}
+  - id: din_l200
+    role: variant
+    title: DIN，L = 200
+    params: {model: din, max_len: 200}
+    expect:
+      - "summary.cost.infer_macs_per_user > 2 * base.summary.cost.infer_macs_per_user"
+
+  # ---------- 截断方向 ----------
+  - id: fault_earliest
+    role: fault
+    title: 超过 L 时保留最早的 50 个（seq[:L]）
+    params: {truncate: earliest}
+    expect:
+      - "summary.test.recall10 < base.summary.test.recall10 - 0.05"
+      - "summary.diag.gap_mean > 20"
+      - "summary.test.by_hist.gt_L.recall10 < base.summary.test.by_hist.gt_L.recall10 - 0.1"

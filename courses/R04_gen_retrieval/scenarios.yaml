@@ -1,0 +1,79 @@
+course: R04
+title: R04 生成式召回：encoder-decoder 逐层生成语义 ID，beam 宽度、trie 约束、去重位、ID 质量，和 SASRec 全量打分比，beam 初始分数全为 0 的故障
+project: genrec
+entry: genrec.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。ML-1M，语义 ID 来自 R03 基线的做法（SASRec 物品向量 + RQ-KMeans 3 × 64 + 去重位，量化种子固定）；encoder 4 层、decoder 2 层、d = 128，12000 步 × 512 个用户；对 6040 个测试用户 beam 解码
+    base: {task: retrieval, device: cuda, max_minutes: 30}
+    seeds: [0, 1, 2]
+    assets: [ml-1m, qwen2.5-0.5b]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：60 步、64 个测试用户、1 + 1 层 d = 32、CPU，只验证流程能跑通（不检查断言）
+    base: {task: retrieval, device: cpu, max_steps: 60, eval_every: 30, eval_users: 64, d_model: 32, enc_layers: 1, dec_layers: 1,
+           max_hist: 20, cf_steps: 50, kmeans_iters: 5, beam_sweep: "1,5", cost_bench_n: 100000, max_minutes: 10}
+    seeds: [0]
+    skip_expect: true
+    assets: [ml-1m, qwen2.5-0.5b]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：3 × 64 + 去重位，trie 约束，beam 10
+    params: {}
+    expect:
+      - "summary.test.invalid_frac == 0"
+      - "summary.test.unique_per_user > 9.9"
+      - "summary.test.recall10 > 3 * summary.pop.recall10"
+
+  # ---------- 解码（只改推理参数，复用基线训练好的模型） ----------
+  - id: beam1
+    role: variant
+    title: 贪心解码（beam 1）
+    params: {beam: 1}
+    expect:
+      - "summary.test.cands_per_user <= 1"
+  - id: beam20
+    role: variant
+    title: beam 20
+    params: {beam: 20}
+  - id: no_trie
+    role: variant
+    title: 不加 trie 约束
+    params: {constrained: false}
+
+  # ---------- ID 质量 ----------
+  - id: sid_k256
+    role: variant
+    title: 语义 ID 3 × 256
+    params: {sid_k: 256}
+  - id: sid_content
+    role: variant
+    title: 用内容向量（Qwen2.5-0.5B）做语义 ID
+    params: {item_repr: qwen}
+  - id: sid_random
+    role: variant
+    title: 用随机向量做语义 ID（码没有语义）
+    params: {item_repr: random}
+  - id: no_dedup
+    role: variant
+    title: 不追加去重位：解出一个码组合后按热度把桶里的物品依次填进结果
+    params: {collision: none}
+
+  # ---------- 参照 ----------
+  - id: sasrec
+    role: reference
+    title: SASRec 对全部物品打分（和 R01 基线同一套代码）
+    params: {method: sasrec}
+
+  # ---------- 故障（只改推理） ----------
+  - id: fault_beamdup
+    role: fault
+    title: beam 的初始分数全设成 0
+    params: {beam_init: all_zero}
+    expect:
+      - "summary.test.unique_per_user < 2"
+      - "summary.test.recall10 < base.summary.test.recall10 - 0.03"

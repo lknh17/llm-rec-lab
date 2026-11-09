@@ -1,0 +1,83 @@
+course: R03
+title: R03 语义 ID：残差量化把物品压成几个离散码；表示来源（协同 / 内容 / 随机）、归一化、码本形状与规模、碰撞率与均匀基准、RQ-VAE 码本坍缩，"残差没减"的故障
+project: genrec
+entry: genrec.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。ML-1M 的 3706 部电影（协同向量来自和 R01 同一套代码训的 SASRec），以及合成的 100 万 / 1000 万物品；RQ-KMeans 逐层 30 轮
+    base: {task: sid, device: cuda, max_minutes: 20}
+    seeds: [0, 1, 2]
+    assets: [ml-1m, qwen2.5-0.5b]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：合成物品缩到 2 万、k-means 5 轮、SASRec 50 步、CPU，只验证流程能跑通（不检查断言）
+    base: {task: sid, device: cpu, synth_n: 20000, kmeans_iters: 5, rqvae_steps: 50, cf_steps: 50, fit_sample: 20000, max_minutes: 10}
+    seeds: [0]
+    skip_expect: true
+    assets: [ml-1m, qwen2.5-0.5b]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：ML-1M，SASRec 物品向量，L2 归一化，RQ-KMeans 3 层 × 64 码
+    params: {}
+    expect:
+      - "summary.sid.levels.L1.used_frac == 1.0"
+      - "summary.sid.recon.L3 < summary.sid.recon.L1"
+
+  # ---------- 表示来源 ----------
+  - id: content
+    role: variant
+    title: 内容向量：Qwen2.5-0.5B 读片名 + 类型
+    params: {item_repr: qwen}
+  - id: random
+    role: variant
+    title: 随机向量（没有任何语义）
+    params: {item_repr: random}
+    expect:
+      - "summary.sid.cross.cooc_same_c1 < base.summary.sid.cross.cooc_same_c1"
+  - id: unnorm
+    role: variant
+    title: 不做 L2 归一化
+    params: {normalize: none}
+  - id: ml1m_k256
+    role: variant
+    title: ML-1M，3 层 × 256 码
+    params: {sid_k: 256}
+    expect:
+      - "summary.sid.collision_rate < base.summary.sid.collision_rate"
+
+  # ---------- 码本形状与规模（合成物品） ----------
+  - id: synth
+    role: reference
+    title: 合成 100 万物品，4 层 × 256 码（前 d 层即 d 层的结果）
+    params: {items: synth, sid_levels: 4, sid_k: 256}
+    expect:
+      - "summary.sid.by_depth.d2.collision_rate > 0.9"
+      - "summary.sid.by_depth.d4.collision_rate < summary.sid.by_depth.d3.collision_rate"
+  - id: synth_k64
+    role: variant
+    title: 合成 100 万物品，4 层 × 64 码
+    params: {items: synth, sid_levels: 4, sid_k: 64}
+    expect:
+      - "summary.sid.by_depth.d3.collision_rate > 0.7"
+  - id: synth_10m
+    role: variant
+    title: 合成 1000 万物品，4 层 × 256 码（码本在 100 万个样本上拟合，全部物品分块分配）
+    params: {items: synth, sid_levels: 4, sid_k: 256, synth_n: 10000000}
+  - id: rqvae
+    role: variant
+    title: 合成 100 万物品，RQ-VAE 3 层 × 256 码（端到端训练，不重置死码）
+    params: {items: synth, quantizer: rqvae, sid_k: 256}
+
+  # ---------- 故障 ----------
+  - id: fault_noresid
+    role: fault
+    title: 每层都对原向量聚类（没减残差）
+    params: {residual: false}
+    expect:
+      - "summary.sid.recon.L3 >= summary.sid.recon.L1 - 0.01"
+      - "summary.sid.nmi.L1_L2 > 0.5"
+      - "summary.sid.collision_rate > base.summary.sid.collision_rate + 0.2"

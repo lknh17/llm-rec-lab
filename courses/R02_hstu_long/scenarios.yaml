@@ -1,0 +1,77 @@
+course: R02
+title: R02 HSTU 与 10K 长序列：长度只在长程题上有收益、O(L²) 的显存与耗时、SDPA 与手写注意力、padding 浪费与 jagged、左补齐只用因果 mask 的故障
+project: recseq
+entry: recseq.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每张卡一个运行。合成长序列（1K-10K，对数均匀；周期性回访串作长程信号），16384 个训练用户、2048 个测试用户；HSTU d=64、2 层、2 头，每步 61440 个 token，3000 步
+    base: {device: cuda, max_minutes: 45, dataset: synth, model: hstu, max_len: 10240, batch_size: 0, steps: 3000,
+           ckpt_every: 500, valid_frac: 1.0, probe_lens: "512,2048,8192,10240"}
+    seeds: [0, 1, 2]
+    assets: [ml-1m]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：长度缩到 1/32（10240 → 320）、128 个训练用户、40 步、CPU，只验证流程能跑通（不检查断言）
+    base: {device: cpu, max_minutes: 15, dataset: synth, model: hstu, max_len: 10240, batch_size: 0, steps: 40,
+           ckpt_every: 20, tokens_per_step: 2048, valid_frac: 1.0, probe_lens: "512,2048,8192,10240", len_scale: 0.03125, synth_users: 128,
+           synth_eval_users: 32, d_model: 16}
+    seeds: [0]
+    skip_expect: true
+    assets: [ml-1m]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: baseline
+    role: baseline
+    title: 基线：HSTU，最近 10240 个行为（按 query 分块计算注意力）
+    params: {}
+    expect:
+      - "summary.checks.pad_invariance_max_dlogit < 0.05"
+      - "summary.checks.causal_max_dlogit < 0.001"
+      - "summary.checks.pad_attn_mass_short < 0.001"
+
+  # ---------- 长度 ----------
+  - id: hstu_512
+    role: variant
+    title: HSTU，L = 512
+    params: {max_len: 512}
+  - id: hstu_2k
+    role: variant
+    title: HSTU，L = 2048
+    params: {max_len: 2048}
+  - id: hstu_8k
+    role: variant
+    title: HSTU，L = 8192
+    params: {max_len: 8192}
+
+  # ---------- 结构与实现 ----------
+  - id: sasrec_10k
+    role: variant
+    title: SASRec（softmax 注意力，SDPA），L = 10240
+    params: {model: sasrec}
+  - id: sasrec_10k_manual
+    role: variant
+    title: SASRec，手写注意力（显式 [B, H, L, L]），L = 10240
+    params: {model: sasrec, attn_impl: manual}
+  - id: hstu_notime
+    role: variant
+    title: HSTU 去掉相对时间偏置
+    params: {time_bias: false}
+  - id: ml1m_hstu
+    role: variant
+    title: ML-1M 上的 HSTU（L = 200）
+    params: {dataset: ml1m, max_len: 200, batch_size: 128, steps: 4000, valid_frac: 0.33, probe_lens: "50,200"}
+  - id: ml1m_sasrec
+    role: variant
+    title: ML-1M 上的 SASRec（L = 200）
+    params: {dataset: ml1m, model: sasrec, max_len: 200, batch_size: 128, steps: 4000, valid_frac: 0.33, probe_lens: "50,200"}
+
+  # ---------- padding ----------
+  - id: fault_padmask
+    role: fault
+    title: HSTU 的 mask 只做因果（左补齐的 padding 没挡住）
+    params: {mask: causal_only}
+    expect:
+      - "summary.checks.pad_invariance_max_dlogit > 0.1"
+      - "summary.checks.pad_attn_mass_short > 0.5"
