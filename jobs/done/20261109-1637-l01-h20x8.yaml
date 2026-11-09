@@ -1,0 +1,197 @@
+job_id: 20261109-1637-l01-h20x8
+created_at: '2026-11-09T08:37:16Z'
+profile: h20x8
+courses:
+- L01
+only: []
+seeds: []
+requested_commit: 756e400d07f9a01f148381d4c41fb9616cd110a3
+note: H20 端重发：labkit 修复 756e400 后重跑 20261109-1048（23 个已成功运行会跳过，只重跑 fault_nodedup s1
+  并生成文档）
+how_to_run: python -m labkit jobs run 20261109-1637-l01-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-09T08:41:30Z'
+started_at: '2026-11-09T08:44:10Z'
+ran_commit: 3ee2dd7a7e2609e5b6090bc00d53d49e16b9032c
+host_summary:
+  torch: 2.15.0+cu132
+  cuda: '13.2'
+  gpu: NVIDIA H20
+  gpu_count: 8
+  gpu_mem_gb: 95.0
+  driver: 535.161.08
+status: done
+finished_at: '2026-11-09T08:47:29Z'
+hours: 0.06
+runs:
+- course: L01
+  scenario: baseline
+  seed: 0
+  dir: h20x8/L01/baseline/s0-39279f
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: baseline
+  seed: 1
+  dir: h20x8/L01/baseline/s1-cbec53
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: baseline
+  seed: 2
+  dir: h20x8/L01/baseline/s2-618736
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: bpe_4k
+  seed: 0
+  dir: h20x8/L01/bpe_4k/s0-2c023d
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: bpe_4k
+  seed: 1
+  dir: h20x8/L01/bpe_4k/s1-c2b9c3
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: bpe_4k
+  seed: 2
+  dir: h20x8/L01/bpe_4k/s2-8fbfb9
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: bpe_64k
+  seed: 0
+  dir: h20x8/L01/bpe_64k/s0-c432bd
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: bpe_64k
+  seed: 1
+  dir: h20x8/L01/bpe_64k/s1-495340
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: bpe_64k
+  seed: 2
+  dir: h20x8/L01/bpe_64k/s2-1e5cb0
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: bytes
+  seed: 0
+  dir: h20x8/L01/bytes/s0-e4f925
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: bytes
+  seed: 1
+  dir: h20x8/L01/bytes/s1-bef0e7
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: bytes
+  seed: 2
+  dir: h20x8/L01/bytes/s2-89359c
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: qwen
+  seed: 0
+  dir: h20x8/L01/qwen/s0-e6bc06
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: qwen
+  seed: 1
+  dir: h20x8/L01/qwen/s1-ccafbe
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: qwen
+  seed: 2
+  dir: h20x8/L01/qwen/s2-c45331
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: tok_ads
+  seed: 0
+  dir: h20x8/L01/tok_ads/s0-ef559c
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: tok_ads
+  seed: 1
+  dir: h20x8/L01/tok_ads/s1-0da723
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: tok_ads
+  seed: 2
+  dir: h20x8/L01/tok_ads/s2-cd1869
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: dedup_exact
+  seed: 0
+  dir: h20x8/L01/dedup_exact/s0-dce1e0
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: dedup_exact
+  seed: 1
+  dir: h20x8/L01/dedup_exact/s1-78e928
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: dedup_exact
+  seed: 2
+  dir: h20x8/L01/dedup_exact/s2-024221
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: fault_nodedup
+  seed: 0
+  dir: h20x8/L01/fault_nodedup/s0-37d57c
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: fault_nodedup
+  seed: 2
+  dir: h20x8/L01/fault_nodedup/s2-a17333
+  status: skipped
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: L01
+  scenario: fault_nodedup
+  seed: 1
+  dir: h20x8/L01/fault_nodedup/s1-3dac52
+  status: succeeded
+  minutes: 2.1
+  expect_ok: true
+  end_reason: 完成
+n_exported: 24
+problems: []

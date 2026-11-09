@@ -30,13 +30,13 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 8 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 9 / 9 个运行）</summary>
 
 | 场景 | 类型 | 留出集 − 验证集 | 验证集 bpb | 留出集 bpb | 验证集泄漏比例 | 训练集副本占字节 | 留出集 − 验证集：与 `baseline` 差 | 留出集 − 验证集：各种子 | 断言 |
 | - | - | - | - | - | - | - | - | - | - |
 | `baseline` | 基线 | +0.016 ± +0.000 | 1.711 ± 0.048 | 1.727 ± 0.048 | 4.2% ± 0.0 | 0.9% ± 0.0 | — | s0 +0.016 / s1 +0.016 / s2 +0.016 | 通过 |
 | `dedup_exact` | 候选改动 | +0.028 ± +0.001 | 1.745 ± 0.030 | 1.772 ± 0.029 | 23.8% ± 0.0 | 25.4% ± 0.0 | +0.012 | s0 +0.026 / s1 +0.029 / s2 +0.028 |  |
-| `fault_nodedup` | 教学故障 | +0.069 ± +0.000 | 1.680 ± 0.021 | 1.749 ± 0.021 | 39.0% ± 0.0 | 42.2% ± 0.0 | +0.054 | s0 +0.069 / s2 +0.070 | 通过 |
+| `fault_nodedup` | 教学故障 | +0.068 ± +0.002 | 1.690 ± 0.022 | 1.758 ± 0.021 | 39.0% ± 0.0 | 42.2% ± 0.0 | +0.052 | s0 +0.069 / s1 +0.066 / s2 +0.070 | 通过 |
 
 ![留出集 − 验证集（均值，误差线为种子间最小到最大）](figures/h20x8-p_fault-metrics.svg)
 
@@ -46,7 +46,7 @@
 
 - `baseline` [s0](../../../results/h20x8/L01/baseline/s0-39279f/) · [s1](../../../results/h20x8/L01/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L01/baseline/s2-618736/)
 - `dedup_exact` [s0](../../../results/h20x8/L01/dedup_exact/s0-dce1e0/) · [s1](../../../results/h20x8/L01/dedup_exact/s1-78e928/) · [s2](../../../results/h20x8/L01/dedup_exact/s2-024221/)
-- `fault_nodedup` [s0](../../../results/h20x8/L01/fault_nodedup/s0-37d57c/) · [s2](../../../results/h20x8/L01/fault_nodedup/s2-a17333/)
+- `fault_nodedup` [s0](../../../results/h20x8/L01/fault_nodedup/s0-37d57c/) · [s1](../../../results/h20x8/L01/fault_nodedup/s1-3dac52/) · [s2](../../../results/h20x8/L01/fault_nodedup/s2-a17333/)
 
 </details>
 

@@ -1,18 +1,31 @@
-[worker] 等待设备锁 gpu4-0
+[worker] 等待设备锁 gpu0-0
 [worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
 [worker] 从快照加载 <data>/batch/h20x8/L01/fault_nodedup/s1-3dac52/code/tinylm/experiment.py
-[15:11:53] ===== 阶段：prepare =====
-[15:12:21] 语料：原始 230791 篇 → 清洗后 212958 篇 → 底稿去重后 177625 篇；注入副本 123303 份；去重（none）去掉 0 篇；训练 87846 篇 100.0 MB，验证 15110 篇（其中 5888 篇在训练集有副本），留出 9269 篇
-Traceback (most recent call last):
-  File "<repo>/labkit/worker.py", line 99, in execute
-    module.run(ctx, cfg)
-  File "<data>/batch/h20x8/L01/fault_nodedup/s1-3dac52/code/tinylm/experiment.py", line 109, in run
-    cdir = stage_cache(ctx, "tinylm_corpus", corpus_key(cfg), build_corpus)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<repo>/labkit/cache.py", line 42, in stage_cache
-    tmp.rename(final)
-  File "/usr/lib/python3.12/pathlib.py", line 1365, in rename
-    os.rename(self, target)
-OSError: [Errno 39] Directory not empty: '<data>/cache/tinylm_corpus/.f241dd6dcac6.tmp-s1-3dac52' -> '<data>/cache/tinylm_corpus/f241dd6dcac6'
-[worker] 结束：failed（OSError: [Errno 39] Directory not empty: '<data>/cache/tinylm_corpus/.f241dd6dcac6.tmp-s1-3dac52' -> '<data>/cache/tinylm_corpus/f241dd6dcac6'）
-{"status": "failed"}
+[16:44:21] ===== 阶段：prepare =====
+[16:44:21] 缓存 tinylm_corpus key=f241dd6dcac6: 命中，复用运行 s0-37d57c 的产物
+[16:44:22] 缓存 tinylm_tokenizer key=f2a513bcca59: 命中，复用运行 s0-37d57c 的产物
+[16:44:22] 缓存 tinylm_streams key=b28d3121278d: 命中，复用运行 s0-37d57c 的产物
+[16:44:23] 压缩率：验证集每 token 3.6829 字节 / 1.5542 字；广告每条 26.38 个 token
+[16:44:23] 模型：总参数 16,913,280，其中 embedding 6,291,456（37%）；每 token 训练 109 MFLOPs，输出层占 35%；KV cache 每 token 9,216 字节（bf16）
+[16:44:23] ===== 阶段：train =====
+[16:44:29] 训练：826 步 × 64 × 512 = 27,066,368 token（训练流共 27,086,038 token，用前 27,085,824 个 × 1 遍；每 token 3.69 字节）；在第 [103, 206, 310, 413, 516, 620, 723, 826] 步评估
+[16:44:41] step 103/826 train_loss 7.0852 valid loss 6.5286 bpb 2.5574
+[16:44:52] step 206/826 train_loss 6.1476 valid loss 5.7309 bpb 2.2450
+[16:45:03] step 310/826 train_loss 5.1109 valid loss 5.2531 bpb 2.0578
+[16:45:14] step 413/826 train_loss 4.8609 valid loss 4.9482 bpb 1.9384
+[16:45:25] step 516/826 train_loss 4.4231 valid loss 4.7210 bpb 1.8494
+[16:45:35] step 620/826 train_loss 4.7208 valid loss 4.5399 bpb 1.7784
+[16:45:46] step 723/826 train_loss 4.4634 valid loss 4.4304 bpb 1.7355
+[16:45:57] step 826/826 train_loss 4.2445 valid loss 4.3626 bpb 1.7090
+[16:45:57] ===== 阶段：evaluate =====
+[16:46:01] [valid] 16.85 MB  每 token loss 4.36257  bpb 1.70896
+[16:46:03] [test] 10.00 MB  每 token loss 4.52851  bpb 1.77447
+[16:46:03] [ads] 0.00 MB  每 token loss 7.26727  bpb 3.5418
+[16:46:04] [valid_leaked] 6.81 MB  每 token loss 4.21989  bpb 1.62987
+[16:46:05] [valid_leak_few] 2.92 MB  每 token loss 4.37854  bpb 1.70887
+[16:46:06] [valid_leak_many] 2.09 MB  每 token loss 4.00847  bpb 1.53079
+[16:46:06] [valid_dup] 1.89 MB  每 token loss 4.21461  bpb 1.70365
+[16:46:08] [valid_uniq] 7.86 MB  每 token loss 4.51143  bpb 1.77351
+[16:46:15] 重新加载核对：广告 bpb 3.5418 → 3.5418（一致）
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

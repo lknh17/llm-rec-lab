@@ -28,13 +28,13 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 8 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 9 / 9 个运行）</summary>
 
 | 场景 | 类型 | 同源 ≥ 8 篇 − 未转载 | 同源 1-2 篇 − 未转载 | 被转载原文 − 未转载原文 | 验证集泄漏比例 | 同源 ≥ 8 篇 − 未转载：与 `baseline` 差 | 同源 ≥ 8 篇 − 未转载：各种子 | 断言 |
 | - | - | - | - | - | - | - | - | - |
 | `baseline` | 基线 | — | -0.693 ± +0.019 | -0.057 ± +0.001 | 4.2% ± 0.0 | — | — | 通过 |
 | `dedup_exact` | 候选改动 | -0.076 ± +0.013 | -0.000 ± +0.004 | -0.068 ± +0.001 | 23.8% ± 0.0 | — | s0 -0.062 / s1 -0.088 / s2 -0.078 |  |
-| `fault_nodedup` | 教学故障 | -0.255 ± +0.003 | -0.067 ± +0.001 | -0.076 ± +0.002 | 39.0% ± 0.0 | — | s0 -0.253 / s2 -0.257 | 通过 |
+| `fault_nodedup` | 教学故障 | -0.251 ± +0.007 | -0.066 ± +0.002 | -0.074 ± +0.004 | 39.0% ± 0.0 | — | s0 -0.253 / s1 -0.243 / s2 -0.257 | 通过 |
 
 ![同源 ≥ 8 篇 − 未转载（均值，误差线为种子间最小到最大）](figures/h20x8-p_leak-metrics.svg)
 
@@ -42,7 +42,7 @@
 
 - `baseline` [s0](../../../results/h20x8/L01/baseline/s0-39279f/) · [s1](../../../results/h20x8/L01/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L01/baseline/s2-618736/)
 - `dedup_exact` [s0](../../../results/h20x8/L01/dedup_exact/s0-dce1e0/) · [s1](../../../results/h20x8/L01/dedup_exact/s1-78e928/) · [s2](../../../results/h20x8/L01/dedup_exact/s2-024221/)
-- `fault_nodedup` [s0](../../../results/h20x8/L01/fault_nodedup/s0-37d57c/) · [s2](../../../results/h20x8/L01/fault_nodedup/s2-a17333/)
+- `fault_nodedup` [s0](../../../results/h20x8/L01/fault_nodedup/s0-37d57c/) · [s1](../../../results/h20x8/L01/fault_nodedup/s1-3dac52/) · [s2](../../../results/h20x8/L01/fault_nodedup/s2-a17333/)
 
 </details>
 
