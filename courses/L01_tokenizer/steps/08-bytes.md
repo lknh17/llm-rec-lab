@@ -27,9 +27,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 留出集 bpb | 验证集 每 token loss | 训练 token 数 | 训练秒数 | 训练吞吐（字节/秒） | 留出集 bpb：与 `baseline` 差 | 留出集 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 1.727 ± 0.048 | 4.343 ± 0.122 | 27,262,976.0 ± 0.0 | 79 ± 0 | 1,742,576 ± 5,879 | — | s0 1.725 / s1 1.776 / s2 1.680 | 通过 |
+| `bytes` | 候选改动 | 1.635 ± 0.033 | 1.121 ± 0.023 | 100,073,472.0 ± 0.0 | 208 ± 7 | 641,836 ± 2,543 | -0.092 | s0 1.673 / s1 1.620 / s2 1.612 | 通过 |
+
+![留出集 bpb（均值，误差线为种子间最小到最大）](figures/h20x8-p_bytes-metrics.svg)
+
+![验证集 bits-per-byte（均值，阴影为种子间范围）](figures/h20x8-p_bytes-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L01/baseline/s0-39279f/) · [s1](../../../results/h20x8/L01/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L01/baseline/s2-618736/)
+- `bytes` [s0](../../../results/h20x8/L01/bytes/s0-e4f925/) · [s1](../../../results/h20x8/L01/bytes/s1-bef0e7/) · [s2](../../../results/h20x8/L01/bytes/s2-89359c/)
 
 </details>
 

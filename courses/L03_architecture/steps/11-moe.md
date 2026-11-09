@@ -27,9 +27,23 @@ FFN 换成 8 个专家（每个中间维 512）、每 token 选 top-2，负载�
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（6 层 d=384）从零训练 100 MB 中文维基 · 每个场景只换一处结构 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（6 层 d=384）从零训练 100 MB 中文维基 · 每个场景只换一处结构 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 留出集 bpb | 总参数 | 激活参数 | 负载 最大/平均 | 训练秒数 | 留出集 bpb：与 `baseline` 差 | 留出集 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 1.727 ± 0.048 | 16,913,280.0 ± 0.0 | 16,913,280.0 ± 0.0 | — | 79 ± 0 | — | s0 1.725 / s1 1.776 / s2 1.680 |  |
+| `moe` | 候选改动 | 1.697 ± 0.034 | 38,165,376.0 ± 0.0 | 16,931,712.0 ± 0.0 | 1.37 ± 0.07 | 128 ± 1 | -0.030 | s0 1.730 / s1 1.662 / s2 1.699 | 通过 |
+
+![留出集 bpb（均值，误差线为种子间最小到最大）](figures/h20x8-p_moe-metrics.svg)
+
+![可训练参数量](figures/h20x8-p_moe-params.svg)
+
+![验证集 bits-per-byte（均值，阴影为种子间范围）](figures/h20x8-p_moe-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L03/baseline/s0-39279f/) · [s1](../../../results/h20x8/L03/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L03/baseline/s2-618736/)
+- `moe` [s0](../../../results/h20x8/L03/moe/s0-d26637/) · [s1](../../../results/h20x8/L03/moe/s1-c21a54/) · [s2](../../../results/h20x8/L03/moe/s2-728fe8/)
 
 </details>
 

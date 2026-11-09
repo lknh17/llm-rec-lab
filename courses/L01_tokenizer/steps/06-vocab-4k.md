@@ -27,9 +27,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 留出集 bpb | 验证集 每 token loss | 每 token 字节数 | 常用字被拆比例 | embedding 占比 | 训练 token 数 | 留出集 bpb：与 `baseline` 差 | 留出集 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 1.727 ± 0.048 | 4.343 ± 0.122 | 3.66 ± 0.00 | 0.1% ± 0.0 | 37.2% ± 0.0 | 27,262,976.0 ± 0.0 | — | s0 1.725 / s1 1.776 / s2 1.680 | 通过 |
+| `bpe_4k` | 候选改动 | 1.627 ± 0.023 | 3.324 ± 0.047 | 2.98 ± 0.00 | 4.2% ± 0.0 | 12.9% ± 0.0 | 33,652,736.0 ± 0.0 | -0.100 | s0 1.646 / s1 1.601 / s2 1.635 |  |
+
+![留出集 bpb（均值，误差线为种子间最小到最大）](figures/h20x8-p_vocab_4k-metrics.svg)
+
+![验证集 bits-per-byte（均值，阴影为种子间范围）](figures/h20x8-p_vocab_4k-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L01/baseline/s0-39279f/) · [s1](../../../results/h20x8/L01/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L01/baseline/s2-618736/)
+- `bpe_4k` [s0](../../../results/h20x8/L01/bpe_4k/s0-2c023d/) · [s1](../../../results/h20x8/L01/bpe_4k/s1-c2b9c3/) · [s2](../../../results/h20x8/L01/bpe_4k/s2-8fbfb9/)
 
 </details>
 

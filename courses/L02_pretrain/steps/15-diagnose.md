@@ -21,19 +21,19 @@
 
 <details><summary>线索 1</summary>
 
-对比干净留出集：基线 〔待 H20 生成〕，重构后 〔待 H20 生成〕；验证集泄漏比例 基线 〔待 H20 生成〕，重构后 〔待 H20 生成〕。留出集从没进过训练，它也一样低说明什么？
+对比干净留出集：基线 1.727 ± 0.048，重构后 0.000 ± 0.000；验证集泄漏比例 基线 4.2% ± 0.0%，重构后 4.2% ± 0.0%。留出集从没进过训练，它也一样低说明什么？
 
 </details>
 
 <details><summary>线索 2</summary>
 
-看 loss 降得多快：warmup 刚结束（总步数的 2%）时，基线 loss 〔待 H20 生成〕，重构后 〔待 H20 生成〕。
+看 loss 降得多快：warmup 刚结束（总步数的 2%）时，基线 loss 7.755 ± 0.178，重构后 1.644 ± 0.048。
 
 </details>
 
 <details><summary>线索 3</summary>
 
-batch 自检：第一个 batch 里 y 和 x 逐位置相等的比例，基线 〔待 H20 生成〕，重构后 〔待 H20 生成〕。去 trace 里看 x 和 y 的前 8 个 token。
+batch 自检：第一个 batch 里 y 和 x 逐位置相等的比例，基线 1.6% ± 0.1%，重构后 100.0% ± 0.0%。去 trace 里看 x 和 y 的前 8 个 token。
 
 </details>
 
@@ -50,9 +50,21 @@ batch 自检：第一个 batch 里 y 和 x 逐位置相等的比例，基线 〔
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练中文维基 · 每个场景 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练中文维基 · 每个场景 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 留出集 bpb | warmup 结束时 loss | y 与 x 逐位相等比例 | 验证集泄漏比例 | 留出集 bpb：与 `fault_noshift` 差 | 留出集 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `fault_noshift` | 教学故障 | 0.000 ± 0.000 | 1.644 ± 0.048 | 100.0% ± 0.0 | 4.2% ± 0.0 | — | s0 0.000 / s1 0.000 / s2 0.000 | 通过 |
+| `baseline` | 基线 | 1.727 ± 0.048 | 7.755 ± 0.178 | 1.6% ± 0.1 | 4.2% ± 0.0 | +1.727 | s0 1.725 / s1 1.776 / s2 1.680 | 通过 |
+
+![留出集 bpb（均值，误差线为种子间最小到最大）](figures/h20x8-diagnose-metrics.svg)
+
+![train loss（均值，阴影为种子间范围）](figures/h20x8-diagnose-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `fault_noshift` [s0](../../../results/h20x8/L02/fault_noshift/s0-f368ad/) · [s1](../../../results/h20x8/L02/fault_noshift/s1-751f00/) · [s2](../../../results/h20x8/L02/fault_noshift/s2-4ee885/)
+- `baseline` [s0](../../../results/h20x8/L02/baseline/s0-39279f/) · [s1](../../../results/h20x8/L02/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L02/baseline/s2-618736/)
 
 </details>
 

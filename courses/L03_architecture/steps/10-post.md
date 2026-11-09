@@ -28,9 +28,23 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（6 层 d=384）从零训练 100 MB 中文维基 · 每个场景只换一处结构 · 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（6 层 d=384）从零训练 100 MB 中文维基 · 每个场景只换一处结构 · 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 留出集 bpb | 梯度范数最大值 | 梯度范数中位数 | loss 尖刺次数 | 留出集 bpb：与 `pre12` 差 | 留出集 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `pre12` | 候选改动 | 1.796 ± 0.032 | 6.15 ± 1.73 | 0.310 ± 0.004 | 0 ± 0 | — | s0 1.829 / s1 1.793 / s2 1.766 | 未通过 |
+| `baseline` | 基线 | 1.727 ± 0.048 | 5.85 ± 2.55 | 0.332 ± 0.005 | 0 ± 0 | -0.069 | s0 1.725 / s1 1.776 / s2 1.680 |  |
+| `post12` | 候选改动 | 3.007 ± 0.000 | 1.51 ± 0.30 | 0.240 ± 0.003 | 0 ± 0 | +1.211 | s0 3.007 / s1 3.007 / s2 3.007 |  |
+
+![留出集 bpb（均值，误差线为种子间最小到最大）](figures/h20x8-p_post-metrics.svg)
+
+![grad_norm（均值，阴影为种子间范围）](figures/h20x8-p_post-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `pre12` [s0](../../../results/h20x8/L03/pre12/s0-b53647/) · [s1](../../../results/h20x8/L03/pre12/s1-4dfc4e/) · [s2](../../../results/h20x8/L03/pre12/s2-f4a533/)
+- `baseline` [s0](../../../results/h20x8/L03/baseline/s0-39279f/) · [s1](../../../results/h20x8/L03/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L03/baseline/s2-618736/)
+- `post12` [s0](../../../results/h20x8/L03/post12/s0-86e45a/) · [s1](../../../results/h20x8/L03/post12/s1-6cb210/) · [s2](../../../results/h20x8/L03/post12/s2-297f77/)
 
 </details>
 

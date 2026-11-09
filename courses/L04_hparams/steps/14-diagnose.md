@@ -21,19 +21,19 @@
 
 <details><summary>线索 1</summary>
 
-看 loss 曲线和梯度范数：梯度范数中位数 bf16 〔待 H20 生成〕，fp16 〔待 H20 生成〕。没有出现 NaN。
+看 loss 曲线和梯度范数：梯度范数中位数 bf16 0.3321 ± 0.0051，fp16 3.5610 ± 0.0964。没有出现 NaN。
 
 </details>
 
 <details><summary>线索 2</summary>
 
-统计 logits 梯度里恰好为 0 的比例：bf16 〔待 H20 生成〕，fp16 〔待 H20 生成〕。交叉熵的梯度要除以 32768 个 token。
+统计 logits 梯度里恰好为 0 的比例：bf16 0.0% ± 0.0%，fp16 99.5% ± 0.1%。交叉熵的梯度要除以 32768 个 token。
 
 </details>
 
 <details><summary>线索 3</summary>
 
-加上 GradScaler 之后：bpb 〔待 H20 生成〕（bf16 〔待 H20 生成〕），零梯度比例 〔待 H20 生成〕，最终 scale 〔待 H20 生成〕。
+加上 GradScaler 之后：bpb 1.747 ± 0.054（bf16 1.727 ± 0.048），零梯度比例 5.2% ± 0.7%，最终 scale 6.554e+04 ± 0。
 
 </details>
 
@@ -50,9 +50,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景只改一个训练参数 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景只改一个训练参数 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | logits 梯度为 0 的比例 | 梯度范数中位数 | 留出集 bpb | logits 梯度为 0 的比例：与 `fault_fp16` 差 | logits 梯度为 0 的比例：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `fault_fp16` | 教学故障 | 99.5% ± 0.1 | 3.5610 ± 0.0964 | 5.813 ± 0.072 | — | s0 99.5% / s1 99.5% / s2 99.4% | 通过 |
+| `baseline` | 基线 | 0.0% ± 0.0 | 0.3321 ± 0.0051 | 1.727 ± 0.048 | -99.5 个点 | s0 0.0% / s1 0.0% / s2 0.0% | 通过 |
+
+![logits 梯度为 0 的比例（均值，误差线为种子间最小到最大）](figures/h20x8-diagnose-metrics.svg)
+
+![train loss（均值，阴影为种子间范围）](figures/h20x8-diagnose-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `fault_fp16` [s0](../../../results/h20x8/L04/fault_fp16/s0-a87ad9/) · [s1](../../../results/h20x8/L04/fault_fp16/s1-faa0ba/) · [s2](../../../results/h20x8/L04/fault_fp16/s2-4a817e/)
+- `baseline` [s0](../../../results/h20x8/L04/baseline/s0-39279f/) · [s1](../../../results/h20x8/L04/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L04/baseline/s2-618736/)
 
 </details>
 

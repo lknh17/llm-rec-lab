@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 广告 每条 token 数 | 维基 每 token 字节数 | 广告 bpb | 留出集 bpb | 广告 每条 token 数：与 `baseline` 差 | 广告 每条 token 数：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 26.3 ± 0.0 | 3.66 ± 0.00 | 3.507 ± 0.017 | 1.727 ± 0.048 | — | s0 26.3 / s1 26.3 / s2 26.3 | 通过 |
+| `qwen` | 候选改动 | 23.2 ± 0.0 | 3.22 ± 0.00 | 3.414 ± 0.018 | 1.659 ± 0.087 | -3.2 | s0 23.2 / s1 23.2 / s2 23.2 |  |
+| `tok_ads` | 候选改动 | 22.5 ± 0.0 | 3.64 ± 0.00 | 3.431 ± 0.013 | 1.736 ± 0.031 | -3.8 | s0 22.5 / s1 22.5 / s2 22.5 |  |
+
+![广告 每条 token 数（均值，误差线为种子间最小到最大）](figures/h20x8-p_tok_ads-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L01/baseline/s0-39279f/) · [s1](../../../results/h20x8/L01/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L01/baseline/s2-618736/)
+- `qwen` [s0](../../../results/h20x8/L01/qwen/s0-e6bc06/) · [s1](../../../results/h20x8/L01/qwen/s1-ccafbe/) · [s2](../../../results/h20x8/L01/qwen/s2-c45331/)
+- `tok_ads` [s0](../../../results/h20x8/L01/tok_ads/s0-ef559c/) · [s1](../../../results/h20x8/L01/tok_ads/s1-0da723/) · [s2](../../../results/h20x8/L01/tok_ads/s2-cd1869/)
 
 </details>
 

@@ -28,9 +28,23 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练中文维基 · 每个场景 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练中文维基 · 每个场景 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 留出集 bpb | 训练 PFLOPs | 每参数 token | 步数 | 留出集 bpb：与 `data_50` 差 | 留出集 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `data_50` | 候选改动 | 2.058 ± 0.031 | 1.48 ± 0.00 | 0.81 ± 0.00 | 416.0 ± 0.0 | — | s0 2.023 / s1 2.068 / s2 2.082 | 通过 |
+| `iso_s` | 候选改动 | 1.911 ± 0.033 | 1.48 ± 0.00 | 1.76 ± 0.00 | 614.0 ± 0.0 | -0.147 | s0 1.932 / s1 1.930 / s2 1.873 | 通过 |
+| `iso_l` | 候选改动 | 2.382 ± 0.035 | 1.48 ± 0.00 | 0.20 ± 0.00 | 210.0 ± 0.0 | +0.324 | s0 2.402 / s1 2.341 / s2 2.402 | 通过 |
+
+![留出集 bpb（均值，误差线为种子间最小到最大）](figures/h20x8-p_iso_large-metrics.svg)
+
+![验证集 bits-per-byte（均值，阴影为种子间范围）](figures/h20x8-p_iso_large-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `data_50` [s0](../../../results/h20x8/L02/data_50/s0-97075e/) · [s1](../../../results/h20x8/L02/data_50/s1-3791eb/) · [s2](../../../results/h20x8/L02/data_50/s2-b28c6d/)
+- `iso_s` [s0](../../../results/h20x8/L02/iso_s/s0-a957c7/) · [s1](../../../results/h20x8/L02/iso_s/s1-aa931a/) · [s2](../../../results/h20x8/L02/iso_s/s2-10000d/)
+- `iso_l` [s0](../../../results/h20x8/L02/iso_l/s0-3b83a4/) · [s1](../../../results/h20x8/L02/iso_l/s1-35b376/) · [s2](../../../results/h20x8/L02/iso_l/s2-628c66/)
 
 </details>
 

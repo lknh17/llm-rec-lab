@@ -28,9 +28,23 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练中文维基 · 每个场景 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练中文维基 · 每个场景 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 验证 − 已见 bpb | 留出集 bpb | 已见数据 bpb | 遍数 | 验证 − 已见 bpb：与 `baseline` 差 | 验证 − 已见 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | +0.006 ± +0.001 | 1.727 ± 0.048 | 1.706 ± 0.047 | 1 ± 0 | — | s0 +0.006 / s1 +0.007 / s2 +0.005 | 通过 |
+| `repeat_4x` | 候选改动 | +0.121 ± +0.005 | 1.737 ± 0.019 | 1.606 ± 0.015 | 4 ± 0 | +0.115 | s0 +0.118 / s1 +0.127 / s2 +0.119 | 通过 |
+| `repeat_16x` | 候选改动 | +0.730 ± +0.042 | 2.026 ± 0.021 | 1.285 ± 0.043 | 16 ± 0 | +0.725 | s0 +0.684 / s1 +0.764 / s2 +0.743 | 通过 |
+
+![验证 − 已见 bpb（均值，误差线为种子间最小到最大）](figures/h20x8-p_repeat16-metrics.svg)
+
+![验证集 bits-per-byte（均值，阴影为种子间范围）](figures/h20x8-p_repeat16-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L02/baseline/s0-39279f/) · [s1](../../../results/h20x8/L02/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L02/baseline/s2-618736/)
+- `repeat_4x` [s0](../../../results/h20x8/L02/repeat_4x/s0-b2042a/) · [s1](../../../results/h20x8/L02/repeat_4x/s1-4b6007/) · [s2](../../../results/h20x8/L02/repeat_4x/s2-a979e9/)
+- `repeat_16x` [s0](../../../results/h20x8/L02/repeat_16x/s0-841291/) · [s1](../../../results/h20x8/L02/repeat_16x/s1-ad863a/) · [s2](../../../results/h20x8/L02/repeat_16x/s2-9ccf36/)
 
 </details>
 

@@ -27,9 +27,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景只改一个训练参数 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景只改一个训练参数 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 留出集 bpb | 峰值显存 GB | 训练 token/s | 留出集 bpb：与 `baseline` 差 | 留出集 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 1.7271 ± 0.0478 | 12.07 ± 0.00 | 475,284.0 ± 1,603.0084216871726 | — | s0 1.7251 / s1 1.7759 / s2 1.6803 | 通过 |
+| `accum4` | 候选改动 | 1.7295 ± 0.0203 | 5.84 ± 0.00 | 438,618.6666666667 ± 1,263.3057164967367 | +0.0024 | s0 1.7494 / s1 1.7303 / s2 1.7089 | 未通过 |
+
+![留出集 bpb（均值，误差线为种子间最小到最大）](figures/h20x8-p_accum-metrics.svg)
+
+![验证集 bits-per-byte（均值，阴影为种子间范围）](figures/h20x8-p_accum-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L04/baseline/s0-39279f/) · [s1](../../../results/h20x8/L04/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L04/baseline/s2-618736/)
+- `accum4` [s0](../../../results/h20x8/L04/accum4/s0-6134be/) · [s1](../../../results/h20x8/L04/accum4/s1-2cc924/) · [s2](../../../results/h20x8/L04/accum4/s2-6604cd/)
 
 </details>
 

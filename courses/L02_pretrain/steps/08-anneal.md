@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练中文维基 · 每个场景 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练中文维基 · 每个场景 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 25 MB 处验证 bpb | 100 MB 处验证 bpb | 步数 | 25 MB 处验证 bpb：与 `baseline` 差 | 25 MB 处验证 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 2.225 ± 0.031 | 1.711 ± 0.048 | 832.0 ± 0.0 | — | s0 2.218 / s1 2.258 / s2 2.198 | 通过 |
+| `data_25` | 候选改动 | 2.379 ± 0.012 | — | 208.0 ± 0.0 | +0.154 | s0 2.373 / s1 2.371 / s2 2.392 | 通过 |
+
+![验证集 bits-per-byte（均值，阴影为种子间范围）](figures/h20x8-p_anneal-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L02/baseline/s0-39279f/) · [s1](../../../results/h20x8/L02/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L02/baseline/s2-618736/)
+- `data_25` [s0](../../../results/h20x8/L02/data_25/s0-9bc5fb/) · [s1](../../../results/h20x8/L02/data_25/s1-55cbd6/) · [s2](../../../results/h20x8/L02/data_25/s2-d9484c/)
 
 </details>
 

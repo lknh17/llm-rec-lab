@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 验证集泄漏比例 | 训练集副本占字节 | 去重删掉的文档数 | 留出集 bpb | 验证集泄漏比例：与 `baseline` 差 | 验证集泄漏比例：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 4.2% ± 0.0 | 0.9% ± 0.0 | 117,170.0 ± 0.0 | 1.727 ± 0.048 | — | s0 4.2% / s1 4.2% / s2 4.2% | 通过 |
+| `dedup_exact` | 候选改动 | 23.8% ± 0.0 | 25.4% ± 0.0 | 67,348.0 ± 0.0 | 1.772 ± 0.029 | +19.7 个点 | s0 23.8% / s1 23.8% / s2 23.8% |  |
+
+![验证集泄漏比例（均值，误差线为种子间最小到最大）](figures/h20x8-p_dedup_exact-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L01/baseline/s0-39279f/) · [s1](../../../results/h20x8/L01/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L01/baseline/s2-618736/)
+- `dedup_exact` [s0](../../../results/h20x8/L01/dedup_exact/s0-dce1e0/) · [s1](../../../results/h20x8/L01/dedup_exact/s1-78e928/) · [s2](../../../results/h20x8/L01/dedup_exact/s2-024221/)
 
 </details>
 

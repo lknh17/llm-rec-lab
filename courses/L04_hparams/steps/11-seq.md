@@ -27,9 +27,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景只改一个训练参数 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景只改一个训练参数 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 训练 token/s | 注意力占比 | 峰值显存 GB | 验证 bpb（512 窗口） | 训练 token/s：与 `baseline` 差 | 训练 token/s：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 475,284.0 ± 1,603.0084216871726 | 6.5% ± 0.0 | 12.07 ± 0.00 | 1.711 ± 0.048 | — | s0 476,638 / s1 475,700 / s2 473,514 | 通过 |
+| `seq_2048` | 候选改动 | 439,108.0 ± 633.2653472281584 | 21.8% ± 0.0 | 12.07 ± 0.00 | 1.826 ± 0.020 | -36,176.0 | s0 438,383 / s1 439,553 / s2 439,388 | 通过 |
+
+![训练 token/s（均值，误差线为种子间最小到最大）](figures/h20x8-p_seq-metrics.svg)
+
+![验证集 bits-per-byte（均值，阴影为种子间范围）](figures/h20x8-p_seq-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L04/baseline/s0-39279f/) · [s1](../../../results/h20x8/L04/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L04/baseline/s2-618736/)
+- `seq_2048` [s0](../../../results/h20x8/L04/seq_2048/s0-bdca01/) · [s1](../../../results/h20x8/L04/seq_2048/s1-6c4a82/) · [s2](../../../results/h20x8/L04/seq_2048/s2-d99630/)
 
 </details>
 

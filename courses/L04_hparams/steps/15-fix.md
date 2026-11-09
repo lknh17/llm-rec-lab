@@ -28,9 +28,23 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景只改一个训练参数 · 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（1060 万主体参数）从零训练 100 MB 中文维基 · 每个场景只改一个训练参数 · 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 留出集 bpb | logits 梯度为 0 的比例 | 跳过的步 | 留出集 bpb：与 `baseline` 差 | 留出集 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 1.727 ± 0.048 | 0.0% ± 0.0 | — | — | s0 1.725 / s1 1.776 / s2 1.680 | 通过 |
+| `fault_fp16` | 教学故障 | 5.813 ± 0.072 | 99.5% ± 0.1 | — | +4.086 | s0 5.822 / s1 5.737 / s2 5.881 | 通过 |
+| `fp16_scaler` | 修复 | 1.747 ± 0.054 | 5.2% ± 0.7 | 0 ± 0 | +0.020 | s0 1.735 / s1 1.806 / s2 1.701 | 未通过 |
+
+![留出集 bpb（均值，误差线为种子间最小到最大）](figures/h20x8-p_fix-metrics.svg)
+
+![验证集 bits-per-byte（均值，阴影为种子间范围）](figures/h20x8-p_fix-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L04/baseline/s0-39279f/) · [s1](../../../results/h20x8/L04/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L04/baseline/s2-618736/)
+- `fault_fp16` [s0](../../../results/h20x8/L04/fault_fp16/s0-a87ad9/) · [s1](../../../results/h20x8/L04/fault_fp16/s1-faa0ba/) · [s2](../../../results/h20x8/L04/fault_fp16/s2-4a817e/)
+- `fp16_scaler` [s0](../../../results/h20x8/L04/fp16_scaler/s0-2b4996/) · [s1](../../../results/h20x8/L04/fp16_scaler/s1-e7aedd/) · [s2](../../../results/h20x8/L04/fp16_scaler/s2-2aa887/)
 
 </details>
 

@@ -28,9 +28,23 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（6 层 d=384）从零训练 100 MB 中文维基 · 每个场景只换一处结构 · 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（6 层 d=384）从零训练 100 MB 中文维基 · 每个场景只换一处结构 · 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 负载 最大/平均 | 路由熵（归一化） | 留出集 bpb | 负载 最大/平均：与 `moe` 差 | 负载 最大/平均：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `moe` | 候选改动 | 1.37 ± 0.07 | 0.442 ± 0.040 | 1.697 ± 0.034 | — | s0 1.35 / s1 1.32 / s2 1.45 | 通过 |
+| `baseline` | 基线 | — | — | 1.727 ± 0.048 | — | — |  |
+| `fault_moe_noaux` | 教学故障 | 3.03 ± 0.25 | 0.375 ± 0.008 | 1.690 ± 0.031 | +1.66 | s0 3.31 / s1 2.82 / s2 2.97 | 通过 |
+
+![负载 最大/平均（均值，误差线为种子间最小到最大）](figures/h20x8-p_fault-metrics.svg)
+
+![moe_max_load（均值，阴影为种子间范围）](figures/h20x8-p_fault-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `moe` [s0](../../../results/h20x8/L03/moe/s0-d26637/) · [s1](../../../results/h20x8/L03/moe/s1-c21a54/) · [s2](../../../results/h20x8/L03/moe/s2-728fe8/)
+- `baseline` [s0](../../../results/h20x8/L03/baseline/s0-39279f/) · [s1](../../../results/h20x8/L03/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L03/baseline/s2-618736/)
+- `fault_moe_noaux` [s0](../../../results/h20x8/L03/fault_moe_noaux/s0-f91c2a/) · [s1](../../../results/h20x8/L03/fault_moe_noaux/s1-5b148b/) · [s2](../../../results/h20x8/L03/fault_moe_noaux/s2-d186b2/)
 
 </details>
 

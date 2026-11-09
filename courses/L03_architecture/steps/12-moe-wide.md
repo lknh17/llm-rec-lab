@@ -28,9 +28,25 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 小 GPT（6 层 d=384）从零训练 100 MB 中文维基 · 每个场景只换一处结构 · 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · 小 GPT（6 层 d=384）从零训练 100 MB 中文维基 · 每个场景只换一处结构 · 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 留出集 bpb | 总参数 | 每 token 训练 FLOPs | 训练秒数 | 留出集 bpb：与 `dense_wide` 差 | 留出集 bpb：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `dense_wide` | 候选改动 | 1.739 ± 0.088 | 38,146,944.0 ± 0.0 | 235,959,552.0 ± 0.0 | 131 ± 1 | — | s0 1.643 / s1 1.815 / s2 1.758 | 通过 |
+| `baseline` | 基线 | 1.727 ± 0.048 | 16,913,280.0 ± 0.0 | 108,557,568.0 ± 0.0 | 79 ± 0 | -0.011 | s0 1.725 / s1 1.776 / s2 1.680 |  |
+| `moe` | 候选改动 | 1.697 ± 0.034 | 38,165,376.0 ± 0.0 | 108,668,160.0 ± 0.0 | 128 ± 1 | -0.042 | s0 1.730 / s1 1.662 / s2 1.699 | 通过 |
+
+![留出集 bpb（均值，误差线为种子间最小到最大）](figures/h20x8-p_moe_wide-metrics.svg)
+
+![可训练参数量](figures/h20x8-p_moe_wide-params.svg)
+
+![验证集 bits-per-byte（均值，阴影为种子间范围）](figures/h20x8-p_moe_wide-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `dense_wide` [s0](../../../results/h20x8/L03/dense_wide/s0-7df068/) · [s1](../../../results/h20x8/L03/dense_wide/s1-429f0a/) · [s2](../../../results/h20x8/L03/dense_wide/s2-bbd85c/)
+- `baseline` [s0](../../../results/h20x8/L03/baseline/s0-39279f/) · [s1](../../../results/h20x8/L03/baseline/s1-cbec53/) · [s2](../../../results/h20x8/L03/baseline/s2-618736/)
+- `moe` [s0](../../../results/h20x8/L03/moe/s0-d26637/) · [s1](../../../results/h20x8/L03/moe/s1-c21a54/) · [s2](../../../results/h20x8/L03/moe/s2-728fe8/)
 
 </details>
 
