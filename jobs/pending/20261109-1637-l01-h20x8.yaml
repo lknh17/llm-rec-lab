@@ -1,0 +1,11 @@
+job_id: 20261109-1637-l01-h20x8
+created_at: '2026-11-09T08:37:16Z'
+profile: h20x8
+courses:
+- L01
+only: []
+seeds: []
+requested_commit: 756e400d07f9a01f148381d4c41fb9616cd110a3
+note: H20 端重发：labkit 修复 756e400 后重跑 20261109-1048（23 个已成功运行会跳过，只重跑 fault_nodedup s1
+  并生成文档）
+how_to_run: python -m labkit jobs run 20261109-1637-l01-h20x8
