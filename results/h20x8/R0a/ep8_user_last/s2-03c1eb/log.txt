@@ -1,0 +1,22 @@
+[worker] 等待设备锁 gpu2-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R0a/ep8_user_last/s2-03c1eb/code/recbase/experiment.py
+[17:22:01] ===== 阶段：prepare =====
+[17:22:01] 缓存 recbase_raw key=abf4d3571fc2: 命中，复用运行 s0-74a5bf 的产物
+[17:22:01] 缓存 recbase_split key=33c9444e1664: 命中，复用运行 s0-20351a 的产物
+[17:22:01] 缓存 recbase_feats key=ea691379f5b7: 命中，复用运行 s0-20351a 的产物
+[17:22:02] 数据：1,000,209 行；train / valid / test = {'train': 870433, 'valid': 29755, 'test': 100021}；验证集冷启动用户行 0.0%；训练集含未来：True
+[17:22:02] 模型：359,521 参数，embedding 占 86%；MLP 输入 64 维；字段 ['user_id', 'movie_id']
+[17:22:02] ===== 阶段：train =====
+[17:22:09] epoch 1: train logloss 0.56595  valid_auc 0.78472  valid_gauc 0.67562  valid_logloss 0.5434  test_auc 0.75899  test_gauc 0.73158
+[17:22:10] epoch 2: train logloss 0.52915  valid_auc 0.78944  valid_gauc 0.67353  valid_logloss 0.53779  test_auc 0.76405  test_gauc 0.73289
+[17:22:11] epoch 3: train logloss 0.52213  valid_auc 0.79251  valid_gauc 0.67812  valid_logloss 0.53504  test_auc 0.76374  test_gauc 0.73549
+[17:22:11] epoch 4: train logloss 0.5153  valid_auc 0.79529  valid_gauc 0.68854  valid_logloss 0.5333  test_auc 0.76486  test_gauc 0.73708
+[17:22:12] epoch 5: train logloss 0.50705  valid_auc 0.79632  valid_gauc 0.68468  valid_logloss 0.53301  test_auc 0.76643  test_gauc 0.73849
+[17:22:13] epoch 6: train logloss 0.50005  valid_auc 0.79679  valid_gauc 0.68699  valid_logloss 0.53336  test_auc 0.76745  test_gauc 0.73833
+[17:22:14] epoch 7: train logloss 0.49371  valid_auc 0.79475  valid_gauc 0.68571  valid_logloss 0.53764  test_auc 0.76322  test_gauc 0.73591
+[17:22:15] epoch 8: train logloss 0.48561  valid_auc 0.79272  valid_gauc 0.68401  valid_logloss 0.54222  test_auc 0.76212  test_gauc 0.73379
+[17:22:15] ===== 阶段：evaluate =====
+[17:22:15] 验证 AUC 0.79272 GAUC 0.68401；留出 AUC 0.76212；参照线（电影平均喜欢率）验证 0.74014；最好 epoch 6
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

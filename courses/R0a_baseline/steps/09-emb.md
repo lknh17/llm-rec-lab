@@ -28,9 +28,21 @@ embedding 维度从 32 改成 128，embedding 参数翻 4 倍，MLP 输入从 64
 
 ## 实测
 
-<details><summary>展开实测：H20 · MovieLens-1M 全量 · 用户 ID + 电影 ID 的 Embedding + MLP · 3 种子（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · MovieLens-1M 全量 · 用户 ID + 电影 ID 的 Embedding + MLP · 3 种子（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 验证 AUC | 见过的用户 AUC | 没见过的用户 AUC | embedding 参数 | 训练秒数 | 验证 AUC：与 `baseline` 差 | 验证 AUC：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.7447 ± 0.0010 | 0.7854 ± 0.0033 | 0.7306 ± 0.0001 | 290,048.0 ± 0.0 | 1.2 ± 0.0 | — | s0 0.7447 / s1 0.7437 / s2 0.7458 | 通过 |
+| `emb_128` | 候选改动 | 0.7443 ± 0.0006 | 0.7899 ± 0.0020 | 0.7300 ± 0.0002 | 1,160,192.0 ± 0.0 | 1.2 ± 0.1 | -0.0004 | s0 0.7441 / s1 0.7450 / s2 0.7439 | 通过 |
+| `emb_8` | 候选改动 | 0.7402 ± 0.0065 | 0.7842 ± 0.0012 | 0.7310 ± 0.0001 | 72,512.0 ± 0.0 | 1.1 ± 0.1 | -0.0045 | s0 0.7439 / s1 0.7327 / s2 0.7442 | 通过 |
+
+![验证 AUC（均值，误差线为种子间最小到最大）](figures/h20x8-p_emb-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R0a/baseline/s0-461376/) · [s1](../../../results/h20x8/R0a/baseline/s1-71c585/) · [s2](../../../results/h20x8/R0a/baseline/s2-570ea7/)
+- `emb_128` [s0](../../../results/h20x8/R0a/emb_128/s0-11cbaa/) · [s1](../../../results/h20x8/R0a/emb_128/s1-36f0f8/) · [s2](../../../results/h20x8/R0a/emb_128/s2-8b6bd2/)
+- `emb_8` [s0](../../../results/h20x8/R0a/emb_8/s0-f74be1/) · [s1](../../../results/h20x8/R0a/emb_8/s1-45a527/) · [s2](../../../results/h20x8/R0a/emb_8/s2-c0fb76/)
 
 </details>
 

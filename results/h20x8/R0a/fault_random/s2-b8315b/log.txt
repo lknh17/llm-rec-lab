@@ -1,0 +1,15 @@
+[worker] 等待设备锁 gpu4-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R0a/fault_random/s2-b8315b/code/recbase/experiment.py
+[17:20:05] ===== 阶段：prepare =====
+[17:20:05] 缓存 recbase_raw key=abf4d3571fc2: 命中，复用运行 s0-74a5bf 的产物
+[17:20:05] 缓存 recbase_split key=0d1c7622580a: 命中，复用运行 s1-6c3980 的产物
+[17:20:05] 缓存 recbase_feats key=5171fca284d9: 命中，复用运行 s1-6c3980 的产物
+[17:20:06] 数据：1,000,209 行；train / valid / test = {'train': 800229, 'valid': 99959, 'test': 100021}；验证集冷启动用户行 0.0%；训练集含未来：True
+[17:20:06] 模型：359,265 参数，embedding 占 86%；MLP 输入 64 维；字段 ['user_id', 'movie_id']
+[17:20:06] ===== 阶段：train =====
+[17:20:13] epoch 1: train logloss 0.56762  valid_auc 0.78936  valid_gauc 0.73237  valid_logloss 0.54085  test_auc 0.7583  test_gauc 0.7302
+[17:20:13] ===== 阶段：evaluate =====
+[17:20:14] 验证 AUC 0.78936 GAUC 0.73237；留出 AUC 0.7583；参照线（电影平均喜欢率）验证 0.72928；最好 epoch 1
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

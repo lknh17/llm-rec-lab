@@ -1,0 +1,29 @@
+{
+  "dataset": "ml-1m",
+  "label_threshold": 4,
+  "split": "time",
+  "user_last_k": 5,
+  "data_seed": 0,
+  "max_users": 0,
+  "stats_mode": "point_in_time",
+  "stats_smooth": 20.0,
+  "feature_groups": [
+    "ids",
+    "user_profile",
+    "item_attr",
+    "user_stats",
+    "item_stats"
+  ],
+  "arch": "dcn",
+  "embedding_dim": 32,
+  "hidden": "256,128",
+  "dropout": 0.0,
+  "lr": 0.001,
+  "weight_decay": 0.0,
+  "batch_size": 2048,
+  "epochs": 1,
+  "seed": 0,
+  "bootstrap": 100,
+  "device": "cuda",
+  "max_minutes": 20
+}

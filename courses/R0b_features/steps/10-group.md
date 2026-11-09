@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · MovieLens-1M 全量 · 在 R0a 基线上逐组加特征、换统计口径 · 3-5 种子（已有 0 / 8 个运行）</summary>
+<details><summary>展开实测：H20 · MovieLens-1M 全量 · 在 R0a 基线上逐组加特征、换统计口径 · 3-5 种子（已有 8 / 8 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 没见过的用户 | 见过的用户 | 此前 0 次评分 | 此前 400 次以上 | 没见过的用户：与 `baseline` 差 | 没见过的用户：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.7308 ± 0.0004 | 0.7872 ± 0.0035 | 0.7195 ± 0.0014 | 0.7785 ± 0.0038 | — | s0 0.7308 / s1 0.7306 / s2 0.7305 / s3 0.7307 / s4 0.7316 | 通过 |
+| `f_user_stats` | 候选改动 | 0.7632 ± 0.0009 | 0.7924 ± 0.0017 | 0.7203 ± 0.0032 | 0.8035 ± 0.0022 | +0.0324 | s0 0.7642 / s1 0.7627 / s2 0.7628 | 通过 |
+
+![没见过的用户（均值，误差线为种子间最小到最大）](figures/h20x8-p_group-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R0b/baseline/s0-461376/) · [s1](../../../results/h20x8/R0b/baseline/s1-71c585/) · [s2](../../../results/h20x8/R0b/baseline/s2-570ea7/) · [s3](../../../results/h20x8/R0b/baseline/s3-a5952b/) · [s4](../../../results/h20x8/R0b/baseline/s4-e7e664/)
+- `f_user_stats` [s0](../../../results/h20x8/R0b/f_user_stats/s0-00e791/) · [s1](../../../results/h20x8/R0b/f_user_stats/s1-7d80a6/) · [s2](../../../results/h20x8/R0b/f_user_stats/s2-2b8070/)
 
 </details>
 

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" width="760" height="330" font-family="-apple-system,'PingFang SC','Noto Sans CJK SC',sans-serif">
+<rect width="760" height="330" rx="12" fill="#FFFFFF" stroke="#E3E6EC"/>
+<text x="20" y="28" font-size="15" font-weight="600" fill="#1D2330">valid_auc_delta_pp（均值，阴影为种子间范围）</text>
+<text x="740" y="28" font-size="11" fill="#6B7385" text-anchor="end">h20x8 · 全是老用户时的过拟合</text>
+<line x1="70" y1="266.0" x2="730" y2="266.0" stroke="#E3E6EC"/>
+<text x="62" y="269.0" font-size="10" fill="#6B7385" text-anchor="end">-2.5</text>
+<line x1="70" y1="211.0" x2="730" y2="211.0" stroke="#E3E6EC"/>
+<text x="62" y="214.0" font-size="10" fill="#6B7385" text-anchor="end">-1.375</text>
+<line x1="70" y1="156.0" x2="730" y2="156.0" stroke="#E3E6EC"/>
+<text x="62" y="159.0" font-size="10" fill="#6B7385" text-anchor="end">-0.25</text>
+<line x1="70" y1="101.0" x2="730" y2="101.0" stroke="#E3E6EC"/>
+<text x="62" y="104.0" font-size="10" fill="#6B7385" text-anchor="end">0.875</text>
+<line x1="70" y1="46.0" x2="730" y2="46.0" stroke="#E3E6EC"/>
+<text x="62" y="49.0" font-size="10" fill="#6B7385" text-anchor="end">2</text>
+<text x="400.0" y="296" font-size="10" fill="#6B7385" text-anchor="middle">训练步（1 – 8）</text>
+<polygon points="70.0,143.8 164.3,129.0 258.6,122.0 352.9,116.9 447.1,117.2 541.4,114.8 635.7,122.9 730.0,125.4 730.0,242.4 635.7,241.8 541.4,251.2 447.1,258.8 352.9,194.0 258.6,174.4 164.3,144.0 70.0,143.8" fill="#3B5BDB" fill-opacity="0.14"/>
+<polyline points="70.0,143.8 164.3,135.7 258.6,139.8 352.9,143.3 447.1,167.1 541.4,161.2 635.7,162.9 730.0,167.6" fill="none" stroke="#3B5BDB" stroke-width="1.8"><title>ep8：最终 -0.4877（3 个种子）</title></polyline>
+<rect x="70" y="306" width="14" height="3" fill="#3B5BDB"/>
+<text x="88" y="311" font-size="11" fill="#1D2330">ep8</text>
+<polygon points="70.0,143.8 164.3,119.5 258.6,103.5 352.9,92.1 447.1,85.3 541.4,78.6 635.7,74.7 730.0,81.3 730.0,108.6 635.7,94.7 541.4,85.0 447.1,88.6 352.9,100.9 258.6,105.7 164.3,122.0 70.0,143.8" fill="#E67700" fill-opacity="0.14"/>
+<polyline points="70.0,143.8 164.3,120.8 258.6,104.4 352.9,96.1 447.1,87.0 541.4,82.8 635.7,86.9 730.0,98.2" fill="none" stroke="#E67700" stroke-width="1.8"><title>ep8_user_last：最终 0.932（3 个种子）</title></polyline>
+<rect x="140" y="306" width="14" height="3" fill="#E67700"/>
+<text x="158" y="311" font-size="11" fill="#1D2330">ep8_user_last</text>
+</svg>

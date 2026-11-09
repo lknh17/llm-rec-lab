@@ -1,0 +1,13 @@
+{"name": "train_loss", "value": 0.6335153639316559, "step": 50, "split": "train", "time": 6.406, "stage": "train", "epoch": 1, "samples_per_s": 171687}
+{"name": "train_loss", "value": 0.5647442877292633, "step": 100, "split": "train", "time": 6.511, "stage": "train", "epoch": 1, "samples_per_s": 1027401}
+{"name": "train_loss", "value": 0.5543243908882141, "step": 150, "split": "train", "time": 6.648, "stage": "train", "epoch": 1, "samples_per_s": 765957}
+{"name": "train_loss", "value": 0.5474285316467286, "step": 200, "split": "train", "time": 6.784, "stage": "train", "epoch": 1, "samples_per_s": 766117}
+{"name": "train_loss", "value": 0.5448918008804321, "step": 250, "split": "train", "time": 6.921, "stage": "train", "epoch": 1, "samples_per_s": 767339}
+{"name": "train_loss", "value": 0.5438535165786743, "step": 300, "split": "train", "time": 7.022, "stage": "train", "epoch": 1, "samples_per_s": 1034115}
+{"name": "train_loss", "value": 0.5431253254413605, "step": 350, "split": "train", "time": 7.156, "stage": "train", "epoch": 1, "samples_per_s": 780275}
+{"name": "valid_auc", "value": 0.74533, "step": null, "split": "valid", "time": 7.347, "stage": "train", "epoch": 1}
+{"name": "valid_gauc", "value": 0.73316, "step": null, "split": "valid", "time": 7.349, "stage": "train", "epoch": 1}
+{"name": "valid_logloss", "value": 0.59169, "step": null, "split": "valid", "time": 7.352, "stage": "train", "epoch": 1}
+{"name": "test_auc", "value": 0.75588, "step": null, "split": "test", "time": 7.354, "stage": "train", "epoch": 1}
+{"name": "test_gauc", "value": 0.73479, "step": null, "split": "test", "time": 7.355, "stage": "train", "epoch": 1}
+{"name": "valid_auc_delta_pp", "value": 0.0, "step": null, "split": "valid", "time": 7.357, "stage": "train", "epoch": 1}

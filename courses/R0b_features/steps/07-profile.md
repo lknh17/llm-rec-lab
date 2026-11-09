@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · MovieLens-1M 全量 · 在 R0a 基线上逐组加特征、换统计口径 · 3-5 种子（已有 0 / 11 个运行）</summary>
+<details><summary>展开实测：H20 · MovieLens-1M 全量 · 在 R0a 基线上逐组加特征、换统计口径 · 3-5 种子（已有 11 / 11 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 验证 AUC | 验证 GAUC | 没见过的用户 AUC | 长尾电影 AUC | 验证 AUC：与 `baseline` 差 | 验证 AUC：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.7449 ± 0.0015 | 0.7304 ± 0.0004 | 0.7308 ± 0.0004 | 0.7177 ± 0.0041 | — | s0 0.7447 / s1 0.7437 / s2 0.7458 / s3 0.7469 / s4 0.7433 | 通过 |
+| `f_profile` | 候选改动 | 0.7440 ± 0.0022 | 0.7302 ± 0.0002 | 0.7310 ± 0.0006 | 0.7128 ± 0.0057 | -0.0009 | s0 0.7414 / s1 0.7455 / s2 0.7451 |  |
+| `f_item_attr` | 候选改动 | 0.7445 ± 0.0011 | 0.7310 ± 0.0002 | 0.7308 ± 0.0003 | 0.7179 ± 0.0028 | -0.0004 | s0 0.7446 / s1 0.7455 / s2 0.7433 |  |
+
+![验证 AUC（均值，误差线为种子间最小到最大）](figures/h20x8-p_profile-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R0b/baseline/s0-461376/) · [s1](../../../results/h20x8/R0b/baseline/s1-71c585/) · [s2](../../../results/h20x8/R0b/baseline/s2-570ea7/) · [s3](../../../results/h20x8/R0b/baseline/s3-a5952b/) · [s4](../../../results/h20x8/R0b/baseline/s4-e7e664/)
+- `f_profile` [s0](../../../results/h20x8/R0b/f_profile/s0-5d2bde/) · [s1](../../../results/h20x8/R0b/f_profile/s1-88ceb7/) · [s2](../../../results/h20x8/R0b/f_profile/s2-4a9e7a/)
+- `f_item_attr` [s0](../../../results/h20x8/R0b/f_item_attr/s0-de0e6b/) · [s1](../../../results/h20x8/R0b/f_item_attr/s1-4439ed/) · [s2](../../../results/h20x8/R0b/f_item_attr/s2-58188d/)
 
 </details>
 

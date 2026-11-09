@@ -1,0 +1,267 @@
+{
+  "raw_csv": {
+    "note": "ratings.csv 开头原文：timestamp 被引号包住、里面还有换行，按字符串读再去空白转整数",
+    "text": "userId,movieId,rating,timestamp\r\n1,1193,5,\"978300760\n\"\r\n1,661,3,\"978302109\n\"\r\n1,914,3,\"978301968\n\"\r\n1,3408,4,\"978300275\n\"\r\n1,2355,5,\"978824291\n\"\r\n1,1197,3,\"9783",
+    "parsed": [
+      {
+        "user": 6040,
+        "movie": 858,
+        "rating": 4,
+        "ts": 956703932
+      },
+      {
+        "user": 6040,
+        "movie": 593,
+        "rating": 5,
+        "ts": 956703954
+      }
+    ]
+  },
+  "sample": {
+    "note": "被追踪样本 = 训练第 1 个 batch 的第 1 条（真实打乱结果）。stats_by_mode 是这一行在四种统计口径下的值",
+    "raw": {
+      "user": 3521,
+      "movie": 3475,
+      "title": "Place in the Sun, A (1951)",
+      "genres": "Drama|Romance",
+      "rating": 4,
+      "time": "2000-08-22T05:30:13+00:00",
+      "label": 1
+    },
+    "encoded": {
+      "user_id": 2881.0,
+      "movie_id": 3205.0
+    },
+    "stats_mode": "point_in_time",
+    "stats_by_mode": {
+      "point_in_time": {
+        "user_cnt": 119,
+        "user_pos": 82,
+        "user_rate": 0.6732,
+        "item_cnt": 50,
+        "item_pos": 36,
+        "item_rate": 0.6796
+      },
+      "daily": {
+        "user_cnt": 0,
+        "user_pos": 0,
+        "user_rate": 0.5787,
+        "item_cnt": 49,
+        "item_pos": 35,
+        "item_rate": 0.675
+      },
+      "include_self": {
+        "user_cnt": 120,
+        "user_pos": 83,
+        "user_rate": 0.6755,
+        "item_cnt": 51,
+        "item_pos": 37,
+        "item_rate": 0.6841
+      },
+      "full": {
+        "user_cnt": 387,
+        "user_pos": 251,
+        "user_rate": 0.6451,
+        "item_cnt": 134,
+        "item_pos": 99,
+        "item_rate": 0.718
+      }
+    }
+  },
+  "batch": {
+    "note": "训练第 1 个 batch：每个字段的张量形状（B = batch 大小）",
+    "batch_size": 2048,
+    "tensors": {
+      "user_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          2881.0,
+          2152.0,
+          4994.0,
+          3476.0,
+          2871.0,
+          3986.0
+        ]
+      },
+      "movie_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          3205.0,
+          3201.0,
+          484.0,
+          1817.0,
+          2.0,
+          3481.0
+        ]
+      },
+      "label": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "mean": 0.58643,
+        "std": 0.49259
+      }
+    },
+    "field_vectors": "[B, 2, 32]",
+    "mlp_input": {
+      "shape": [
+        2048,
+        64
+      ],
+      "dtype": "float32",
+      "device": "cuda:0",
+      "head": [
+        -0.03241,
+        0.00726,
+        -0.04395,
+        0.07523,
+        -0.06238,
+        -0.01478,
+        0.00106,
+        -0.15509
+      ],
+      "mean": -0.00031,
+      "std": 0.05003
+    },
+    "in_dim": 64,
+    "positives": 1201
+  },
+  "forward": {
+    "field_embedding_head4": {
+      "user_id": [
+        -0.0324,
+        0.0073,
+        -0.044,
+        0.0752
+      ],
+      "movie_id": [
+        0.0157,
+        -0.0002,
+        0.0017,
+        0.0781
+      ]
+    },
+    "logit": 0.07331,
+    "prob": 0.51832,
+    "label": 1,
+    "sample_loss": 0.65717,
+    "batch_loss_mean": 0.68724,
+    "formula": "loss_i = −[y·log σ(z) + (1−y)·log(1−σ(z))]，batch loss = 1/B Σ loss_i"
+  },
+  "update": {
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "user_embedding_row": 2881,
+    "row_before_head4": [
+      -0.032408,
+      0.007262,
+      -0.043954,
+      0.075235
+    ],
+    "row_grad_head4": [
+      1.7e-05,
+      8e-06,
+      1e-06,
+      6e-06
+    ],
+    "user_rows_with_grad": 1445,
+    "user_rows_total": 5401,
+    "oov_row_in_batch": 0,
+    "row_after_head4": [
+      -0.033408,
+      0.006263,
+      -0.04494,
+      0.074236
+    ],
+    "logit_before": 0.07331,
+    "logit_after": 0.09967,
+    "batch_loss_before": 0.68724,
+    "batch_loss_after": 0.68545,
+    "note": "只有本 batch 出现过的用户行有梯度；Adam 第一步每个元素的更新量约等于 lr × sign(grad)"
+  },
+  "cold_sample": {
+    "note": "验证集里训练集没见过的用户：用户 ID 编码成 0，所有冷启动用户共用这一行 embedding。词表只来自训练集，所以训练集里没有任何一行是 0：这一行从没拿到过梯度，一直是随机初始化",
+    "user_raw": 634,
+    "user_id_encoded": 0,
+    "movie_raw": 260,
+    "label": 1,
+    "prob": 0.8621,
+    "oov_rows_in_train": 0,
+    "cold_rows_share": 0.7616
+  },
+  "gauc_example": {
+    "note": "同一个用户的验证行按模型分数从高到低；单用户 AUC = 正例排在负例前面的比例",
+    "user": 26,
+    "rows": [
+      {
+        "prob": 0.8962,
+        "label": 1
+      },
+      {
+        "prob": 0.8516,
+        "label": 0
+      },
+      {
+        "prob": 0.8166,
+        "label": 1
+      },
+      {
+        "prob": 0.7904,
+        "label": 1
+      },
+      {
+        "prob": 0.7653,
+        "label": 0
+      },
+      {
+        "prob": 0.7213,
+        "label": 1
+      },
+      {
+        "prob": 0.7131,
+        "label": 0
+      },
+      {
+        "prob": 0.6975,
+        "label": 1
+      },
+      {
+        "prob": 0.6023,
+        "label": 1
+      },
+      {
+        "prob": 0.394,
+        "label": 0
+      },
+      {
+        "prob": 0.342,
+        "label": 1
+      }
+    ],
+    "n_pos": 7,
+    "n_neg": 4,
+    "user_auc": 0.5
+  },
+  "reload": {
+    "max_prob_diff": 1.1920928955078125e-07,
+    "ok": true
+  }
+}

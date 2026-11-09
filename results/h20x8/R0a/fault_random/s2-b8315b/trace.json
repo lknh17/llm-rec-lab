@@ -1,0 +1,255 @@
+{
+  "raw_csv": {
+    "note": "ratings.csv 开头原文：timestamp 被引号包住、里面还有换行，按字符串读再去空白转整数",
+    "text": "userId,movieId,rating,timestamp\r\n1,1193,5,\"978300760\n\"\r\n1,661,3,\"978302109\n\"\r\n1,914,3,\"978301968\n\"\r\n1,3408,4,\"978300275\n\"\r\n1,2355,5,\"978824291\n\"\r\n1,1197,3,\"9783",
+    "parsed": [
+      {
+        "user": 6040,
+        "movie": 858,
+        "rating": 4,
+        "ts": 956703932
+      },
+      {
+        "user": 6040,
+        "movie": 593,
+        "rating": 5,
+        "ts": 956703954
+      }
+    ]
+  },
+  "sample": {
+    "note": "被追踪样本 = 训练第 1 个 batch 的第 1 条（真实打乱结果）。stats_by_mode 是这一行在四种统计口径下的值",
+    "raw": {
+      "user": 5644,
+      "movie": 2355,
+      "title": "Bug's Life, A (1998)",
+      "genres": "Animation|Children's|Comedy",
+      "rating": 4,
+      "time": "2000-05-21T03:52:26+00:00",
+      "label": 1
+    },
+    "encoded": {
+      "user_id": 5614.0,
+      "movie_id": 2137.0
+    },
+    "stats_mode": "point_in_time",
+    "stats_by_mode": {
+      "point_in_time": {
+        "user_cnt": 25,
+        "user_pos": 16,
+        "user_rate": 0.6127,
+        "item_cnt": 103,
+        "item_pos": 78,
+        "item_rate": 0.7282
+      },
+      "daily": {
+        "user_cnt": 0,
+        "user_pos": 0,
+        "user_rate": 0.5785,
+        "item_cnt": 101,
+        "item_pos": 76,
+        "item_rate": 0.7237
+      },
+      "include_self": {
+        "user_cnt": 26,
+        "user_pos": 17,
+        "user_rate": 0.6211,
+        "item_cnt": 104,
+        "item_pos": 79,
+        "item_rate": 0.7304
+      },
+      "full": {
+        "user_cnt": 73,
+        "user_pos": 50,
+        "user_rate": 0.662,
+        "item_cnt": 1703,
+        "item_pos": 1192,
+        "item_rate": 0.6985
+      }
+    }
+  },
+  "batch": {
+    "note": "训练第 1 个 batch：每个字段的张量形状（B = batch 大小）",
+    "batch_size": 2048,
+    "tensors": {
+      "user_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          5614.0,
+          3729.0,
+          5033.0,
+          1810.0,
+          5050.0,
+          1936.0
+        ]
+      },
+      "movie_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          2137.0,
+          102.0,
+          1758.0,
+          1665.0,
+          2838.0,
+          2653.0
+        ]
+      },
+      "label": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "mean": 0.55713,
+        "std": 0.49685
+      }
+    },
+    "field_vectors": "[B, 2, 32]",
+    "mlp_input": {
+      "shape": [
+        2048,
+        64
+      ],
+      "dtype": "float32",
+      "device": "cuda:0",
+      "head": [
+        -0.01073,
+        -0.02061,
+        -0.02414,
+        -0.00906,
+        -9e-05,
+        -0.09034,
+        0.00489,
+        -0.02085
+      ],
+      "mean": 7e-05,
+      "std": 0.04997
+    },
+    "in_dim": 64,
+    "positives": 1141
+  },
+  "forward": {
+    "field_embedding_head4": {
+      "user_id": [
+        -0.0107,
+        -0.0206,
+        -0.0241,
+        -0.0091
+      ],
+      "movie_id": [
+        0.0571,
+        -0.0116,
+        0.034,
+        0.0439
+      ]
+    },
+    "logit": -0.04157,
+    "prob": 0.48961,
+    "label": 1,
+    "sample_loss": 0.71415,
+    "batch_loss_mean": 0.6956,
+    "formula": "loss_i = −[y·log σ(z) + (1−y)·log(1−σ(z))]，batch loss = 1/B Σ loss_i"
+  },
+  "update": {
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "user_embedding_row": 5614,
+    "row_before_head4": [
+      -0.010727,
+      -0.020605,
+      -0.024141,
+      -0.009061
+    ],
+    "row_grad_head4": [
+      3e-06,
+      -5e-06,
+      -5e-06,
+      -1e-06
+    ],
+    "user_rows_with_grad": 1485,
+    "user_rows_total": 6011,
+    "oov_row_in_batch": 0,
+    "row_after_head4": [
+      -0.011724,
+      -0.019607,
+      -0.023143,
+      -0.008075
+    ],
+    "logit_before": -0.04157,
+    "logit_after": -0.00658,
+    "batch_loss_before": 0.6956,
+    "batch_loss_after": 0.69325,
+    "note": "只有本 batch 出现过的用户行有梯度；Adam 第一步每个元素的更新量约等于 lr × sign(grad)"
+  },
+  "cold_sample": {
+    "note": "验证集里训练集没见过的用户：用户 ID 编码成 0，所有冷启动用户共用这一行 embedding。词表只来自训练集，所以训练集里没有任何一行是 0：这一行从没拿到过梯度，一直是随机初始化",
+    "user_raw": 3326,
+    "user_id_encoded": 0,
+    "movie_raw": 912,
+    "label": 1,
+    "prob": 0.8612,
+    "oov_rows_in_train": 0,
+    "cold_rows_share": 0.0
+  },
+  "gauc_example": {
+    "note": "同一个用户的验证行按模型分数从高到低；单用户 AUC = 正例排在负例前面的比例",
+    "user": 27,
+    "rows": [
+      {
+        "prob": 0.9249,
+        "label": 1
+      },
+      {
+        "prob": 0.9233,
+        "label": 1
+      },
+      {
+        "prob": 0.8802,
+        "label": 1
+      },
+      {
+        "prob": 0.8636,
+        "label": 1
+      },
+      {
+        "prob": 0.8635,
+        "label": 1
+      },
+      {
+        "prob": 0.7529,
+        "label": 0
+      },
+      {
+        "prob": 0.6351,
+        "label": 0
+      },
+      {
+        "prob": 0.2809,
+        "label": 0
+      }
+    ],
+    "n_pos": 5,
+    "n_neg": 3,
+    "user_auc": 1.0
+  },
+  "reload": {
+    "max_prob_diff": 1.7881393432617188e-07,
+    "ok": true
+  }
+}

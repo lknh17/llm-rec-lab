@@ -1,0 +1,517 @@
+{
+  "raw_csv": {
+    "note": "ratings.csv 开头原文：timestamp 被引号包住、里面还有换行，按字符串读再去空白转整数",
+    "text": "userId,movieId,rating,timestamp\r\n1,1193,5,\"978300760\n\"\r\n1,661,3,\"978302109\n\"\r\n1,914,3,\"978301968\n\"\r\n1,3408,4,\"978300275\n\"\r\n1,2355,5,\"978824291\n\"\r\n1,1197,3,\"9783",
+    "parsed": [
+      {
+        "user": 6040,
+        "movie": 858,
+        "rating": 4,
+        "ts": 956703932
+      },
+      {
+        "user": 6040,
+        "movie": 593,
+        "rating": 5,
+        "ts": 956703954
+      }
+    ]
+  },
+  "sample": {
+    "note": "被追踪样本 = 训练第 1 个 batch 的第 1 条（真实打乱结果）。stats_by_mode 是这一行在四种统计口径下的值",
+    "raw": {
+      "user": 3778,
+      "movie": 1822,
+      "title": "Meet the Deedles (1998)",
+      "genres": "Children's|Comedy",
+      "rating": 1,
+      "time": "2000-08-12T00:24:19+00:00",
+      "label": 0
+    },
+    "encoded": {
+      "user_id": 3138.0,
+      "movie_id": 1623.0,
+      "gender": 2.0,
+      "age": 3.0,
+      "occupation": 1.0,
+      "zip1": 7.0,
+      "year_bucket": 17.0,
+      "user_cnt_bucket": 9.0,
+      "item_cnt_bucket": 3.0,
+      "genres": [
+        4,
+        5,
+        0,
+        0,
+        0,
+        0
+      ],
+      "user_rate": 0.2161,
+      "user_lcnt": 0.7738,
+      "item_rate": 0.4451,
+      "item_lcnt": 0.2432
+    },
+    "stats_mode": "include_self",
+    "stats_by_mode": {
+      "point_in_time": {
+        "user_cnt": 486,
+        "user_pos": 98,
+        "user_rate": 0.2165,
+        "item_cnt": 5,
+        "item_pos": 0,
+        "item_rate": 0.463
+      },
+      "daily": {
+        "user_cnt": 384,
+        "user_pos": 97,
+        "user_rate": 0.2687,
+        "item_cnt": 5,
+        "item_pos": 0,
+        "item_rate": 0.463
+      },
+      "include_self": {
+        "user_cnt": 487,
+        "user_pos": 98,
+        "user_rate": 0.2161,
+        "item_cnt": 6,
+        "item_pos": 0,
+        "item_rate": 0.4452
+      },
+      "full": {
+        "user_cnt": 941,
+        "user_pos": 171,
+        "user_rate": 0.19,
+        "item_cnt": 21,
+        "item_pos": 3,
+        "item_rate": 0.3555
+      }
+    }
+  },
+  "batch": {
+    "note": "训练第 1 个 batch：每个字段的张量形状（B = batch 大小）",
+    "batch_size": 2048,
+    "tensors": {
+      "user_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          3138.0,
+          2740.0,
+          3057.0,
+          2980.0,
+          2204.0,
+          1628.0
+        ]
+      },
+      "movie_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          1623.0,
+          2125.0,
+          2711.0,
+          146.0,
+          3118.0,
+          844.0
+        ]
+      },
+      "gender": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "age": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          3.0,
+          6.0,
+          3.0,
+          3.0,
+          6.0,
+          7.0
+        ]
+      },
+      "occupation": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          1.0,
+          1.0,
+          16.0,
+          8.0,
+          13.0,
+          14.0
+        ]
+      },
+      "zip1": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          7.0,
+          3.0,
+          7.0,
+          10.0,
+          10.0,
+          7.0
+        ]
+      },
+      "year_bucket": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          17.0,
+          13.0,
+          10.0,
+          17.0,
+          16.0,
+          5.0
+        ]
+      },
+      "user_cnt_bucket": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          9.0,
+          9.0,
+          7.0,
+          9.0,
+          6.0,
+          8.0
+        ]
+      },
+      "item_cnt_bucket": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          3.0,
+          8.0,
+          9.0,
+          9.0,
+          9.0,
+          11.0
+        ]
+      },
+      "genres": {
+        "shape": [
+          2048,
+          6
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          4.0,
+          5.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "user_rate": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.21612,
+          0.58034,
+          0.63403,
+          0.38472,
+          0.70396,
+          0.56377
+        ],
+        "mean": 0.58973,
+        "std": 0.13856
+      },
+      "user_lcnt": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.77379,
+          0.75797,
+          0.55679,
+          0.72221,
+          0.489,
+          0.65322
+        ],
+        "mean": 0.56634,
+        "std": 0.15966
+      },
+      "item_rate": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.44512,
+          0.4475,
+          0.73802,
+          0.57095,
+          0.60374,
+          0.79664
+        ],
+        "mean": 0.58516,
+        "std": 0.1666
+      },
+      "item_lcnt": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.24324,
+          0.61035,
+          0.70787,
+          0.70345,
+          0.73153,
+          0.87075
+        ],
+        "mean": 0.6425,
+        "std": 0.16808
+      },
+      "label": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          1.0,
+          1.0
+        ],
+        "mean": 0.55664,
+        "std": 0.4969
+      }
+    },
+    "field_vectors": "[B, 10, 32]",
+    "mlp_input": {
+      "shape": [
+        2048,
+        324
+      ],
+      "dtype": "float32",
+      "device": "cuda:0",
+      "head": [
+        -0.11219,
+        -0.03613,
+        -0.03544,
+        -0.08438,
+        0.01945,
+        -0.04238,
+        0.04128,
+        0.03866
+      ],
+      "mean": 0.00589,
+      "std": 0.08489
+    },
+    "in_dim": 324,
+    "positives": 1140
+  },
+  "forward": {
+    "field_embedding_head4": {
+      "user_id": [
+        -0.1122,
+        -0.0361,
+        -0.0354,
+        -0.0844
+      ],
+      "movie_id": [
+        -0.0184,
+        0.0046,
+        0.0268,
+        -0.0712
+      ],
+      "gender": [
+        0.0313,
+        -0.1108,
+        -0.1142,
+        0.0566
+      ],
+      "age": [
+        0.0076,
+        0.0682,
+        -0.0085,
+        0.0463
+      ],
+      "occupation": [
+        0.0689,
+        -0.0638,
+        0.0398,
+        0.0723
+      ],
+      "zip1": [
+        -0.1076,
+        0.0411,
+        0.0086,
+        0.0543
+      ],
+      "year_bucket": [
+        -0.1092,
+        0.0075,
+        0.0691,
+        0.0301
+      ],
+      "user_cnt_bucket": [
+        0.0376,
+        0.0552,
+        0.0113,
+        0.028
+      ],
+      "item_cnt_bucket": [
+        -0.0369,
+        0.0107,
+        -0.0264,
+        -0.0015
+      ]
+    },
+    "logit": -0.01382,
+    "prob": 0.49654,
+    "label": 0,
+    "sample_loss": 0.68626,
+    "batch_loss_mean": 0.69401,
+    "formula": "loss_i = −[y·log σ(z) + (1−y)·log(1−σ(z))]，batch loss = 1/B Σ loss_i"
+  },
+  "update": {
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "user_embedding_row": 3138,
+    "row_before_head4": [
+      -0.11219,
+      -0.036135,
+      -0.035437,
+      -0.084376
+    ],
+    "row_grad_head4": [
+      2e-06,
+      2e-06,
+      -3e-06,
+      1e-06
+    ],
+    "user_rows_with_grad": 1424,
+    "user_rows_total": 5401,
+    "oov_row_in_batch": 0,
+    "row_after_head4": [
+      -0.113186,
+      -0.037129,
+      -0.034441,
+      -0.085364
+    ],
+    "logit_before": -0.01382,
+    "logit_after": 0.01385,
+    "batch_loss_before": 0.69401,
+    "batch_loss_after": 0.69133,
+    "note": "只有本 batch 出现过的用户行有梯度；Adam 第一步每个元素的更新量约等于 lr × sign(grad)"
+  },
+  "cold_sample": {
+    "note": "验证集里训练集没见过的用户：用户 ID 编码成 0，所有冷启动用户共用这一行 embedding。词表只来自训练集，所以训练集里没有任何一行是 0：这一行从没拿到过梯度，一直是随机初始化",
+    "user_raw": 634,
+    "user_id_encoded": 0,
+    "movie_raw": 260,
+    "label": 1,
+    "prob": 0.7746,
+    "oov_rows_in_train": 0,
+    "cold_rows_share": 0.7616
+  },
+  "gauc_example": {
+    "note": "同一个用户的验证行按模型分数从高到低；单用户 AUC = 正例排在负例前面的比例",
+    "user": 26,
+    "rows": [
+      {
+        "prob": 0.8944,
+        "label": 1
+      },
+      {
+        "prob": 0.8207,
+        "label": 1
+      },
+      {
+        "prob": 0.8086,
+        "label": 1
+      },
+      {
+        "prob": 0.764,
+        "label": 1
+      },
+      {
+        "prob": 0.7362,
+        "label": 0
+      },
+      {
+        "prob": 0.685,
+        "label": 0
+      },
+      {
+        "prob": 0.6715,
+        "label": 0
+      },
+      {
+        "prob": 0.5086,
+        "label": 1
+      },
+      {
+        "prob": 0.4224,
+        "label": 1
+      },
+      {
+        "prob": 0.2132,
+        "label": 0
+      },
+      {
+        "prob": 0.1738,
+        "label": 1
+      }
+    ],
+    "n_pos": 7,
+    "n_neg": 4,
+    "user_auc": 0.6429
+  },
+  "reload": {
+    "max_prob_diff": 1.1920928955078125e-07,
+    "ok": true
+  }
+}

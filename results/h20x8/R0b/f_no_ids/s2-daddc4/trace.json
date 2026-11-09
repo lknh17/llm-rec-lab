@@ -1,0 +1,451 @@
+{
+  "raw_csv": {
+    "note": "ratings.csv 开头原文：timestamp 被引号包住、里面还有换行，按字符串读再去空白转整数",
+    "text": "userId,movieId,rating,timestamp\r\n1,1193,5,\"978300760\n\"\r\n1,661,3,\"978302109\n\"\r\n1,914,3,\"978301968\n\"\r\n1,3408,4,\"978300275\n\"\r\n1,2355,5,\"978824291\n\"\r\n1,1197,3,\"9783",
+    "parsed": [
+      {
+        "user": 6040,
+        "movie": 858,
+        "rating": 4,
+        "ts": 956703932
+      },
+      {
+        "user": 6040,
+        "movie": 593,
+        "rating": 5,
+        "ts": 956703954
+      }
+    ]
+  },
+  "sample": {
+    "note": "被追踪样本 = 训练第 1 个 batch 的第 1 条（真实打乱结果）。stats_by_mode 是这一行在四种统计口径下的值",
+    "raw": {
+      "user": 4611,
+      "movie": 3260,
+      "title": "Howards End (1992)",
+      "genres": "Drama",
+      "rating": 4,
+      "time": "2000-07-21T04:22:33+00:00",
+      "label": 1
+    },
+    "encoded": {
+      "gender": 1.0,
+      "age": 2.0,
+      "occupation": 5.0,
+      "zip1": 8.0,
+      "year_bucket": 16.0,
+      "user_cnt_bucket": 8.0,
+      "item_cnt_bucket": 7.0,
+      "genres": [
+        8,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "user_rate": 0.491,
+      "user_lcnt": 0.6168,
+      "item_rate": 0.674,
+      "item_lcnt": 0.5817
+    },
+    "stats_mode": "point_in_time",
+    "stats_by_mode": {
+      "point_in_time": {
+        "user_cnt": 138,
+        "user_pos": 66,
+        "user_rate": 0.491,
+        "item_cnt": 104,
+        "item_pos": 72,
+        "item_rate": 0.674
+      },
+      "daily": {
+        "user_cnt": 0,
+        "user_pos": 0,
+        "user_rate": 0.5787,
+        "item_cnt": 104,
+        "item_pos": 72,
+        "item_rate": 0.674
+      },
+      "include_self": {
+        "user_cnt": 139,
+        "user_pos": 67,
+        "user_rate": 0.4942,
+        "item_cnt": 105,
+        "item_pos": 73,
+        "item_rate": 0.6766
+      },
+      "full": {
+        "user_cnt": 370,
+        "user_pos": 170,
+        "user_rate": 0.4656,
+        "item_cnt": 480,
+        "item_pos": 300,
+        "item_rate": 0.6231
+      }
+    }
+  },
+  "batch": {
+    "note": "训练第 1 个 batch：每个字段的张量形状（B = batch 大小）",
+    "batch_size": 2048,
+    "tensors": {
+      "gender": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          1.0,
+          2.0,
+          1.0,
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "age": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          2.0,
+          3.0,
+          5.0,
+          2.0,
+          3.0,
+          5.0
+        ]
+      },
+      "occupation": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          5.0,
+          18.0,
+          1.0,
+          5.0,
+          13.0,
+          2.0
+        ]
+      },
+      "zip1": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          8.0,
+          8.0,
+          1.0,
+          2.0,
+          10.0,
+          6.0
+        ]
+      },
+      "year_bucket": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          16.0,
+          15.0,
+          6.0,
+          17.0,
+          16.0,
+          12.0
+        ]
+      },
+      "user_cnt_bucket": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          8.0,
+          9.0,
+          8.0,
+          2.0,
+          7.0,
+          7.0
+        ]
+      },
+      "item_cnt_bucket": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          7.0,
+          7.0,
+          7.0,
+          9.0,
+          9.0,
+          6.0
+        ]
+      },
+      "genres": {
+        "shape": [
+          2048,
+          6
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          8.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "user_rate": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.49097,
+          0.62727,
+          0.33947,
+          0.54665,
+          0.54889,
+          0.8479
+        ],
+        "mean": 0.59006,
+        "std": 0.13657
+      },
+      "user_lcnt": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.61681,
+          0.74831,
+          0.65119,
+          0.17329,
+          0.56923,
+          0.56108
+        ],
+        "mean": 0.56172,
+        "std": 0.16541
+      },
+      "item_rate": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.67398,
+          0.49303,
+          0.53168,
+          0.83349,
+          0.5197,
+          0.68083
+        ],
+        "mean": 0.59549,
+        "std": 0.16897
+      },
+      "item_lcnt": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.58175,
+          0.59202,
+          0.54459,
+          0.76586,
+          0.72862,
+          0.47583
+        ],
+        "mean": 0.64639,
+        "std": 0.1736
+      },
+      "label": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "mean": 0.58008,
+        "std": 0.49367
+      }
+    },
+    "field_vectors": "[B, 8, 32]",
+    "mlp_input": {
+      "shape": [
+        2048,
+        260
+      ],
+      "dtype": "float32",
+      "device": "cuda:0",
+      "head": [
+        0.03448,
+        -0.03948,
+        -0.00406,
+        0.133,
+        0.00415,
+        -0.12203,
+        0.00373,
+        0.00492
+      ],
+      "mean": 0.00901,
+      "std": 0.09119
+    },
+    "in_dim": 260,
+    "positives": 1188
+  },
+  "forward": {
+    "field_embedding_head4": {
+      "gender": [
+        0.0345,
+        -0.0395,
+        -0.0041,
+        0.133
+      ],
+      "age": [
+        -0.0462,
+        -0.0091,
+        -0.0426,
+        0.1136
+      ],
+      "occupation": [
+        -0.0676,
+        -0.0427,
+        0.0071,
+        0.0141
+      ],
+      "zip1": [
+        0.0281,
+        0.0075,
+        -0.0223,
+        -0.0394
+      ],
+      "year_bucket": [
+        0.033,
+        0.0223,
+        0.0345,
+        -0.0751
+      ],
+      "user_cnt_bucket": [
+        0.057,
+        0.0498,
+        0.0678,
+        0.0409
+      ],
+      "item_cnt_bucket": [
+        -0.005,
+        -0.0054,
+        -0.0058,
+        -0.0198
+      ]
+    },
+    "logit": 0.01557,
+    "prob": 0.50389,
+    "label": 1,
+    "sample_loss": 0.68539,
+    "batch_loss_mean": 0.69102,
+    "formula": "loss_i = −[y·log σ(z) + (1−y)·log(1−σ(z))]，batch loss = 1/B Σ loss_i"
+  },
+  "update": {
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "logit_before": 0.01557,
+    "logit_after": 0.04679,
+    "batch_loss_before": 0.69102,
+    "batch_loss_after": 0.68815,
+    "note": "只有本 batch 出现过的用户行有梯度；Adam 第一步每个元素的更新量约等于 lr × sign(grad)"
+  },
+  "cold_sample": {
+    "note": "验证集里训练集没见过的用户：用户 ID 编码成 0，所有冷启动用户共用这一行 embedding。词表只来自训练集，所以训练集里没有任何一行是 0：这一行从没拿到过梯度，一直是随机初始化",
+    "user_raw": 634,
+    "user_id_encoded": 0,
+    "movie_raw": 260,
+    "label": 1,
+    "prob": 0.8259,
+    "oov_rows_in_train": 0,
+    "cold_rows_share": 0.7616
+  },
+  "gauc_example": {
+    "note": "同一个用户的验证行按模型分数从高到低；单用户 AUC = 正例排在负例前面的比例",
+    "user": 26,
+    "rows": [
+      {
+        "prob": 0.9054,
+        "label": 1
+      },
+      {
+        "prob": 0.8437,
+        "label": 1
+      },
+      {
+        "prob": 0.8354,
+        "label": 1
+      },
+      {
+        "prob": 0.826,
+        "label": 0
+      },
+      {
+        "prob": 0.8016,
+        "label": 1
+      },
+      {
+        "prob": 0.7997,
+        "label": 0
+      },
+      {
+        "prob": 0.759,
+        "label": 0
+      },
+      {
+        "prob": 0.6021,
+        "label": 1
+      },
+      {
+        "prob": 0.4698,
+        "label": 1
+      },
+      {
+        "prob": 0.4144,
+        "label": 0
+      },
+      {
+        "prob": 0.3086,
+        "label": 1
+      }
+    ],
+    "n_pos": 7,
+    "n_neg": 4,
+    "user_auc": 0.6071
+  },
+  "reload": {
+    "max_prob_diff": 1.7881393432617188e-07,
+    "ok": true
+  }
+}

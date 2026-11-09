@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · MovieLens-1M 全量 · 用户 ID + 电影 ID 的 Embedding + MLP · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · MovieLens-1M 全量 · 用户 ID + 电影 ID 的 Embedding + MLP · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 验证 AUC | 验证 GAUC | 留出 AUC | 验证冷启动用户行 | 验证行数 | 验证 AUC：与 `baseline` 差 | 验证 AUC：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.7447 ± 0.0010 | 0.7302 ± 0.0002 | 0.7531 ± 0.0003 | 76.2% ± 0.0% | 100,024.0 ± 0.0 | — | s0 0.7447 / s1 0.7437 / s2 0.7458 | 通过 |
+| `split_user_last` | 候选改动 | 0.7841 ± 0.0007 | 0.6734 ± 0.0020 | 0.7595 ± 0.0004 | 0.0% ± 0.0% | 29,755.0 ± 0.0 | +0.0394 | s0 0.7844 / s1 0.7833 / s2 0.7847 | 通过 |
+
+![验证 AUC（均值，误差线为种子间最小到最大）](figures/h20x8-p_user_last-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R0a/baseline/s0-461376/) · [s1](../../../results/h20x8/R0a/baseline/s1-71c585/) · [s2](../../../results/h20x8/R0a/baseline/s2-570ea7/)
+- `split_user_last` [s0](../../../results/h20x8/R0a/split_user_last/s0-ca5532/) · [s1](../../../results/h20x8/R0a/split_user_last/s1-8d3a8f/) · [s2](../../../results/h20x8/R0a/split_user_last/s2-1ccd26/)
 
 </details>
 

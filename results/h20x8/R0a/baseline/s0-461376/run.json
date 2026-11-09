@@ -1,0 +1,237 @@
+{
+  "run_id": "h20x8.R0a.baseline.s0-461376",
+  "course_id": "R0a",
+  "project": "recbase",
+  "entry": "recbase.experiment",
+  "profile": "h20x8",
+  "scenario": "baseline",
+  "role": "baseline",
+  "title": "基线：全局时间切分（训练 < t80 ≤ 验证 < t90 ≤ 留出），只用 ID，1 个 epoch",
+  "seed": 0,
+  "variant": "baseline",
+  "config_hash": "4613762dd6d1",
+  "code_hash": "1677f61f004b",
+  "git": {
+    "commit": "2a924a34db794e49505d7d6999be497afdb6dda3",
+    "dirty": false
+  },
+  "changed_from_baseline": {},
+  "param_affects": {
+    "dataset": "data",
+    "label_threshold": "data",
+    "split": "data",
+    "user_last_k": "data",
+    "data_seed": "data",
+    "max_users": "data",
+    "stats_mode": "data",
+    "stats_smooth": "data",
+    "feature_groups": "model",
+    "arch": "model",
+    "embedding_dim": "model",
+    "hidden": "model",
+    "dropout": "model",
+    "lr": "train",
+    "weight_decay": "train",
+    "batch_size": "train",
+    "epochs": "train",
+    "seed": "train",
+    "bootstrap": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794215961.6502788,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794215961.8005593,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794215975.9916537,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794215978.8548987,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794215986.9625149,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794215987.7812624,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794215961.6502788,
+  "budget": {
+    "max_minutes": 20
+  },
+  "expect": [
+    "summary.data.leak.train_has_future == False",
+    "summary.data.cold.valid.user_rows > 0.5",
+    "summary.valid.auc > 0.70",
+    "summary.valid.auc > summary.reference.valid.item_mean.auc"
+  ],
+  "slot": "gpu0-0",
+  "started_at": 1794215961.8005612,
+  "cache": [
+    {
+      "stage": "recbase_raw",
+      "key_hash": "abf4d3571fc2",
+      "key": {
+        "v": 1,
+        "dataset": "ml-1m"
+      },
+      "hit": false,
+      "source_run": "s0-461376"
+    },
+    {
+      "stage": "recbase_split",
+      "key_hash": "bace5a4e2e85",
+      "key": {
+        "v": 1,
+        "raw": {
+          "v": 1,
+          "dataset": "ml-1m"
+        },
+        "split": "time",
+        "label_threshold": 4,
+        "max_users": 0
+      },
+      "hit": false,
+      "source_run": "s0-461376"
+    },
+    {
+      "stage": "recbase_feats",
+      "key_hash": "39737dbae836",
+      "key": {
+        "v": 1,
+        "split": {
+          "v": 1,
+          "raw": {
+            "v": 1,
+            "dataset": "ml-1m"
+          },
+          "split": "time",
+          "label_threshold": 4,
+          "max_users": 0
+        },
+        "stats_mode": "point_in_time",
+        "stats_smooth": 20.0
+      },
+      "hit": false,
+      "source_run": "s0-461376"
+    }
+  ],
+  "data": {
+    "kind": "公开数据集 MovieLens-1M（评分 ≥ 阈值记为喜欢）",
+    "source": "hazemessam/ml-1m（HF 镜像）",
+    "license": "GroupLens 研究用途条款",
+    "rows": 1000209,
+    "users": 6040,
+    "items": 3706,
+    "split_rows": {
+      "train": 800164,
+      "valid": 100024,
+      "test": 100021
+    },
+    "label_rate": {
+      "train": 0.5787,
+      "valid": 0.578,
+      "test": 0.5444
+    },
+    "time_range": {
+      "t80": "2000-12-02",
+      "t90": "2000-12-29",
+      "train": [
+        "2000-04-25",
+        "2000-12-02"
+      ],
+      "valid": [
+        "2000-12-02",
+        "2000-12-29"
+      ],
+      "test": [
+        "2000-12-29",
+        "2003-02-28"
+      ]
+    },
+    "test_hash": "3f523a92118c",
+    "split": "time",
+    "stats_mode": "point_in_time"
+  },
+  "model": {
+    "arch": "Embedding + MLP",
+    "feature_groups": [
+      "ids"
+    ],
+    "fields": [
+      "user_id",
+      "movie_id"
+    ],
+    "params": {
+      "total": 339713,
+      "embedding": 290048,
+      "mlp": 49665,
+      "embedding_share": 0.8538,
+      "mlp_input_dim": 64,
+      "fields": 2,
+      "dense": 0
+    },
+    "device": "cuda",
+    "dtype": "float32",
+    "train_mode": "full"
+  },
+  "train": {
+    "train_samples": 800164,
+    "steps_per_epoch": 391,
+    "planned_steps": 391,
+    "steps": 391,
+    "seconds": 1.23,
+    "samples_per_s": 695148
+  },
+  "artifacts": {
+    "model.pt": {
+      "kind": "checkpoint",
+      "bytes": 1362545,
+      "note": "排序模型权重"
+    }
+  },
+  "checks": {
+    "reload_identical": true
+  },
+  "ended_at": 1794215987.7812636,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.data.leak.train_has_future == False",
+      "ok": true
+    },
+    {
+      "expr": "summary.data.cold.valid.user_rows > 0.5",
+      "ok": true
+    },
+    {
+      "expr": "summary.valid.auc > 0.70",
+      "ok": true
+    },
+    {
+      "expr": "summary.valid.auc > summary.reference.valid.item_mean.auc",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

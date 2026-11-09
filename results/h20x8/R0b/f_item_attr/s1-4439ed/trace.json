@@ -1,0 +1,313 @@
+{
+  "raw_csv": {
+    "note": "ratings.csv 开头原文：timestamp 被引号包住、里面还有换行，按字符串读再去空白转整数",
+    "text": "userId,movieId,rating,timestamp\r\n1,1193,5,\"978300760\n\"\r\n1,661,3,\"978302109\n\"\r\n1,914,3,\"978301968\n\"\r\n1,3408,4,\"978300275\n\"\r\n1,2355,5,\"978824291\n\"\r\n1,1197,3,\"9783",
+    "parsed": [
+      {
+        "user": 6040,
+        "movie": 858,
+        "rating": 4,
+        "ts": 956703932
+      },
+      {
+        "user": 6040,
+        "movie": 593,
+        "rating": 5,
+        "ts": 956703954
+      }
+    ]
+  },
+  "sample": {
+    "note": "被追踪样本 = 训练第 1 个 batch 的第 1 条（真实打乱结果）。stats_by_mode 是这一行在四种统计口径下的值",
+    "raw": {
+      "user": 3778,
+      "movie": 1822,
+      "title": "Meet the Deedles (1998)",
+      "genres": "Children's|Comedy",
+      "rating": 1,
+      "time": "2000-08-12T00:24:19+00:00",
+      "label": 0
+    },
+    "encoded": {
+      "user_id": 3138.0,
+      "movie_id": 1623.0,
+      "year_bucket": 17.0,
+      "genres": [
+        4,
+        5,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "stats_mode": "point_in_time",
+    "stats_by_mode": {
+      "point_in_time": {
+        "user_cnt": 486,
+        "user_pos": 98,
+        "user_rate": 0.2165,
+        "item_cnt": 5,
+        "item_pos": 0,
+        "item_rate": 0.463
+      },
+      "daily": {
+        "user_cnt": 384,
+        "user_pos": 97,
+        "user_rate": 0.2687,
+        "item_cnt": 5,
+        "item_pos": 0,
+        "item_rate": 0.463
+      },
+      "include_self": {
+        "user_cnt": 487,
+        "user_pos": 98,
+        "user_rate": 0.2161,
+        "item_cnt": 6,
+        "item_pos": 0,
+        "item_rate": 0.4452
+      },
+      "full": {
+        "user_cnt": 941,
+        "user_pos": 171,
+        "user_rate": 0.19,
+        "item_cnt": 21,
+        "item_pos": 3,
+        "item_rate": 0.3555
+      }
+    }
+  },
+  "batch": {
+    "note": "训练第 1 个 batch：每个字段的张量形状（B = batch 大小）",
+    "batch_size": 2048,
+    "tensors": {
+      "user_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          3138.0,
+          2740.0,
+          3057.0,
+          2980.0,
+          2204.0,
+          1628.0
+        ]
+      },
+      "movie_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          1623.0,
+          2125.0,
+          2711.0,
+          146.0,
+          3118.0,
+          844.0
+        ]
+      },
+      "year_bucket": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          17.0,
+          13.0,
+          10.0,
+          17.0,
+          16.0,
+          5.0
+        ]
+      },
+      "genres": {
+        "shape": [
+          2048,
+          6
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          4.0,
+          5.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "label": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          1.0,
+          1.0
+        ],
+        "mean": 0.55664,
+        "std": 0.4969
+      }
+    },
+    "field_vectors": "[B, 4, 32]",
+    "mlp_input": {
+      "shape": [
+        2048,
+        128
+      ],
+      "dtype": "float32",
+      "device": "cuda:0",
+      "head": [
+        0.0053,
+        0.06738,
+        0.01904,
+        -0.02394,
+        -0.04237,
+        0.03943,
+        0.05502,
+        -0.08138
+      ],
+      "mean": 0.00023,
+      "std": 0.04898
+    },
+    "in_dim": 128,
+    "positives": 1140
+  },
+  "forward": {
+    "field_embedding_head4": {
+      "user_id": [
+        0.0053,
+        0.0674,
+        0.019,
+        -0.0239
+      ],
+      "movie_id": [
+        -0.0752,
+        0.0181,
+        -0.0762,
+        0.0401
+      ],
+      "year_bucket": [
+        0.0556,
+        -0.0445,
+        -0.0358,
+        -0.1084
+      ]
+    },
+    "logit": 0.05948,
+    "prob": 0.51486,
+    "label": 0,
+    "sample_loss": 0.72333,
+    "batch_loss_mean": 0.69017,
+    "formula": "loss_i = −[y·log σ(z) + (1−y)·log(1−σ(z))]，batch loss = 1/B Σ loss_i"
+  },
+  "update": {
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "user_embedding_row": 3138,
+    "row_before_head4": [
+      0.005303,
+      0.067378,
+      0.019036,
+      -0.023943
+    ],
+    "row_grad_head4": [
+      -6e-06,
+      -3e-06,
+      9e-06,
+      2e-06
+    ],
+    "user_rows_with_grad": 1424,
+    "user_rows_total": 5401,
+    "oov_row_in_batch": 0,
+    "row_after_head4": [
+      0.006301,
+      0.068374,
+      0.018037,
+      -0.024937
+    ],
+    "logit_before": 0.05948,
+    "logit_after": 0.08165,
+    "batch_loss_before": 0.69017,
+    "batch_loss_after": 0.68896,
+    "note": "只有本 batch 出现过的用户行有梯度；Adam 第一步每个元素的更新量约等于 lr × sign(grad)"
+  },
+  "cold_sample": {
+    "note": "验证集里训练集没见过的用户：用户 ID 编码成 0，所有冷启动用户共用这一行 embedding。词表只来自训练集，所以训练集里没有任何一行是 0：这一行从没拿到过梯度，一直是随机初始化",
+    "user_raw": 634,
+    "user_id_encoded": 0,
+    "movie_raw": 260,
+    "label": 1,
+    "prob": 0.9016,
+    "oov_rows_in_train": 0,
+    "cold_rows_share": 0.7616
+  },
+  "gauc_example": {
+    "note": "同一个用户的验证行按模型分数从高到低；单用户 AUC = 正例排在负例前面的比例",
+    "user": 26,
+    "rows": [
+      {
+        "prob": 0.9414,
+        "label": 1
+      },
+      {
+        "prob": 0.9087,
+        "label": 0
+      },
+      {
+        "prob": 0.853,
+        "label": 1
+      },
+      {
+        "prob": 0.8422,
+        "label": 1
+      },
+      {
+        "prob": 0.8139,
+        "label": 0
+      },
+      {
+        "prob": 0.7304,
+        "label": 1
+      },
+      {
+        "prob": 0.7145,
+        "label": 0
+      },
+      {
+        "prob": 0.6188,
+        "label": 1
+      },
+      {
+        "prob": 0.5516,
+        "label": 1
+      },
+      {
+        "prob": 0.4095,
+        "label": 0
+      },
+      {
+        "prob": 0.3249,
+        "label": 1
+      }
+    ],
+    "n_pos": 7,
+    "n_neg": 4,
+    "user_auc": 0.5
+  },
+  "reload": {
+    "max_prob_diff": 1.1920928955078125e-07,
+    "ok": true
+  }
+}

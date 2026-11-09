@@ -1,0 +1,233 @@
+{
+  "raw_csv": {
+    "note": "ratings.csv 开头原文：timestamp 被引号包住、里面还有换行，按字符串读再去空白转整数",
+    "text": "userId,movieId,rating,timestamp\r\n1,1193,5,\"978300760\n\"\r\n1,661,3,\"978302109\n\"\r\n1,914,3,\"978301968\n\"\r\n1,3408,4,\"978300275\n\"\r\n1,2355,5,\"978824291\n\"\r\n1,1197,3,\"9783",
+    "parsed": [
+      {
+        "user": 6040,
+        "movie": 858,
+        "rating": 4,
+        "ts": 956703932
+      },
+      {
+        "user": 6040,
+        "movie": 593,
+        "rating": 5,
+        "ts": 956703954
+      }
+    ]
+  },
+  "sample": {
+    "note": "被追踪样本 = 训练第 1 个 batch 的第 1 条（真实打乱结果）。stats_by_mode 是这一行在四种统计口径下的值",
+    "raw": {
+      "user": 6014,
+      "movie": 272,
+      "title": "Madness of King George, The (1994)",
+      "genres": "Drama",
+      "rating": 4,
+      "time": "2000-04-26T20:12:13+00:00",
+      "label": 1
+    },
+    "encoded": {
+      "user_id": 5985.0,
+      "movie_id": 266.0
+    },
+    "stats_mode": "point_in_time",
+    "stats_by_mode": {
+      "point_in_time": {
+        "user_cnt": 48,
+        "user_pos": 37,
+        "user_rate": 0.7142,
+        "item_cnt": 1,
+        "item_pos": 0,
+        "item_rate": 0.5507
+      },
+      "daily": {
+        "user_cnt": 0,
+        "user_pos": 0,
+        "user_rate": 0.5782,
+        "item_cnt": 0,
+        "item_pos": 0,
+        "item_rate": 0.5782
+      },
+      "include_self": {
+        "user_cnt": 49,
+        "user_pos": 38,
+        "user_rate": 0.7183,
+        "item_cnt": 2,
+        "item_pos": 1,
+        "item_rate": 0.5711
+      },
+      "full": {
+        "user_cnt": 106,
+        "user_pos": 77,
+        "user_rate": 0.7029,
+        "item_cnt": 383,
+        "item_pos": 247,
+        "item_rate": 0.6416
+      }
+    }
+  },
+  "batch": {
+    "note": "训练第 1 个 batch：每个字段的张量形状（B = batch 大小）",
+    "batch_size": 2048,
+    "tensors": {
+      "user_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          5985.0,
+          4300.0,
+          3283.0,
+          724.0,
+          4597.0,
+          4188.0
+        ]
+      },
+      "movie_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          266.0,
+          1623.0,
+          2216.0,
+          411.0,
+          1034.0,
+          61.0
+        ]
+      },
+      "label": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ],
+        "mean": 0.58496,
+        "std": 0.49285
+      }
+    },
+    "field_vectors": "[B, 2, 32]",
+    "mlp_input": {
+      "shape": [
+        2048,
+        64
+      ],
+      "dtype": "float32",
+      "device": "cuda:0",
+      "head": [
+        0.08732,
+        0.01864,
+        0.02102,
+        -0.09063,
+        0.03584,
+        -0.03958,
+        -0.00587,
+        0.01684
+      ],
+      "mean": -6e-05,
+      "std": 0.05005
+    },
+    "in_dim": 64,
+    "positives": 1198
+  },
+  "forward": {
+    "field_embedding_head4": {
+      "user_id": [
+        0.0873,
+        0.0186,
+        0.021,
+        -0.0906
+      ],
+      "movie_id": [
+        0.0249,
+        -0.0228,
+        -0.0578,
+        0.0054
+      ]
+    },
+    "logit": -0.00172,
+    "prob": 0.49957,
+    "label": 1,
+    "sample_loss": 0.69401,
+    "batch_loss_mean": 0.69368,
+    "formula": "loss_i = −[y·log σ(z) + (1−y)·log(1−σ(z))]，batch loss = 1/B Σ loss_i"
+  },
+  "update": {
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "user_embedding_row": 5985,
+    "row_before_head4": [
+      0.087315,
+      0.018642,
+      0.021018,
+      -0.090629
+    ],
+    "row_grad_head4": [
+      1e-06,
+      5e-06,
+      2e-06,
+      -1e-06
+    ],
+    "user_rows_with_grad": 1430,
+    "user_rows_total": 6012,
+    "oov_row_in_batch": 0,
+    "row_after_head4": [
+      0.086325,
+      0.017644,
+      0.020025,
+      -0.08964
+    ],
+    "logit_before": -0.00172,
+    "logit_after": 0.0341,
+    "batch_loss_before": 0.69368,
+    "batch_loss_after": 0.69045,
+    "note": "只有本 batch 出现过的用户行有梯度；Adam 第一步每个元素的更新量约等于 lr × sign(grad)"
+  },
+  "gauc_example": {
+    "note": "同一个用户的验证行按模型分数从高到低；单用户 AUC = 正例排在负例前面的比例",
+    "user": 25,
+    "rows": [
+      {
+        "prob": 0.9294,
+        "label": 0
+      },
+      {
+        "prob": 0.922,
+        "label": 1
+      },
+      {
+        "prob": 0.3664,
+        "label": 0
+      },
+      {
+        "prob": 0.0623,
+        "label": 0
+      },
+      {
+        "prob": 0.0263,
+        "label": 1
+      }
+    ],
+    "n_pos": 2,
+    "n_neg": 3,
+    "user_auc": 0.3333
+  },
+  "reload": {
+    "max_prob_diff": 1.1920928955078125e-07,
+    "ok": true
+  }
+}

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 336" width="760" height="336" font-family="-apple-system,'PingFang SC','Noto Sans CJK SC',sans-serif">
+<rect width="760" height="336" rx="12" fill="#FFFFFF" stroke="#E3E6EC"/>
+<text x="20" y="28" font-size="15" font-weight="600" fill="#1D2330">验证 AUC（越高越好；不同切分的验证集不是同一批样本）（各场景）</text>
+<text x="740" y="28" font-size="11" fill="#6B7385" text-anchor="end">h20x8 · 每个场景最多 3 个种子</text>
+<line x1="190.0" y1="40" x2="190.0" y2="308" stroke="#E3E6EC"/>
+<text x="190.0" y="324" font-size="10" fill="#6B7385" text-anchor="middle">0</text>
+<line x1="310.0" y1="40" x2="310.0" y2="308" stroke="#E3E6EC"/>
+<text x="310.0" y="324" font-size="10" fill="#6B7385" text-anchor="middle">0.25</text>
+<line x1="430.0" y1="40" x2="430.0" y2="308" stroke="#E3E6EC"/>
+<text x="430.0" y="324" font-size="10" fill="#6B7385" text-anchor="middle">0.5</text>
+<line x1="550.0" y1="40" x2="550.0" y2="308" stroke="#E3E6EC"/>
+<text x="550.0" y="324" font-size="10" fill="#6B7385" text-anchor="middle">0.75</text>
+<line x1="670.0" y1="40" x2="670.0" y2="308" stroke="#E3E6EC"/>
+<text x="670.0" y="324" font-size="10" fill="#6B7385" text-anchor="middle">1</text>
+<text x="180" y="61.0" font-size="12" fill="#1D2330" text-anchor="end">baseline</text>
+<rect x="190" y="46" width="357.5" height="22" rx="4" fill="#3B5BDB" fill-opacity="0.82"><title>baseline：0.745（3 个种子）</title></rect>
+<line x1="547.0" y1="57.0" x2="548.0" y2="57.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="547.5" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="547.0" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="548.0" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="556.0" y="61.0" font-size="11" fill="#6B7385">0.745 ±0.0</text>
+<text x="180" y="93.0" font-size="12" fill="#1D2330" text-anchor="end">fault_random</text>
+<rect x="190" y="78" width="379.2" height="22" rx="4" fill="#C92A2A" fill-opacity="0.82"><title>fault_random：0.79（3 个种子）</title></rect>
+<line x1="568.9" y1="89.0" x2="569.6" y2="89.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="569.0" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="569.6" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="568.9" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="577.6" y="93.0" font-size="11" fill="#6B7385">0.79 ±0.0</text>
+<text x="180" y="125.0" font-size="12" fill="#1D2330" text-anchor="end">split_user_last</text>
+<rect x="190" y="110" width="376.4" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>split_user_last：0.784（3 个种子）</title></rect>
+<line x1="566.0" y1="121.0" x2="566.7" y2="121.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="566.5" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="566.0" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="566.7" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="574.7" y="125.0" font-size="11" fill="#6B7385">0.784 ±0.0</text>
+<text x="180" y="157.0" font-size="12" fill="#1D2330" text-anchor="end">emb_8</text>
+<rect x="190" y="142" width="355.3" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>emb_8：0.74（3 个种子）</title></rect>
+<line x1="541.7" y1="153.0" x2="547.2" y2="153.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="547.0" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="541.7" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="547.2" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="555.2" y="157.0" font-size="11" fill="#6B7385">0.74 ±0.0</text>
+<text x="180" y="189.0" font-size="12" fill="#1D2330" text-anchor="end">emb_128</text>
+<rect x="190" y="174" width="357.3" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>emb_128：0.744（3 个种子）</title></rect>
+<line x1="547.1" y1="185.0" x2="547.6" y2="185.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="547.1" cy="185.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="547.6" cy="185.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="547.1" cy="185.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="555.6" y="189.0" font-size="11" fill="#6B7385">0.744 ±0.0</text>
+<text x="180" y="221.0" font-size="12" fill="#1D2330" text-anchor="end">ep8</text>
+<rect x="190" y="206" width="355.1" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>ep8：0.74（3 个种子）</title></rect>
+<line x1="538.3" y1="217.0" x2="549.3" y2="217.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="549.3" cy="217.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="547.8" cy="217.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="538.3" cy="217.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="557.3" y="221.0" font-size="11" fill="#6B7385">0.74 ±0.0</text>
+<text x="180" y="253.0" font-size="12" fill="#1D2330" text-anchor="end">ep8_emb128</text>
+<rect x="190" y="238" width="353.4" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>ep8_emb128：0.736（3 个种子）</title></rect>
+<line x1="543.2" y1="249.0" x2="543.7" y2="249.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="543.7" cy="249.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="543.2" cy="249.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="543.4" cy="249.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="551.7" y="253.0" font-size="11" fill="#6B7385">0.736 ±0.0</text>
+<text x="180" y="285.0" font-size="12" fill="#1D2330" text-anchor="end">ep8_user_last</text>
+<rect x="190" y="270" width="380.9" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>ep8_user_last：0.793（3 个种子）</title></rect>
+<line x1="570.0" y1="281.0" x2="572.1" y2="281.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="570.0" cy="281.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="572.1" cy="281.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="570.5" cy="281.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="580.1" y="285.0" font-size="11" fill="#6B7385">0.793 ±0.0</text>
+</svg>

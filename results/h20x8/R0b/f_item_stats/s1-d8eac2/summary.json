@@ -1,0 +1,569 @@
+{
+  "valid": {
+    "n": 100024,
+    "label_rate": 0.578,
+    "auc": 0.74584,
+    "gauc": 0.73266,
+    "gauc_row_cov": 0.9958,
+    "logloss": 0.59267,
+    "ne": 0.87037,
+    "auc_boot_std": 0.00578
+  },
+  "test": {
+    "n": 100021,
+    "label_rate": 0.5444,
+    "auc": 0.75553,
+    "gauc": 0.73378,
+    "gauc_row_cov": 0.9945,
+    "logloss": 0.59045,
+    "ne": 0.85671,
+    "auc_boot_std": 0.00646
+  },
+  "valid_serving": {
+    "n": 100024,
+    "label_rate": 0.578,
+    "auc": 0.74584,
+    "gauc": 0.73266,
+    "gauc_row_cov": 0.9958,
+    "logloss": 0.59267,
+    "ne": 0.87037,
+    "auc_boot_std": null
+  },
+  "gap": {
+    "valid_minus_test_auc": -0.00969,
+    "valid_minus_test_gauc": -0.00112,
+    "valid_minus_serving_auc": 0.0,
+    "valid_minus_serving_gauc": 0.0
+  },
+  "reference": {
+    "valid": {
+      "item_mean": {
+        "auc": 0.73433,
+        "gauc": 0.73213,
+        "logloss": 0.59363
+      },
+      "user_mean": {
+        "auc": 0.54895,
+        "gauc": 0.5,
+        "logloss": 0.67036
+      }
+    },
+    "test": {
+      "item_mean": {
+        "auc": 0.73186,
+        "gauc": 0.73221,
+        "logloss": 0.60469
+      },
+      "user_mean": {
+        "auc": 0.60733,
+        "gauc": 0.5,
+        "logloss": 0.67758
+      }
+    }
+  },
+  "groups": {
+    "valid": {
+      "u_unseen": {
+        "n": 76176,
+        "label_rate": 0.5928,
+        "auc": 0.7323,
+        "gauc": 0.73187
+      },
+      "u_seen": {
+        "n": 23848,
+        "label_rate": 0.5306,
+        "auc": 0.78591,
+        "gauc": 0.73521
+      },
+      "u_new": {
+        "n": 1382,
+        "label_rate": 0.5318,
+        "auc": 0.72031,
+        "gauc": 0.75456
+      },
+      "u_low": {
+        "n": 11397,
+        "label_rate": 0.6876,
+        "auc": 0.71777,
+        "gauc": 0.7237
+      },
+      "u_mid": {
+        "n": 31935,
+        "label_rate": 0.6455,
+        "auc": 0.70762,
+        "gauc": 0.6957
+      },
+      "u_high": {
+        "n": 39855,
+        "label_rate": 0.5556,
+        "auc": 0.7393,
+        "gauc": 0.72427
+      },
+      "u_heavy": {
+        "n": 15455,
+        "label_rate": 0.4193,
+        "auc": 0.77301,
+        "gauc": 0.76173
+      },
+      "i_tail": {
+        "n": 3164,
+        "label_rate": 0.4087,
+        "auc": 0.72261,
+        "gauc": 0.69617
+      },
+      "i_mid": {
+        "n": 43202,
+        "label_rate": 0.4833,
+        "auc": 0.75302,
+        "gauc": 0.73742
+      },
+      "i_head": {
+        "n": 53658,
+        "label_rate": 0.6642,
+        "auc": 0.70349,
+        "gauc": 0.7006
+      },
+      "fut_user": {
+        "n": 0,
+        "label_rate": null,
+        "auc": null,
+        "gauc": null
+      },
+      "no_fut_user": {
+        "n": 100024,
+        "label_rate": 0.578,
+        "auc": 0.74584,
+        "gauc": 0.73266
+      }
+    },
+    "test": {
+      "u_unseen": {
+        "n": 19326,
+        "label_rate": 0.5595,
+        "auc": 0.72707,
+        "gauc": 0.72825
+      },
+      "u_seen": {
+        "n": 80695,
+        "label_rate": 0.5408,
+        "auc": 0.76303,
+        "gauc": 0.73511
+      },
+      "u_new": {
+        "n": 58,
+        "label_rate": 0.5,
+        "auc": 0.75268,
+        "gauc": 0.67901
+      },
+      "u_low": {
+        "n": 1711,
+        "label_rate": 0.6739,
+        "auc": 0.74341,
+        "gauc": 0.71912
+      },
+      "u_mid": {
+        "n": 14124,
+        "label_rate": 0.6451,
+        "auc": 0.72319,
+        "gauc": 0.69679
+      },
+      "u_high": {
+        "n": 48145,
+        "label_rate": 0.5781,
+        "auc": 0.73951,
+        "gauc": 0.72
+      },
+      "u_heavy": {
+        "n": 35983,
+        "label_rate": 0.4538,
+        "auc": 0.76618,
+        "gauc": 0.75281
+      },
+      "i_tail": {
+        "n": 4012,
+        "label_rate": 0.4215,
+        "auc": 0.71371,
+        "gauc": 0.66709
+      },
+      "i_mid": {
+        "n": 45799,
+        "label_rate": 0.4673,
+        "auc": 0.76955,
+        "gauc": 0.75074
+      },
+      "i_head": {
+        "n": 50210,
+        "label_rate": 0.6245,
+        "auc": 0.71892,
+        "gauc": 0.69574
+      },
+      "fut_user": {
+        "n": 0,
+        "label_rate": null,
+        "auc": null,
+        "gauc": null
+      },
+      "no_fut_user": {
+        "n": 100021,
+        "label_rate": 0.5444,
+        "auc": 0.75553,
+        "gauc": 0.73378
+      }
+    }
+  },
+  "groups_valid": [
+    {
+      "key": "u_unseen",
+      "group": "用户在训练集",
+      "value": "没出现（OOV）",
+      "n": 76176,
+      "label_rate": 0.5928,
+      "auc": 0.7323,
+      "gauc": 0.73187
+    },
+    {
+      "key": "u_seen",
+      "group": "用户在训练集",
+      "value": "出现过",
+      "n": 23848,
+      "label_rate": 0.5306,
+      "auc": 0.78591,
+      "gauc": 0.73521
+    },
+    {
+      "key": "u_new",
+      "group": "用户此前评分数",
+      "value": "0",
+      "n": 1382,
+      "label_rate": 0.5318,
+      "auc": 0.72031,
+      "gauc": 0.75456
+    },
+    {
+      "key": "u_low",
+      "group": "用户此前评分数",
+      "value": "1-19",
+      "n": 11397,
+      "label_rate": 0.6876,
+      "auc": 0.71777,
+      "gauc": 0.7237
+    },
+    {
+      "key": "u_mid",
+      "group": "用户此前评分数",
+      "value": "20-99",
+      "n": 31935,
+      "label_rate": 0.6455,
+      "auc": 0.70762,
+      "gauc": 0.6957
+    },
+    {
+      "key": "u_high",
+      "group": "用户此前评分数",
+      "value": "100-399",
+      "n": 39855,
+      "label_rate": 0.5556,
+      "auc": 0.7393,
+      "gauc": 0.72427
+    },
+    {
+      "key": "u_heavy",
+      "group": "用户此前评分数",
+      "value": "400+",
+      "n": 15455,
+      "label_rate": 0.4193,
+      "auc": 0.77301,
+      "gauc": 0.76173
+    },
+    {
+      "key": "i_tail",
+      "group": "电影此前评分数",
+      "value": "<50",
+      "n": 3164,
+      "label_rate": 0.4087,
+      "auc": 0.72261,
+      "gauc": 0.69617
+    },
+    {
+      "key": "i_mid",
+      "group": "电影此前评分数",
+      "value": "50-499",
+      "n": 43202,
+      "label_rate": 0.4833,
+      "auc": 0.75302,
+      "gauc": 0.73742
+    },
+    {
+      "key": "i_head",
+      "group": "电影此前评分数",
+      "value": "500+",
+      "n": 53658,
+      "label_rate": 0.6642,
+      "auc": 0.70349,
+      "gauc": 0.7006
+    },
+    {
+      "key": "fut_user",
+      "group": "训练集有该用户更晚的行为",
+      "value": "有",
+      "n": 0,
+      "label_rate": null,
+      "auc": null,
+      "gauc": null
+    },
+    {
+      "key": "no_fut_user",
+      "group": "训练集有该用户更晚的行为",
+      "value": "没有",
+      "n": 100024,
+      "label_rate": 0.578,
+      "auc": 0.74584,
+      "gauc": 0.73266
+    }
+  ],
+  "groups_test": [
+    {
+      "key": "u_unseen",
+      "group": "用户在训练集",
+      "value": "没出现（OOV）",
+      "n": 19326,
+      "label_rate": 0.5595,
+      "auc": 0.72707,
+      "gauc": 0.72825
+    },
+    {
+      "key": "u_seen",
+      "group": "用户在训练集",
+      "value": "出现过",
+      "n": 80695,
+      "label_rate": 0.5408,
+      "auc": 0.76303,
+      "gauc": 0.73511
+    },
+    {
+      "key": "u_new",
+      "group": "用户此前评分数",
+      "value": "0",
+      "n": 58,
+      "label_rate": 0.5,
+      "auc": 0.75268,
+      "gauc": 0.67901
+    },
+    {
+      "key": "u_low",
+      "group": "用户此前评分数",
+      "value": "1-19",
+      "n": 1711,
+      "label_rate": 0.6739,
+      "auc": 0.74341,
+      "gauc": 0.71912
+    },
+    {
+      "key": "u_mid",
+      "group": "用户此前评分数",
+      "value": "20-99",
+      "n": 14124,
+      "label_rate": 0.6451,
+      "auc": 0.72319,
+      "gauc": 0.69679
+    },
+    {
+      "key": "u_high",
+      "group": "用户此前评分数",
+      "value": "100-399",
+      "n": 48145,
+      "label_rate": 0.5781,
+      "auc": 0.73951,
+      "gauc": 0.72
+    },
+    {
+      "key": "u_heavy",
+      "group": "用户此前评分数",
+      "value": "400+",
+      "n": 35983,
+      "label_rate": 0.4538,
+      "auc": 0.76618,
+      "gauc": 0.75281
+    },
+    {
+      "key": "i_tail",
+      "group": "电影此前评分数",
+      "value": "<50",
+      "n": 4012,
+      "label_rate": 0.4215,
+      "auc": 0.71371,
+      "gauc": 0.66709
+    },
+    {
+      "key": "i_mid",
+      "group": "电影此前评分数",
+      "value": "50-499",
+      "n": 45799,
+      "label_rate": 0.4673,
+      "auc": 0.76955,
+      "gauc": 0.75074
+    },
+    {
+      "key": "i_head",
+      "group": "电影此前评分数",
+      "value": "500+",
+      "n": 50210,
+      "label_rate": 0.6245,
+      "auc": 0.71892,
+      "gauc": 0.69574
+    },
+    {
+      "key": "fut_user",
+      "group": "训练集有该用户更晚的行为",
+      "value": "有",
+      "n": 0,
+      "label_rate": null,
+      "auc": null,
+      "gauc": null
+    },
+    {
+      "key": "no_fut_user",
+      "group": "训练集有该用户更晚的行为",
+      "value": "没有",
+      "n": 100021,
+      "label_rate": 0.5444,
+      "auc": 0.75553,
+      "gauc": 0.73378
+    }
+  ],
+  "data": {
+    "rows": 1000209,
+    "users": 6040,
+    "items": 3706,
+    "split_rows": {
+      "train": 800164,
+      "valid": 100024,
+      "test": 100021
+    },
+    "label_rate": {
+      "train": 0.5787,
+      "valid": 0.578,
+      "test": 0.5444
+    },
+    "time_range": {
+      "t80": "2000-12-02",
+      "t90": "2000-12-29",
+      "train": [
+        "2000-04-25",
+        "2000-12-02"
+      ],
+      "valid": [
+        "2000-12-02",
+        "2000-12-29"
+      ],
+      "test": [
+        "2000-12-29",
+        "2003-02-28"
+      ]
+    },
+    "test_hash": "3f523a92118c",
+    "train_vocab": {
+      "users": 5400,
+      "movies": 3662
+    },
+    "leak": {
+      "train_has_future": false,
+      "valid_rows_with_later_train_same_user": 0.0,
+      "valid_rows_with_later_train_same_item": 0.0
+    },
+    "cold": {
+      "valid": {
+        "user_rows": 0.7616,
+        "item_rows": 0.0002,
+        "users": 1134
+      },
+      "test": {
+        "user_rows": 0.1932,
+        "item_rows": 0.001,
+        "users": 1209
+      }
+    }
+  },
+  "stats_check": {
+    "mode": "point_in_time",
+    "serve_mode": "point_in_time",
+    "prior": 0.5787,
+    "single_auc": {
+      "user_rate": {
+        "train": 0.68,
+        "valid": 0.6882,
+        "valid_serving": 0.6882
+      },
+      "item_rate": {
+        "train": 0.7254,
+        "valid": 0.7345,
+        "valid_serving": 0.7345
+      }
+    },
+    "user_rows_using_future_share": 0.0,
+    "user_rows_using_self_share": 0.0,
+    "item_rows_using_future_share": 0.0,
+    "item_rows_using_self_share": 0.0,
+    "used": true
+  },
+  "params": {
+    "total": 348865,
+    "embedding": 290496,
+    "mlp": 58369,
+    "embedding_share": 0.8327,
+    "mlp_input_dim": 98,
+    "fields": 3,
+    "dense": 2
+  },
+  "train": {
+    "epochs": 1,
+    "steps": 391,
+    "seconds": 1.22,
+    "train_seconds": 1.14,
+    "samples_per_s": 699425,
+    "peak_gb": 0.136
+  },
+  "epochs": [
+    {
+      "epoch": 1,
+      "step": 391,
+      "train_logloss": 0.56088,
+      "valid_auc": 0.74584,
+      "valid_gauc": 0.73266,
+      "valid_logloss": 0.59267,
+      "test_auc": 0.75553,
+      "test_gauc": 0.73378
+    }
+  ],
+  "best_epoch": {
+    "epoch": 1,
+    "valid_auc": 0.74584
+  },
+  "overfit": {
+    "valid_auc_drop_from_best": 0.0,
+    "test_auc_drop_from_best": 0.0,
+    "train_valid_logloss_gap": 0.03179
+  },
+  "headline": {
+    "valid_auc": 0.74584,
+    "valid_gauc": 0.73266,
+    "test_auc": 0.75553,
+    "valid_minus_test_auc": -0.00969,
+    "embedding_share": 0.8327
+  },
+  "display": {
+    "验证 AUC": 0.74584,
+    "验证 GAUC": 0.73266,
+    "验证 LogLoss": 0.59267,
+    "留出 AUC": 0.75553,
+    "留出 GAUC": 0.73378,
+    "验证 − 留出 AUC": -0.00969,
+    "验证冷启动用户行占比": 0.7616,
+    "embedding 占比": 0.8327,
+    "最好 epoch": 1
+  },
+  "display_pct": [
+    "验证冷启动用户行占比",
+    "embedding 占比"
+  ]
+}

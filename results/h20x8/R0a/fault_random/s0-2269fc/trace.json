@@ -1,0 +1,255 @@
+{
+  "raw_csv": {
+    "note": "ratings.csv 开头原文：timestamp 被引号包住、里面还有换行，按字符串读再去空白转整数",
+    "text": "userId,movieId,rating,timestamp\r\n1,1193,5,\"978300760\n\"\r\n1,661,3,\"978302109\n\"\r\n1,914,3,\"978301968\n\"\r\n1,3408,4,\"978300275\n\"\r\n1,2355,5,\"978824291\n\"\r\n1,1197,3,\"9783",
+    "parsed": [
+      {
+        "user": 6040,
+        "movie": 858,
+        "rating": 4,
+        "ts": 956703932
+      },
+      {
+        "user": 6040,
+        "movie": 593,
+        "rating": 5,
+        "ts": 956703954
+      }
+    ]
+  },
+  "sample": {
+    "note": "被追踪样本 = 训练第 1 个 batch 的第 1 条（真实打乱结果）。stats_by_mode 是这一行在四种统计口径下的值",
+    "raw": {
+      "user": 2627,
+      "movie": 592,
+      "title": "Batman (1989)",
+      "genres": "Action|Adventure|Crime|Drama",
+      "rating": 3,
+      "time": "2000-11-07T20:32:58+00:00",
+      "label": 0
+    },
+    "encoded": {
+      "user_id": 2601.0,
+      "movie_id": 574.0
+    },
+    "stats_mode": "point_in_time",
+    "stats_by_mode": {
+      "point_in_time": {
+        "user_cnt": 166,
+        "user_pos": 72,
+        "user_rate": 0.4493,
+        "item_cnt": 787,
+        "item_pos": 434,
+        "item_rate": 0.5521
+      },
+      "daily": {
+        "user_cnt": 0,
+        "user_pos": 0,
+        "user_rate": 0.5785,
+        "item_cnt": 782,
+        "item_pos": 433,
+        "item_rate": 0.5543
+      },
+      "include_self": {
+        "user_cnt": 167,
+        "user_pos": 72,
+        "user_rate": 0.4469,
+        "item_cnt": 788,
+        "item_pos": 434,
+        "item_rate": 0.5514
+      },
+      "full": {
+        "user_cnt": 485,
+        "user_pos": 199,
+        "user_rate": 0.417,
+        "item_cnt": 1431,
+        "item_pos": 822,
+        "item_rate": 0.5745
+      }
+    }
+  },
+  "batch": {
+    "note": "训练第 1 个 batch：每个字段的张量形状（B = batch 大小）",
+    "batch_size": 2048,
+    "tensors": {
+      "user_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          2601.0,
+          541.0,
+          2764.0,
+          3899.0,
+          5026.0,
+          1882.0
+        ]
+      },
+      "movie_id": {
+        "shape": [
+          2048
+        ],
+        "dtype": "int64",
+        "device": "cuda:0",
+        "head": [
+          574.0,
+          2237.0,
+          1751.0,
+          1091.0,
+          2094.0,
+          742.0
+        ]
+      },
+      "label": {
+        "shape": [
+          2048
+        ],
+        "dtype": "float32",
+        "device": "cuda:0",
+        "head": [
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean": 0.59082,
+        "std": 0.4918
+      }
+    },
+    "field_vectors": "[B, 2, 32]",
+    "mlp_input": {
+      "shape": [
+        2048,
+        64
+      ],
+      "dtype": "float32",
+      "device": "cuda:0",
+      "head": [
+        -0.01373,
+        0.01567,
+        0.00499,
+        -0.03846,
+        0.10547,
+        -0.02602,
+        -0.0457,
+        0.03229
+      ],
+      "mean": -6e-05,
+      "std": 0.05028
+    },
+    "in_dim": 64,
+    "positives": 1210
+  },
+  "forward": {
+    "field_embedding_head4": {
+      "user_id": [
+        -0.0137,
+        0.0157,
+        0.005,
+        -0.0385
+      ],
+      "movie_id": [
+        0.0333,
+        0.0637,
+        0.0738,
+        0.0548
+      ]
+    },
+    "logit": -0.01289,
+    "prob": 0.49678,
+    "label": 0,
+    "sample_loss": 0.68672,
+    "batch_loss_mean": 0.69473,
+    "formula": "loss_i = −[y·log σ(z) + (1−y)·log(1−σ(z))]，batch loss = 1/B Σ loss_i"
+  },
+  "update": {
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "user_embedding_row": 2601,
+    "row_before_head4": [
+      -0.013731,
+      0.015675,
+      0.004988,
+      -0.038455
+    ],
+    "row_grad_head4": [
+      -1e-06,
+      -1e-06,
+      -2e-06,
+      -1e-06
+    ],
+    "user_rows_with_grad": 1493,
+    "user_rows_total": 6011,
+    "oov_row_in_batch": 0,
+    "row_after_head4": [
+      -0.012741,
+      0.016661,
+      0.005984,
+      -0.037474
+    ],
+    "logit_before": -0.01289,
+    "logit_after": 0.01252,
+    "batch_loss_before": 0.69473,
+    "batch_loss_after": 0.69206,
+    "note": "只有本 batch 出现过的用户行有梯度；Adam 第一步每个元素的更新量约等于 lr × sign(grad)"
+  },
+  "cold_sample": {
+    "note": "验证集里训练集没见过的用户：用户 ID 编码成 0，所有冷启动用户共用这一行 embedding。词表只来自训练集，所以训练集里没有任何一行是 0：这一行从没拿到过梯度，一直是随机初始化",
+    "user_raw": 3326,
+    "user_id_encoded": 0,
+    "movie_raw": 912,
+    "label": 1,
+    "prob": 0.9025,
+    "oov_rows_in_train": 0,
+    "cold_rows_share": 0.0
+  },
+  "gauc_example": {
+    "note": "同一个用户的验证行按模型分数从高到低；单用户 AUC = 正例排在负例前面的比例",
+    "user": 27,
+    "rows": [
+      {
+        "prob": 0.9188,
+        "label": 1
+      },
+      {
+        "prob": 0.9137,
+        "label": 1
+      },
+      {
+        "prob": 0.8887,
+        "label": 1
+      },
+      {
+        "prob": 0.8455,
+        "label": 1
+      },
+      {
+        "prob": 0.839,
+        "label": 1
+      },
+      {
+        "prob": 0.7686,
+        "label": 0
+      },
+      {
+        "prob": 0.5747,
+        "label": 0
+      },
+      {
+        "prob": 0.3255,
+        "label": 0
+      }
+    ],
+    "n_pos": 5,
+    "n_neg": 3,
+    "user_auc": 1.0
+  },
+  "reload": {
+    "max_prob_diff": 1.1920928955078125e-07,
+    "ok": true
+  }
+}
