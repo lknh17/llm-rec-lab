@@ -9,3 +9,5 @@ seeds: []
 requested_commit: 6aa3a9e55eb0fef870d20bcb318f211742917e1c
 note: R05/R06 首次生成（recops 微基准；R06 的 Triton kernel 第一次在 GPU 上跑，看 rel_err）
 how_to_run: python -m labkit jobs run 20261109-2328-r05-r06-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-09T18:35:20Z'
