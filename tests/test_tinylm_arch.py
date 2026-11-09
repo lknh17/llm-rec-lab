@@ -21,8 +21,10 @@ def test_default_structure_init_is_bitwise_unchanged():
     m = GPT(257, SMALL)
     s = sum(p.double().sum().item() * (i + 1) for i, p in enumerate(m.parameters()))
     x = torch.randint(0, 257, (2, 16), generator=torch.Generator().manual_seed(1))
-    assert repr(s) == "1163.155247777907"
-    assert repr(m(x).double().sum().item()) == "21.418252611032585"
+    # 金标值在 Mac（ARM）上用 L01 代码算出。x86/AVX512 上 L01 代码本身就差 ~1e-7（浮点内核不同），
+    # 所以跨平台只能比到 rel=1e-6；模块创建顺序一旦变化，参数会换一批随机数，差在 1e-3 量级，仍能抓到。
+    assert s == pytest.approx(1163.155247777907, rel=1e-6, abs=0)
+    assert m(x).double().sum().item() == pytest.approx(21.418252611032585, rel=1e-6, abs=0)
 
 
 def test_new_params_are_omitted_from_hash_at_default():

@@ -20,7 +20,7 @@
 | 作业单 | `jobs/pending/` 下的作业单按文件名顺序逐张执行（文件名形如 `<日期>-<课程>-h20x8.yaml`） |
 
 **第一次**：按第 1-3 节准备环境、下载模型、预检，再按第 4 节装好常驻 agent。之后什么都不用做，agent 会自动领取、执行、推回。
-**agent 已经在跑**：确认 `systemctl --user status labkit-agent` 是 active，`status/h20x8.json` 的更新时间在心跳间隔以内即可（运行中 15 分钟，空闲 3 小时，见文件里的 `beat_every_s`）。
+**agent 已经在跑**：确认 `systemctl --user status labkit-agent` 是 active（容器里用 tmux 跑的看 `tmux has-session -t labagent`），`status/h20x8.json` 的更新时间在心跳间隔以内即可（运行中 15 分钟，空闲 3 小时，见文件里的 `beat_every_s`）。
 
 ---
 
@@ -44,7 +44,7 @@
 3. **网络**：能访问 `github.com`、`pypi.org`（或国内镜像）、HuggingFace（或 `hf-mirror.com` / ModelScope）。
 4. **GitHub 凭证**：只授权本仓库写权限，二选一：
    - **Deploy key**（推荐）：仓库 Settings → Deploy keys → Add，勾选 *Allow write access*；`git remote set-url origin git@github.com:lknh17/llm-rec-lab.git`。
-   - **Fine-grained PAT**：Repository access 只选 `lknh17/llm-rec-lab`，Permissions 只给 *Contents: Read and write*。
+   - **Fine-grained PAT**：Repository access 只选 `lknh17/llm-rec-lab`，Permissions 只给 *Contents: Read and write*。出网只有 HTTPS（SSH 的 22/443 都不通）时只能用这种。令牌存成权限 600 的文件，用仓库本地的 `credential.helper` 脚本读取，**不要把令牌写进 remote URL 或环境变量**。
 5. **git 身份**：`git config user.name "h20-agent"`、`git config user.email "h20-agent@users.noreply.github.com"`（不要用真实邮箱）。
 
 ## 2. 环境准备（一次性）
@@ -63,6 +63,8 @@ export HF_HOME=/data/hf
 export HF_ENDPOINT=https://hf-mirror.com          # huggingface.co 不通时
 export LABKIT_REDACT_EXTRA=/data,<集群名>          # 不能公开的路径前缀、集群名，逗号分隔
 ```
+
+`~/.bashrc` 开头通常有 `[ -z "$PS1" ] && return`，tmux、脚本等非交互 shell 读不到写在它后面的变量。建议把上面这些写进单独的文件（例如 `~/.config/llm-rec-lab/env.sh`），在 `~/.bashrc` 的这一行**之前** `source` 它；启动 agent 的命令里也显式 `source` 一次。
 
 主机名、用户名、家目录、仓库路径、`LAB_DATA_DIR`、`LAB_ASSETS_DIR` 会自动识别并脱敏；**内部挂载点、集群名、机房名**只有你知道，必须登记在 `LABKIT_REDACT_EXTRA`。
 
@@ -87,15 +89,23 @@ systemctl --user daemon-reload && systemctl --user enable --now labkit-agent
 loginctl enable-linger $USER                                     # 退出 SSH 后继续运行
 ```
 
+**没有 systemd 用户服务时**（容器里常见，`systemctl --user` 报 "Failed to connect to bus"），用 tmux 代替，环境变量要和服务文件一致：
+
+```bash
+tmux new -d -s labagent '. ~/.config/llm-rec-lab/env.sh && cd <仓库目录> && uv run python -m labkit agent --profile h20x8 --interval 60 2>&1 | tee -a $LAB_DATA_DIR/agent-console.log'
+```
+
+tmux 会话会随容器重启消失，重启后要重新执行这条命令。
+
 服务文件里**不要**设 `HF_HUB_OFFLINE=1`：agent 执行作业前会自动下载场景声明的资产（已存在就跳过），离线模式会让缺资产的运行全部失败。第 3 节先手动下载一遍，可以避免第一张作业等下载。
 
 agent 每 60 秒一轮（`labkit/agent.py`）：
 
 1. `git pull --rebase`；
-2. **抢占**：最早的一张 `jobs/pending/*.yaml`（档位 h20x8）移到 `jobs/running/`，写 `claimed_by`（随机编号，不是主机名），只提交这张作业单并推送；推送冲突说明别人先领了，放弃；
+2. **抢占**：最早的一张 `jobs/pending/*.yaml`（档位 h20x8）移到 `jobs/running/`，写 `claimed_by`（随机编号，不是主机名），只提交这张作业单并推送；推送冲突时先看远端：远端已不在 `pending/` 才算被别人领走，否则只记警告、下一轮再试；
 3. **校验**：只允许 `courses / profile / only / seeds / requested_commit / note` 字段，场景编号必须在场景清单里，`requested_commit` 必须是当前 HEAD 的祖先；不通过就移到 `jobs/done/`（`status: rejected`，附原因），不执行；
 4. **执行**：批量运行 → expect 断言 → 导出脱敏结果到 `results/h20x8/` → 更新课程 README 的结果表和证据图；
-5. **推回**：脱敏检查通过后提交并推送；
+5. **推回**：脱敏检查通过后提交并推送；push 被拒（Mac 端或 pages 工作流同时在推）会重新 `pull --rebase` 再推，最多 3 次。上一张作业的结果没推出去时，下一轮先补推；补推还失败就**暂停领取和续跑**，心跳报 `error`，等人处理（避免在脏工作区上反复重跑）；
 6. **心跳** `status/h20x8.json`：状态（idle / running / publishing / error）、作业编号、进度、GPU 型号与数量、更新时间；状态变化时立即推送，状态不变时运行中每 15 分钟、空闲每 3 小时推一次（`beat_every_s`），避免空闲时刷提交历史；
 7. 日志 `$LAB_DATA_DIR/agent/agent.log`（5 MB × 5 份轮转）。
 
@@ -103,7 +113,7 @@ agent 每 60 秒一轮（`labkit/agent.py`）：
 
 agent 重启后，自己领过但没跑完的作业会自动续跑（已成功的运行跳过）。Mac 端作废的作业在 `jobs/cancelled/`，agent 不会领取。
 
-查看：`systemctl --user status labkit-agent`、`tail -f $LAB_DATA_DIR/agent/agent.log`。手动执行（下一节）前先 `systemctl --user stop labkit-agent`，两者不要同时进行。
+查看：`systemctl --user status labkit-agent`、`tail -f $LAB_DATA_DIR/agent/agent.log`。手动执行（下一节）前先 `systemctl --user stop labkit-agent`（tmux 方式：`tmux send-keys -t labagent C-c`），两者不要同时进行。
 
 ## 5. 手动执行（agent 不可用时）
 
@@ -124,7 +134,7 @@ tmux new -s lab 'uv run python -m labkit jobs run <job_id> 2>&1 | tee -a $LAB_DA
 `jobs/done/<job_id>.yaml` 里：
 
 - [ ] `status: done`（全部成功且断言通过）；`partial` 表示部分失败或部分断言不通过；`failed` 表示全部失败；
-- [ ] `runs` 共 34 项，每项都有 `status` 和 `minutes`；有断言的场景 `expect_ok` 为 `true`；
+- [ ] `runs` 的项数等于 `labkit scenarios <课程> --profile h20x8` 列出的运行数，每项都有 `status` 和 `minutes`（因已有结果而 `skipped` 的记 0）；有断言的场景 `expect_ok` 为 `true`；
 - [ ] `problems` 为空；不为空时，每条在 `notes` 里写一句你的判断；
 - [ ] `host_summary` 只有 GPU 型号、数量、显存、驱动/CUDA/torch 版本，**没有主机名和 IP**；
 - [ ] `uv run python -m labkit redact --check` 输出"脱敏检查通过"。
@@ -139,6 +149,7 @@ tmux new -s lab 'uv run python -m labkit jobs run <job_id> 2>&1 | tee -a $LAB_DA
 | 某个运行 `expect_ok: false` | **不要重跑碰运气，也不要改断言。**这是有价值的结果（例如放大后故障不再复现）。保留结果，在 `notes` 写一句观察，正常推送 |
 | 运行超时（`end_reason` 含 budget） | 保留结果推送，在 `notes` 写明；Mac 端会调整预算后重新下发 |
 | `publish` 报"脱敏检查没通过" | 看输出的文件和问题类型。漏登记的字符串补进 `LABKIT_REDACT_EXTRA`，执行 `uv run python -m labkit export --profile h20x8` 重新导出，再 `publish`。**不要手工删结果内容，不要绕过钩子** |
+| 心跳 `last_error` 是"本地有没推送的结果且补推失败，暂停领取" | agent 在等人。按上一行处理脱敏问题后 `uv run python -m labkit publish -m "results: 补推"`，下一轮 agent 自动恢复领取 |
 | `publish` 报 pull --rebase 冲突 | `git rebase --abort` → `git pull` → `uv run python -m labkit publish -m "results: <job_id>"` |
 | `requested_commit` 比本地新 | 先 `git pull` |
 | 作业单被 `rejected` | 看作业单里的原因（场景编号不存在、字段不合法、代码版本不是祖先），写进 `notes` 推回即可，不要自己修作业单 |
