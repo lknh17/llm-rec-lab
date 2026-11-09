@@ -10,3 +10,5 @@ seeds: []
 requested_commit: 756e400d07f9a01f148381d4c41fb9616cd110a3
 note: H20 端重发：labkit 修复 756e400 后重跑 20261109-1317（90 个运行已成功会跳过，只导出并生成文档）
 how_to_run: python -m labkit jobs run 20261109-1638-l02-l03-l04-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-09T08:52:30Z'
