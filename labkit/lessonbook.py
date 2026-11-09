@@ -122,6 +122,8 @@ class Book:
 
 # ------------------------------------------------------------------ 格式化
 def fmt(v: float, spec: str | None = None, pct: bool = False, signed: bool = False) -> str:
+    if spec and spec.startswith("+"):  # 规格自带符号（如 lesson.yaml 的 fmt: +.3f）：不能再加一次，否则拼成 "++.3f" 报错
+        signed, spec = True, spec[1:]
     sign = "+" if signed else ""
     if pct or spec == "pct":
         return f"{v * 100:{sign}.1f}%"

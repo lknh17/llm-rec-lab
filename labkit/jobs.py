@@ -77,7 +77,9 @@ def new_job(courses: list[str], profile: str, only: list[str] | None = None, see
 
 
 def find(job_id: str) -> tuple[str, Path] | None:
-    for s in STATES:
+    # 从最靠后的状态找起：同一作业单同时出现在 running/ 和 done/（例如 git reset 恢复了旧的 running 副本）时，
+    # 以 done 为准，否则 agent 会把已经结束的作业当成"没跑完"反复续跑
+    for s in reversed(STATES):
         p = _dir(s) / f"{job_id}.yaml"
         if p.exists():
             return s, p
@@ -94,13 +96,27 @@ def load(job_id: str) -> dict:
 
 
 def list_jobs() -> list[dict]:
-    out = []
+    out: dict[str, dict] = {}
     for s in STATES:
         for p in sorted(_dir(s).glob("*.yaml")):
             d = yaml.safe_load(p.read_text()) or {}
             d["_state"] = s
-            out.append(d)
-    return out
+            out[p.stem] = d  # 同一作业单在多个目录：后面的状态覆盖前面的（与 find 一致）
+    return list(out.values())
+
+
+def _redact(x, extra: list[str] | None = None):
+    """作业单会推到公开仓库：写入的字符串（尤其是 problems 里的异常信息，常带本机路径）先脱敏。"""
+    from . import redact
+
+    extra = redact.sensitive_strings() if extra is None else extra
+    if isinstance(x, str):
+        return redact.redact_text(x, extra)
+    if isinstance(x, dict):
+        return {k: _redact(v, extra) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [_redact(v, extra) for v in x]
+    return x
 
 
 def move(job_id: str, to: str, **updates) -> Path:
@@ -110,7 +126,7 @@ def move(job_id: str, to: str, **updates) -> Path:
     if to not in _NEXT[state]:
         raise ValueError(f"作业状态只能往前走：{state} → {to} 不允许")
     data = yaml.safe_load(path.read_text())
-    data.update(updates)
+    data.update(_redact(updates))
     dst = _dir(to) / path.name
     dst.write_text(_dump(data))
     if dst != path:
@@ -186,10 +202,17 @@ def run_job(job_id: str, max_slots: int | None = None, publish_each: bool = True
     exported = redact.export_all(job["profile"], job["courses"])
     from . import docs
 
-    docs.build_all()  # README 结果表和证据图跟着结果一起更新（GitHub 页面上直接能看）
+    try:
+        docs.build_all()  # README 结果表和证据图跟着结果一起更新（GitHub 页面上直接能看）
+        docs_err = None
+    except Exception as e:  # noqa: BLE001  文档渲染的 bug 不能让已经跑完的运行报告丢失
+        docs_err = f"docs 生成失败（结果已导出，README/图未更新）：{type(e).__name__}: {e}"[:500]
+        print(f"[注意] {docs_err}", flush=True)
     bad = [r for r in report if r["status"] not in ("succeeded", "skipped")]
     expect_bad = [r for r in report if r.get("expect_ok") is False]
     status = "done" if not bad and not expect_bad else ("failed" if len(bad) == len(report) else "partial")
+    if docs_err and status == "done":
+        status = "partial"
     runs = [{k: r.get(k) for k in ("course", "scenario", "seed", "dir", "status", "minutes", "expect_ok", "note",
                                    "end_reason") if r.get(k) is not None} for r in report]
     if (find(job_id) or ("",))[0] == "cancelled":  # 跑的过程中被 Mac 端作废：结果照常导出，作业单保持作废
@@ -197,5 +220,6 @@ def run_job(job_id: str, max_slots: int | None = None, publish_each: bool = True
     dst = move(job_id, "done", status=status, finished_at=_now(), hours=round((time.time() - t0) / 3600, 2),
                runs=runs, n_exported=len(exported),
                problems=[f"{r['course']}/{r['scenario']} s{r['seed']}: {r['status']} expect_ok={r.get('expect_ok')} "
-                         f"{r.get('end_reason') or ''}".strip() for r in bad + expect_bad])
-    return {"status": status, "job_file": str(dst), "runs": len(report), "problems": len(bad) + len(expect_bad)}
+                         f"{r.get('end_reason') or ''}".strip() for r in bad + expect_bad] + ([docs_err] if docs_err else []))
+    return {"status": status, "job_file": str(dst), "runs": len(report),
+            "problems": len(bad) + len(expect_bad) + (1 if docs_err else 0)}

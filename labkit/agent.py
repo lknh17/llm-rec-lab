@@ -39,7 +39,7 @@ from pathlib import Path
 
 from . import paths
 
-AGENT_VERSION = 3
+AGENT_VERSION = 4
 HEARTBEAT_EVERY = 15 * 60  # 运行中 / 推送中：进度要能看到
 HEARTBEAT_IDLE_EVERY = 3 * 3600  # 空闲 / 出错：只证明 agent 还活着
 BUSY_STATES = {"running", "publishing"}
@@ -99,6 +99,31 @@ def pull() -> bool:
     return True
 
 
+def unpublished() -> list[str]:
+    """results/ jobs/ 下还没提交推送的改动（上一张作业发布失败留下的）。"""
+    r = git("status", "--porcelain", "--untracked-files=all", "--", "results", "jobs", check=False)
+    return [line[3:] for line in r.stdout.splitlines() if line.strip()]
+
+
+def flush_unpublished(hb: "Heartbeat") -> bool:
+    """有没推出去的结果时先补推；补推失败就不领新作业、不续跑（否则会在脏工作区上反复重跑同一张作业）。"""
+    left = unpublished()
+    if not left:
+        return True
+    from .publish import publish
+
+    log.warning("本地有 %d 个文件没推送（例如 %s），先补推", len(left), left[0])
+    with _git_lock:
+        try:
+            publish("results: 补推上次没推出去的结果")
+            return True
+        except (SystemExit, RuntimeError) as e:
+            err = e
+    log.error("补推失败，暂停领取和续跑，需要人工处理：%s", err)
+    hb.update(state="error", last_error=f"本地有没推送的结果且补推失败，暂停领取：{err}"[:300])  # 锁外调用：update 自己会拿锁
+    return False
+
+
 def pending_jobs(profile: str) -> list[dict]:
     from . import jobs
 
@@ -123,13 +148,19 @@ def claim(job_id: str, me: str, push: bool = True) -> bool:
         for _ in range(3):
             if git("push", check=False).returncode == 0:
                 return True
-            r = git("pull", "--rebase", check=False)
-            if r.returncode != 0:  # 同一张作业单冲突：被别的 agent 抢走了
-                log.info("rebase 失败：%s", (r.stderr or r.stdout).strip()[:300])
+            r = git("pull", "--rebase", "--autostash", check=False)
+            if r.returncode != 0:
                 git("rebase", "--abort", check=False)
+                # 只有远端已经不在 pending/ 才算被别人抢走；否则是本地问题（例如工作区不干净），不能误判后去续跑别的作业
+                git("fetch", check=False)
+                taken = git("cat-file", "-e", f"@{{u}}:jobs/pending/{job_id}.yaml", check=False).returncode != 0
                 git("reset", "--hard", "HEAD~1")
-                git("pull", "--rebase", check=False)
-                log.info("作业 %s 被别的 agent 领取，放弃", job_id)
+                git("pull", "--rebase", "--autostash", check=False)
+                if taken:
+                    log.info("作业 %s 被别的 agent 领取，放弃", job_id)
+                else:
+                    log.warning("领取 %s 时 pull --rebase 失败（远端仍是 pending，不是被抢）：%s", job_id,
+                                (r.stderr or r.stdout).strip()[:300])
                 return False
             state = jobs.find(job_id)
             if not state or state[0] != "running" or (jobs.load(job_id).get("claimed_by") != me):
@@ -200,6 +231,10 @@ class Heartbeat:
         if not self.host:
             hs = jobs.host_summary()
             self.host = {"gpu": hs.get("gpu"), "gpu_count": hs.get("gpu_count"), "gpu_mem_gb": hs.get("gpu_mem_gb")}
+        if isinstance(fields.get("last_error"), str):  # 异常信息常带本机路径，心跳文件也会推到公开仓库
+            from . import redact
+
+            fields["last_error"] = redact.redact_text(fields["last_error"])
         self.state.update(fields)
         every = HEARTBEAT_EVERY if self.state.get("state") in BUSY_STATES else HEARTBEAT_IDLE_EVERY
         data = {"agent_version": AGENT_VERSION, "agent_id": self.me, "profile": self.profile, **self.host, **self.state,
@@ -370,6 +405,8 @@ def run(profile: str = "h20x8", once: bool = False, interval: int = 60, max_slot
             restart_if_code_changed(started_with)  # 只在两张作业之间发生，不会打断正在跑的作业
         if not ok:
             hb.update(state="error", last_error="git pull 失败，下一轮重试")
+        elif push and not flush_unpublished(hb):
+            pass
         else:
             hb.update(state="idle", queue=len(pending_jobs(profile)))
             try:
