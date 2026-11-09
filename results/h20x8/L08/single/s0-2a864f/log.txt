@@ -1,0 +1,12 @@
+[worker] 等待设备锁 gpu0-7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L08/single/s0-2a864f/code/trainperf/experiment.py
+[03:08:09] ===== 阶段：prepare =====
+[03:08:09] qwen1.5b：1.54B 参数；none × 1；静态显存估算 24.7 GB/卡
+[03:08:09] ===== 阶段：train =====
+USDT:2026-11-10 03:08:40 458295:458295 SyncActivityProfilerHandler.cpp:39] profiler_start
+USDT:2026-11-10 03:08:42 458295:458295 SyncActivityProfilerHandler.cpp:46] profiler_stop
+[03:08:43] ===== 阶段：evaluate =====
+[03:08:43] 每卡 9,260 tokens/s，MFU 61.3%，步时 452 ms（数据 0 / 前向 155 / 反向 279 / 优化器 14），峰值 48.86 GB
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

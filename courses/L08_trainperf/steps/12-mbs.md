@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | MFU | 峰值 GB | 优化器占比 | MFU：与 `baseline` 差 | MFU：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 40.6% ± 8.2% | 48.9 ± 0.0 | 2.2% ± 0.2% | — | s0 31.2% / s1 46.5% / s2 44.0% | 通过 |
+| `mbs4` | 候选改动 | 41.1% ± 3.9% | 69.8 ± 0.0 | 1.1% ± 0.1% | +0.5% | s0 37.2% / s1 45.0% / s2 41.2% |  |
+| `mbs1` | 候选改动 | 23.2% ± 1.4% | 38.4 ± 0.0 | 3.3% ± 0.6% | -17.4% | s0 22.8% / s1 24.7% / s2 22.1% |  |
+
+![MFU（均值，误差线为种子间最小到最大）](figures/h20x8-p_mbs-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L08/baseline/s0-cb39a6/) · [s1](../../../results/h20x8/L08/baseline/s1-ef300b/) · [s2](../../../results/h20x8/L08/baseline/s2-8206db/)
+- `mbs4` [s0](../../../results/h20x8/L08/mbs4/s0-335e25/) · [s1](../../../results/h20x8/L08/mbs4/s1-0b545e/) · [s2](../../../results/h20x8/L08/mbs4/s2-25d4e9/)
+- `mbs1` [s0](../../../results/h20x8/L08/mbs1/s0-004708/) · [s1](../../../results/h20x8/L08/mbs1/s1-1fe3b0/) · [s2](../../../results/h20x8/L08/mbs1/s2-4d5150/)
 
 </details>
 

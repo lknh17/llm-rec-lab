@@ -28,9 +28,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 0 / 2 个运行）</summary>
+<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 2 / 2 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | OOM 阶段序号 | OOM 时已分配 GB | 估算需要 GB | OOM 阶段序号：各种子 | 断言 |
+| - | - | - | - | - | - | - |
+| `qwen7b_fsdp8` | 候选改动 | 4 | — | — | s0 4 | 通过 |
+| `qwen7b_single` | 候选改动 | 3 | 97.8 | 130 | s0 3 | 通过 |
+
+![峰值显存构成（实测峰值，分项为估算）](figures/h20x8-p_7b_oom-memory.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `qwen7b_fsdp8` [s0](../../../results/h20x8/L08/qwen7b_fsdp8/s0-89b424/)
+- `qwen7b_single` [s0](../../../results/h20x8/L08/qwen7b_single/s0-4c327e/)
 
 </details>
 

@@ -1,0 +1,10 @@
+[worker] 等待设备锁 gpu0-7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L08/qwen7b_single/s0-4c327e/code/trainperf/experiment.py
+[03:47:59] ===== 阶段：prepare =====
+[03:47:59] qwen7b：7.62B 参数；none × 1；静态显存估算 121.8 GB/卡
+[03:47:59] ===== 阶段：train =====
+[03:49:01] ===== 阶段：evaluate =====
+[03:49:01] OOM：发生在 optimizer，当时已分配 97.85 GB；估算需要 129 GB
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

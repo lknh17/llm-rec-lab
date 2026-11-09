@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 步时 ms | 每步同步次数 | 步时 ms：与 `gas8` 差 | 步时 ms：各种子 | 断言 |
+| - | - | - | - | - | - | - |
+| `gas8` | 候选改动 | 3875 ± 48 | 1 ± 0 | — | s0 3895 / s1 3821 / s2 3910 | 通过 |
+| `gas8_sync` | 候选改动 | 5431 ± 607 | 8 ± 0 | +1555 | s0 5448 / s1 6028 / s2 4816 | 通过 |
+
+![步时 ms（均值，误差线为种子间最小到最大）](figures/h20x8-p_gas-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `gas8` [s0](../../../results/h20x8/L08/gas8/s0-d56e78/) · [s1](../../../results/h20x8/L08/gas8/s1-bc42b1/) · [s2](../../../results/h20x8/L08/gas8/s2-780359/)
+- `gas8_sync` [s0](../../../results/h20x8/L08/gas8_sync/s0-fa1a73/) · [s1](../../../results/h20x8/L08/gas8_sync/s1-8d8a25/) · [s2](../../../results/h20x8/L08/gas8_sync/s2-3a75d1/)
 
 </details>
 

@@ -1,0 +1,26 @@
+[worker] 等待设备锁 gpu0-7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L08/ckpt/s2-84029d/code/trainperf/experiment.py
+[04:10:14] ===== 阶段：prepare =====
+[04:10:14] qwen1.5b：1.54B 参数；ddp × 8；静态显存估算 24.7 GB/卡
+[04:10:14] ===== 阶段：train =====
+USDT:2026-11-10 04:11:18 534923:534923 SyncActivityProfilerHandler.cpp:39] profiler_start
+USDT:2026-11-10 04:11:18 534920:534920 SyncActivityProfilerHandler.cpp:39] profiler_start
+USDT:2026-11-10 04:11:18 534917:534917 SyncActivityProfilerHandler.cpp:39] profiler_start
+USDT:2026-11-10 04:11:18 534918:534918 SyncActivityProfilerHandler.cpp:39] profiler_start
+USDT:2026-11-10 04:11:18 534921:534921 SyncActivityProfilerHandler.cpp:39] profiler_start
+USDT:2026-11-10 04:11:18 534919:534919 SyncActivityProfilerHandler.cpp:39] profiler_start
+USDT:2026-11-10 04:11:18 534922:534922 SyncActivityProfilerHandler.cpp:39] profiler_start
+USDT:2026-11-10 04:11:18 534839:534839 SyncActivityProfilerHandler.cpp:39] profiler_start
+USDT:2026-11-10 04:11:21 534918:534918 SyncActivityProfilerHandler.cpp:46] profiler_stop
+USDT:2026-11-10 04:11:21 534919:534919 SyncActivityProfilerHandler.cpp:46] profiler_stop
+USDT:2026-11-10 04:11:21 534923:534923 SyncActivityProfilerHandler.cpp:46] profiler_stop
+USDT:2026-11-10 04:11:21 534839:534839 SyncActivityProfilerHandler.cpp:46] profiler_stop
+USDT:2026-11-10 04:11:21 534922:534922 SyncActivityProfilerHandler.cpp:46] profiler_stop
+USDT:2026-11-10 04:11:21 534921:534921 SyncActivityProfilerHandler.cpp:46] profiler_stop
+USDT:2026-11-10 04:11:21 534917:534917 SyncActivityProfilerHandler.cpp:46] profiler_stop
+USDT:2026-11-10 04:11:21 534920:534920 SyncActivityProfilerHandler.cpp:46] profiler_stop
+[04:11:29] ===== 阶段：evaluate =====
+[04:11:30] 每卡 4,166 tokens/s，MFU 27.6%，步时 1058 ms（数据 0 / 前向 144 / 反向 893 / 优化器 15），峰值 34.8 GB
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

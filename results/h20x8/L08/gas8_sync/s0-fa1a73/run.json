@@ -1,0 +1,122 @@
+{
+  "run_id": "h20x8.L08.gas8_sync.s0-fa1a73",
+  "course_id": "L08",
+  "project": "trainperf",
+  "entry": "trainperf.experiment",
+  "profile": "h20x8",
+  "scenario": "gas8_sync",
+  "role": "variant",
+  "title": "梯度累积 8 步，每个 micro step 都同步",
+  "seed": 0,
+  "variant": "gas8_sync",
+  "config_hash": "fa1a7307448f",
+  "code_hash": "5e40fcdf4fdb",
+  "git": {
+    "commit": "c161317ea42b4fb4752079d59e78d757b546883f",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "grad_accum": 8,
+    "no_sync": false
+  },
+  "param_affects": {
+    "preset": "model",
+    "seq_len": "model",
+    "attn": "model",
+    "strategy": "train",
+    "world_size": "runtime",
+    "backend": "runtime",
+    "mbs": "train",
+    "grad_accum": "train",
+    "no_sync": "train",
+    "precision": "train",
+    "ckpt": "train",
+    "compile": "train",
+    "adam": "train",
+    "lr": "train",
+    "data": "data",
+    "num_workers": "data",
+    "pin_memory": "data",
+    "prefetch_factor": "data",
+    "prep_passes": "data",
+    "steps": "train",
+    "profile_steps": "eval",
+    "bench_hw": "eval",
+    "peak_tflops": "eval",
+    "seed": "train",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794252971.453801,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794252971.6103358,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794252981.0872602,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794252981.1315632,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794253223.6290746,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794253223.7154574,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794252971.453801,
+  "budget": {
+    "max_minutes": 30
+  },
+  "expect": [
+    "summary.comm.syncs_per_opt_step == 8"
+  ],
+  "slot": "gpu0-7-0",
+  "started_at": 1794252971.610337,
+  "data": {
+    "kind": "随机 token（性能测量）",
+    "seq_len": 2048,
+    "mbs": 2,
+    "world_size": 8
+  },
+  "model": {
+    "arch": "类 Qwen2.5（qwen1.5b）",
+    "params": {
+      "total": 1543714304,
+      "trainable": 1543714304
+    },
+    "train_mode": "full",
+    "dtype": "fp32 主参数 + bf16 autocast",
+    "strategy": "ddp",
+    "world_size": 8,
+    "device": "NVIDIA H20"
+  },
+  "ended_at": 1794253223.715459,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.comm.syncs_per_opt_step == 8",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

@@ -29,9 +29,23 @@ DDP 8 卡基础上开全量重计算：每层只存输入，反向时重算这�
 
 ## 实测
 
-<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 每卡 tokens/s | 激活与其他 GB | HFU | 每卡 tokens/s：与 `baseline` 差 | 每卡 tokens/s：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 6,134 ± 1,240 | 24.2 ± 0.0 | 40.6% ± 8.2% | — | s0 4,719 / s1 7,035 / s2 6,647 | 通过 |
+| `ckpt_mbs8` | 候选改动 | 5,747 ± 181 | 38.3 ± 0.0 | 50.7% ± 1.6% | -387 | s0 5,793 / s1 5,547 / s2 5,901 | 通过 |
+| `ckpt` | 候选改动 | 4,664 ± 1,087 | 10.1 ± 0.0 | 41.1% ± 9.6% | -1,469 | s0 5,912 / s1 3,916 / s2 4,166 | 未通过 |
+
+![峰值显存构成（实测峰值，分项为估算）](figures/h20x8-p_ckpt-memory.svg)
+
+![训练吞吐（tokens/s，中位数）](figures/h20x8-p_ckpt-throughput.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L08/baseline/s0-cb39a6/) · [s1](../../../results/h20x8/L08/baseline/s1-ef300b/) · [s2](../../../results/h20x8/L08/baseline/s2-8206db/)
+- `ckpt_mbs8` [s0](../../../results/h20x8/L08/ckpt_mbs8/s0-271791/) · [s1](../../../results/h20x8/L08/ckpt_mbs8/s1-05225e/) · [s2](../../../results/h20x8/L08/ckpt_mbs8/s2-6d754f/)
+- `ckpt` [s0](../../../results/h20x8/L08/ckpt/s0-561819/) · [s1](../../../results/h20x8/L08/ckpt/s1-0f1a29/) · [s2](../../../results/h20x8/L08/ckpt/s2-84029d/)
 
 </details>
 

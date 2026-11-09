@@ -29,9 +29,23 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 峰值 GB | 优化器 GB | 每卡 tokens/s | 峰值 GB：与 `baseline` 差 | 峰值 GB：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 48.9 ± 0.0 | 12.36 ± 0.00 | 6,134 ± 1,240 | — | s0 48.9 / s1 48.9 / s2 48.9 | 通过 |
+| `fsdp_grad_op` | 候选改动 | 25.4 ± 0.0 | 1.56 ± 0.00 | 8,346 ± 495 | -23.5 | s0 25.4 / s1 25.4 / s2 25.4 | 通过 |
+| `fsdp_full` | 候选改动 | 22.3 ± 0.0 | 1.56 ± 0.00 | 7,356 ± 970 | -26.6 | s0 22.3 / s1 22.3 / s2 22.3 | 通过 |
+
+![峰值显存构成（实测峰值，分项为估算）](figures/h20x8-p_fsdp-memory.svg)
+
+![训练吞吐（tokens/s，中位数）](figures/h20x8-p_fsdp-throughput.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L08/baseline/s0-cb39a6/) · [s1](../../../results/h20x8/L08/baseline/s1-ef300b/) · [s2](../../../results/h20x8/L08/baseline/s2-8206db/)
+- `fsdp_grad_op` [s0](../../../results/h20x8/L08/fsdp_grad_op/s0-ecc10f/) · [s1](../../../results/h20x8/L08/fsdp_grad_op/s1-df5187/) · [s2](../../../results/h20x8/L08/fsdp_grad_op/s2-152c18/)
+- `fsdp_full` [s0](../../../results/h20x8/L08/fsdp_full/s0-c286d4/) · [s1](../../../results/h20x8/L08/fsdp_full/s1-50e180/) · [s2](../../../results/h20x8/L08/fsdp_full/s2-806d64/)
 
 </details>
 

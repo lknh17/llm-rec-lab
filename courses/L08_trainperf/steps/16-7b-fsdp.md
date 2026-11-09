@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 0 / 4 个运行）</summary>
+<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 4 / 4 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | MFU | 每卡 tokens/s | 峰值 GB | 暴露的通信 ms | MFU：与 `baseline` 差 | MFU：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 40.6% ± 8.2% | 6,134 ± 1,240 | 48.9 ± 0.0 | 220 ± 88 | — | s0 31.2% / s1 46.5% / s2 44.0% | 通过 |
+| `qwen7b_fsdp8` | 候选改动 | 53.1% | 1,801 | 46.6 | 226 | +12.5% | s0 53.1% | 通过 |
+
+![MFU（均值，误差线为种子间最小到最大）](figures/h20x8-p_7b_fsdp-metrics.svg)
+
+![峰值显存构成（实测峰值，分项为估算）](figures/h20x8-p_7b_fsdp-memory.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L08/baseline/s0-cb39a6/) · [s1](../../../results/h20x8/L08/baseline/s1-ef300b/) · [s2](../../../results/h20x8/L08/baseline/s2-8206db/)
+- `qwen7b_fsdp8` [s0](../../../results/h20x8/L08/qwen7b_fsdp8/s0-89b424/)
 
 </details>
 

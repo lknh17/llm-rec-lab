@@ -1,0 +1,55 @@
+{
+  "model": {
+    "preset": "qwen7b",
+    "params_total": 7615616512,
+    "params_matmul": 7070285824,
+    "embedding": 544997376,
+    "d": 3584,
+    "layers": 28,
+    "heads": 28,
+    "kv": 4,
+    "ffn": 18944,
+    "vocab": 152064,
+    "tie": false
+  },
+  "parallel": {
+    "strategy": "none",
+    "world_size": 1,
+    "mbs": 1,
+    "seq_len": 2048,
+    "grad_accum": 1,
+    "tokens_per_step_global": 2048
+  },
+  "hw": {
+    "gpu_name": "NVIDIA H20",
+    "n_gpus": 8,
+    "cpu_count": 384,
+    "peak_tflops_nominal": 148.0,
+    "matmul_tflops_measured": 91.1,
+    "hbm_gbs_measured": 3330.0
+  },
+  "memory": {
+    "oom": true,
+    "oom_stage": "optimizer",
+    "oom_stage_idx": 3,
+    "oom_alloc_gb": 97.85,
+    "peak_allocated_gb": 97.85,
+    "oom_need_gb_est": 129.5,
+    "est": {
+      "params_gb": 30.462,
+      "grads_gb": 30.462,
+      "optimizer_gb": 60.925,
+      "static_gb": 121.85
+    },
+    "device_total_gb": 102.0,
+    "method": "OOM：记录出错的阶段和当时的显存；需要量 = 16 字节/参数 + 激活粗估"
+  },
+  "headline": {
+    "oom_stage": "optimizer"
+  },
+  "display": {
+    "OOM 阶段序号（0 建模 / 1 前向 / 2 反向 / 3 优化器）": 3,
+    "OOM 时已分配 GB": 97.85,
+    "估算需要 GB": 129.5
+  }
+}

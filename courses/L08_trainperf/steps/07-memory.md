@@ -27,9 +27,17 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 0 / 3 个运行）</summary>
+<details><summary>展开实测：H20 × 8 · 类 Qwen2.5-1.5B / 7B · seq 2048 · bf16 · 3 种子（部分 1 种子）（已有 3 / 3 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 峰值 GB | 激活与其他 GB | 静态估算 GB | 峰值 GB：各种子 | 断言 |
+| - | - | - | - | - | - | - |
+| `single` | 参照 | 48.9 ± 0.0 | 24.1 ± 0.0 | 24.7 ± 0.0 | s0 48.9 / s1 48.9 / s2 48.9 | 通过 |
+
+![峰值显存构成（实测峰值，分项为估算）](figures/h20x8-p_memory-memory.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `single` [s0](../../../results/h20x8/L08/single/s0-2a864f/) · [s1](../../../results/h20x8/L08/single/s1-b8026d/) · [s2](../../../results/h20x8/L08/single/s2-81f014/)
 
 </details>
 

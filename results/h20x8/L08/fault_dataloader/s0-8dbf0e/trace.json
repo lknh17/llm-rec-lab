@@ -1,0 +1,38 @@
+{
+  "step_timeline": {
+    "note": "rank0 逐阶段计时窗口的前 3 步（每段前后同步，ms）",
+    "steps": [
+      {
+        "data": 997.49,
+        "fwd": 164.11,
+        "bwd": 690.45,
+        "opt": 32.09
+      },
+      {
+        "data": 1005.94,
+        "fwd": 164.13,
+        "bwd": 527.96,
+        "opt": 15.34
+      },
+      {
+        "data": 1000.82,
+        "fwd": 164.2,
+        "bwd": 384.09,
+        "opt": 15.28
+      }
+    ]
+  },
+  "memory_timeline": {
+    "note": "rank0 显存快照（GB）",
+    "after_build": 6.178,
+    "after_backward": 12.353,
+    "after_step": 24.717,
+    "peak": 48.895,
+    "estimate": {
+      "params_gb": 6.175,
+      "grads_gb": 6.175,
+      "optimizer_gb": 12.35,
+      "static_gb": 24.699
+    }
+  }
+}

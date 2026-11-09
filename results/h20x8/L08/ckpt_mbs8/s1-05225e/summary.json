@@ -1,0 +1,149 @@
+{
+  "model": {
+    "preset": "qwen1.5b",
+    "params_total": 1543714304,
+    "params_matmul": 1543569408,
+    "embedding": 233373696,
+    "d": 1536,
+    "layers": 28,
+    "heads": 12,
+    "kv": 2,
+    "ffn": 8960,
+    "vocab": 151936,
+    "tie": true
+  },
+  "parallel": {
+    "strategy": "ddp",
+    "world_size": 8,
+    "mbs": 8,
+    "seq_len": 2048,
+    "grad_accum": 1,
+    "tokens_per_step_global": 131072
+  },
+  "hw": {
+    "gpu_name": "NVIDIA H20",
+    "n_gpus": 8,
+    "cpu_count": 384,
+    "peak_tflops_nominal": 148.0,
+    "matmul_tflops_measured": 90.8,
+    "hbm_gbs_measured": 3329.0,
+    "allreduce_busbw_gbs": 66.7
+  },
+  "throughput": {
+    "tokens_per_s_per_gpu": 5547.4,
+    "tokens_per_s_global": 44378.9,
+    "step_ms_median": 2977.75,
+    "step_ms_p90": 3243.84,
+    "step_ms_window": 2953.48
+  },
+  "mfu": {
+    "mfu": 0.3669,
+    "mfu_dense_only": 0.3471,
+    "hfu": 0.4893,
+    "model_tflops_per_gpu": 54.31,
+    "peak_tflops_used": 148.0,
+    "mfu_vs_measured_peak": 0.5981,
+    "attn_flops_share": 0.054
+  },
+  "memory": {
+    "oom": false,
+    "oom_stage": "none",
+    "oom_stage_idx": 4,
+    "peak_allocated_gb": 63.01,
+    "peak_reserved_gb": 74.58,
+    "device_total_gb": 102.0,
+    "per_rank_peak_gb": [
+      63.01,
+      63.01,
+      63.01,
+      63.01,
+      63.01,
+      63.01,
+      63.01,
+      63.01
+    ],
+    "est": {
+      "params_gb": 6.175,
+      "grads_gb": 6.175,
+      "optimizer_gb": 12.35,
+      "static_gb": 24.699
+    },
+    "method": "rank0 实测快照：建模（FSDP 为切分）后 = 参数；首个反向后增量 = 梯度；首次 step 后增量 = 优化器状态；激活与其他 = 训练期间峰值 − 前三项（含 logits、通信缓冲、FSDP 的整份参数、碎片）",
+    "breakdown": {
+      "params_gb": 6.178,
+      "grads_gb": 6.175,
+      "optimizer_gb": 12.375,
+      "activations_other_gb": 38.287
+    },
+    "activations_frac": 0.6076
+  },
+  "time": {
+    "data_ms": 0.08,
+    "fwd_ms": 545.8,
+    "bwd_ms": 2409.72,
+    "opt_ms": 14.63,
+    "step_ms": 2970.23,
+    "data_ms_max_rank": 0.09,
+    "data_frac": 0.0,
+    "fwd_frac": 0.1838,
+    "bwd_frac": 0.8113,
+    "opt_frac": 0.0049
+  },
+  "prof": {
+    "gpu_busy_frac": 0.9951,
+    "gpu_idle_frac": 0.0049,
+    "compute_ms_per_step": 2127.29,
+    "nccl_ms_per_step": 818.154,
+    "nccl_exposed_ms_per_step": 818.154,
+    "kernels_per_step": 5798.0,
+    "top_kernels": [
+      {
+        "name": "ncclDevKernel_AllReduce_Sum_f32_RING_LL(ncclDevKernelArgsStorage<4096ul>)",
+        "ms_per_step": 818.075
+      },
+      {
+        "name": "nvjet_sm90_tst_320x128_64x3_1x2_h_bz_coopB_TNT",
+        "ms_per_step": 524.182
+      },
+      {
+        "name": "nvjet_sm90_tst_192x192_64x3_1x2_h_bz_coopB_NNN",
+        "ms_per_step": 345.193
+      },
+      {
+        "name": "nvjet_sm90_tst_192x192_64x3_2x1_v_bz_coopB_NTN",
+        "ms_per_step": 240.713
+      },
+      {
+        "name": "nvjet_sm90_tst_192x192_64x3_1x2_h_bz_coopB_NTN",
+        "ms_per_step": 181.299
+      }
+    ]
+  },
+  "comm": {
+    "syncs_per_opt_step": 1.0,
+    "buckets": 85,
+    "grad_bytes_per_sync_gb": 6.17
+  },
+  "loss": {
+    "first": 12.239,
+    "last": 12.2309
+  },
+  "headline": {
+    "mfu": 0.3669,
+    "tokens_per_s_per_gpu": 5547.4,
+    "peak_allocated_gb": 63.01
+  },
+  "display": {
+    "MFU": 0.3669,
+    "每卡 tokens/s": 5547.0,
+    "峰值显存 GB": 63.01,
+    "步时 ms": 2977.75,
+    "等数据占比": 0.0,
+    "GPU 空闲占比": 0.0049
+  },
+  "display_pct": [
+    "MFU",
+    "等数据占比",
+    "GPU 空闲占比"
+  ]
+}
