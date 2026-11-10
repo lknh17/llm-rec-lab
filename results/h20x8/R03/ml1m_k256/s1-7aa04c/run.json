@@ -10,9 +10,9 @@
   "seed": 1,
   "variant": "ml1m_k256",
   "config_hash": "7aa04cc075e6",
-  "code_hash": "0c476ecb2aed",
+  "code_hash": "6cf06518be5b",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -65,26 +65,26 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794243595.1116157,
+      "time": 1794327003.9113162,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794243595.2680502,
+      "time": 1794327004.060578,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794243603.2863836,
+      "time": 1794327011.1669567,
       "note": "阶段 prepare"
     },
     {
       "status": "succeeded",
-      "time": 1794243605.1945002,
+      "time": 1794327012.754653,
       "note": "完成"
     }
   ],
-  "created_at": 1794243595.1116157,
+  "created_at": 1794327003.9113162,
   "budget": {
     "max_minutes": 20
   },
@@ -92,7 +92,7 @@
     "summary.sid.collision_rate < base.summary.sid.collision_rate"
   ],
   "slot": "gpu1-0",
-  "started_at": 1794243595.2680514,
+  "started_at": 1794327004.0605798,
   "cache": [
     {
       "stage": "genrec_cf_emb",
@@ -124,7 +124,7 @@
       "note": "每个物品的语义 ID [N, L]"
     }
   },
-  "ended_at": 1794243605.1945016,
+  "ended_at": 1794327012.7546542,
   "end_reason": "完成",
   "expect_results": [
     {

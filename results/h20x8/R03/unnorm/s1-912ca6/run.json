@@ -10,9 +10,9 @@
   "seed": 1,
   "variant": "unnorm",
   "config_hash": "912ca628653a",
-  "code_hash": "0c476ecb2aed",
+  "code_hash": "6cf06518be5b",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -65,32 +65,32 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794243715.7122355,
+      "time": 1794327030.593594,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794243715.8526843,
+      "time": 1794327030.7338438,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794243723.0492694,
+      "time": 1794327037.2788773,
       "note": "阶段 prepare"
     },
     {
       "status": "succeeded",
-      "time": 1794243724.8333068,
+      "time": 1794327039.053019,
       "note": "完成"
     }
   ],
-  "created_at": 1794243715.7122355,
+  "created_at": 1794327030.593594,
   "budget": {
     "max_minutes": 20
   },
   "expect": [],
-  "slot": "gpu1-0",
-  "started_at": 1794243715.852686,
+  "slot": "gpu7-0",
+  "started_at": 1794327030.733845,
   "cache": [
     {
       "stage": "genrec_cf_emb",
@@ -122,7 +122,7 @@
       "note": "每个物品的语义 ID [N, L]"
     }
   },
-  "ended_at": 1794243724.8333085,
+  "ended_at": 1794327039.0530205,
   "end_reason": "完成",
   "expect_results": [],
   "expect_ok": true,

@@ -10,9 +10,9 @@
   "seed": 1,
   "variant": "sid_random",
   "config_hash": "840a80eaeed7",
-  "code_hash": "0c476ecb2aed",
+  "code_hash": "6cf06518be5b",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -65,42 +65,42 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794244415.220068,
+      "time": 1794327059.9074113,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794244415.3884418,
+      "time": 1794327060.0719252,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794244423.827439,
+      "time": 1794327068.743739,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794244426.0029466,
+      "time": 1794327070.8523946,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794245046.626634,
+      "time": 1794327070.954777,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794245056.6355467,
+      "time": 1794327084.6777442,
       "note": "完成"
     }
   ],
-  "created_at": 1794244415.220068,
+  "created_at": 1794327059.9074113,
   "budget": {
     "max_minutes": 30
   },
   "expect": [],
-  "slot": "gpu1-0",
-  "started_at": 1794244415.388443,
+  "slot": "gpu5-0",
+  "started_at": 1794327060.0719273,
   "data": {
     "kind": "MovieLens-1M 电影",
     "items": 3706,
@@ -148,7 +148,7 @@
         "task": "retrieval",
         "weight_decay": 0.01
       },
-      "hit": false,
+      "hit": true,
       "source_run": "s1-840a80"
     }
   ],
@@ -171,7 +171,7 @@
       "note": "encoder-decoder 权重"
     }
   },
-  "ended_at": 1794245056.6355486,
+  "ended_at": 1794327084.6777456,
   "end_reason": "完成",
   "expect_results": [],
   "expect_ok": true,

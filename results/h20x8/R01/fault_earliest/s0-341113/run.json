@@ -10,9 +10,9 @@
   "seed": 0,
   "variant": "fault_earliest",
   "config_hash": "3411131f9e5a",
-  "code_hash": "068f21297526",
+  "code_hash": "2792836a45cf",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -70,36 +70,36 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794237072.4122853,
+      "time": 1794326868.3802001,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794237072.554843,
+      "time": 1794326868.5814707,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794237079.8547738,
+      "time": 1794326877.6905818,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794237082.6898432,
+      "time": 1794326880.4947102,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794237112.6540244,
+      "time": 1794326912.4534624,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794237113.4563158,
+      "time": 1794326913.2051005,
       "note": "完成"
     }
   ],
-  "created_at": 1794237072.4122853,
+  "created_at": 1794326868.3802001,
   "budget": {
     "max_minutes": 30
   },
@@ -108,8 +108,8 @@
     "summary.diag.gap_mean > 20",
     "summary.test.by_hist.gt_L.recall10 < base.summary.test.by_hist.gt_L.recall10 - 0.1"
   ],
-  "slot": "gpu4-0",
-  "started_at": 1794237072.5548444,
+  "slot": "gpu5-0",
+  "started_at": 1794326868.5814724,
   "data": {
     "kind": "MovieLens-1M 评分序列（leave-one-out）",
     "users": 6040,
@@ -139,9 +139,9 @@
   },
   "train": {
     "steps": 4000,
-    "seconds": 25.33,
-    "samples_per_s": 20216.8,
-    "tokens_per_s": 661966.2,
+    "seconds": 27.42,
+    "samples_per_s": 18670.7,
+    "tokens_per_s": 611342.8,
     "train_tokens": 16764626
   },
   "artifacts": {
@@ -151,7 +151,7 @@
       "note": "序列模型权重（验证最好的那一步）"
     }
   },
-  "ended_at": 1794237113.4563172,
+  "ended_at": 1794326913.205103,
   "end_reason": "完成",
   "expect_results": [
     {

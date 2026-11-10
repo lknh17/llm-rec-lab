@@ -10,9 +10,9 @@
   "seed": 1,
   "variant": "content",
   "config_hash": "aff4a17743fd",
-  "code_hash": "0c476ecb2aed",
+  "code_hash": "6cf06518be5b",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -65,32 +65,32 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794243582.2433305,
+      "time": 1794327003.2440634,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794243582.3969126,
+      "time": 1794327003.384166,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794243590.110027,
+      "time": 1794327010.8876643,
       "note": "阶段 prepare"
     },
     {
       "status": "succeeded",
-      "time": 1794243591.861514,
+      "time": 1794327012.4662523,
       "note": "完成"
     }
   ],
-  "created_at": 1794243582.2433305,
+  "created_at": 1794327003.2440634,
   "budget": {
     "max_minutes": 20
   },
   "expect": [],
-  "slot": "gpu1-0",
-  "started_at": 1794243582.3969142,
+  "slot": "gpu6-0",
+  "started_at": 1794327003.3841674,
   "cache": [
     {
       "stage": "genrec_content_emb",
@@ -122,7 +122,7 @@
       "note": "每个物品的语义 ID [N, L]"
     }
   },
-  "ended_at": 1794243591.8615165,
+  "ended_at": 1794327012.4662533,
   "end_reason": "完成",
   "expect_results": [],
   "expect_ok": true,

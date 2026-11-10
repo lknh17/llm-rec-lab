@@ -10,9 +10,9 @@
   "seed": 0,
   "variant": "din_l50",
   "config_hash": "bddc4b42b213",
-  "code_hash": "068f21297526",
+  "code_hash": "2792836a45cf",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -70,42 +70,42 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794237809.2532635,
+      "time": 1794326904.3083515,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794237809.4030635,
+      "time": 1794326904.4418135,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794237817.0815978,
+      "time": 1794326912.1434255,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794237818.5325918,
+      "time": 1794326913.4834251,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794237851.468801,
+      "time": 1794326947.1803524,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794237852.263681,
+      "time": 1794326948.0552754,
       "note": "完成"
     }
   ],
-  "created_at": 1794237809.2532635,
+  "created_at": 1794326904.3083515,
   "budget": {
     "max_minutes": 30
   },
   "expect": [],
-  "slot": "gpu4-0",
-  "started_at": 1794237809.4030654,
+  "slot": "gpu1-0",
+  "started_at": 1794326904.4418151,
   "data": {
     "kind": "MovieLens-1M 评分序列（leave-one-out）",
     "users": 6040,
@@ -135,9 +135,9 @@
   },
   "train": {
     "steps": 4000,
-    "seconds": 27.94,
-    "samples_per_s": 18327.6,
-    "tokens_per_s": 600109.2,
+    "seconds": 28.84,
+    "samples_per_s": 17750.1,
+    "tokens_per_s": 581200.0,
     "train_tokens": 16764626
   },
   "artifacts": {
@@ -147,7 +147,7 @@
       "note": "序列模型权重（验证最好的那一步）"
     }
   },
-  "ended_at": 1794237852.2636828,
+  "ended_at": 1794326948.055277,
   "end_reason": "完成",
   "expect_results": [],
   "expect_ok": true,

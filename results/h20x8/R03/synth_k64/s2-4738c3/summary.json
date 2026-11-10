@@ -1,9 +1,9 @@
 {
   "sid": {
-    "collision_rate": 0.95759,
-    "combos": 110912,
+    "collision_rate": 0.95745,
+    "combos": 111684,
     "capacity": 16777216,
-    "max_bucket": 3631,
+    "max_bucket": 3573,
     "uniform": 0.05786,
     "levels": {
       "L1": {
@@ -18,13 +18,13 @@
       },
       "L3": {
         "used_frac": 1.0,
-        "ppl": 36.61,
-        "ppl_frac": 0.572
+        "ppl": 36.59,
+        "ppl_frac": 0.5717
       },
       "L4": {
         "used_frac": 1.0,
-        "ppl": 49.11,
-        "ppl_frac": 0.7673
+        "ppl": 49.47,
+        "ppl_frac": 0.7729
       }
     },
     "by_depth": {
@@ -36,74 +36,74 @@
         "uniform": 1.0
       },
       "d2": {
-        "collision_rate": 0.99992,
-        "combos": 1168,
+        "collision_rate": 0.99993,
+        "combos": 1167,
         "capacity": 4096,
-        "max_bucket": 12890,
+        "max_bucket": 12899,
         "uniform": 1.0
       },
       "d3": {
-        "collision_rate": 0.99835,
-        "combos": 15649,
+        "collision_rate": 0.99838,
+        "combos": 15628,
         "capacity": 262144,
-        "max_bucket": 4746,
+        "max_bucket": 4681,
         "uniform": 0.97796
       },
       "d4": {
-        "collision_rate": 0.95759,
-        "combos": 110912,
+        "collision_rate": 0.95745,
+        "combos": 111684,
         "capacity": 16777216,
-        "max_bucket": 3631,
+        "max_bucket": 3573,
         "uniform": 0.05786
       }
     },
     "at_cap": {
       "c16m": {
         "depth": 4,
-        "collision_rate": 0.95759
+        "collision_rate": 0.95745
       }
     },
     "recon": {
       "L1": 0.5482,
       "L2": 0.4633,
-      "L3": 0.4156,
-      "L4": 0.3832
+      "L3": 0.4155,
+      "L4": 0.3834
     },
     "nmi": {
       "L1_L2": 0.3244,
       "L2_L3": 0.1611,
-      "L3_L4": 0.1063
+      "L3_L4": 0.1036
     },
     "prefix_sim": {
       "random": 0.0369,
-      "d1": 0.6759,
-      "d2": 0.8313,
-      "full": 0.9344
+      "d1": 0.6751,
+      "d2": 0.8306,
+      "full": 0.9355
     },
     "cross": {
       "true_top_purity": 0.8448,
       "true_sub_purity": 0.3357
     },
     "timing": {
-      "emb_s": 1.05,
-      "quantize_s": 2.87
+      "emb_s": 1.2,
+      "quantize_s": 3.89
     }
   },
   "rqvae": {},
   "headline": {
-    "collision_rate": 0.95759
+    "collision_rate": 0.95745
   },
   "display": {
-    "碰撞率": 0.95759,
+    "碰撞率": 0.95745,
     "均匀基准碰撞率": 0.05786,
-    "码组合数": 110912,
+    "码组合数": 111684,
     "L1 困惑度 / K": 0.7859,
-    "L4 困惑度 / K": 0.7673,
+    "L4 困惑度 / K": 0.7729,
     "最低码字利用率": 1.0,
-    "最大桶": 3631,
-    "末层重建误差": 0.3832,
+    "最大桶": 3573,
+    "末层重建误差": 0.3834,
     "NMI(L1, L2)": 0.3244,
-    "同前缀余弦（d1）": 0.6759
+    "同前缀余弦（d1）": 0.6751
   },
   "display_pct": [
     "碰撞率",

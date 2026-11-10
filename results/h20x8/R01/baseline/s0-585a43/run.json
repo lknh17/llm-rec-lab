@@ -10,9 +10,9 @@
   "seed": 0,
   "variant": "baseline",
   "config_hash": "585a4314a83c",
-  "code_hash": "068f21297526",
+  "code_hash": "2792836a45cf",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {},
@@ -68,36 +68,36 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794236905.3641596,
+      "time": 1794326813.8580997,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794236905.5365884,
+      "time": 1794326814.0093982,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794236918.3935509,
+      "time": 1794326827.2389607,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794236921.9607022,
+      "time": 1794326830.3874562,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794236950.8855088,
+      "time": 1794326862.9497666,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794236951.6577952,
+      "time": 1794326863.8418121,
       "note": "完成"
     }
   ],
-  "created_at": 1794236905.3641596,
+  "created_at": 1794326813.8580997,
   "budget": {
     "max_minutes": 30
   },
@@ -109,7 +109,7 @@
     "summary.checks.pad_invariance_max_dlogit < 0.01"
   ],
   "slot": "gpu0-0",
-  "started_at": 1794236905.5365899,
+  "started_at": 1794326814.0093997,
   "data": {
     "kind": "MovieLens-1M 评分序列（leave-one-out）",
     "users": 6040,
@@ -139,9 +139,9 @@
   },
   "train": {
     "steps": 4000,
-    "seconds": 25.24,
-    "samples_per_s": 20284.7,
-    "tokens_per_s": 664190.0,
+    "seconds": 26.96,
+    "samples_per_s": 18992.0,
+    "tokens_per_s": 621863.9,
     "train_tokens": 16764626
   },
   "artifacts": {
@@ -151,7 +151,7 @@
       "note": "序列模型权重（验证最好的那一步）"
     }
   },
-  "ended_at": 1794236951.6577966,
+  "ended_at": 1794326863.841814,
   "end_reason": "完成",
   "expect_results": [
     {

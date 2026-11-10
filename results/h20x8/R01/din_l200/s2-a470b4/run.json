@@ -10,9 +10,9 @@
   "seed": 2,
   "variant": "din_l200",
   "config_hash": "a470b49bb477",
-  "code_hash": "068f21297526",
+  "code_hash": "2792836a45cf",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -71,44 +71,44 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794244560.782502,
+      "time": 1794327064.9370964,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794244560.9417937,
+      "time": 1794327065.099338,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794244569.5790136,
+      "time": 1794327073.6069503,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794244571.1244917,
+      "time": 1794327075.1293964,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794244655.867987,
+      "time": 1794327160.9826727,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794244657.2283487,
+      "time": 1794327162.3192725,
       "note": "完成"
     }
   ],
-  "created_at": 1794244560.782502,
+  "created_at": 1794327064.9370964,
   "budget": {
     "max_minutes": 30
   },
   "expect": [
     "summary.cost.infer_macs_per_user > 2 * base.summary.cost.infer_macs_per_user"
   ],
-  "slot": "gpu0-0",
-  "started_at": 1794244560.9417949,
+  "slot": "gpu2-0",
+  "started_at": 1794327065.0993395,
   "data": {
     "kind": "MovieLens-1M 评分序列（leave-one-out）",
     "users": 6040,
@@ -138,9 +138,9 @@
   },
   "train": {
     "steps": 4000,
-    "seconds": 79.47,
-    "samples_per_s": 6442.4,
-    "tokens_per_s": 416122.4,
+    "seconds": 80.87,
+    "samples_per_s": 6330.9,
+    "tokens_per_s": 408920.1,
     "train_tokens": 33070499
   },
   "artifacts": {
@@ -150,7 +150,7 @@
       "note": "序列模型权重（验证最好的那一步）"
     }
   },
-  "ended_at": 1794244657.22835,
+  "ended_at": 1794327162.3192737,
   "end_reason": "完成",
   "expect_results": [
     {

@@ -197,13 +197,13 @@
     "note": "随机输入、每条序列单独测前向 + 反向（B = 1）",
     "L20": {
       "manual": {
-        "ms": 3.365,
+        "ms": 3.341,
         "peak_gb": 0.036,
         "est_gb": 0.0,
         "oom": false
       },
       "sdpa": {
-        "ms": 2.872,
+        "ms": 2.916,
         "peak_gb": 0.036,
         "est_gb": null,
         "oom": false
@@ -211,13 +211,13 @@
     },
     "L50": {
       "manual": {
-        "ms": 3.698,
+        "ms": 3.693,
         "peak_gb": 0.037,
         "est_gb": 0.0,
         "oom": false
       },
       "sdpa": {
-        "ms": 2.874,
+        "ms": 2.419,
         "peak_gb": 0.037,
         "est_gb": null,
         "oom": false
@@ -225,13 +225,13 @@
     },
     "L200": {
       "manual": {
-        "ms": 4.099,
+        "ms": 3.739,
         "peak_gb": 0.041,
         "est_gb": 0.001,
         "oom": false
       },
       "sdpa": {
-        "ms": 3.27,
+        "ms": 2.931,
         "peak_gb": 0.04,
         "est_gb": null,
         "oom": false
@@ -239,13 +239,13 @@
     },
     "L1000": {
       "manual": {
-        "ms": 3.79,
+        "ms": 3.781,
         "peak_gb": 0.101,
         "est_gb": 0.024,
         "oom": false
       },
       "sdpa": {
-        "ms": 2.924,
+        "ms": 2.929,
         "peak_gb": 0.075,
         "est_gb": null,
         "oom": false
@@ -260,9 +260,9 @@
         50,
         50
       ],
-      "ms_padded": 2.94,
-      "ms_jagged": 16.44,
-      "speedup": 0.18
+      "ms_padded": 2.9,
+      "ms_jagged": 17.45,
+      "speedup": 0.17
     }
   }
 }

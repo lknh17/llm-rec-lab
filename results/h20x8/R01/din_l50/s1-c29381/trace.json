@@ -197,7 +197,7 @@
     "note": "随机输入、每条序列单独测前向 + 反向（B = 1）",
     "L20": {
       "none": {
-        "ms": 1.175,
+        "ms": 1.096,
         "peak_gb": 0.037,
         "est_gb": null,
         "oom": false
@@ -213,7 +213,7 @@
     },
     "L200": {
       "none": {
-        "ms": 1.017,
+        "ms": 1.011,
         "peak_gb": 0.043,
         "est_gb": null,
         "oom": false
@@ -221,7 +221,7 @@
     },
     "L1000": {
       "none": {
-        "ms": 1.725,
+        "ms": 3.69,
         "peak_gb": 0.195,
         "est_gb": null,
         "oom": false
@@ -236,9 +236,9 @@
         50,
         50
       ],
-      "ms_padded": 1.03,
-      "ms_jagged": 7.58,
-      "speedup": 0.14
+      "ms_padded": 1.07,
+      "ms_jagged": 6.24,
+      "speedup": 0.17
     }
   }
 }

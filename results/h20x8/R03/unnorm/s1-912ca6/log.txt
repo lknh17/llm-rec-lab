@@ -1,8 +1,8 @@
-[worker] 等待设备锁 gpu1-0
+[worker] 等待设备锁 gpu7-0
 [worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
 [worker] 从快照加载 <data>/batch/h20x8/R03/unnorm/s1-912ca6/code/genrec/experiment.py
-[01:02:03] ===== 阶段：prepare =====
-[01:02:03] 缓存 genrec_cf_emb key=ef755f944330: 命中，复用运行 s1-d942ef 的产物
-[01:02:04] 语义 ID：3,706 个物品、3 层 × 64 码；碰撞率 16.4%（均匀基准 1.4%），码组合 3,362；每层重建误差 {'L1': 0.6301, 'L2': 0.5308, 'L3': 0.4731}
+[00:10:37] ===== 阶段：prepare =====
+[00:10:38] 缓存 genrec_cf_emb key=ef755f944330: 命中，复用运行 s1-d942ef 的产物
+[00:10:38] 语义 ID：3,706 个物品、3 层 × 64 码；碰撞率 16.4%（均匀基准 1.4%），码组合 3,362；每层重建误差 {'L1': 0.6301, 'L2': 0.5308, 'L3': 0.4731}
 [worker] 结束：succeeded（完成）
 {"status": "succeeded"}

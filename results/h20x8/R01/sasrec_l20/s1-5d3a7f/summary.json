@@ -48,11 +48,11 @@
   },
   "train": {
     "steps": 4000,
-    "seconds": 25.09,
+    "seconds": 24.81,
     "best_step": 4000,
     "best_valid_recall10": 0.23984,
-    "samples_per_s": 20407.1,
-    "tokens_per_s": 343849.9,
+    "samples_per_s": 20633.7,
+    "tokens_per_s": 347668.2,
     "train_tokens": 8626942,
     "final_loss": 5.48143,
     "batch_size": 128,
@@ -68,13 +68,13 @@
     "sdpa_backend": "flash",
     "L20": {
       "manual": {
-        "ms": 3.732,
+        "ms": 3.781,
         "peak_gb": 0.036,
         "est_gb": 0.0,
         "oom": false
       },
       "sdpa": {
-        "ms": 2.896,
+        "ms": 3.05,
         "peak_gb": 0.036,
         "est_gb": null,
         "oom": false
@@ -82,13 +82,13 @@
     },
     "L50": {
       "manual": {
-        "ms": 3.374,
+        "ms": 3.844,
         "peak_gb": 0.037,
         "est_gb": 0.0,
         "oom": false
       },
       "sdpa": {
-        "ms": 3.011,
+        "ms": 2.827,
         "peak_gb": 0.037,
         "est_gb": null,
         "oom": false
@@ -96,13 +96,13 @@
     },
     "L200": {
       "manual": {
-        "ms": 3.778,
+        "ms": 3.892,
         "peak_gb": 0.041,
         "est_gb": 0.001,
         "oom": false
       },
       "sdpa": {
-        "ms": 3.244,
+        "ms": 2.889,
         "peak_gb": 0.04,
         "est_gb": null,
         "oom": false
@@ -110,13 +110,13 @@
     },
     "L1000": {
       "manual": {
-        "ms": 3.82,
+        "ms": 3.923,
         "peak_gb": 0.101,
         "est_gb": 0.024,
         "oom": false
       },
       "sdpa": {
-        "ms": 2.932,
+        "ms": 2.976,
         "peak_gb": 0.075,
         "est_gb": null,
         "oom": false
@@ -131,9 +131,9 @@
         20,
         20
       ],
-      "ms_padded": 2.93,
-      "ms_jagged": 17.73,
-      "speedup": 0.17
+      "ms_padded": 2.95,
+      "ms_jagged": 18.42,
+      "speedup": 0.16
     }
   },
   "checks": {
@@ -164,7 +164,7 @@
     "NDCG@10": 0.1191,
     "采样 100 Recall@10": 0.78659,
     "热度参照 Recall@10": 0.01639,
-    "训练 tokens/s（千）": 343.8,
+    "训练 tokens/s（千）": 347.7,
     "训练峰值 GB": 0.133
   },
   "display_pct": [

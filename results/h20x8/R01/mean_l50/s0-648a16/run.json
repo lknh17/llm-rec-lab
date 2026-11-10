@@ -10,9 +10,9 @@
   "seed": 0,
   "variant": "mean_l50",
   "config_hash": "648a16fc8d35",
-  "code_hash": "068f21297526",
+  "code_hash": "2792836a45cf",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -70,42 +70,42 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794237853.885535,
+      "time": 1794326905.9545355,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794237854.0272624,
+      "time": 1794326906.087253,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794237861.6377308,
+      "time": 1794326913.032975,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794237863.0783987,
+      "time": 1794326914.1666777,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794237882.498106,
+      "time": 1794326932.3157074,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794237883.219729,
+      "time": 1794326933.127357,
       "note": "完成"
     }
   ],
-  "created_at": 1794237853.885535,
+  "created_at": 1794326905.9545355,
   "budget": {
     "max_minutes": 30
   },
   "expect": [],
   "slot": "gpu4-0",
-  "started_at": 1794237854.027264,
+  "started_at": 1794326906.0872543,
   "data": {
     "kind": "MovieLens-1M 评分序列（leave-one-out）",
     "users": 6040,
@@ -135,9 +135,9 @@
   },
   "train": {
     "steps": 4000,
-    "seconds": 14.08,
-    "samples_per_s": 36361.5,
-    "tokens_per_s": 1190600.7,
+    "seconds": 13.98,
+    "samples_per_s": 36615.6,
+    "tokens_per_s": 1198919.0,
     "train_tokens": 16764626
   },
   "artifacts": {
@@ -147,7 +147,7 @@
       "note": "序列模型权重（验证最好的那一步）"
     }
   },
-  "ended_at": 1794237883.2197301,
+  "ended_at": 1794326933.1273582,
   "end_reason": "完成",
   "expect_results": [],
   "expect_ok": true,

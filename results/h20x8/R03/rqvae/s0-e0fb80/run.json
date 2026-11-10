@@ -10,9 +10,9 @@
   "seed": 0,
   "variant": "rqvae",
   "config_hash": "e0fb80d95335",
-  "code_hash": "0c476ecb2aed",
+  "code_hash": "6cf06518be5b",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -67,32 +67,32 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794241032.2586207,
+      "time": 1794326937.1076734,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794241032.4045978,
+      "time": 1794326937.2636545,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794241039.8293319,
+      "time": 1794326945.010883,
       "note": "阶段 prepare"
     },
     {
       "status": "succeeded",
-      "time": 1794241071.7507913,
+      "time": 1794326977.4977634,
       "note": "完成"
     }
   ],
-  "created_at": 1794241032.2586207,
+  "created_at": 1794326937.1076734,
   "budget": {
     "max_minutes": 20
   },
   "expect": [],
   "slot": "gpu4-0",
-  "started_at": 1794241032.4045987,
+  "started_at": 1794326937.2636561,
   "data": {
     "kind": "合成物品",
     "items": 1000000,
@@ -110,7 +110,7 @@
       "note": "每个物品的语义 ID [N, L]"
     }
   },
-  "ended_at": 1794241071.7507927,
+  "ended_at": 1794326977.4977646,
   "end_reason": "完成",
   "expect_results": [],
   "expect_ok": true,

@@ -48,11 +48,11 @@
   },
   "train": {
     "steps": 4000,
-    "seconds": 33.88,
+    "seconds": 34.71,
     "best_step": 4000,
     "best_valid_recall10": 0.27346,
-    "samples_per_s": 15114.3,
-    "tokens_per_s": 976865.9,
+    "samples_per_s": 14751.2,
+    "tokens_per_s": 953399.7,
     "train_tokens": 33091630,
     "final_loss": 5.26675,
     "batch_size": 128,
@@ -68,13 +68,13 @@
     "sdpa_backend": "flash",
     "L20": {
       "manual": {
-        "ms": 3.754,
+        "ms": 3.732,
         "peak_gb": 0.037,
         "est_gb": 0.0,
         "oom": false
       },
       "sdpa": {
-        "ms": 2.789,
+        "ms": 3.31,
         "peak_gb": 0.037,
         "est_gb": null,
         "oom": false
@@ -82,13 +82,13 @@
     },
     "L50": {
       "manual": {
-        "ms": 3.676,
+        "ms": 3.751,
         "peak_gb": 0.037,
         "est_gb": 0.0,
         "oom": false
       },
       "sdpa": {
-        "ms": 2.81,
+        "ms": 2.473,
         "peak_gb": 0.037,
         "est_gb": null,
         "oom": false
@@ -96,13 +96,13 @@
     },
     "L200": {
       "manual": {
-        "ms": 3.673,
+        "ms": 3.748,
         "peak_gb": 0.041,
         "est_gb": 0.001,
         "oom": false
       },
       "sdpa": {
-        "ms": 2.844,
+        "ms": 2.88,
         "peak_gb": 0.04,
         "est_gb": null,
         "oom": false
@@ -110,13 +110,13 @@
     },
     "L1000": {
       "manual": {
-        "ms": 3.924,
+        "ms": 3.82,
         "peak_gb": 0.101,
         "est_gb": 0.024,
         "oom": false
       },
       "sdpa": {
-        "ms": 2.862,
+        "ms": 3.227,
         "peak_gb": 0.075,
         "est_gb": null,
         "oom": false
@@ -131,8 +131,8 @@
         51,
         61
       ],
-      "ms_padded": 2.9,
-      "ms_jagged": 17.29,
+      "ms_padded": 2.92,
+      "ms_jagged": 17.33,
       "speedup": 0.17
     }
   },
@@ -164,7 +164,7 @@
     "NDCG@10": 0.13431,
     "采样 100 Recall@10": 0.8043,
     "热度参照 Recall@10": 0.01639,
-    "训练 tokens/s（千）": 976.9,
+    "训练 tokens/s（千）": 953.4,
     "训练峰值 GB": 1.289
   },
   "display_pct": [

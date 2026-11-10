@@ -10,9 +10,9 @@
   "seed": 1,
   "variant": "synth",
   "config_hash": "de2ed3c403d6",
-  "code_hash": "0c476ecb2aed",
+  "code_hash": "6cf06518be5b",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -67,26 +67,26 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794237004.9418285,
+      "time": 1794326847.5227659,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794237005.0928228,
+      "time": 1794326847.6730368,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794237012.6702018,
+      "time": 1794326856.136893,
       "note": "阶段 prepare"
     },
     {
       "status": "succeeded",
-      "time": 1794237021.7507305,
+      "time": 1794326865.6837468,
       "note": "完成"
     }
   ],
-  "created_at": 1794237004.9418285,
+  "created_at": 1794326847.5227659,
   "budget": {
     "max_minutes": 20
   },
@@ -94,8 +94,8 @@
     "summary.sid.by_depth.d2.collision_rate > 0.9",
     "summary.sid.by_depth.d4.collision_rate < summary.sid.by_depth.d3.collision_rate"
   ],
-  "slot": "gpu4-0",
-  "started_at": 1794237005.0928242,
+  "slot": "gpu5-0",
+  "started_at": 1794326847.673038,
   "data": {
     "kind": "合成物品",
     "items": 1000000,
@@ -113,7 +113,7 @@
       "note": "每个物品的语义 ID [N, L]"
     }
   },
-  "ended_at": 1794237021.7507327,
+  "ended_at": 1794326865.683748,
   "end_reason": "完成",
   "expect_results": [
     {

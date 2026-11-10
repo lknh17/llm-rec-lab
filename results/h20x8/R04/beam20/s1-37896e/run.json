@@ -10,9 +10,9 @@
   "seed": 1,
   "variant": "beam20",
   "config_hash": "37896e0647b8",
-  "code_hash": "0c476ecb2aed",
+  "code_hash": "6cf06518be5b",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -65,42 +65,42 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794243755.3877273,
+      "time": 1794327040.3712637,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794243755.5338235,
+      "time": 1794327040.514637,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794243762.7283876,
+      "time": 1794327047.6932151,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794243764.8849864,
+      "time": 1794327049.8942769,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794243765.0042326,
+      "time": 1794327050.0073848,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794243779.0523155,
+      "time": 1794327064.085617,
       "note": "完成"
     }
   ],
-  "created_at": 1794243755.3877273,
+  "created_at": 1794327040.3712637,
   "budget": {
     "max_minutes": 30
   },
   "expect": [],
-  "slot": "gpu1-0",
-  "started_at": 1794243755.5338247,
+  "slot": "gpu0-0",
+  "started_at": 1794327040.5146384,
   "cache": [
     {
       "stage": "genrec_cf_emb",
@@ -183,7 +183,7 @@
       "note": "encoder-decoder 权重"
     }
   },
-  "ended_at": 1794243779.0523164,
+  "ended_at": 1794327064.0856187,
   "end_reason": "完成",
   "expect_results": [],
   "expect_ok": true,

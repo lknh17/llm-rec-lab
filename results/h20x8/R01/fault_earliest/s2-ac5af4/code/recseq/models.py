@@ -33,6 +33,27 @@ def time_bucket(dt: torch.Tensor, n_buckets: int) -> torch.Tensor:
 # --8<-- [end:rab]
 
 
+class BucketGather(torch.autograd.Function):
+    """out = bias[:, idx]：bias [H, n_buckets]，idx 任意形状 → [H, *idx.shape]。
+    前向就是普通索引；反向不走 index 的默认反向（CUDA 上是按下标排序后每个桶一个 warp 串行累加，
+    几千万个元素只落进 32-64 个桶时每个 warp 要串行加几十万次，一步要几十秒），
+    改用 bincount（桶数 < 100 时是 shared memory 直方图，所有 block 并行）。"""
+
+    @staticmethod
+    def forward(ctx, bias: torch.Tensor, idx: torch.Tensor) -> torch.Tensor:
+        ctx.save_for_backward(idx)
+        ctx.n_buckets = bias.shape[1]
+        return bias[:, idx]
+
+    @staticmethod
+    def backward(ctx, g: torch.Tensor):
+        (idx,) = ctx.saved_tensors
+        flat = idx.reshape(-1)
+        gb = torch.stack([torch.bincount(flat, weights=g[h].reshape(-1).float(), minlength=ctx.n_buckets)
+                          for h in range(g.shape[0])])                     # [H, n_buckets]
+        return gb.to(g.dtype), None
+
+
 # --8<-- [start:mask]
 def build_mask(valid: torch.Tensor, q0: int, q1: int, mode: str) -> torch.Tensor:
     """query 行 [q0, q1) 对 key 列 [0, q1) 的可见性 [B, 1, q1−q0, q1]。
@@ -177,10 +198,10 @@ class HSTULayer(nn.Module):
         """query 行 [q0, q1) 对 key [0, q1)：[B, H, q, dh]。"""
         s = (q[:, :, q0:q1] @ k[:, :, :q1].transpose(-1, -2)) / math.sqrt(self.dh)   # [B, H, q, k]
         i, j = torch.arange(q0, q1, device=q.device), torch.arange(q1, device=q.device)
-        s = s + self.pos_bias.to(s.dtype)[:, pos_bucket(i[:, None] - j[None], self.nb, self.max_len)][None]
+        s = s + BucketGather.apply(self.pos_bias, pos_bucket(i[:, None] - j[None], self.nb, self.max_len)).to(s.dtype)[None]
         if self.use_time:                                                   # Δt = 请求时刻 − 行为时刻
             dt = b["ts_next"][:, q0:q1, None] - b["ts"][:, None, :q1]       # [B, q, k]
-            s = s + self.time_bias.to(s.dtype)[:, time_bucket(dt, self.nt)].permute(1, 0, 2, 3)
+            s = s + BucketGather.apply(self.time_bias, time_bucket(dt, self.nt)).to(s.dtype).permute(1, 0, 2, 3)
         a = F.silu(s) * build_mask(valid, q0, q1, self.mask_mode) / n      # mask 乘在 SiLU 之后
         if q1 == valid.shape[1]:
             self.last_attn = a[:, :, -1].abs().sum(1).detach()

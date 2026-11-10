@@ -12,32 +12,32 @@
     "invalid_frac": 0.0,
     "wrong_level_frac": 0.0,
     "unique_per_user": 10.0,
-    "ms_per_user": 0.1107
+    "ms_per_user": 0.1136
   },
   "beam": {
     "w1": {
       "recall10": 0.03245,
       "invalid_frac": 0.0,
       "unique_per_user": 1.0,
-      "ms_per_user": 0.046
+      "ms_per_user": 0.047
     },
     "w5": {
       "recall10": 0.09934,
       "invalid_frac": 0.0,
       "unique_per_user": 5.0,
-      "ms_per_user": 0.0676
+      "ms_per_user": 0.0686
     },
     "w10": {
       "recall10": 0.15546,
       "invalid_frac": 0.0,
       "unique_per_user": 10.0,
-      "ms_per_user": 0.1106
+      "ms_per_user": 0.1117
     },
     "w20": {
       "recall10": 0.16391,
       "invalid_frac": 0.0,
       "unique_per_user": 20.0,
-      "ms_per_user": 0.2109
+      "ms_per_user": 0.2265
     }
   },
   "notrie": {
@@ -54,7 +54,7 @@
       "invalid_frac": 0.0,
       "wrong_level_frac": 0.0,
       "unique_per_user": 10.0,
-      "ms_per_user": 0.1101
+      "ms_per_user": 0.1111
     }
   },
   "pop": {
@@ -84,10 +84,10 @@
     "params": 1400136
   },
   "cost": {
-    "full_ms_1e7": 0.2506,
+    "full_ms_1e7": 0.2124,
     "item_table_gb_1e7": 2.56,
-    "beam_ms_w10": 0.1106,
-    "full_over_beam_1e7": 2.266,
+    "beam_ms_w10": 0.1117,
+    "full_over_beam_1e7": 1.902,
     "bench_n": 10000000
   },
   "headline": {
@@ -99,7 +99,7 @@
     "NDCG@10": 0.08757,
     "非法元组比例": 0.0,
     "每用户不重复物品数": 10.0,
-    "解码 ms/用户": 0.1107,
+    "解码 ms/用户": 0.1136,
     "碰撞率": 0.14625,
     "训练秒数": 605.36,
     "参数量": 1400136

@@ -10,9 +10,9 @@
   "seed": 2,
   "variant": "synth_10m",
   "config_hash": "d0b9df91c4e5",
-  "code_hash": "0c476ecb2aed",
+  "code_hash": "6cf06518be5b",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -68,32 +68,32 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794245150.7502055,
+      "time": 1794327101.910443,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794245150.9052696,
+      "time": 1794327102.0729063,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794245159.8361487,
+      "time": 1794327108.8721974,
       "note": "阶段 prepare"
     },
     {
       "status": "succeeded",
-      "time": 1794245182.3692884,
+      "time": 1794327133.1036272,
       "note": "完成"
     }
   ],
-  "created_at": 1794245150.7502055,
+  "created_at": 1794327101.910443,
   "budget": {
     "max_minutes": 20
   },
   "expect": [],
-  "slot": "gpu4-0",
-  "started_at": 1794245150.9052708,
+  "slot": "gpu6-0",
+  "started_at": 1794327102.0729077,
   "data": {
     "kind": "合成物品",
     "items": 10000000,
@@ -111,7 +111,7 @@
       "note": "每个物品的语义 ID [N, L]"
     }
   },
-  "ended_at": 1794245182.3692906,
+  "ended_at": 1794327133.103629,
   "end_reason": "完成",
   "expect_results": [],
   "expect_ok": true,

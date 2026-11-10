@@ -48,11 +48,11 @@
   },
   "train": {
     "steps": 4000,
-    "seconds": 24.62,
+    "seconds": 25.07,
     "best_step": 3500,
     "best_valid_recall10": 0.08128,
-    "samples_per_s": 20797.3,
-    "tokens_per_s": 1343478.8,
+    "samples_per_s": 20426.6,
+    "tokens_per_s": 1319530.4,
     "train_tokens": 33074516,
     "final_loss": 6.01669,
     "batch_size": 128,
@@ -68,7 +68,7 @@
     "sdpa_backend": "flash",
     "L20": {
       "none": {
-        "ms": 0.882,
+        "ms": 1.204,
         "peak_gb": 0.036,
         "est_gb": null,
         "oom": false
@@ -76,7 +76,7 @@
     },
     "L50": {
       "none": {
-        "ms": 0.866,
+        "ms": 0.655,
         "peak_gb": 0.036,
         "est_gb": null,
         "oom": false
@@ -84,7 +84,7 @@
     },
     "L200": {
       "none": {
-        "ms": 0.733,
+        "ms": 0.843,
         "peak_gb": 0.039,
         "est_gb": null,
         "oom": false
@@ -92,7 +92,7 @@
     },
     "L1000": {
       "none": {
-        "ms": 0.908,
+        "ms": 0.88,
         "peak_gb": 0.069,
         "est_gb": null,
         "oom": false
@@ -107,8 +107,8 @@
         51,
         61
       ],
-      "ms_padded": 0.87,
-      "ms_jagged": 5.11,
+      "ms_padded": 0.86,
+      "ms_jagged": 5.06,
       "speedup": 0.17
     }
   },
@@ -140,7 +140,7 @@
     "NDCG@10": 0.04001,
     "采样 100 Recall@10": 0.6606,
     "热度参照 Recall@10": 0.01639,
-    "训练 tokens/s（千）": 1343.5,
+    "训练 tokens/s（千）": 1319.5,
     "训练峰值 GB": 1.157
   },
   "display_pct": [

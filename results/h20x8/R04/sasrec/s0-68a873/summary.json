@@ -3,12 +3,12 @@
     "recall10": 0.23692,
     "ndcg10": 0.13165,
     "n": 6040,
-    "ms_per_user": 0.0177,
+    "ms_per_user": 0.0169,
     "invalid_frac": 0.0,
     "unique_per_user": 10.0
   },
   "train": {
-    "seconds": 26.25,
+    "seconds": 28.97,
     "steps": 4000
   },
   "headline": {
@@ -17,7 +17,7 @@
   "display": {
     "Recall@10": 0.23692,
     "NDCG@10": 0.13165,
-    "打分 ms/用户": 0.0177
+    "打分 ms/用户": 0.0169
   },
   "display_pct": [
     "Recall@10",

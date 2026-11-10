@@ -10,9 +10,9 @@
   "seed": 0,
   "variant": "sasrec_l200",
   "config_hash": "9de048ab2a02",
-  "code_hash": "068f21297526",
+  "code_hash": "2792836a45cf",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -70,36 +70,36 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794237897.6011312,
+      "time": 1794326917.8568127,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794237897.742505,
+      "time": 1794326918.0024025,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794237905.4409273,
+      "time": 1794326926.79103,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794237908.3967385,
+      "time": 1794326930.0197604,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794237945.9478405,
+      "time": 1794326969.8261344,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794237946.841048,
+      "time": 1794326970.6772206,
       "note": "完成"
     }
   ],
-  "created_at": 1794237897.6011312,
+  "created_at": 1794326917.8568127,
   "budget": {
     "max_minutes": 30
   },
@@ -107,7 +107,7 @@
     "summary.cost.flops.attn_share > 0.15"
   ],
   "slot": "gpu3-0",
-  "started_at": 1794237897.7425063,
+  "started_at": 1794326918.0024037,
   "data": {
     "kind": "MovieLens-1M 评分序列（leave-one-out）",
     "users": 6040,
@@ -137,9 +137,9 @@
   },
   "train": {
     "steps": 4000,
-    "seconds": 33.0,
-    "samples_per_s": 15515.7,
-    "tokens_per_s": 1002292.4,
+    "seconds": 35.03,
+    "samples_per_s": 14614.8,
+    "tokens_per_s": 944098.8,
     "train_tokens": 33074516
   },
   "artifacts": {
@@ -149,7 +149,7 @@
       "note": "序列模型权重（验证最好的那一步）"
     }
   },
-  "ended_at": 1794237946.8410504,
+  "ended_at": 1794326970.6772218,
   "end_reason": "完成",
   "expect_results": [
     {

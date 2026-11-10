@@ -10,9 +10,9 @@
   "seed": 0,
   "variant": "mean_l200",
   "config_hash": "931fe69c3138",
-  "code_hash": "068f21297526",
+  "code_hash": "2792836a45cf",
   "git": {
-    "commit": "5eeb29b4c2cb497fd6718625d60fa01a458bb235",
+    "commit": "2fab6e9622d8ff0507c8aec4c60d60e24f2118e3",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -71,42 +71,42 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794237852.9677465,
+      "time": 1794326905.880141,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794237853.1338995,
+      "time": 1794326906.0623374,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794237861.6498995,
+      "time": 1794326913.0537827,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794237863.0811837,
+      "time": 1794326914.1643047,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794237893.0305095,
+      "time": 1794326943.4064848,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794237893.8007107,
+      "time": 1794326944.1774561,
       "note": "完成"
     }
   ],
-  "created_at": 1794237852.9677465,
+  "created_at": 1794326905.880141,
   "budget": {
     "max_minutes": 30
   },
   "expect": [],
-  "slot": "gpu3-0",
-  "started_at": 1794237853.133901,
+  "slot": "gpu7-0",
+  "started_at": 1794326906.0623388,
   "data": {
     "kind": "MovieLens-1M 评分序列（leave-one-out）",
     "users": 6040,
@@ -136,9 +136,9 @@
   },
   "train": {
     "steps": 4000,
-    "seconds": 24.62,
-    "samples_per_s": 20797.3,
-    "tokens_per_s": 1343478.8,
+    "seconds": 25.07,
+    "samples_per_s": 20426.6,
+    "tokens_per_s": 1319530.4,
     "train_tokens": 33074516
   },
   "artifacts": {
@@ -148,7 +148,7 @@
       "note": "序列模型权重（验证最好的那一步）"
     }
   },
-  "ended_at": 1794237893.8007119,
+  "ended_at": 1794326944.1774576,
   "end_reason": "完成",
   "expect_results": [],
   "expect_ok": true,

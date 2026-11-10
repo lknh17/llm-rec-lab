@@ -1,18 +1,18 @@
-[worker] 等待设备锁 gpu5-0
+[worker] 等待设备锁 gpu1-0
 [worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
 [worker] 从快照加载 <data>/batch/h20x8/R01/din_l50/s2-ffd0a9/code/recseq/experiment.py
-[01:17:06] ===== 阶段：prepare =====
-[01:17:07] 模型 din：241,344 参数；L = 50，B = 128，注意力实现 none
-[01:17:07] ===== 阶段：train =====
-[01:17:16] step 500/4000  loss 7.0910  验证 Recall@10 0.0256
-[01:17:19] step 1000/4000  loss 6.7989  验证 Recall@10 0.0326
-[01:17:23] step 1500/4000  loss 6.5722  验证 Recall@10 0.0381
-[01:17:26] step 2000/4000  loss 6.5088  验证 Recall@10 0.0356
-[01:17:30] step 2500/4000  loss 6.3634  验证 Recall@10 0.0361
-[01:17:33] step 3000/4000  loss 6.2651  验证 Recall@10 0.0351
-[01:17:37] step 3500/4000  loss 6.3217  验证 Recall@10 0.0356
-[01:17:40] step 4000/4000  loss 6.2500  验证 Recall@10 0.0346
-[01:17:40] ===== 阶段：evaluate =====
-[01:17:41] 测试 Recall@10 0.03427  NDCG@10 0.01517  采样 100 Recall@10 0.6207  热度参照 0.01639
+[00:11:13] ===== 阶段：prepare =====
+[00:11:15] 模型 din：241,344 参数；L = 50，B = 128，注意力实现 none
+[00:11:15] ===== 阶段：train =====
+[00:11:23] step 500/4000  loss 7.0910  验证 Recall@10 0.0256
+[00:11:27] step 1000/4000  loss 6.7989  验证 Recall@10 0.0326
+[00:11:31] step 1500/4000  loss 6.5722  验证 Recall@10 0.0381
+[00:11:34] step 2000/4000  loss 6.5088  验证 Recall@10 0.0356
+[00:11:38] step 2500/4000  loss 6.3634  验证 Recall@10 0.0361
+[00:11:41] step 3000/4000  loss 6.2651  验证 Recall@10 0.0351
+[00:11:45] step 3500/4000  loss 6.3217  验证 Recall@10 0.0356
+[00:11:49] step 4000/4000  loss 6.2500  验证 Recall@10 0.0346
+[00:11:49] ===== 阶段：evaluate =====
+[00:11:49] 测试 Recall@10 0.03427  NDCG@10 0.01517  采样 100 Recall@10 0.6207  热度参照 0.01639
 [worker] 结束：succeeded（完成）
 {"status": "succeeded"}
