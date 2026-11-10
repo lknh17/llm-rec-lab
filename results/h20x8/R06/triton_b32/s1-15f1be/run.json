@@ -10,9 +10,9 @@
   "seed": 1,
   "variant": "triton_b32",
   "config_hash": "15f1be764b02",
-  "code_hash": "b57783f017c6",
+  "code_hash": "930dc39f9757",
   "git": {
-    "commit": "bb45bd038287c8d6da0c687068d76cc09cde1899",
+    "commit": "7f135b1d42804aca68a70a56ac52d5ef3b19df97",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -79,39 +79,39 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794249978.100894,
+      "time": 1794294163.2666132,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794249978.2392826,
+      "time": 1794294163.4239001,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794249985.050497,
+      "time": 1794294170.0373564,
       "note": "阶段 prepare"
     },
     {
       "status": "evaluating",
-      "time": 1794249986.0332084,
+      "time": 1794294171.0749643,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794249997.062143,
+      "time": 1794294181.9875517,
       "note": "完成"
     }
   ],
-  "created_at": 1794249978.100894,
+  "created_at": 1794294163.2666132,
   "budget": {
     "max_minutes": 20
   },
   "expect": [
     "summary.check.max_rel_err < 0.02"
   ],
-  "slot": "gpu6-0",
-  "started_at": 1794249978.239284,
+  "slot": "gpu1-0",
+  "started_at": 1794294163.4239018,
   "data": {
     "kind": "微基准（随机输入）",
     "suite": "r06",
@@ -119,7 +119,7 @@
     "sms": 78,
     "l2_mb": 60.0
   },
-  "ended_at": 1794249997.0621445,
+  "ended_at": 1794294181.9875534,
   "end_reason": "完成",
   "expect_results": [
     {

@@ -10,9 +10,9 @@
   "seed": 2,
   "variant": "sdpa",
   "config_hash": "a59ffe6f4a17",
-  "code_hash": "b57783f017c6",
+  "code_hash": "930dc39f9757",
   "git": {
-    "commit": "bb45bd038287c8d6da0c687068d76cc09cde1899",
+    "commit": "7f135b1d42804aca68a70a56ac52d5ef3b19df97",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -78,39 +78,39 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794249998.6016815,
+      "time": 1794294185.339811,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794249998.7426913,
+      "time": 1794294185.4800024,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794250008.2057772,
+      "time": 1794294195.0552647,
       "note": "阶段 prepare"
     },
     {
       "status": "evaluating",
-      "time": 1794250009.3140445,
+      "time": 1794294196.1833029,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794250014.326588,
+      "time": 1794294201.361363,
       "note": "完成"
     }
   ],
-  "created_at": 1794249998.6016815,
+  "created_at": 1794294185.339811,
   "budget": {
     "max_minutes": 20
   },
   "expect": [
     "summary.check.max_rel_err < 0.02"
   ],
-  "slot": "gpu2-0",
-  "started_at": 1794249998.742693,
+  "slot": "gpu3-0",
+  "started_at": 1794294185.4800036,
   "data": {
     "kind": "微基准（随机输入）",
     "suite": "r06",
@@ -118,7 +118,7 @@
     "sms": 78,
     "l2_mb": 60.0
   },
-  "ended_at": 1794250014.3265896,
+  "ended_at": 1794294201.3613644,
   "end_reason": "完成",
   "expect_results": [
     {

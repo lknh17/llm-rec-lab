@@ -1,9 +1,9 @@
-[worker] 等待设备锁 gpu7-0
+[worker] 等待设备锁 gpu0-0
 [worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
 [worker] 从快照加载 <data>/batch/h20x8/R05/pyfeat_workers16/s2-e3b55d/code/recops/experiment.py
-[02:46:41] ===== 阶段：prepare =====
-[02:46:42] 硬件：NVIDIA H20；拷贝带宽实测 3326.5 GB/s，bf16 矩阵乘实测 138.9 TFLOPS
-[02:46:42] ===== 阶段：evaluate =====
-[02:47:03] 端到端：194,727 样本/秒；逐阶段 ms {'wait_data': 0.165, 'h2d': 0.13, 'forward_backward': 3.991, 'optimizer': 12.553}
+[15:03:09] ===== 阶段：prepare =====
+[15:03:10] 硬件：NVIDIA H20；拷贝带宽实测 3327.6 GB/s，bf16 矩阵乘实测 138.7 TFLOPS
+[15:03:10] ===== 阶段：evaluate =====
+[15:03:32] 端到端：195,902 样本/秒；逐阶段 ms {'wait_data': 0.159, 'h2d': 0.128, 'forward_backward': 3.751, 'optimizer': 11.475}
 [worker] 结束：succeeded（完成）
 {"status": "succeeded"}

@@ -12,12 +12,12 @@
 
 | 场景 | 类型 | 在哪一步 | 逐点 attention L=8192 D=64 耗时 ms（越低越好） | 与 `baseline` 差 | 种子数 |
 | - | - | - | - | - | - |
-| `baseline` | 基线 | [naive 的显存](06-naive-mem.md) | 47.46 ± 0.03232 | — | 3 |
-| `compiled` | 候选改动 | [torch.compile](08-compile.md) | 47.47 ± 0.03819 | +0.008253 | 3 |
-| `triton` | 修复 | [手写 Triton](09-triton.md) | 10.14 ± 0.03377 | -37.32 | 3 |
-| `triton_b128` | 候选改动 | [块大小](10-block.md) | 10.39 ± 0.01876 | -37.07 | 3 |
-| `triton_b32` | 候选改动 |  | 12.1 ± 0.07235 | -35.36 | 3 |
-| `fault_diag` | 教学故障 | [同事改了 kernel](13-fault.md) | 10.18 ± 0.04011 | -37.28 | 3 |
+| `baseline` | 基线 | [naive 的显存](06-naive-mem.md) | 47.48 ± 0.04099 | — | 3 |
+| `compiled` | 候选改动 | [torch.compile](08-compile.md) | 47.46 ± 0.04482 | -0.01227 | 3 |
+| `triton` | 修复 | [手写 Triton](09-triton.md) | 10.08 ± 0.02183 | -37.39 | 3 |
+| `triton_b128` | 候选改动 | [块大小](10-block.md) | 10.37 ± 0.007463 | -37.1 | 3 |
+| `triton_b32` | 候选改动 |  | 12.08 ± 0.06784 | -35.4 | 3 |
+| `fault_diag` | 教学故障 | [同事改了 kernel](13-fault.md) | 10.15 ± 0.05514 | -37.33 | 3 |
 
 </details>
 

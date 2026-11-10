@@ -1,4 +1,4 @@
-{"name": "stage_ms", "value": 0.183, "step": null, "split": "wait_data", "time": 21.963, "stage": "evaluate"}
-{"name": "stage_ms", "value": 0.127, "step": null, "split": "h2d", "time": 21.969, "stage": "evaluate"}
-{"name": "stage_ms", "value": 3.904, "step": null, "split": "forward_backward", "time": 21.972, "stage": "evaluate"}
-{"name": "stage_ms", "value": 11.531, "step": null, "split": "optimizer", "time": 21.974, "stage": "evaluate"}
+{"name": "stage_ms", "value": 0.195, "step": null, "split": "wait_data", "time": 22.803, "stage": "evaluate"}
+{"name": "stage_ms", "value": 0.136, "step": null, "split": "h2d", "time": 22.807, "stage": "evaluate"}
+{"name": "stage_ms", "value": 4.228, "step": null, "split": "forward_backward", "time": 22.809, "stage": "evaluate"}
+{"name": "stage_ms", "value": 11.59, "step": null, "split": "optimizer", "time": 22.811, "stage": "evaluate"}

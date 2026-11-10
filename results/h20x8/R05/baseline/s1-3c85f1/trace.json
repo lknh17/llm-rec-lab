@@ -3,10 +3,10 @@
     "note": "EmbeddingBag 查表：10M × 64 fp32 表，16384 个样本 × 每个 10 个 id（均匀）",
     "table_gb": 2.56,
     "bytes_read_mb": 41.9,
-    "median_ms": 0.06022,
-    "eff_gbs": 718.3,
+    "median_ms": 0.06048,
+    "eff_gbs": 715.2,
     "floor_ms": 0.0108,
-    "ref_copy_gbs": 3327.5
+    "ref_copy_gbs": 3324.7
   },
   "feature": {
     "note": "3 条原始样本 → 处理后：数值 log1p、类别和多值按表行数取模",

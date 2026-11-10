@@ -20,15 +20,15 @@
       "oom": false,
       "rel_err": 0.003455,
       "peak_delta_gb": 0.0841,
-      "median_ms": 0.17584,
-      "p10_ms": 0.14422,
-      "p90_ms": 0.1869,
-      "cv": 0.2427,
+      "median_ms": 0.17419,
+      "p10_ms": 0.14566,
+      "p90_ms": 0.18915,
+      "cv": 0.2496,
       "n": 500,
-      "tflops": 6.106,
+      "tflops": 6.164,
       "ai": 14.222,
       "bound_tflops": 56.89,
-      "roofline_frac": 0.1073
+      "roofline_frac": 0.1084
     }
   }
 }

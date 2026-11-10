@@ -11,25 +11,25 @@
     "sm_clock": 1980.0,
     "sm_clock_max": 1980.0,
     "temp_c": 50.0,
-    "power_w": 233.55,
-    "ref_copy_gbs": 3326.5,
-    "ref_matmul_tflops": 139.0
+    "power_w": 206.93,
+    "ref_copy_gbs": 3326.4,
+    "ref_matmul_tflops": 139.2
   },
   "e2e": {
-    "samples_per_s": 74027.0,
+    "samples_per_s": 73719.7,
     "steps_measured": 300,
-    "seconds": 16.6,
+    "seconds": 16.67,
     "stage_ms": {
-      "wait_data": 0.209,
-      "h2d": 0.173,
-      "forward_backward": 8.332,
-      "optimizer": 40.228
+      "wait_data": 0.192,
+      "h2d": 0.165,
+      "forward_backward": 8.297,
+      "optimizer": 40.227
     },
     "stage_share": {
-      "wait_data": 0.0043,
-      "h2d": 0.0035,
-      "forward_backward": 0.1702,
-      "optimizer": 0.822
+      "wait_data": 0.0039,
+      "h2d": 0.0034,
+      "forward_backward": 0.1697,
+      "optimizer": 0.823
     },
     "workers": 2,
     "peak_gb": 35.98,
@@ -38,14 +38,14 @@
     "params": 1792527681
   },
   "headline": {
-    "端到端 样本/秒": 74027.0,
-    "等数据占比": 0.0043,
-    "优化器占比": 0.822
+    "端到端 样本/秒": 73719.7,
+    "等数据占比": 0.0039,
+    "优化器占比": 0.823
   },
   "display": {
-    "端到端 样本/秒": 74027.0,
-    "等数据占比": 0.0043,
-    "优化器占比": 0.822
+    "端到端 样本/秒": 73719.7,
+    "等数据占比": 0.0039,
+    "优化器占比": 0.823
   },
   "display_pct": [
     "等数据占比",

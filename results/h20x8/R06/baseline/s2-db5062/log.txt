@@ -1,8 +1,8 @@
 [worker] 等待设备锁 gpu5-0
 [worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
 [worker] 从快照加载 <data>/batch/h20x8/R06/baseline/s2-db5062/code/recops/experiment.py
-[02:43:04] ===== 阶段：prepare =====
-[02:43:05] 硬件：NVIDIA H20；拷贝带宽实测 3325.6 GB/s，bf16 矩阵乘实测 138.9 TFLOPS
-[02:43:05] ===== 阶段：evaluate =====
+[14:59:31] ===== 阶段：prepare =====
+[14:59:33] 硬件：NVIDIA H20；拷贝带宽实测 3327.1 GB/s，bf16 矩阵乘实测 139.0 TFLOPS
+[14:59:33] ===== 阶段：evaluate =====
 [worker] 结束：succeeded（完成）
 {"status": "succeeded"}

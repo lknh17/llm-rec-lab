@@ -10,9 +10,9 @@
   "seed": 1,
   "variant": "pyfeat_workers16",
   "config_hash": "252df1e397e7",
-  "code_hash": "b57783f017c6",
+  "code_hash": "930dc39f9757",
   "git": {
-    "commit": "bb45bd038287c8d6da0c687068d76cc09cde1899",
+    "commit": "7f135b1d42804aca68a70a56ac52d5ef3b19df97",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -79,37 +79,37 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794249948.4134052,
+      "time": 1794294131.490779,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794249948.5442297,
+      "time": 1794294131.6312447,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794249955.3028717,
+      "time": 1794294138.4707124,
       "note": "阶段 prepare"
     },
     {
       "status": "evaluating",
-      "time": 1794249956.3656569,
+      "time": 1794294139.5422163,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794249977.7290828,
+      "time": 1794294163.6645572,
       "note": "完成"
     }
   ],
-  "created_at": 1794249948.4134052,
+  "created_at": 1794294131.490779,
   "budget": {
     "max_minutes": 15
   },
   "expect": [],
-  "slot": "gpu3-0",
-  "started_at": 1794249948.5442312,
+  "slot": "gpu4-0",
+  "started_at": 1794294131.6312463,
   "data": {
     "kind": "微基准（随机输入）",
     "suite": "r05",
@@ -117,7 +117,7 @@
     "sms": 78,
     "l2_mb": 60.0
   },
-  "ended_at": 1794249977.7290864,
+  "ended_at": 1794294163.6645603,
   "end_reason": "完成",
   "expect_results": [],
   "expect_ok": true,

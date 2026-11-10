@@ -13,45 +13,45 @@
 <line x1="670.0" y1="40" x2="670.0" y2="244" stroke="#E3E6EC"/>
 <text x="670.0" y="260" font-size="10" fill="#6B7385" text-anchor="middle">250,000</text>
 <text x="180" y="61.0" font-size="12" fill="#1D2330" text-anchor="end">baseline</text>
-<rect x="190" y="46" width="362.2" height="22" rx="4" fill="#3B5BDB" fill-opacity="0.82"><title>baseline：188,641（3 个种子）</title></rect>
-<line x1="543.3" y1="57.0" x2="559.6" y2="57.0" stroke="#1D2330" stroke-width="1.4"/>
-<circle cx="543.3" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="559.6" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="553.7" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<text x="567.6" y="61.0" font-size="11" fill="#6B7385">188,641 ±4301.8</text>
+<rect x="190" y="46" width="376.5" height="22" rx="4" fill="#3B5BDB" fill-opacity="0.82"><title>baseline：196,081（3 个种子）</title></rect>
+<line x1="557.9" y1="57.0" x2="575.3" y2="57.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="575.3" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="557.9" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="566.2" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="583.3" y="61.0" font-size="11" fill="#6B7385">196,081 ±4530.7</text>
 <text x="180" y="93.0" font-size="12" fill="#1D2330" text-anchor="end">e2e_dense_adam</text>
-<rect x="190" y="78" width="140.9" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>e2e_dense_adam：73,378（3 个种子）</title></rect>
-<line x1="330.1" y1="89.0" x2="332.1" y2="89.0" stroke="#1D2330" stroke-width="1.4"/>
-<circle cx="330.1" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="332.1" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="330.4" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<text x="340.1" y="93.0" font-size="11" fill="#6B7385">73,378 ±568.8</text>
+<rect x="190" y="78" width="140.4" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>e2e_dense_adam：73,137（3 个种子）</title></rect>
+<line x1="328.8" y1="89.0" x2="331.5" y2="89.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="328.8" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="331.5" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="330.9" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="339.5" y="93.0" font-size="11" fill="#6B7385">73,137 ±747.3</text>
 <text x="180" y="125.0" font-size="12" fill="#1D2330" text-anchor="end">e2e_workers0</text>
-<rect x="190" y="110" width="285.7" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>e2e_workers0：148,828（3 个种子）</title></rect>
-<line x1="462.1" y1="121.0" x2="489.7" y2="121.0" stroke="#1D2330" stroke-width="1.4"/>
-<circle cx="475.4" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="489.7" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="462.1" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<text x="497.7" y="125.0" font-size="11" fill="#6B7385">148,828 ±7186.4</text>
+<rect x="190" y="110" width="283.9" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>e2e_workers0：147,868（3 个种子）</title></rect>
+<line x1="457.4" y1="121.0" x2="506.7" y2="121.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="506.7" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="457.7" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="457.4" cy="121.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="514.7" y="125.0" font-size="11" fill="#6B7385">147,868 ±14773.3</text>
 <text x="180" y="157.0" font-size="12" fill="#1D2330" text-anchor="end">e2e_nopin</text>
-<rect x="190" y="142" width="331.3" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>e2e_nopin：172,548（3 个种子）</title></rect>
-<line x1="506.3" y1="153.0" x2="537.8" y2="153.0" stroke="#1D2330" stroke-width="1.4"/>
-<circle cx="537.8" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="519.7" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="506.3" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<text x="545.8" y="157.0" font-size="11" fill="#6B7385">172,548 ±8245.5</text>
+<rect x="190" y="142" width="340.9" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>e2e_nopin：177,557（3 个种子）</title></rect>
+<line x1="523.8" y1="153.0" x2="538.1" y2="153.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="538.1" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="530.8" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="523.8" cy="153.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="546.1" y="157.0" font-size="11" fill="#6B7385">177,557 ±3734.2</text>
 <text x="180" y="189.0" font-size="12" fill="#1D2330" text-anchor="end">fault_pyfeat</text>
-<rect x="190" y="174" width="109.6" height="22" rx="4" fill="#C92A2A" fill-opacity="0.82"><title>fault_pyfeat：57,080（3 个种子）</title></rect>
-<line x1="289.0" y1="185.0" x2="311.4" y2="185.0" stroke="#1D2330" stroke-width="1.4"/>
-<circle cx="289.0" cy="185.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="311.4" cy="185.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="298.4" cy="185.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<text x="319.4" y="189.0" font-size="11" fill="#6B7385">57,080 ±5849.9</text>
+<rect x="190" y="174" width="114.4" height="22" rx="4" fill="#C92A2A" fill-opacity="0.82"><title>fault_pyfeat：59,561（3 个种子）</title></rect>
+<line x1="302.0" y1="185.0" x2="307.7" y2="185.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="302.0" cy="185.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="303.3" cy="185.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="307.7" cy="185.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="315.7" y="189.0" font-size="11" fill="#6B7385">59,561 ±1562.1</text>
 <text x="180" y="221.0" font-size="12" fill="#1D2330" text-anchor="end">pyfeat_workers16</text>
-<rect x="190" y="206" width="360.6" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>pyfeat_workers16：187,788（3 个种子）</title></rect>
-<line x1="525.4" y1="217.0" x2="563.9" y2="217.0" stroke="#1D2330" stroke-width="1.4"/>
-<circle cx="562.4" cy="217.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="525.4" cy="217.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<circle cx="563.9" cy="217.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
-<text x="571.9" y="221.0" font-size="11" fill="#6B7385">187,788 ±11348.7</text>
+<rect x="190" y="206" width="353.4" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>pyfeat_workers16：184,038（3 个种子）</title></rect>
+<line x1="508.7" y1="217.0" x2="566.1" y2="217.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="555.2" cy="217.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="508.7" cy="217.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="566.1" cy="217.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="574.1" y="221.0" font-size="11" fill="#6B7385">184,038 ±15870.9</text>
 </svg>
