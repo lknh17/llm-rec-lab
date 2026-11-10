@@ -260,3 +260,19 @@ def test_scenarios_r01_r02():
         for s in scenarios.load_course(c)["scenarios"]:
             for e in s.get("expect", []):
                 scenarios.check_expr(e)
+
+
+def test_bucket_gather_grad_matches_index():
+    """相对偏置的自定义反向（bincount）和默认的索引反向数值一致。"""
+    from recseq.models import BucketGather
+    torch.manual_seed(0)
+    bias = torch.randn(2, 32, requires_grad=True)
+    idx = torch.randint(0, 32, (3, 7, 11))
+    g = torch.randn(2, 3, 7, 11)
+    bias[:, idx].backward(g)
+    ref = bias.grad.clone()
+    bias.grad = None
+    out = BucketGather.apply(bias, idx)
+    assert torch.equal(out, bias.detach()[:, idx])
+    out.backward(g)
+    assert torch.allclose(bias.grad, ref, atol=1e-5)

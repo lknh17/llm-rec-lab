@@ -162,7 +162,7 @@ def process_python(raw: RawShard, idx: np.ndarray, rows: int) -> dict:
 
 每个阶段前后都同步，拿到真实耗时（会略微降低吞吐）；吞吐窗口里不插同步。
 
-[`recops/embops.py#L219-L278`](../../../projects/recops/embops.py#L219-L278)
+[`recops/embops.py#L219-L279`](../../../projects/recops/embops.py#L219-L279)
 
 ```python
 def e2e_bench(raw, cfg, device) -> dict:
@@ -174,7 +174,8 @@ def e2e_bench(raw, cfg, device) -> dict:
     opts = [torch.optim.Adam(other, lr=1e-3),
             torch.optim.SparseAdam(emb_params, lr=1e-3) if sparse else torch.optim.Adam(emb_params, lr=1e-3)]
     w = effective_workers(cfg)
-    n_total = cfg["e2e_profile_steps"] + cfg["e2e_steps"] + 5
+    warm = 3 + w * cfg["prefetch_factor"]                                   # 热身先耗尽预取缓冲，计时窗口落在稳态
+    n_total = warm + cfg["e2e_profile_steps"] + cfg["e2e_steps"] + 5
     it = iter(make_loader(raw, cfg, n_total, w))
     nb = cfg["non_blocking"] and cfg["pin_memory"]
 
@@ -190,7 +191,7 @@ def e2e_bench(raw, cfg, device) -> dict:
             o.step()
         return loss
 
-    for _ in range(3):                                                      # 热身
+    for _ in range(warm):                                                   # 热身
         step(to_dev(next(it)))
     sync(device)
     stages = {"wait_data": [], "h2d": [], "forward_backward": [], "optimizer": []}

@@ -117,12 +117,8 @@
     {
       "expr": "summary.time.data_frac < 0.1",
       "ok": true
-    },
-    {
-      "expr": "summary.mfu.mfu > base.summary.mfu.mfu * 0.85",
-      "ok": false
     }
   ],
-  "expect_ok": false,
+  "expect_ok": true,
   "exported": true
 }

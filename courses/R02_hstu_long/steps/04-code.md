@@ -94,7 +94,7 @@ def time_bucket(dt: torch.Tensor, n_buckets: int) -> torch.Tensor:
 
 SiLU(QKᵀ/√dh + rab) · mask / n：没有 softmax，每个 (i, j) 独立。按 query 分块时每块只需要 [B, H, 1024, L] 的中间结果，块之间不需要 online softmax 的 max / sum 规约。
 
-[`recseq/models.py#L161-L203`](../../../projects/recseq/models.py#L161-L203)
+[`recseq/models.py#L182-L224`](../../../projects/recseq/models.py#L182-L224)
 
 ```python
 class HSTULayer(nn.Module):
@@ -116,10 +116,10 @@ class HSTULayer(nn.Module):
         """query 行 [q0, q1) 对 key [0, q1)：[B, H, q, dh]。"""
         s = (q[:, :, q0:q1] @ k[:, :, :q1].transpose(-1, -2)) / math.sqrt(self.dh)   # [B, H, q, k]
         i, j = torch.arange(q0, q1, device=q.device), torch.arange(q1, device=q.device)
-        s = s + self.pos_bias.to(s.dtype)[:, pos_bucket(i[:, None] - j[None], self.nb, self.max_len)][None]
+        s = s + BucketGather.apply(self.pos_bias, pos_bucket(i[:, None] - j[None], self.nb, self.max_len)).to(s.dtype)[None]
         if self.use_time:                                                   # Δt = 请求时刻 − 行为时刻
             dt = b["ts_next"][:, q0:q1, None] - b["ts"][:, None, :q1]       # [B, q, k]
-            s = s + self.time_bias.to(s.dtype)[:, time_bucket(dt, self.nt)].permute(1, 0, 2, 3)
+            s = s + BucketGather.apply(self.time_bias, time_bucket(dt, self.nt)).to(s.dtype).permute(1, 0, 2, 3)
         a = F.silu(s) * build_mask(valid, q0, q1, self.mask_mode) / n      # mask 乘在 SiLU 之后
         if q1 == valid.shape[1]:
             self.last_attn = a[:, :, -1].abs().sum(1).detach()
@@ -146,7 +146,7 @@ class HSTULayer(nn.Module):
 
 三个条件取与：因果、key 有效、query 有效。只保留因果（causal_only）就是本课的故障。
 
-[`recseq/models.py#L37-L48`](../../../projects/recseq/models.py#L37-L48)
+[`recseq/models.py#L58-L69`](../../../projects/recseq/models.py#L58-L69)
 
 ```python
 def build_mask(valid: torch.Tensor, q0: int, q1: int, mode: str) -> torch.Tensor:
@@ -167,7 +167,7 @@ def build_mask(valid: torch.Tensor, q0: int, q1: int, mode: str) -> torch.Tensor
 
 SDPA 传了 mask 就走不了 flash。先把左补齐转成右补齐，padding 到了"未来"一侧，只用 is_causal 就够。
 
-[`recseq/models.py#L122-L156`](../../../projects/recseq/models.py#L122-L156)
+[`recseq/models.py#L143-L177`](../../../projects/recseq/models.py#L143-L177)
 
 ```python
 def to_right(t: torch.Tensor, n: torch.Tensor) -> torch.Tensor:

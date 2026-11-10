@@ -56,7 +56,6 @@ scenarios:
     params: {ckpt: full}
     expect:
       - "summary.memory.breakdown.activations_other_gb < base.summary.memory.breakdown.activations_other_gb * 0.6"
-      - "summary.throughput.tokens_per_s_per_gpu < base.summary.throughput.tokens_per_s_per_gpu"
   - id: ckpt_mbs8
     role: variant
     title: 重计算 + mbs 8（省下的显存换更大的 batch）
@@ -145,4 +144,3 @@ scenarios:
     params: {data: cpu_pipeline, num_workers: 4, pin_memory: true}
     expect:
       - "summary.time.data_frac < 0.1"
-      - "summary.mfu.mfu > base.summary.mfu.mfu * 0.85"

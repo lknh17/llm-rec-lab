@@ -49,7 +49,7 @@ def train_batch(d: SeqData, rng: np.random.Generator, B: int, L: int, mode: str)
 
 s1 = h W Eᵀ 是"历史 j 对候选 c"的注意力打分 [B, L, V]，s2 = h Eᵀ 是被加权的值。没有位置偏置时，位置 t 只看 j ≤ t 的 softmax 可以用前缀和一次算完。
 
-[`recseq/models.py#L71-L93`](../../../projects/recseq/models.py#L71-L93)
+[`recseq/models.py#L92-L114`](../../../projects/recseq/models.py#L92-L114)
 
 ```python
 class DIN(nn.Module):
@@ -81,7 +81,7 @@ class DIN(nn.Module):
 
 先把左补齐转成右补齐（padding 移到"未来"），这样 SDPA 只用 is_causal=True、不传 mask，就能走 flash 后端；算完再转回来。
 
-[`recseq/models.py#L122-L156`](../../../projects/recseq/models.py#L122-L156)
+[`recseq/models.py#L143-L177`](../../../projects/recseq/models.py#L143-L177)
 
 ```python
 def to_right(t: torch.Tensor, n: torch.Tensor) -> torch.Tensor:

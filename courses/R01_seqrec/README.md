@@ -91,10 +91,10 @@
 | `truncate` | [projects/recseq/data.py#L36](../../projects/recseq/data.py#L36) |
 | `windows` | [projects/recseq/data.py#L55](../../projects/recseq/data.py#L55) |
 | `rab` | [projects/recseq/models.py#L20](../../projects/recseq/models.py#L20) |
-| `mask` | [projects/recseq/models.py#L36](../../projects/recseq/models.py#L36) |
-| `din` | [projects/recseq/models.py#L70](../../projects/recseq/models.py#L70) |
-| `sasrec` | [projects/recseq/models.py#L121](../../projects/recseq/models.py#L121) |
-| `hstu_attn` | [projects/recseq/models.py#L160](../../projects/recseq/models.py#L160) |
+| `mask` | [projects/recseq/models.py#L57](../../projects/recseq/models.py#L57) |
+| `din` | [projects/recseq/models.py#L91](../../projects/recseq/models.py#L91) |
+| `sasrec` | [projects/recseq/models.py#L142](../../projects/recseq/models.py#L142) |
+| `hstu_attn` | [projects/recseq/models.py#L181](../../projects/recseq/models.py#L181) |
 | `generate` | [projects/recseq/synth.py#L37](../../projects/recseq/synth.py#L37) |
 | `evaluate` | [projects/recseq/train.py#L38](../../projects/recseq/train.py#L38) |
 | `train` | [projects/recseq/train.py#L96](../../projects/recseq/train.py#L96) |

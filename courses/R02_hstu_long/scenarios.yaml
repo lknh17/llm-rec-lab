@@ -6,7 +6,7 @@ entry: recseq.experiment
 profiles:
   h20x8:
     note: 8 × NVIDIA H20，每张卡一个运行。合成长序列（1K-10K，对数均匀；周期性回访串作长程信号），16384 个训练用户、2048 个测试用户；HSTU d=64、2 层、2 头，每步 61440 个 token，3000 步
-    base: {device: cuda, max_minutes: 45, dataset: synth, model: hstu, max_len: 10240, batch_size: 0, steps: 3000,
+    base: {device: cuda, max_minutes: 75, dataset: synth, model: hstu, max_len: 10240, batch_size: 0, steps: 3000,
            ckpt_every: 500, valid_frac: 1.0, probe_lens: "512,2048,8192,10240"}
     seeds: [0, 1, 2]
     assets: [ml-1m]

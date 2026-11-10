@@ -115,10 +115,6 @@
     {
       "expr": "summary.memory.breakdown.activations_other_gb < base.summary.memory.breakdown.activations_other_gb * 0.6",
       "ok": true
-    },
-    {
-      "expr": "summary.throughput.tokens_per_s_per_gpu < base.summary.throughput.tokens_per_s_per_gpu",
-      "ok": true
     }
   ],
   "expect_ok": true,
