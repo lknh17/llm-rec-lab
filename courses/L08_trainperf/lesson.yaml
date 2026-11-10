@@ -181,7 +181,7 @@ steps:
     - 15% - 25%
     - 30% - 40%
     - 50% 以上
-  - text: 1.5B DDP 8 卡，每步梯度 all-reduce 的数据量约 6 GB（fp32）。它大约占步时的多少？
+  - text: 1.5B DDP 8 卡，每步梯度 all-reduce 的数据量约 6 GB（fp32）。按 NVLink 正常水平（NCCL busbw 约 350 GB/s）估，没被反向盖住的通信大约占步时的多少？
     options:
     - 不到 5%
     - 5% - 20%
@@ -205,9 +205,6 @@ steps:
   columns:
   - path: summary.mfu.mfu
     label: MFU
-    fmt: .1%
-  - path: summary.mfu.mfu_vs_measured_peak
-    label: 对实测峰值
     fmt: .1%
   - path: summary.throughput.tokens_per_s_per_gpu
     label: 每卡 tokens/s
@@ -608,7 +605,7 @@ steps:
   selfcheck:
   - 全参 AdamW 的静态显存是多少字节/参数？两种口径怎么对上？
   - ZeRO-1/2/3（FSDP）各切什么？静态显存和通信量各是 DDP 的多少？
-  - MFU 和 HFU 怎么算？为什么要同时报"按标称"和"按实测峰值"？
+  - MFU 和 HFU 怎么算？为什么 MFU 要和同机单卡基线比，而不是和 100% 比？
   - 重计算的代价和收益各是多少？什么时候不该开？
   - 7B 单卡全参在哪一步 OOM？为什么"前几步能跑"不代表能训？
   - MFU 低时按什么顺序排查？怎么证明 GPU 在等数据？
