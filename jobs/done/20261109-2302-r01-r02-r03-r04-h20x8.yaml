@@ -940,3 +940,5 @@ problems:
 - 'R02/ml1m_hstu s2: failed expect_ok=None budget: 超过时间预算 45.0 分钟'
 - 'R02/hstu_2k s2: failed expect_ok=None budget: 超过时间预算 45.0 分钟'
 - 'R02/hstu_8k s2: failed expect_ok=None budget: 超过时间预算 45.0 分钟'
+notes: >-
+  R01/R03/R04 全部成功；R02（HSTU 长序列）21/21 个运行全部因超时间预算失败（预算 45 分钟，实际 45-64 分钟被终止，含 baseline 三个种子），其他课程不受影响。按手册保留结果不重跑，建议 Mac 端调大 R02 的 budget 后重新下发（以 64 分钟仍未完成看，至少需要 90 分钟以上，或缩小 h20x8 档位规模）。

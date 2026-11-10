@@ -363,3 +363,5 @@ runs:
 n_exported: 42
 problems:
 - 'R05/fault_pyfeat s2: succeeded expect_ok=False 完成'
+notes: >-
+  42/42 成功。R05/fault_pyfeat 的断言 wait_data > 0.5：s0/s1 为 0.708/0.704 通过，s2 只有 0.013，故障在该种子上没有复现（疑似数据等待被缓存或预取掩盖），未重跑。

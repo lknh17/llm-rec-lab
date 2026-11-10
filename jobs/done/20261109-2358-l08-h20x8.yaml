@@ -395,3 +395,5 @@ n_exported: 46
 problems:
 - 'L08/fix_dataloader s1: succeeded expect_ok=False 完成'
 - 'L08/ckpt s0: succeeded expect_ok=False 完成'
+notes: >-
+  46/46 成功，两个断言未通过，都是种子间波动大于断言阈值：fix_dataloader s1 的 MFU 0.391，低于 baseline s1 的 0.465×0.85（baseline 三个种子 0.312/0.465/0.440 本身差异就很大）；ckpt s0 的吞吐 5912 tokens/s/GPU 高于 baseline s0 的 4719（其余种子 ckpt 都低于 baseline）。建议断言改为与 baseline 种子均值比较，或放宽阈值。
