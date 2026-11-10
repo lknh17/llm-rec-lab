@@ -1,0 +1,160 @@
+{
+  "run_id": "h20x8.R02.ml1m_hstu.s1-e28844",
+  "course_id": "R02",
+  "project": "recseq",
+  "entry": "recseq.experiment",
+  "profile": "h20x8",
+  "scenario": "ml1m_hstu",
+  "role": "variant",
+  "title": "ML-1M 上的 HSTU（L = 200）",
+  "seed": 1,
+  "variant": "ml1m_hstu",
+  "config_hash": "e28844be030b",
+  "code_hash": "2792836a45cf",
+  "git": {
+    "commit": "946db4a3f605c9775c7b7e4de54ae26b56de28de",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "dataset": "ml1m",
+    "max_len": 200,
+    "batch_size": 128,
+    "steps": 4000,
+    "valid_frac": 0.33,
+    "probe_lens": "50,200"
+  },
+  "param_affects": {
+    "dataset": "data",
+    "max_len": "data",
+    "truncate": "data",
+    "len_scale": "data",
+    "synth_users": "data",
+    "synth_eval_users": "data",
+    "synth_clusters": "data",
+    "synth_items_per_cluster": "data",
+    "synth_len_min": "data",
+    "synth_len_max": "data",
+    "synth_period_min": "data",
+    "synth_period_max": "data",
+    "synth_burst": "data",
+    "synth_noise": "data",
+    "synth_stay": "data",
+    "synth_alpha": "data",
+    "synth_session_mean": "data",
+    "data_seed": "data",
+    "model": "model",
+    "d_model": "model",
+    "n_layer": "model",
+    "n_head": "model",
+    "dropout": "model",
+    "attn_impl": "model",
+    "attn_chunk": "model",
+    "mask": "model",
+    "pos_buckets": "model",
+    "time_bias": "model",
+    "time_buckets": "model",
+    "batch_size": "train",
+    "tokens_per_step": "train",
+    "steps": "train",
+    "lr": "train",
+    "warmup_frac": "train",
+    "weight_decay": "train",
+    "precision": "train",
+    "seed": "train",
+    "ckpt_every": "eval",
+    "valid_frac": "eval",
+    "sampled_negs": "eval",
+    "probe_lens": "eval",
+    "probe": "eval",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794324269.7930408,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794324269.9630387,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794324278.3111753,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794324285.8534925,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794324353.085699,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794324354.1924293,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794324269.7930408,
+  "budget": {
+    "max_minutes": 75
+  },
+  "expect": [],
+  "slot": "gpu2-0",
+  "started_at": 1794324269.9630404,
+  "data": {
+    "kind": "MovieLens-1M 评分序列（leave-one-out）",
+    "users": 6040,
+    "n_items": 3707,
+    "rows": 1000209,
+    "len_median": 96.0,
+    "len_p90": 400.0,
+    "len_max": 2314,
+    "pad_token_waste": 0.4565,
+    "pad_attn_waste": 0.5871,
+    "max_len": 200,
+    "truncate": "recent"
+  },
+  "model": {
+    "arch": "HSTU（逐点 SiLU 注意力 + 相对位置 / 时间偏置）",
+    "params": {
+      "total": 279872,
+      "trainable": 279872,
+      "embedding": 237248,
+      "body": 42624,
+      "embedding_share": 0.8477,
+      "train_mode": "full"
+    },
+    "attn_impl": "chunked",
+    "device": "cuda",
+    "dtype": "bf16 autocast"
+  },
+  "train": {
+    "steps": 4000,
+    "seconds": 67.19,
+    "samples_per_s": 7619.8,
+    "tokens_per_s": 492481.9,
+    "train_tokens": 33091630
+  },
+  "artifacts": {
+    "model.pt": {
+      "kind": "checkpoint",
+      "bytes": 1126116,
+      "note": "序列模型权重（验证最好的那一步）"
+    }
+  },
+  "ended_at": 1794324354.1924307,
+  "end_reason": "完成",
+  "expect_results": [],
+  "expect_ok": true,
+  "exported": true
+}

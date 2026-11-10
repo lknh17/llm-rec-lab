@@ -1,0 +1,147 @@
+{
+  "test": {
+    "recall10": 0.24487,
+    "ndcg10": 0.13522,
+    "n": 6040,
+    "sampled100": {
+      "recall10": 0.80646,
+      "ndcg10": 0.61267,
+      "n": 6040
+    },
+    "pop": {
+      "recall10": 0.01639,
+      "ndcg10": 0.00873,
+      "n": 6040
+    },
+    "by_hist": {
+      "le_L": {
+        "recall10": 0.27865,
+        "ndcg10": 0.15495,
+        "n": 4468
+      },
+      "gt_L": {
+        "recall10": 0.14885,
+        "ndcg10": 0.07916,
+        "n": 1572
+      }
+    }
+  },
+  "valid": {
+    "recall10": 0.27334,
+    "ndcg10": 0.14858,
+    "n": 6040
+  },
+  "diag": {
+    "gap_mean": 1.0,
+    "gap_days_median": 0.0,
+    "recent_genre_overlap": 0.2484
+  },
+  "data": {
+    "users": 6040,
+    "n_items": 3707,
+    "rows": 1000209,
+    "len_median": 96.0,
+    "len_p90": 400.0,
+    "len_max": 2314,
+    "pad_token_waste": 0.4565,
+    "pad_attn_waste": 0.5871
+  },
+  "train": {
+    "steps": 4000,
+    "seconds": 33.13,
+    "best_step": 4000,
+    "best_valid_recall10": 0.26693,
+    "samples_per_s": 15455.1,
+    "tokens_per_s": 998896.6,
+    "train_tokens": 33091630,
+    "final_loss": 5.26288,
+    "batch_size": 128,
+    "peak_gb": 1.289
+  },
+  "cost": {
+    "flops": {
+      "linear_per_token": 98304,
+      "attn_per_token": 25600,
+      "attn_share": 0.2066
+    },
+    "infer_macs_per_user": 25018048,
+    "sdpa_backend": "flash",
+    "L50": {
+      "manual": {
+        "ms": 4.307,
+        "peak_gb": 0.037,
+        "est_gb": 0.0,
+        "oom": false
+      },
+      "sdpa": {
+        "ms": 2.883,
+        "peak_gb": 0.037,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "L200": {
+      "manual": {
+        "ms": 3.421,
+        "peak_gb": 0.041,
+        "est_gb": 0.001,
+        "oom": false
+      },
+      "sdpa": {
+        "ms": 2.836,
+        "peak_gb": 0.04,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "jagged": {
+      "lengths": [
+        34,
+        42,
+        42,
+        50,
+        51,
+        61
+      ],
+      "ms_padded": 2.87,
+      "ms_jagged": 16.53,
+      "speedup": 0.17
+    }
+  },
+  "checks": {
+    "causal_max_dlogit": 0.0,
+    "pad_invariance_max_dlogit": 6e-06,
+    "pad_attn_mass_short": null
+  },
+  "params": {
+    "total": 349312,
+    "trainable": 349312,
+    "embedding": 237248,
+    "body": 112064,
+    "embedding_share": 0.6792,
+    "train_mode": "full"
+  },
+  "config_eff": {
+    "max_len": 200,
+    "batch_size": 128,
+    "attn_impl": "sdpa"
+  },
+  "headline": {
+    "recall10": 0.24487,
+    "ndcg10": 0.13522,
+    "sampled100_recall10": 0.80646
+  },
+  "display": {
+    "Recall@10": 0.24487,
+    "NDCG@10": 0.13522,
+    "采样 100 Recall@10": 0.80646,
+    "热度参照 Recall@10": 0.01639,
+    "训练 tokens/s（千）": 998.9,
+    "训练峰值 GB": 1.289
+  },
+  "display_pct": [
+    "Recall@10",
+    "采样 100 Recall@10",
+    "热度参照 Recall@10"
+  ]
+}

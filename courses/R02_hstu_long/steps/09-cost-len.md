@@ -28,9 +28,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 训练 token/秒 | 训练峰值 GB | 训练秒数 | 训练 token/秒：与 `baseline` 差 | 训练 token/秒：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 31,431 ± 320 | 3.3 ± 0.0 | 1145 ± 1 | — | s0 31,799 / s1 31,231 / s2 31,262 | 通过 |
+| `hstu_512` | 候选改动 | 1,155,154 ± 6,558 | 3.3 ± 0.0 | 144 ± 1 | +1,123,724 | s0 1,160,948 / s1 1,156,479 / s2 1,148,035 |  |
+
+![训练吞吐（tokens/s，中位数）](figures/h20x8-p_cost_len-throughput.svg)
+
+![峰值显存构成（实测峰值，分项为估算）](figures/h20x8-p_cost_len-memory.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R02/baseline/s0-7f1334/) · [s1](../../../results/h20x8/R02/baseline/s1-b6ddff/) · [s2](../../../results/h20x8/R02/baseline/s2-b2e97d/)
+- `hstu_512` [s0](../../../results/h20x8/R02/hstu_512/s0-c30810/) · [s1](../../../results/h20x8/R02/hstu_512/s1-e2e360/) · [s2](../../../results/h20x8/R02/hstu_512/s2-b64856/)
 
 </details>
 

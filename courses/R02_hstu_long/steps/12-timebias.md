@@ -27,9 +27,19 @@ HSTU 去掉相对时间偏置，只保留相对位置偏置。新会话题的输
 
 ## 实测
 
-<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 新会话题 | 近期题 | 长程题 | 新会话题：与 `baseline` 差 | 新会话题：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.054 ± 0.003 | 0.644 ± 0.003 | 0.021 ± 0.008 | — | s0 0.052 / s1 0.057 / s2 0.052 | 通过 |
+| `hstu_notime` | 候选改动 | 0.053 ± 0.001 | 0.646 ± 0.005 | 0.017 ± 0.002 | -0.001 | s0 0.052 / s1 0.055 / s2 0.052 |  |
+
+![新会话题（均值，误差线为种子间最小到最大）](figures/h20x8-p_timebias-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R02/baseline/s0-7f1334/) · [s1](../../../results/h20x8/R02/baseline/s1-b6ddff/) · [s2](../../../results/h20x8/R02/baseline/s2-b2e97d/)
+- `hstu_notime` [s0](../../../results/h20x8/R02/hstu_notime/s0-931ce9/) · [s1](../../../results/h20x8/R02/hstu_notime/s1-c9f6dc/) · [s2](../../../results/h20x8/R02/hstu_notime/s2-449e1e/)
 
 </details>
 

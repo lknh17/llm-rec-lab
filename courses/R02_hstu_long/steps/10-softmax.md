@@ -27,12 +27,12 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 3 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 9 / 6 个运行）</summary>
 
 | 场景 | 类型 | 长程题 | 近期题 | 新会话题 | 训练 token/秒 | 主体参数 | 长程题：与 `baseline` 差 | 长程题：各种子 | 断言 |
 | - | - | - | - | - | - | - | - | - | - |
-| `baseline` | 基线 | 〔待 H20 生成〕 | 〔待 H20 生成〕 | 〔待 H20 生成〕 | 〔待 H20 生成〕 | 〔待 H20 生成〕 |  | | |
-| `sasrec_10k` | 候选改动 | 0.013 ± 0.007 | 0.644 ± 0.001 | 0.052 ± 0.000 | 447,738 ± 3,496 | 754,624.0 ± 0.0 | — | s0 0.011 / s1 0.021 / s2 0.006 |  |
+| `baseline` | 基线 | 0.021 ± 0.008 | 0.644 ± 0.003 | 0.054 ± 0.003 | 31,431 ± 320 | 42,624.0 ± 0.0 | — | s0 0.018 / s1 0.031 / s2 0.015 | 通过 |
+| `sasrec_10k` | 候选改动 | 0.012 ± 0.005 | 0.644 ± 0.001 | 0.052 ± 0.000 | 447,101 ± 3,993 | 754,624.0 ± 0.0 | -0.009 | s0 0.011 / s0 0.011 / s1 0.016 / s1 0.021 / s2 0.007 / s2 0.006 |  |
 
 ![长程题（均值，误差线为种子间最小到最大）](figures/h20x8-p_softmax-metrics.svg)
 
@@ -40,7 +40,8 @@
 
 运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
 
-- `sasrec_10k` [s0](../../../results/h20x8/R02/sasrec_10k/s0-5dcb8f/) · [s1](../../../results/h20x8/R02/sasrec_10k/s1-e4f2b0/) · [s2](../../../results/h20x8/R02/sasrec_10k/s2-a96687/)
+- `baseline` [s0](../../../results/h20x8/R02/baseline/s0-7f1334/) · [s1](../../../results/h20x8/R02/baseline/s1-b6ddff/) · [s2](../../../results/h20x8/R02/baseline/s2-b2e97d/)
+- `sasrec_10k` [s0](../../../results/h20x8/R02/sasrec_10k/s0-5dcb8f/) · [s0](../../../results/h20x8/R02/sasrec_10k/s0-9db389/) · [s1](../../../results/h20x8/R02/sasrec_10k/s1-b76534/) · [s1](../../../results/h20x8/R02/sasrec_10k/s1-e4f2b0/) · [s2](../../../results/h20x8/R02/sasrec_10k/s2-130824/) · [s2](../../../results/h20x8/R02/sasrec_10k/s2-a96687/)
 
 </details>
 

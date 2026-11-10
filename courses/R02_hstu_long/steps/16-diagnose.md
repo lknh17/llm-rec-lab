@@ -21,19 +21,19 @@
 
 <details><summary>线索 1</summary>
 
-按用户长度分组：短用户（< 2048）Recall@10 〔待 H20 生成〕（基线 〔待 H20 生成〕）；长用户（> 8192）〔待 H20 生成〕（基线 〔待 H20 生成〕）。
+按用户长度分组：短用户（< 2048）Recall@10 0.285 ± 0.005（基线 0.282 ± 0.003）；长用户（> 8192）0.287 ± 0.006（基线 0.292 ± 0.003）。
 
 </details>
 
 <details><summary>线索 2</summary>
 
-同一批用户"各自不补齐"和"补齐到 10240"，最后一个位置 logits 的最大差：基线 〔待 H20 生成〕，故障 〔待 H20 生成〕。
+同一批用户"各自不补齐"和"补齐到 10240"，最后一个位置 logits 的最大差：基线 0.0e+00 ± 0.0e+00，故障 1.77 ± 0.19。
 
 </details>
 
 <details><summary>线索 3</summary>
 
-短用户最后一个位置的注意力有多少落在 padding 上：〔待 H20 生成〕（基线 〔待 H20 生成〕）。看追踪里的 6 × 6 mask。
+短用户最后一个位置的注意力有多少落在 padding 上：93% ± 2%（基线 0% ± 0%）。看追踪里的 6 × 6 mask。
 
 </details>
 
@@ -50,9 +50,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 补不补齐的 logits 差 | 注意力落在 pad 上 | 短用户 | 长用户 | 补不补齐的 logits 差：与 `baseline` 差 | 补不补齐的 logits 差：各种子 | 断言 |
+| - | - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.000 ± 0.000 | 0.0% ± 0.0% | 0.282 ± 0.003 | 0.292 ± 0.003 | — | s0 0.000 / s1 0.000 / s2 0.000 | 通过 |
+| `fault_padmask` | 教学故障 | 1.770 ± 0.193 | 93.2% ± 1.6% | 0.285 ± 0.005 | 0.287 ± 0.006 | +1.770 | s0 1.852 / s1 1.549 / s2 1.909 | 通过 |
+
+![补不补齐的 logits 差（均值，误差线为种子间最小到最大）](figures/h20x8-diagnose-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R02/baseline/s0-7f1334/) · [s1](../../../results/h20x8/R02/baseline/s1-b6ddff/) · [s2](../../../results/h20x8/R02/baseline/s2-b2e97d/)
+- `fault_padmask` [s0](../../../results/h20x8/R02/fault_padmask/s0-1f0937/) · [s1](../../../results/h20x8/R02/fault_padmask/s1-188b29/) · [s2](../../../results/h20x8/R02/fault_padmask/s2-ec7080/)
 
 </details>
 

@@ -27,9 +27,21 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 短用户 | 长用户 | 整体 | 短用户：与 `baseline` 差 | 短用户：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.282 ± 0.003 | 0.292 ± 0.003 | 0.279 ± 0.003 | — | s0 0.286 / s1 0.280 / s2 0.281 | 通过 |
+| `fault_padmask` | 教学故障 | 0.285 ± 0.005 | 0.287 ± 0.006 | 0.276 ± 0.001 | +0.003 | s0 0.291 / s1 0.283 / s2 0.281 | 通过 |
+
+![短用户（均值，误差线为种子间最小到最大）](figures/h20x8-p_fault-metrics.svg)
+
+![valid_recall10（均值，阴影为种子间范围）](figures/h20x8-p_fault-loss.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/R02/baseline/s0-7f1334/) · [s1](../../../results/h20x8/R02/baseline/s1-b6ddff/) · [s2](../../../results/h20x8/R02/baseline/s2-b2e97d/)
+- `fault_padmask` [s0](../../../results/h20x8/R02/fault_padmask/s0-1f0937/) · [s1](../../../results/h20x8/R02/fault_padmask/s1-188b29/) · [s2](../../../results/h20x8/R02/fault_padmask/s2-ec7080/)
 
 </details>
 

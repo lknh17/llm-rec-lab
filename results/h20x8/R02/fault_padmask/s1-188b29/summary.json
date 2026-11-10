@@ -1,0 +1,243 @@
+{
+  "test": {
+    "recall10": 0.27588,
+    "ndcg10": 0.17612,
+    "n": 2048,
+    "sampled100": {
+      "recall10": 0.61621,
+      "ndcg10": 0.50109,
+      "n": 2048
+    },
+    "pop": {
+      "recall10": 0.0166,
+      "ndcg10": 0.00669,
+      "n": 2048
+    },
+    "long": {
+      "recall10": 0.01465,
+      "ndcg10": 0.00681,
+      "n": 819
+    },
+    "recent": {
+      "recall10": 0.64286,
+      "ndcg10": 0.41196,
+      "n": 826
+    },
+    "newsess": {
+      "recall10": 0.05459,
+      "ndcg10": 0.03684,
+      "n": 403
+    },
+    "long_by_dist": {
+      "lt512": {
+        "recall10": 0.004,
+        "ndcg10": 0.00142,
+        "n": 250
+      },
+      "d512_2k": {
+        "recall10": 0.01878,
+        "ndcg10": 0.00994,
+        "n": 426
+      },
+      "d2k_8k": {
+        "recall10": 0.02222,
+        "ndcg10": 0.00731,
+        "n": 135
+      },
+      "gt8k": {
+        "recall10": 0.0,
+        "ndcg10": 0.0,
+        "n": 3
+      },
+      "unseen": {
+        "recall10": 0.0,
+        "ndcg10": 0.0,
+        "n": 5
+      }
+    },
+    "mix": {
+      "r05": {
+        "recall10": 0.42516
+      },
+      "r20": {
+        "recall10": 0.36035
+      },
+      "r50": {
+        "recall10": 0.23071
+      }
+    },
+    "by_len": {
+      "short": {
+        "recall10": 0.28275,
+        "ndcg10": 0.17723,
+        "n": 626
+      },
+      "long": {
+        "recall10": 0.29412,
+        "ndcg10": 0.18601,
+        "n": 187
+      }
+    }
+  },
+  "valid": {
+    "recall10": 0.30664,
+    "ndcg10": 0.18545,
+    "n": 512
+  },
+  "diag": {},
+  "data": {
+    "users": 16384,
+    "eval_users": 2048,
+    "n_items": 4105,
+    "rows": 75839539,
+    "len_median": 3149.0,
+    "len_p90": 8040.0,
+    "len_max": 10225,
+    "period_median": 847.0,
+    "long_cover": {
+      "L512": 0.3065,
+      "L2048": 0.8254,
+      "L8192": 0.9902,
+      "L10240": 0.9939
+    },
+    "type_share": {
+      "long": 0.3999,
+      "recent": 0.4033,
+      "newsess": 0.1968
+    },
+    "pad_token_waste": 0.6137,
+    "pad_attn_waste": 0.7903
+  },
+  "train": {
+    "steps": 3000,
+    "seconds": 1403.84,
+    "best_step": 1500,
+    "best_valid_recall10": 0.30469,
+    "samples_per_s": 12.8,
+    "tokens_per_s": 25506.3,
+    "train_tokens": 35806720,
+    "final_loss": 3.9727,
+    "batch_size": 6,
+    "peak_gb": 3.316
+  },
+  "cost": {
+    "flops": {
+      "linear_per_token": 40960,
+      "attn_per_token": 1310720,
+      "attn_share": 0.9697
+    },
+    "infer_macs_per_user": 13841465920,
+    "sdpa_backend": "flash",
+    "L512": {
+      "manual": {
+        "ms": 4.573,
+        "peak_gb": 0.061,
+        "est_gb": 0.016,
+        "oom": false
+      },
+      "chunked": {
+        "ms": 7.252,
+        "peak_gb": 0.05,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "L2048": {
+      "manual": {
+        "ms": 6.082,
+        "peak_gb": 0.372,
+        "est_gb": 0.252,
+        "oom": false
+      },
+      "chunked": {
+        "ms": 19.642,
+        "peak_gb": 0.163,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "L8192": {
+      "manual": {
+        "ms": 82.677,
+        "peak_gb": 4.728,
+        "est_gb": 4.027,
+        "oom": false
+      },
+      "chunked": {
+        "ms": 88.086,
+        "peak_gb": 0.646,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "L10240": {
+      "manual": {
+        "ms": 128.898,
+        "peak_gb": 7.378,
+        "est_gb": 6.291,
+        "oom": false
+      },
+      "chunked": {
+        "ms": 138.816,
+        "peak_gb": 0.807,
+        "est_gb": null,
+        "oom": false
+      }
+    },
+    "jagged": {
+      "lengths": [
+        1602,
+        2847,
+        3147,
+        5033,
+        8110,
+        8184
+      ],
+      "ms_padded": 323.68,
+      "ms_jagged": 297.01,
+      "speedup": 1.09
+    }
+  },
+  "checks": {
+    "causal_max_dlogit": 0.0,
+    "pad_invariance_max_dlogit": 1.548939,
+    "pad_attn_mass_short": 0.939
+  },
+  "params": {
+    "total": 305344,
+    "trainable": 305344,
+    "embedding": 262720,
+    "body": 42624,
+    "embedding_share": 0.8604,
+    "train_mode": "full"
+  },
+  "config_eff": {
+    "max_len": 10240,
+    "batch_size": 6,
+    "attn_impl": "chunked"
+  },
+  "headline": {
+    "recall10": 0.27588,
+    "ndcg10": 0.17612,
+    "sampled100_recall10": 0.61621
+  },
+  "display": {
+    "Recall@10": 0.27588,
+    "NDCG@10": 0.17612,
+    "采样 100 Recall@10": 0.61621,
+    "热度参照 Recall@10": 0.0166,
+    "长程题 Recall@10": 0.01465,
+    "近期题 Recall@10": 0.64286,
+    "新会话题 Recall@10": 0.05459,
+    "训练 tokens/s（千）": 25.5,
+    "训练峰值 GB": 3.316
+  },
+  "display_pct": [
+    "Recall@10",
+    "采样 100 Recall@10",
+    "热度参照 Recall@10",
+    "长程题 Recall@10",
+    "近期题 Recall@10",
+    "新会话题 Recall@10"
+  ]
+}

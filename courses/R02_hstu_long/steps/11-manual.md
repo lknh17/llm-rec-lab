@@ -28,12 +28,12 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 6 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · 合成长序列 1K-10K（回访簇作长程信号）· HSTU d=64、2 层 · 3 种子（已有 12 / 6 个运行）</summary>
 
 | 场景 | 类型 | 训练峰值 GB | 训练 token/秒 | Recall@10 | 训练峰值 GB：与 `sasrec_10k` 差 | 训练峰值 GB：各种子 | 断言 |
 | - | - | - | - | - | - | - | - |
-| `sasrec_10k` | 候选改动 | 3.4 ± 0.0 | 447,738 ± 3,496 | 0.275 ± 0.003 | — | s0 3.4 / s1 3.4 / s2 3.4 |  |
-| `sasrec_10k_manual` | 候选改动 | 28.1 ± 0.0 | 92,625 ± 904 | 0.274 ± 0.002 | +24.7 | s0 28.1 / s1 28.1 / s2 28.1 |  |
+| `sasrec_10k` | 候选改动 | 3.4 ± 0.0 | 447,101 ± 3,993 | 0.275 ± 0.002 | — | s0 3.4 / s0 3.4 / s1 3.4 / s1 3.4 / s2 3.4 / s2 3.4 |  |
+| `sasrec_10k_manual` | 候选改动 | 28.1 ± 0.0 | 92,941 ± 834 | 0.274 ± 0.002 | +24.7 | s0 28.1 / s0 28.1 / s1 28.1 / s1 28.1 / s2 28.1 / s2 28.1 |  |
 
 ![峰值显存构成（实测峰值，分项为估算）](figures/h20x8-p_manual-memory.svg)
 
@@ -41,8 +41,8 @@
 
 运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
 
-- `sasrec_10k` [s0](../../../results/h20x8/R02/sasrec_10k/s0-5dcb8f/) · [s1](../../../results/h20x8/R02/sasrec_10k/s1-e4f2b0/) · [s2](../../../results/h20x8/R02/sasrec_10k/s2-a96687/)
-- `sasrec_10k_manual` [s0](../../../results/h20x8/R02/sasrec_10k_manual/s0-0c3274/) · [s1](../../../results/h20x8/R02/sasrec_10k_manual/s1-cf7652/) · [s2](../../../results/h20x8/R02/sasrec_10k_manual/s2-c5a924/)
+- `sasrec_10k` [s0](../../../results/h20x8/R02/sasrec_10k/s0-5dcb8f/) · [s0](../../../results/h20x8/R02/sasrec_10k/s0-9db389/) · [s1](../../../results/h20x8/R02/sasrec_10k/s1-b76534/) · [s1](../../../results/h20x8/R02/sasrec_10k/s1-e4f2b0/) · [s2](../../../results/h20x8/R02/sasrec_10k/s2-130824/) · [s2](../../../results/h20x8/R02/sasrec_10k/s2-a96687/)
+- `sasrec_10k_manual` [s0](../../../results/h20x8/R02/sasrec_10k_manual/s0-0c3274/) · [s0](../../../results/h20x8/R02/sasrec_10k_manual/s0-f53ca5/) · [s1](../../../results/h20x8/R02/sasrec_10k_manual/s1-cf7652/) · [s1](../../../results/h20x8/R02/sasrec_10k_manual/s1-e86c0d/) · [s2](../../../results/h20x8/R02/sasrec_10k_manual/s2-c5a924/) · [s2](../../../results/h20x8/R02/sasrec_10k_manual/s2-eedb80/)
 
 </details>
 

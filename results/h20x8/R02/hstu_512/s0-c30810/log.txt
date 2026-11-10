@@ -1,0 +1,17 @@
+[worker] 等待设备锁 gpu7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/R02/hstu_512/s0-c30810/code/recseq/experiment.py
+[23:01:27] ===== 阶段：prepare =====
+[23:01:27] 缓存 recseq_synth key=81766954143a: 命中，复用运行 s1-58b973 的产物
+[23:01:41] 模型 hstu：305,344 参数；L = 512，B = 120，注意力实现 chunked
+[23:01:41] ===== 阶段：train =====
+[23:02:05] step 500/3000  loss 3.8940  验证 Recall@10 0.3027
+[23:02:29] step 1000/3000  loss 3.8403  验证 Recall@10 0.3203
+[23:02:53] step 1500/3000  loss 3.8177  验证 Recall@10 0.3223
+[23:03:17] step 2000/3000  loss 3.8063  验证 Recall@10 0.3184
+[23:03:41] step 2500/3000  loss 3.8118  验证 Recall@10 0.3281
+[23:04:05] step 3000/3000  loss 3.7832  验证 Recall@10 0.3223
+[23:04:05] ===== 阶段：evaluate =====
+[23:04:06] 测试 Recall@10 0.29102  NDCG@10 0.18308  采样 100 Recall@10 0.71289  热度参照 0.0166
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}
