@@ -14,9 +14,18 @@ import time
 from . import paths, redact
 
 
+GIT_TIMEOUT_S = 900
+# 网络停滞（每秒不到 1 KB、持续 120 秒）时让 git 自己放弃，不要无限挂住（H20 到 GitHub 的连接偶尔会卡死）
+GIT_NET_OPTS = ("-c", "http.lowSpeedLimit=1000", "-c", "http.lowSpeedTime=120")
+
+
 def _git(*args: str, check: bool = True) -> subprocess.CompletedProcess:
     # 关掉目录重命名检测：作业单在 pending/ running/ done/ 之间移动时，它会把对方新加的作业单也挪走造成假冲突
-    r = subprocess.run(["git", "-c", "merge.directoryRenames=false", *args], cwd=paths.ROOT, capture_output=True, text=True)
+    try:
+        r = subprocess.run(["git", "-c", "merge.directoryRenames=false", *GIT_NET_OPTS, *args], cwd=paths.ROOT,
+                           capture_output=True, text=True, timeout=GIT_TIMEOUT_S)
+    except subprocess.TimeoutExpired as e:
+        raise RuntimeError(f"git {' '.join(args)} 超过 {GIT_TIMEOUT_S} 秒没结束（网络卡住？），下一轮补推") from e
     if check and r.returncode != 0:
         raise RuntimeError(f"git {' '.join(args)} 失败：{r.stderr.strip() or r.stdout.strip()}")
     return r

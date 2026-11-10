@@ -59,11 +59,14 @@ def _now() -> str:
 
 # 作业单在 pending/ running/ done/ 之间移动，git 的"目录重命名检测"会把对方新加进 pending/ 的作业单也挪走，
 # 造成假冲突，所以关掉。
-GIT_OPTS = ("-c", "merge.directoryRenames=false")
+GIT_OPTS = ("-c", "merge.directoryRenames=false", "-c", "http.lowSpeedLimit=1000", "-c", "http.lowSpeedTime=120")
 
 
 def git(*args: str, check: bool = True) -> subprocess.CompletedProcess:
-    r = subprocess.run(["git", *GIT_OPTS, *args], cwd=paths.ROOT, capture_output=True, text=True, timeout=600)
+    try:
+        r = subprocess.run(["git", *GIT_OPTS, *args], cwd=paths.ROOT, capture_output=True, text=True, timeout=600)
+    except subprocess.TimeoutExpired as e:
+        raise RuntimeError(f"git {' '.join(args)} 超过 600 秒没结束（网络卡住？）") from e
     if check and r.returncode != 0:
         raise RuntimeError(f"git {' '.join(args)} 失败：{(r.stderr or r.stdout).strip()[:500]}")
     return r
@@ -92,7 +95,11 @@ def setup_logging() -> None:
 # ------------------------------------------------------------------ 抢占
 def pull() -> bool:
     with _git_lock:
-        r = git("pull", "--rebase", "--autostash", check=False)
+        try:
+            r = git("pull", "--rebase", "--autostash", check=False)
+        except RuntimeError as e:
+            log.warning("pull 失败：%s", e)
+            return False
     if r.returncode != 0:
         log.warning("pull 失败：%s", (r.stderr or r.stdout).strip()[:300])
         return False
