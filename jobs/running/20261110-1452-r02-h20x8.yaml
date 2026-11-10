@@ -9,3 +9,5 @@ requested_commit: bda3d563af7ebcefc77e19868e7606b06627dc8f
 note: R02 重跑：HSTU 相对偏置反向改用 bincount（上次 CUDA 索引反向逐桶串行，L=10240 一步几十秒，全部超时）；预算放宽到 75
   分钟
 how_to_run: python -m labkit jobs run 20261110-1452-r02-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-10T14:53:06Z'
