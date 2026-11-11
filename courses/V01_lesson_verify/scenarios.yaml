@@ -1,0 +1,124 @@
+course: V01
+title: V01 讲义验证：讲义 GPU 验证清单里 L09 覆盖不到的项（S2 decode、S3 Triton / CUDA / Nsight Compute、S5.5 vLLM 源码、S7 vLLM 接入）在 H20 上跑一遍
+project: lessonbench
+entry: lessonbench.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20，每项独占 1 张卡；讲义脚本原样运行（vendor/ 是私有仓库讲义代码的逐字节拷贝），--hw H20。主环境叠加 tabulate / matplotlib / ninja（uv run --with，不改 uv.lock），vLLM 相关的项用 vllm-env
+    base: {hw: H20, max_minutes: 60}
+    seeds: [0]
+    assets: [vllm-env]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：环境探测和解析讲义附带的 ncu 典型值 CSV（不需要 GPU），只验证执行和收集报告的流程
+    base: {hw: H20, max_minutes: 10}
+    seeds: [0]
+    skip_expect: true
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  - id: env_probe
+    role: baseline
+    title: 环境探测：torch / triton / nvcc / ncu / vllm-env 是否可用（W1 作业单先跑它，决定后面哪些项能跑）
+    params: {item: env_probe}
+    cost_note: 不到 1 分钟
+    expect:
+      - "summary.env.cuda == True"
+  - id: ncu_parse
+    role: reference
+    title: 解析讲义附带的 ncu 典型值 CSV（冒烟，不需要 GPU）
+    params: {item: ncu_parse}
+    expect:
+      - "summary.ok == True"
+  - id: gpu_check
+    role: variant
+    title: S2.1 实测矩阵乘峰值和 HBM 带宽
+    params: {item: gpu_check}
+    profiles: [h20x8]
+    cost_note: 约 1 分钟
+    expect:
+      - "summary.ok == True"
+  - id: decode_bench
+    role: variant
+    title: S2.2 decode 的 MBU 和 batch 拐点（自写 GPT，llama3_8b 形状，context 4096）
+    params: {item: decode_bench}
+    profiles: [h20x8]
+    cost_note: 约 5 分钟
+    expect:
+      - "summary.ok == True"
+  - id: s3_tests
+    role: variant
+    title: S3 全部 kernel 的正确性测试
+    params: {item: s3_tests}
+    profiles: [h20x8]
+    cost_note: 约 5 分钟（含 CUDA 扩展编译）
+    expect:
+      - "summary.ok == True"
+  - id: triton_bench
+    role: variant
+    title: S3.1-S3.3 Triton kernel 对照 PyTorch
+    params: {item: triton_bench}
+    profiles: [h20x8]
+    expect:
+      - "summary.ok == True"
+  - id: coalescing
+    role: variant
+    title: S3.4 访存合并
+    params: {item: coalescing}
+    profiles: [h20x8]
+    expect:
+      - "summary.ok == True"
+  - id: cuda_matmul
+    role: variant
+    title: S3.5 手写 CUDA matmul v1-v5 对照 cuBLAS
+    params: {item: cuda_matmul}
+    profiles: [h20x8]
+    cost_note: 第一次要编译 CUDA 扩展（约 1-2 分钟）
+    expect:
+      - "summary.ok == True"
+  - id: ncu
+    role: variant
+    title: S3.6 Nsight Compute 采集 v1-v5
+    params: {item: ncu}
+    profiles: [h20x8]
+    cost_note: ncu 逐 kernel 重放，约 5-10 分钟；容器里可能没有性能计数器权限（ERR_NVGPUCTRPERM），失败时日志里有原因
+    expect:
+      - "summary.ok == True"
+  - id: split_kv
+    role: variant
+    title: S3.7 split-KV decode attention
+    params: {item: split_kv}
+    profiles: [h20x8]
+    expect:
+      - "summary.ok == True"
+  - id: w4a16
+    role: variant
+    title: S3.8 W4A16 GEMM
+    params: {item: w4a16}
+    profiles: [h20x8]
+    expect:
+      - "summary.ok == True"
+  - id: moe
+    role: variant
+    title: S3.9 fused MoE
+    params: {item: moe}
+    profiles: [h20x8]
+    expect:
+      - "summary.ok == True"
+  - id: vllm_facts
+    role: variant
+    title: S5.5 从 vLLM 源码核对前缀哈希登记、投机草稿 token、接受长度指标名
+    params: {item: vllm_facts}
+    profiles: [h20x8]
+    cost_note: 只读源码，几秒
+    expect:
+      - "summary.ok == True"
+  - id: s7_vllm
+    role: variant
+    title: S7.3 TIGER 导出到 vLLM，trie 约束 beam search 对照自研引擎
+    params: {item: s7_vllm}
+    profiles: [h20x8]
+    cost_note: 下载 MovieLens-1M（grouplens.org）、训练 TIGER 约 5 分钟、导出、vLLM beam 512 用户
+    expect:
+      - "summary.ok == True"

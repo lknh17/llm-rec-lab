@@ -1,0 +1,30 @@
+# 手写（V01 不是教学课，没有私有讲义）：只用来生成 README 的结果表和步骤页。
+course: V01
+profiles:
+  h20x8: H20 · 讲义代码原样运行（--hw H20）· 每项 1 张卡、1 次
+metric:
+  path: summary.seconds
+  label: 用时（秒）
+table:
+- path: summary.ok
+  label: 通过
+- path: summary.seconds
+  label: 用时 s
+- path: summary.lesson
+  label: 讲义
+figures:
+  loss: []
+noise_note: 讲义脚本各自做 warmup 和多次测量取中位数；这里每项只跑一次。
+stages:
+- id: run
+  title: 验证
+steps:
+- id: results
+  file: 01-results
+  stage: run
+  title: 验证结果
+  body: |-
+    每一项对应讲义 GPU 验证清单的一条。运行目录的 trace.json 里有讲义脚本生成的报告原文（outputs），log.txt 里有完整输出；
+    结果回填到私有仓库的讲义折叠块和 experiments/ 里。
+  blocks:
+  - overview

@@ -36,6 +36,8 @@ addopts = "-q"
 
 [tool.ruff]
 line-length = 130
+# 私有仓库讲义代码的逐字节拷贝（tools/export_lessonbench.py 同步），按讲义仓库的规则检查，这里不改
+extend-exclude = ["projects/lessonbench/vendor"]
 
 [tool.ruff.lint]
 # l 作为 label/line 的循环变量在教学代码里很常见；改名会改变 projects/ 的代码哈希，让已有结果过期
