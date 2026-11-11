@@ -1,0 +1,91 @@
+{
+  "run_id": "h20x8.V01.gpu_check.s0-bebdb9",
+  "course_id": "V01",
+  "project": "lessonbench",
+  "entry": "lessonbench.experiment",
+  "profile": "h20x8",
+  "scenario": "gpu_check",
+  "role": "variant",
+  "title": "S2.1 实测矩阵乘峰值和 HBM 带宽",
+  "seed": 0,
+  "variant": "gpu_check",
+  "config_hash": "bebdb92f3a68",
+  "code_hash": "e4c4cbb180c3",
+  "git": {
+    "commit": "d72ad59deed484b5069077b897a7bae9589f4e20",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item": "gpu_check"
+  },
+  "param_affects": {
+    "item": "runtime",
+    "hw": "runtime",
+    "seed": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794390852.8940609,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794390853.0727227,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794390864.3217561,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794390869.9135413,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794390882.2463338,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794390882.6199338,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794390852.8940609,
+  "budget": {
+    "max_minutes": 60
+  },
+  "expect": [
+    "summary.ok == True"
+  ],
+  "slot": "gpu6-0",
+  "started_at": 1794390853.0727239,
+  "model": {
+    "arch": "讲义代码（vendor/ 逐字节拷贝）",
+    "params": {
+      "total": 0,
+      "trainable": 0
+    },
+    "train_mode": "benchmark",
+    "item": "gpu_check",
+    "lesson": "S2.1"
+  },
+  "ended_at": 1794390882.619936,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.ok == True",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

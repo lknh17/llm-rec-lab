@@ -1,0 +1,315 @@
+job_id: 20261111-1630-l09-v01-h20x8
+created_at: '2026-11-11T08:30:07Z'
+profile: h20x8
+courses:
+- L09
+- V01
+only:
+- env_probe
+- seqs_1
+- awq_c1
+- spec_ngram_c1
+- spec_draft_c1
+- vllm_facts
+- gpu_check
+seeds:
+- 0
+requested_commit: a03cee869ae951f8c7a3259849f67665e2654aee
+note: W1 环境探测：vllm-env 安装、vLLM 建引擎、AWQ、n-gram 与草稿模型投机、vLLM 源码核对、峰值自测（各 1 种子）；结果决定
+  W2/W3 是否要改代码
+how_to_run: python -m labkit jobs run 20261111-1630-l09-v01-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-11T09:31:35Z'
+started_at: '2026-11-11T09:35:18Z'
+ran_commit: dfbc93725afef69c020c16018e2aba96bfd6cfe9
+host_summary:
+  torch: 2.15.0+cu132
+  cuda: '13.2'
+  gpu: NVIDIA H20
+  gpu_count: 8
+  gpu_mem_gb: 95.0
+  driver: 535.161.08
+status: partial
+finished_at: '2026-11-11T10:02:11Z'
+hours: 0.45
+runs:
+- course: V01
+  scenario: env_probe
+  seed: 0
+  dir: h20x8/V01/env_probe/s0-a45ed8
+  status: succeeded
+  minutes: 0.4
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: gpu_check
+  seed: 0
+  dir: h20x8/V01/gpu_check/s0-bebdb9
+  status: succeeded
+  minutes: 0.6
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: vllm_facts
+  seed: 0
+  dir: h20x8/V01/vllm_facts/s0-364d83
+  status: succeeded
+  minutes: 2.8
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: env_probe
+  seed: 0
+  dir: h20x8/L09/env_probe/s0-cc3c4c
+  status: failed
+  minutes: 4.6
+  end_reason: "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n\
+    \  File \"<data>/batch/h20x8/L09/env_probe/s0-cc3c4c/code/vllmserve/bench_worker.py\"\
+    , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+    \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+    \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+    , line 118, in run\n    return self._loop.run_until_complete(task)\n         \
+    \  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\"\
+    , line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n\
+    \  File \"<data>/batch/h20x8/L09/env_probe/s0-cc3c4c/code/vllmserve/bench_worker.py\"\
+    , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+    \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 235, in from_engine_args\n    return cls(\n           ^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 114, in __init__\n    self.tokenizer = init_tokenizer_from_configs(\n \
+    \                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 286, in init_tokenizer_from_configs\n    return get_tokenizer(\n      \
+    \     ^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 256, in get_tokenizer\n    tokenizer = get_cached_tokenizer(tokenizer)\n\
+    \                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 99, in get_cached_tokenizer\n    tokenizer.all_special_tokens_extended)\n\
+    \    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/transformers/tokenization_utils_base.py\"\
+    , line 1335, in __getattr__\n    raise AttributeError(f\"{self.__class__.__name__}\
+    \ has no attribute {key}\")\nAttributeError: Qwen2Tokenizer has no attribute all_special_tokens_extended.\
+    \ Did you mean: 'num_special_tokens_to_add'?\n"
+- course: L09
+  scenario: spec_draft_c1
+  seed: 0
+  dir: h20x8/L09/spec_draft_c1/s0-f9cb04
+  status: failed
+  minutes: 4.6
+  end_reason: "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n\
+    \  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\"\
+    , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+    \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+    \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+    , line 118, in run\n    return self._loop.run_until_complete(task)\n         \
+    \  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\"\
+    , line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n\
+    \  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\"\
+    , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+    \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n\
+    \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"\
+    <assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+    , line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n\
+    \                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+    , line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n\
+    \           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\"\
+    , line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args,\
+    \ kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/config/speculative.py\"\
+    , line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError:\
+    \ Speculative decoding with draft model is not supported yet. Please consider\
+    \ using other speculative decoding methods such as ngram, medusa, eagle, or mtp.\n"
+- course: L09
+  scenario: seqs_1
+  seed: 0
+  dir: h20x8/L09/seqs_1/s0-c6d0e0
+  status: failed
+  minutes: 4.6
+  end_reason: "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n\
+    \  File \"<data>/batch/h20x8/L09/seqs_1/s0-c6d0e0/code/vllmserve/bench_worker.py\"\
+    , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+    \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+    \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+    , line 118, in run\n    return self._loop.run_until_complete(task)\n         \
+    \  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\"\
+    , line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n\
+    \  File \"<data>/batch/h20x8/L09/seqs_1/s0-c6d0e0/code/vllmserve/bench_worker.py\"\
+    , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+    \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 235, in from_engine_args\n    return cls(\n           ^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 114, in __init__\n    self.tokenizer = init_tokenizer_from_configs(\n \
+    \                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 286, in init_tokenizer_from_configs\n    return get_tokenizer(\n      \
+    \     ^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 256, in get_tokenizer\n    tokenizer = get_cached_tokenizer(tokenizer)\n\
+    \                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 99, in get_cached_tokenizer\n    tokenizer.all_special_tokens_extended)\n\
+    \    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/transformers/tokenization_utils_base.py\"\
+    , line 1335, in __getattr__\n    raise AttributeError(f\"{self.__class__.__name__}\
+    \ has no attribute {key}\")\nAttributeError: Qwen2Tokenizer has no attribute all_special_tokens_extended.\
+    \ Did you mean: 'num_special_tokens_to_add'?\n"
+- course: L09
+  scenario: spec_ngram_c1
+  seed: 0
+  dir: h20x8/L09/spec_ngram_c1/s0-b957ed
+  status: failed
+  minutes: 4.6
+  end_reason: "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n\
+    \  File \"<data>/batch/h20x8/L09/spec_ngram_c1/s0-b957ed/code/vllmserve/bench_worker.py\"\
+    , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+    \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+    \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+    , line 118, in run\n    return self._loop.run_until_complete(task)\n         \
+    \  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\"\
+    , line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n\
+    \  File \"<data>/batch/h20x8/L09/spec_ngram_c1/s0-b957ed/code/vllmserve/bench_worker.py\"\
+    , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+    \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 235, in from_engine_args\n    return cls(\n           ^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 114, in __init__\n    self.tokenizer = init_tokenizer_from_configs(\n \
+    \                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 286, in init_tokenizer_from_configs\n    return get_tokenizer(\n      \
+    \     ^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 256, in get_tokenizer\n    tokenizer = get_cached_tokenizer(tokenizer)\n\
+    \                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 99, in get_cached_tokenizer\n    tokenizer.all_special_tokens_extended)\n\
+    \    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/transformers/tokenization_utils_base.py\"\
+    , line 1335, in __getattr__\n    raise AttributeError(f\"{self.__class__.__name__}\
+    \ has no attribute {key}\")\nAttributeError: Qwen2Tokenizer has no attribute all_special_tokens_extended.\
+    \ Did you mean: 'num_special_tokens_to_add'?\n"
+- course: L09
+  scenario: awq_c1
+  seed: 0
+  dir: h20x8/L09/awq_c1/s0-0c810e
+  status: failed
+  minutes: 4.6
+  end_reason: "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n\
+    \  File \"<data>/batch/h20x8/L09/awq_c1/s0-0c810e/code/vllmserve/bench_worker.py\"\
+    , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+    \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+    \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+    , line 118, in run\n    return self._loop.run_until_complete(task)\n         \
+    \  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\"\
+    , line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n\
+    \  File \"<data>/batch/h20x8/L09/awq_c1/s0-0c810e/code/vllmserve/bench_worker.py\"\
+    , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+    \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 235, in from_engine_args\n    return cls(\n           ^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 114, in __init__\n    self.tokenizer = init_tokenizer_from_configs(\n \
+    \                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 286, in init_tokenizer_from_configs\n    return get_tokenizer(\n      \
+    \     ^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 256, in get_tokenizer\n    tokenizer = get_cached_tokenizer(tokenizer)\n\
+    \                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+    , line 99, in get_cached_tokenizer\n    tokenizer.all_special_tokens_extended)\n\
+    \    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/transformers/tokenization_utils_base.py\"\
+    , line 1335, in __getattr__\n    raise AttributeError(f\"{self.__class__.__name__}\
+    \ has no attribute {key}\")\nAttributeError: Qwen2Tokenizer has no attribute all_special_tokens_extended.\
+    \ Did you mean: 'num_special_tokens_to_add'?\n"
+n_exported: 8
+problems:
+- "L09/env_probe s0: failed expect_ok=None RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback\
+  \ (most recent call last):\n  File \"<data>/batch/h20x8/L09/env_probe/s0-cc3c4c/code/vllmserve/bench_worker.py\"\
+  , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+  \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+  , line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n\
+  \    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/env_probe/s0-cc3c4c/code/vllmserve/bench_worker.py\"\
+  , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+  \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 235, in from_engine_args\n    return cls(\n           ^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 114, in __init__\n    self.tokenizer = init_tokenizer_from_configs(\n   \
+  \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 286, in init_tokenizer_from_configs\n    return get_tokenizer(\n        \
+  \   ^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 256, in get_tokenizer\n    tokenizer = get_cached_tokenizer(tokenizer)\n\
+  \                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 99, in get_cached_tokenizer\n    tokenizer.all_special_tokens_extended)\n\
+  \    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/transformers/tokenization_utils_base.py\"\
+  , line 1335, in __getattr__\n    raise AttributeError(f\"{self.__class__.__name__}\
+  \ has no attribute {key}\")\nAttributeError: Qwen2Tokenizer has no attribute all_special_tokens_extended.\
+  \ Did you mean: 'num_special_tokens_to_add'?"
+- "L09/spec_draft_c1 s0: failed expect_ok=None RuntimeError: vLLM 测量进程失败（退出码 1）：\n\
+  Traceback (most recent call last):\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\"\
+  , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+  \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+  , line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n\
+  \    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\"\
+  , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+  \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n\
+  \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+  , line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n\
+  \                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+  , line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n\
+  \           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\"\
+  , line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args,\
+  \ kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/config/speculative.py\"\
+  , line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError:\
+  \ Speculative decoding with draft model is not supported yet. Please consider using\
+  \ other speculative decoding methods such as ngram, medusa, eagle, or mtp."
+- "L09/seqs_1 s0: failed expect_ok=None RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback\
+  \ (most recent call last):\n  File \"<data>/batch/h20x8/L09/seqs_1/s0-c6d0e0/code/vllmserve/bench_worker.py\"\
+  , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+  \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+  , line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n\
+  \    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/seqs_1/s0-c6d0e0/code/vllmserve/bench_worker.py\"\
+  , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+  \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 235, in from_engine_args\n    return cls(\n           ^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 114, in __init__\n    self.tokenizer = init_tokenizer_from_configs(\n   \
+  \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 286, in init_tokenizer_from_configs\n    return get_tokenizer(\n        \
+  \   ^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 256, in get_tokenizer\n    tokenizer = get_cached_tokenizer(tokenizer)\n\
+  \                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 99, in get_cached_tokenizer\n    tokenizer.all_special_tokens_extended)\n\
+  \    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/transformers/tokenization_utils_base.py\"\
+  , line 1335, in __getattr__\n    raise AttributeError(f\"{self.__class__.__name__}\
+  \ has no attribute {key}\")\nAttributeError: Qwen2Tokenizer has no attribute all_special_tokens_extended.\
+  \ Did you mean: 'num_special_tokens_to_add'?"
+- "L09/spec_ngram_c1 s0: failed expect_ok=None RuntimeError: vLLM 测量进程失败（退出码 1）：\n\
+  Traceback (most recent call last):\n  File \"<data>/batch/h20x8/L09/spec_ngram_c1/s0-b957ed/code/vllmserve/bench_worker.py\"\
+  , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+  \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+  , line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n\
+  \    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/spec_ngram_c1/s0-b957ed/code/vllmserve/bench_worker.py\"\
+  , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+  \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 235, in from_engine_args\n    return cls(\n           ^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 114, in __init__\n    self.tokenizer = init_tokenizer_from_configs(\n   \
+  \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 286, in init_tokenizer_from_configs\n    return get_tokenizer(\n        \
+  \   ^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 256, in get_tokenizer\n    tokenizer = get_cached_tokenizer(tokenizer)\n\
+  \                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 99, in get_cached_tokenizer\n    tokenizer.all_special_tokens_extended)\n\
+  \    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/transformers/tokenization_utils_base.py\"\
+  , line 1335, in __getattr__\n    raise AttributeError(f\"{self.__class__.__name__}\
+  \ has no attribute {key}\")\nAttributeError: Qwen2Tokenizer has no attribute all_special_tokens_extended.\
+  \ Did you mean: 'num_special_tokens_to_add'?"
+- "L09/awq_c1 s0: failed expect_ok=None RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback\
+  \ (most recent call last):\n  File \"<data>/batch/h20x8/L09/awq_c1/s0-0c810e/code/vllmserve/bench_worker.py\"\
+  , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+  \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+  , line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n\
+  \    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/awq_c1/s0-0c810e/code/vllmserve/bench_worker.py\"\
+  , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+  \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 235, in from_engine_args\n    return cls(\n           ^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 114, in __init__\n    self.tokenizer = init_tokenizer_from_configs(\n   \
+  \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 286, in init_tokenizer_from_configs\n    return get_tokenizer(\n        \
+  \   ^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 256, in get_tokenizer\n    tokenizer = get_cached_tokenizer(tokenizer)\n\
+  \                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/transformers_utils/tokenizer.py\"\
+  , line 99, in get_cached_tokenizer\n    tokenizer.all_special_tokens_extended)\n\
+  \    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/transformers/tokenization_utils_base.py\"\
+  , line 1335, in __getattr__\n    raise AttributeError(f\"{self.__class__.__name__}\
+  \ has no attribute {key}\")\nAttributeError: Qwen2Tokenizer has no attribute all_special_tokens_extended.\
+  \ Did you mean: 'num_special_tokens_to_add'?"

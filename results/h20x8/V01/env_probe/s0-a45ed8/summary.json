@@ -1,0 +1,40 @@
+{
+  "item": "env_probe",
+  "lesson": "—",
+  "title": "环境探测：torch / triton / nvcc / ncu / vLLM 是否可用",
+  "ok": true,
+  "missing": [],
+  "env": {
+    "python": "3.12.3",
+    "torch": "2.15.0+cu132",
+    "torch_cuda": "13.2",
+    "cuda": true,
+    "gpu": "NVIDIA H20",
+    "gpu_mem_gb": 102.0,
+    "sm_count": 78,
+    "capability": "9.0",
+    "triton": "3.9.0",
+    "nvcc": "/usr/local/cuda/bin/nvcc",
+    "nvcc_version": [
+      "Build cuda_13.0.r13.0/compiler.36424714_0"
+    ],
+    "ncu": "/usr/local/cuda/bin/ncu",
+    "ncu_version": [
+      "Version 2025.3.1.0 (build 36398880) (public-release)"
+    ],
+    "vllm_python": "<assets>/venvs/vllm-env--vllm-0.11.0/bin/python",
+    "uv": "/usr/local/bin/uv"
+  },
+  "steps": [],
+  "outputs": [],
+  "binary_outputs": [],
+  "seconds": 0,
+  "headline": {
+    "ok": 1,
+    "seconds": 0
+  },
+  "display": {
+    "通过": 1,
+    "用时 s": 0
+  }
+}

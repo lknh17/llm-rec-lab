@@ -1,0 +1,89 @@
+{
+  "run_id": "h20x8.V01.env_probe.s0-a45ed8",
+  "course_id": "V01",
+  "project": "lessonbench",
+  "entry": "lessonbench.experiment",
+  "profile": "h20x8",
+  "scenario": "env_probe",
+  "role": "baseline",
+  "title": "环境探测：torch / triton / nvcc / ncu / vllm-env 是否可用（W1 作业单先跑它，决定后面哪些项能跑）",
+  "seed": 0,
+  "variant": "env_probe",
+  "config_hash": "a45ed8b74fc7",
+  "code_hash": "e4c4cbb180c3",
+  "git": {
+    "commit": "d72ad59deed484b5069077b897a7bae9589f4e20",
+    "dirty": false
+  },
+  "changed_from_baseline": {},
+  "param_affects": {
+    "item": "runtime",
+    "hw": "runtime",
+    "seed": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794390852.9267325,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794390853.0773227,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794390864.2634416,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794390869.907948,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794390869.925554,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794390870.2235656,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794390852.9267325,
+  "budget": {
+    "max_minutes": 60
+  },
+  "expect": [
+    "summary.env.cuda == True"
+  ],
+  "slot": "gpu0-0",
+  "started_at": 1794390853.0773244,
+  "model": {
+    "arch": "讲义代码（vendor/ 逐字节拷贝）",
+    "params": {
+      "total": 0,
+      "trainable": 0
+    },
+    "train_mode": "benchmark",
+    "item": "env_probe",
+    "lesson": "—"
+  },
+  "ended_at": 1794390870.223567,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.env.cuda == True",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

@@ -1,0 +1,91 @@
+{
+  "run_id": "h20x8.V01.vllm_facts.s0-364d83",
+  "course_id": "V01",
+  "project": "lessonbench",
+  "entry": "lessonbench.experiment",
+  "profile": "h20x8",
+  "scenario": "vllm_facts",
+  "role": "variant",
+  "title": "S5.5 从 vLLM 源码核对前缀哈希登记、投机草稿 token、接受长度指标名",
+  "seed": 0,
+  "variant": "vllm_facts",
+  "config_hash": "364d830e63ba",
+  "code_hash": "e4c4cbb180c3",
+  "git": {
+    "commit": "d72ad59deed484b5069077b897a7bae9589f4e20",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item": "vllm_facts"
+  },
+  "param_affects": {
+    "item": "runtime",
+    "hw": "runtime",
+    "seed": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794390852.9330232,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794390853.0793595,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794390864.2451806,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794390869.9077606,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794391014.9046335,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794391015.2579067,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794390852.9330232,
+  "budget": {
+    "max_minutes": 60
+  },
+  "expect": [
+    "summary.ok == True"
+  ],
+  "slot": "gpu7-0",
+  "started_at": 1794390853.079361,
+  "model": {
+    "arch": "讲义代码（vendor/ 逐字节拷贝）",
+    "params": {
+      "total": 0,
+      "trainable": 0
+    },
+    "train_mode": "benchmark",
+    "item": "vllm_facts",
+    "lesson": "S5.5"
+  },
+  "ended_at": 1794391015.2579079,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.ok == True",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

@@ -1,0 +1,11 @@
+[worker] 等待设备锁 gpu0-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/V01/env_probe/s0-a45ed8/code/lessonbench/experiment.py
+[17:54:24] ===== 阶段：prepare =====
+[17:54:27] 验证项 env_probe（—）：环境探测：torch / triton / nvcc / ncu / vLLM 是否可用
+[17:54:27] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0/bin/python，uv=/usr/local/bin/uv
+[17:54:29] ===== 阶段：train =====
+[17:54:29] ===== 阶段：evaluate =====
+[17:54:30] 通过：0 条命令，0 秒；报告 无；缺少 无
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

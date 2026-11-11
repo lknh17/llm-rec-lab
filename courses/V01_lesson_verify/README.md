@@ -23,9 +23,24 @@
 <!-- labkit:results -->
 <details><summary>展开结果（先自己预测，再看）</summary>
 
-**h20x8**：8 × NVIDIA H20，每项独占 1 张卡；讲义脚本原样运行（vendor/ 是私有仓库讲义代码的逐字节拷贝），--hw H20。主环境叠加 tabulate / matplotlib / ninja（uv run --with，不改 uv.lock），vLLM 相关的项用 vllm-env（已有 0 / 14 个运行）
+**h20x8**：8 × NVIDIA H20，每项独占 1 张卡；讲义脚本原样运行（vendor/ 是私有仓库讲义代码的逐字节拷贝），--hw H20。主环境叠加 tabulate / matplotlib / ninja（uv run --with，不改 uv.lock），vLLM 相关的项用 vllm-env（已有 3 / 14 个运行）
 
-_还没有结果：等待批量运行。_
+| 场景 | 类型 | 通过 | 用时 s | 断言 |
+| - | - | - | - | - |
+| `env_probe` | 基线 | 1.0000 | 0.0000 | 通过 |
+| `ncu_parse` | 参照 | 待生成 | 待生成 | |
+| `gpu_check` | 候选改动 | 1.0000 | 12.3000 | 通过 |
+| `decode_bench` | 候选改动 | 待生成 | 待生成 | |
+| `s3_tests` | 候选改动 | 待生成 | 待生成 | |
+| `triton_bench` | 候选改动 | 待生成 | 待生成 | |
+| `coalescing` | 候选改动 | 待生成 | 待生成 | |
+| `cuda_matmul` | 候选改动 | 待生成 | 待生成 | |
+| `ncu` | 候选改动 | 待生成 | 待生成 | |
+| `split_kv` | 候选改动 | 待生成 | 待生成 | |
+| `w4a16` | 候选改动 | 待生成 | 待生成 | |
+| `moe` | 候选改动 | 待生成 | 待生成 | |
+| `vllm_facts` | 候选改动 | 1.0000 | 145.0000 | 通过 |
+| `s7_vllm` | 候选改动 | 待生成 | 待生成 | |
 
 </details>
 <!-- /labkit:results -->
@@ -35,7 +50,9 @@ _还没有结果：等待批量运行。_
 <!-- labkit:figures -->
 <details><summary>展开证据图（先自己预测，再看）</summary>
 
-- **h20x8**：还没有结果，图在结果推回后自动生成。
+- **h20x8**：[主指标](figures/h20x8-metrics.svg)
+
+  ![h20x8 主指标](figures/h20x8-metrics.svg)
 
 </details>
 <!-- /labkit:figures -->

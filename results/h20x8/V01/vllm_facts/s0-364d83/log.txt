@@ -1,0 +1,219 @@
+[worker] 等待设备锁 gpu7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/V01/vllm_facts/s0-364d83/code/lessonbench/experiment.py
+[17:54:24] ===== 阶段：prepare =====
+[17:54:27] 验证项 vllm_facts（S5.5）：S5 第 5 课：从 vLLM 源码核对前缀哈希登记时机、投机草稿 token、接受长度指标名
+[17:54:27] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0/bin/python，uv=/usr/local/bin/uv
+[17:54:29] ===== 阶段：train =====
+[17:54:29] $ [vllm] python vllm_facts.py
+[17:55:09] INFO 11-11 17:55:09 [__init__.py:216] Automatically detected platform cuda.
+[17:56:52] # vLLM 0.11.0 源码核对
+[17:56:52] 
+[17:56:52] ## KVCacheManager.allocate_slots
+[17:56:52] 
+[17:56:52] ```python
+[17:56:52]     def allocate_slots(
+[17:56:52]         self,
+[17:56:52]         request: Request,
+[17:56:52]         num_new_tokens: int,
+[17:56:52]         num_new_computed_tokens: int = 0,
+[17:56:52]         new_computed_blocks: Optional[KVCacheBlocks] = None,
+[17:56:52]         num_lookahead_tokens: int = 0,
+[17:56:52]         delay_cache_blocks: bool = False,
+[17:56:52]         num_encoder_tokens: int = 0,
+[17:56:52]     ) -> Optional[KVCacheBlocks]:
+[17:56:52]         """Add slots for a request with new tokens to append.
+[17:56:52] 
+[17:56:52]         Args:
+[17:56:52]             request: The request to allocate slots.
+[17:56:52]             num_new_tokens: The number of tokens to allocate, including external
+[17:56:52]                 tokens. Note that this does not include tokens that have
+[17:56:52]                 already been computed locally (i.e. new_computed_blocks).
+[17:56:52]             num_new_computed_tokens: The number of new computed tokens just
+[17:56:52]                 hitting the prefix caching, excluding external tokens.
+[17:56:52]             new_computed_blocks: The cached blocks for the above new computed
+[17:56:52]                 tokens.
+[17:56:52]             num_lookahead_tokens: The number of speculative tokens to allocate.
+[17:56:52]                 This is used by spec decode proposers with kv-cache such
+[17:56:52]                 as eagle.
+[17:56:52]             delay_cache_blocks: Whether to skip caching the blocks. This is
+[17:56:52]                 used by P/D when allocating blocks used in a KV transfer
+[17:56:52]                 which will complete in a future step.
+[17:56:52] 
+[17:56:52]         Blocks layout:
+[17:56:52]         ```
+[17:56:52]         -----------------------------------------------------------------------
+[17:56:52]         | < computed > | < new computed > |    < new >    | < pre-allocated > |
+[17:56:52]         -----------------------------------------------------------------------
+[17:56:52]         |                  < required >                   |
+[17:56:52]         --------------------------------------------------
+[17:56:52]         |                    < full >                  |
+[17:56:52]         ------------------------------------------------
+[17:56:52]                                           | <new full> |
+[17:56:52]                                           --------------
+[17:56:52]         ```
+[17:56:52]         The following *_blocks are illustrated in this layout.
+[17:56:52] 
+[17:56:52]         Returns:
+[17:56:52]             A list of new allocated blocks.
+[17:56:52]         """
+[17:56:52]         if num_new_tokens == 0:
+[17:56:52]             raise ValueError("num_new_tokens must be greater than 0")
+[17:56:52] 
+[17:56:52]         if new_computed_blocks is not None:
+[17:56:52]             new_computed_block_list = new_computed_blocks.blocks
+[17:56:52]         else:
+[17:56:52]             new_computed_block_list = tuple(
+[17:56:52]                 [] for _ in range(len(self.kv_cache_config.kv_cache_groups)))
+[17:56:52] 
+[17:56:52]         # Free the blocks that are skipped during the attention computation
+[17:56:52]         # (e.g., tokens outside the sliding window).
+[17:56:52]         # We can do this even if we cannot schedule this request due to
+[17:56:52]         # insufficient free blocks.
+[17:56:52]         # Should call this function before allocating new blocks to reduce
+[17:56:52]         # the number of evicted blocks.
+[17:56:52]         self.coordinator.remove_skipped_blocks(request.request_id,
+[17:56:52]                                                request.num_computed_tokens)
+[17:56:52] 
+[17:56:52]         # The number of computed tokens is the number of computed tokens plus
+[17:56:52]         # the new prefix caching hits
+[17:56:52]         num_computed_tokens = (request.num_computed_tokens +
+[17:56:52]                                num_new_computed_tokens)
+[17:56:52]         num_tokens_need_slot = min(
+[17:56:52]             num_computed_tokens + num_new_tokens + num_lookahead_tokens,
+[17:56:52]             self.max_model_len)
+[17:56:52] 
+[17:56:52]         num_blocks_to_allocate = self.coordinator.get_num_blocks_to_allocate(
+[17:56:52]             request_id=request.request_id,
+[17:56:52]             num_tokens=num_tokens_need_slot,
+[17:56:52]             new_computed_blocks=new_computed_block_list,
+[17:56:52]             num_encoder_tokens=num_encoder_tokens,
+[17:56:52]         )
+[17:56:52] 
+[17:56:52]         if num_blocks_to_allocate > self.block_pool.get_num_free_blocks():
+[17:56:52]             # Cannot allocate new blocks
+[17:56:52]             return None
+[17:56:52] 
+[17:56:52]         # Touch the computed blocks to make sure they won't be evicted.
+[17:56:52]         if self.enable_caching:
+[17:56:52]             self.block_pool.touch(new_computed_block_list)
+[17:56:52]         else:
+[17:56:52]             assert not any(new_computed_block_list), (
+[17:56:52]                 "Computed blocks should be empty when "
+[17:56:52]                 "prefix caching is disabled")
+[17:56:52] 
+[17:56:52]         # Append the new computed blocks to the request blocks until now to
+[17:56:52]         # avoid the case where the new blocks cannot be allocated.
+[17:56:52]         self.coordinator.save_new_computed_blocks(request.request_id,
+[17:56:52]                                                   new_computed_block_list)
+[17:56:52] 
+[17:56:52]         new_blocks = self.coordinator.allocate_new_blocks(
+[17:56:52]             request.request_id, num_tokens_need_slot, num_encoder_tokens)
+[17:56:52] 
+[17:56:52]         # P/D: delay caching blocks if we have to recv from
+[17:56:52]         # remote. Update state for locally cached blocks.
+[17:56:52]         if not self.enable_caching or delay_cache_blocks:
+[17:56:52]             return KVCacheBlocks(new_blocks)
+[17:56:52] 
+[17:56:52]         # NOTE(woosuk): We want to commit (cache) up to num_computed_tokens +
+[17:56:52]         # num_new_tokens, but must exclude "non-committable" tokens (e.g.,
+[17:56:52]         # draft tokens that could be rejected). Therefore, we cap the number
+[17:56:52]         # at `request.num_tokens`, ensuring only "finalized" tokens are cached.
+[17:56:52]         num_tokens_to_cache = min(num_computed_tokens + num_new_tokens,
+[17:56:52]                                   request.num_tokens)
+[17:56:52]         self.coordinator.cache_blocks(request, num_tokens_to_cache)
+[17:56:52] 
+[17:56:52]         return KVCacheBlocks(new_blocks)
+[17:56:52] ```
+[17:56:52] 
+[17:56:52] ## 投机解码日志与指标
+[17:56:52] 
+[17:56:52] ```
+[17:56:52] vllm/v1/spec_decode/metrics.py:29: num_accepted_tokens: int = 0
+[17:56:52] vllm/v1/spec_decode/metrics.py:30: num_accepted_tokens_per_pos: list[int] = field(default_factory=list)
+[17:56:52] vllm/v1/spec_decode/metrics.py:35: num_accepted_tokens_per_pos=[0] * num_spec_tokens)
+[17:56:52] vllm/v1/spec_decode/metrics.py:37: def observe_draft(self, num_draft_tokens: int, num_accepted_tokens: int):
+[17:56:52] vllm/v1/spec_decode/metrics.py:40: self.num_accepted_tokens += num_accepted_tokens
+[17:56:52] vllm/v1/spec_decode/metrics.py:41: assert num_accepted_tokens <= self.num_spec_tokens
+[17:56:52] vllm/v1/spec_decode/metrics.py:42: for i in range(num_accepted_tokens):
+[17:56:52] vllm/v1/spec_decode/metrics.py:43: self.num_accepted_tokens_per_pos[i] += 1
+[17:56:52] vllm/v1/spec_decode/metrics.py:60: self.num_accepted_tokens: list[int] = []
+[17:56:52] vllm/v1/spec_decode/metrics.py:67: self.num_accepted_tokens.append(
+[17:56:52] vllm/v1/spec_decode/metrics.py:68: spec_decoding_stats.num_accepted_tokens)
+[17:56:52] vllm/v1/spec_decode/metrics.py:70: spec_decoding_stats.num_accepted_tokens_per_pos)
+[17:56:52] vllm/v1/spec_decode/metrics.py:77: num_accepted_tokens = np.sum(self.num_accepted_tokens)
+[17:56:52] vllm/v1/spec_decode/metrics.py:84: accepted_throughput = num_accepted_tokens / elapsed_time
+[17:56:52] vllm/v1/spec_decode/metrics.py:86: draft_acceptance_rate = (num_accepted_tokens / num_draft_tokens *
+[17:56:52] vllm/v1/spec_decode/metrics.py:90: mean_acceptance_length = 1 + (num_accepted_tokens / num_drafts)
+[17:56:52] vllm/v1/spec_decode/metrics.py:98: "Mean acceptance length: %.2f, "
+[17:56:52] vllm/v1/spec_decode/metrics.py:108: num_accepted_tokens,
+[17:56:52] vllm/v1/spec_decode/metrics.py:121: rate(vllm:spec_decode_num_accepted_tokens_total[$interval]) /
+[17:56:52] vllm/v1/spec_decode/metrics.py:128: rate(vllm:spec_decode_num_accepted_tokens_total[$interval]) /
+[17:56:52] vllm/v1/spec_decode/metrics.py:133: vllm:spec_decode_num_accepted_tokens_per_pos[$interval] /
+[17:56:52] vllm/v1/spec_decode/metrics.py:164: name="vllm:spec_decode_num_accepted_tokens",
+[17:56:52] vllm/v1/spec_decode/metrics.py:167: self.counter_spec_decode_num_accepted_tokens = make_per_engine(
+[17:56:52] vllm/v1/spec_decode/metrics.py:175: name="vllm:spec_decode_num_accepted_tokens_per_pos",
+[17:56:52] vllm/v1/spec_decode/metrics.py:179: self.counter_spec_decode_num_accepted_tokens_per_pos: dict[
+[17:56:52] vllm/v1/spec_decode/metrics.py:197: self.counter_spec_decode_num_accepted_tokens[engine_idx].inc(
+[17:56:52] vllm/v1/spec_decode/metrics.py:198: spec_decoding_stats.num_accepted_tokens)
+[17:56:52] vllm/v1/spec_decode/metrics.py:201: counter_spec_decode_num_accepted_tokens_per_pos[engine_idx]):
+[17:56:52] vllm/v1/spec_decode/metrics.py:202: counter.inc(spec_decoding_stats.num_accepted_tokens_per_pos[pos])
+[17:56:52] vllm/v1/metrics/reader.py:35: specific metric, vllm:spec_decode_num_accepted_tokens_per_pos.
+[17:56:52] ```
+[17:56:52] 
+[17:56:52] ## 前缀缓存登记（cache_blocks / num_tokens_to_cache）
+[17:56:52] 
+[17:56:52] ```
+[17:56:52] vllm/v1/core/block_pool.py:188: def cache_full_blocks(
+[17:56:52] vllm/v1/core/kv_cache_coordinator.py:118: def cache_blocks(self, request: Request, num_computed_tokens: int) -> None:
+[17:56:52] vllm/v1/core/kv_cache_coordinator.py:129: manager.cache_blocks(request, num_computed_tokens)
+[17:56:52] vllm/v1/core/kv_cache_manager.py:300: num_tokens_to_cache = min(num_computed_tokens + num_new_tokens,
+[17:56:52] vllm/v1/core/kv_cache_manager.py:302: self.coordinator.cache_blocks(request, num_tokens_to_cache)
+[17:56:52] vllm/v1/core/kv_cache_manager.py:391: def cache_blocks(self, request: Request, num_computed_tokens: int) -> None:
+[17:56:52] vllm/v1/core/kv_cache_manager.py:394: self.coordinator.cache_blocks(request, num_computed_tokens)
+[17:56:52] vllm/v1/core/sched/async_scheduler.py:44: self.kv_cache_manager.cache_blocks(
+[17:56:52] vllm/v1/core/sched/scheduler.py:1261: self.kv_cache_manager.cache_blocks(request, num_computed_tokens)
+[17:56:52] vllm/v1/core/single_type_kv_cache_manager.py:133: def cache_blocks(self, request: Request, num_tokens: int) -> None:
+[17:56:52] vllm/v1/core/single_type_kv_cache_manager.py:145: self.block_pool.cache_full_blocks(
+[17:56:52] vllm/v1/core/single_type_kv_cache_manager.py:616: def cache_blocks(self, request: Request, num_tokens: int) -> None:
+[17:56:52] ```
+[17:56:52] 
+[17:56:52] ## 前缀缓存命中统计
+[17:56:52] 
+[17:56:52] ```
+[17:56:52] vllm/v1/metrics/loggers.py:224: # Deprecated in 0.9.2 - Renamed as vllm:prefix_cache_queries
+[17:56:52] vllm/v1/metrics/loggers.py:228: counter_gpu_prefix_cache_queries = self._counter_cls(
+[17:56:52] vllm/v1/metrics/loggers.py:229: name="vllm:gpu_prefix_cache_queries",
+[17:56:52] vllm/v1/metrics/loggers.py:232: "tokens. DEPRECATED: Use vllm:prefix_cache_queries instead."
+[17:56:52] vllm/v1/metrics/loggers.py:235: self.counter_gpu_prefix_cache_queries = make_per_engine(
+[17:56:52] vllm/v1/metrics/loggers.py:236: counter_gpu_prefix_cache_queries, engine_indexes, model_name)
+[17:56:52] vllm/v1/metrics/loggers.py:238: # Deprecated in 0.9.2 - Renamed as vllm:prefix_cache_hits
+[17:56:52] vllm/v1/metrics/loggers.py:242: counter_gpu_prefix_cache_hits = self._counter_cls(
+[17:56:52] vllm/v1/metrics/loggers.py:243: name="vllm:gpu_prefix_cache_hits",
+[17:56:52] vllm/v1/metrics/loggers.py:246: "tokens. DEPRECATED: Use vllm:prefix_cache_hits instead."),
+[17:56:52] vllm/v1/metrics/loggers.py:248: self.counter_gpu_prefix_cache_hits = make_per_engine(
+[17:56:52] vllm/v1/metrics/loggers.py:249: counter_gpu_prefix_cache_hits, engine_indexes, model_name)
+[17:56:52] vllm/v1/metrics/loggers.py:258: counter_prefix_cache_queries = self._counter_cls(
+[17:56:52] vllm/v1/metrics/loggers.py:259: name="vllm:prefix_cache_queries",
+[17:56:52] vllm/v1/metrics/loggers.py:263: self.counter_prefix_cache_queries = make_per_engine(
+[17:56:52] vllm/v1/metrics/loggers.py:264: counter_prefix_cache_queries, engine_indexes, model_name)
+[17:56:52] vllm/v1/metrics/loggers.py:266: counter_prefix_cache_hits = self._counter_cls(
+[17:56:52] vllm/v1/metrics/loggers.py:267: name="vllm:prefix_cache_hits",
+[17:56:52] vllm/v1/metrics/loggers.py:271: self.counter_prefix_cache_hits = make_per_engine(
+[17:56:52] vllm/v1/metrics/loggers.py:272: counter_prefix_cache_hits, engine_indexes, model_name)
+[17:56:52] vllm/v1/metrics/loggers.py:543: self.counter_gpu_prefix_cache_queries[engine_idx].inc(
+[17:56:52] vllm/v1/metrics/loggers.py:545: self.counter_gpu_prefix_cache_hits[engine_idx].inc(
+[17:56:52] vllm/v1/metrics/loggers.py:548: self.counter_prefix_cache_queries[engine_idx].inc(
+[17:56:52] vllm/v1/metrics/loggers.py:550: self.counter_prefix_cache_hits[engine_idx].inc(
+[17:56:52] vllm/v1/metrics/stats.py:16: class PrefixCacheStats:
+[17:56:52] vllm/v1/metrics/stats.py:42: prefix_cache_stats: PrefixCacheStats = field(
+[17:56:52] vllm/v1/metrics/stats.py:43: default_factory=PrefixCacheStats)
+[17:56:52] vllm/v1/core/kv_cache_manager.py:12: from vllm.v1.metrics.stats import PrefixCacheStats
+[17:56:52] vllm/v1/core/kv_cache_manager.py:103: self.prefix_cache_stats = PrefixCacheStats() if log_stats else None
+[17:56:52] vllm/v1/core/kv_cache_manager.py:142: def make_prefix_cache_stats(self) -> Optional[PrefixCacheStats]:
+[17:56:52] ```
+[17:56:52] 
+[17:56:54] ===== 阶段：evaluate =====
+[17:56:55] 通过：1 条命令，145.0 秒；报告 ['vllm_facts.md']；缺少 无
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}
