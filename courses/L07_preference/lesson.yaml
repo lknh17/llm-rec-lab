@@ -525,9 +525,9 @@ steps:
   question:
     text: 偏好阶段的时间里，生成占多少？
     options:
-    - 不到 40%
-    - 40% - 70%
-    - 70% 以上
+    - 不到 25%
+    - 25% - 60%
+    - 60% 以上
   columns:
   - path: summary.pref.result.gen_share
     label: 生成耗时占比

@@ -313,9 +313,9 @@ steps:
   question:
     text: 同容量（1677 万）时，4 × 64 的碰撞率和 3 × 256 比怎样？
     options:
-    - 多 5 个点以上
-    - 差不多（±5 个点）
-    - 少 5 个点以上
+    - 多 2 个点以上
+    - 差不多（±2 个点）
+    - 少 2 个点以上
   columns:
   - path: summary.sid.at_cap.c16m.collision_rate
     label: 容量 1677 万的碰撞率

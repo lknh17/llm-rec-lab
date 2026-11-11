@@ -187,8 +187,8 @@ steps:
     options:
     - 不到 0.3
     - 0.3 - 0.5
-    - 0.5 - 0.8
-    - 0.8 以上
+    - 0.5 - 0.7
+    - 0.7 以上
 - id: p_mean
   file: 06-mean
   stage: models

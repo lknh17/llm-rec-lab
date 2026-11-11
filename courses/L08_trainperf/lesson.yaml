@@ -415,9 +415,9 @@ steps:
   question:
     text: fp32 的每卡吞吐是 bf16 的多少？
     options:
-    - 不到 25%
-    - 25% - 50%
-    - 50% - 80%
+    - 不到 15%
+    - 15% - 40%
+    - 40% - 80%
     - 80% 以上
   columns:
   - path: summary.throughput.tokens_per_s_per_gpu
@@ -542,9 +542,9 @@ steps:
   question:
     text: MFU 是基线的多少？
     options:
-    - 不到 50%
-    - 50% - 80%
-    - 80% 以上
+    - 不到 60%
+    - 60% - 90%
+    - 90% 以上
   columns:
   - path: summary.mfu.mfu
     label: MFU

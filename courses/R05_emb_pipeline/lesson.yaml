@@ -384,8 +384,9 @@ steps:
     text: 拷到 GPU 这一阶段的耗时是基线的几倍？
     options:
     - 不到 1.5 倍
-    - 1.5 - 5 倍
-    - 5 倍以上
+    - 1.5 - 3 倍
+    - 3 - 10 倍
+    - 10 倍以上
   columns:
   - path: summary.e2e.stage_ms.h2d
     label: 拷贝 ms
@@ -410,9 +411,9 @@ steps:
   question:
     text: 端到端吞吐是基线的多少？
     options:
-    - 不到 30%
-    - 30% - 70%
-    - 70% 以上
+    - 不到 20%
+    - 20% - 50%
+    - 50% 以上
   columns:
   - path: summary.e2e.samples_per_s
     label: 样本/秒
@@ -477,8 +478,8 @@ steps:
     text: 端到端吞吐能恢复到基线的多少？
     options:
     - 不到 50%
-    - 50% - 90%
-    - 90% 以上
+    - 50% - 80%
+    - 80% 以上（基本恢复）
   columns:
   - path: summary.e2e.samples_per_s
     label: 样本/秒
