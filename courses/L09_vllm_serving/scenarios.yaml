@@ -1,0 +1,181 @@
+course: L09
+title: L09 推理性能与 vLLM 服务：长输入短输出的 7B 打标，TTFT / TPOT 对照屋顶线、batch 拐点、前缀缓存、chunked prefill、FP8 与 AWQ、投机解码、KV 显存与并发，前缀顺序写反让缓存失效的故障
+project: vllmserve
+entry: vllmserve.experiment
+
+profiles:
+  h20x8:
+    note: 8 × NVIDIA H20（96 GB，bf16 稠密标称 148 TFLOPS，HBM 标称 4.0 TB/s），每个运行独占 1 张卡。vLLM 0.11 装在独立环境 vllm-env 里；Qwen2.5-7B-Instruct bf16，每条输入 4096 token、输出 50 token（忽略 EOS），贪心解码
+    base: {backend: vllm, max_minutes: 30}
+    seeds: [0, 1, 2]
+    assets: [vllm-env, qwen2.5-7b, qwen2.5-0.5b, qwen2.5-7b-awq]
+    slots: {gpus_per_job: 1, jobs_per_device: 1}
+  mac-smoke:
+    note: Mac 冒烟：transformers 逐条 generate（qwen2.5-0.5b），输入 192 token、输出 6 token、3 条，只验证请求构造、计时和汇总口径（vLLM 的旋钮不生效，不检查断言）
+    base: {backend: hf, model: qwen2.5-0.5b, device: auto, input_len: 192, output_len: 6, num_prompts: 3, max_minutes: 10}
+    seeds: [0]
+    skip_expect: true
+    assets: [qwen2.5-0.5b]
+    slots: {gpus_per_job: 0, jobs_per_device: 1}
+
+scenarios:
+  # ---------- 环境探测（W1 作业单先跑它，不进讲义）----------
+  - id: env_probe
+    role: reference
+    title: 环境探测：vLLM 能否在 H20 上建引擎，测量链路（流式计时、前缀缓存计数、KV 容量日志）是否都取得到
+    params: {model: qwen2.5-0.5b, input_len: 1024, output_len: 16, num_prompts: 16, max_num_seqs: 8, shared_prefix: 512}
+    profiles: [h20x8]
+    seeds: [0]
+    cost_note: 0.5B，16 条，约 2 分钟（含建环境后的首次编译）
+    expect:
+      - "summary.throughput.completed == 16"
+      - "summary.cache.prefix_hit_rate > 0.1"
+      - "summary.engine.kv_tokens > 0"
+
+  # ---------- 基线 ----------
+  - id: baseline
+    role: baseline
+    title: 基线：7B bf16，256 条同时到达，max_num_seqs 32，每步 token 预算 8192，前缀缓存开（没有共享前缀）
+    params: {}
+    cost_note: 256 × 4096 token 的 prefill 约 1M token，单卡约 3-4 分钟
+    expect:
+      - "summary.throughput.completed == 256"
+      - "summary.sched.max_decoding <= 32"
+      - "summary.roofline.work_mfu > 0.15"
+
+  # ---------- 单条请求：屋顶线 ----------
+  - id: seqs_1
+    role: reference
+    title: 一次只跑一条（max_num_seqs 1，16 条）：TTFT 就是单条 prefill，TPOT 就是 batch=1 的 decode 一步
+    params: {max_num_seqs: 1, num_prompts: 16}
+    expect:
+      - "summary.sched.max_decoding == 1"
+      - "summary.roofline.ttft_vs_est > 1.0"
+      - "summary.roofline.tpot_vs_est > 1.0"
+
+  # ---------- batch 拐点 ----------
+  - id: seqs_8
+    role: variant
+    title: max_num_seqs 8
+    params: {max_num_seqs: 8}
+    expect:
+      - "summary.sched.max_decoding <= 8"
+  - id: seqs_128
+    role: variant
+    title: max_num_seqs 128
+    params: {max_num_seqs: 128}
+    expect:
+      - "summary.latency.tpot_ms_p50 > base.summary.latency.tpot_ms_p50"
+  - id: seqs_256
+    role: variant
+    title: max_num_seqs 256
+    params: {max_num_seqs: 256}
+    expect:
+      - "summary.latency.tpot_ms_p50 > base.summary.latency.tpot_ms_p50"
+      - "summary.sched.max_decoding > 32"
+
+  # ---------- 前缀缓存 ----------
+  - id: prefix_off
+    role: variant
+    title: 前 2048 token 是所有请求共享的打标规范，前缀缓存关
+    params: {shared_prefix: 2048, enable_prefix_caching: false}
+    profile_params: {mac-smoke: {shared_prefix: 96}}
+    expect:
+      - "summary.cache.prefix_hit_rate < 0.05"
+  - id: prefix_on
+    role: variant
+    title: 前 2048 token 共享，前缀缓存开
+    params: {shared_prefix: 2048}
+    profile_params: {mac-smoke: {shared_prefix: 96}}
+    expect:
+      - "summary.cache.prefix_hit_rate > 0.4"
+      - "summary.throughput.req_per_s > base.summary.throughput.req_per_s * 1.2"
+
+  # ---------- chunked prefill（在线到达）----------
+  - id: chunk_16k
+    role: variant
+    title: 在线到达 1 条/s（200 条），每步 token 预算 16384：一条 4096 的 prefill 一步做完，正在 decode 的请求跟着等
+    params: {request_rate: 1.0, num_prompts: 200, max_num_batched_tokens: 16384}
+    profile_params: {mac-smoke: {request_rate: 20.0, num_prompts: 3}}
+    expect:
+      - "summary.throughput.completed == 200"
+  - id: chunk_2k
+    role: variant
+    title: 在线到达 1 条/s（200 条），每步 token 预算 2048：prefill 切成 2048 的块和 decode 拼在一起
+    params: {request_rate: 1.0, num_prompts: 200, max_num_batched_tokens: 2048}
+    profile_params: {mac-smoke: {request_rate: 20.0, num_prompts: 3}}
+    expect:
+      - "summary.throughput.completed == 200"
+
+  # ---------- 量化 ----------
+  - id: fp8
+    role: variant
+    title: FP8 W8A8（在线量化）
+    params: {quantization: fp8}
+    profiles: [h20x8]
+    expect:
+      - "summary.throughput.req_per_s > base.summary.throughput.req_per_s * 1.15"
+  - id: awq
+    role: variant
+    title: AWQ INT4 权重（W4A16，awq_marlin）
+    params: {model: qwen2.5-7b-awq}
+    profiles: [h20x8]
+    expect:
+      - "summary.throughput.completed == 256"
+  - id: awq_c1
+    role: variant
+    title: AWQ INT4，一次只跑一条（max_num_seqs 1，16 条）
+    params: {model: qwen2.5-7b-awq, max_num_seqs: 1, num_prompts: 16}
+    profiles: [h20x8]
+    expect:
+      - "summary.sched.max_decoding == 1"
+
+  # ---------- 投机解码 ----------
+  - id: spec_ngram_c1
+    role: variant
+    title: n-gram 投机（k=4），一次只跑一条（16 条）
+    params: {spec: ngram, max_num_seqs: 1, num_prompts: 16}
+    profiles: [h20x8]
+    expect:
+      - "summary.spec.mean_accept_len > 1.0"
+  - id: spec_ngram_c32
+    role: variant
+    title: n-gram 投机（k=4），max_num_seqs 32（256 条）
+    params: {spec: ngram}
+    profiles: [h20x8]
+    expect:
+      - "summary.spec.mean_accept_len > 1.0"
+  - id: spec_draft_c1
+    role: variant
+    title: Qwen2.5-0.5B 草稿模型（k=4），一次只跑一条（16 条）
+    params: {spec: draft, max_num_seqs: 1, num_prompts: 16}
+    profiles: [h20x8]
+    expect:
+      - "summary.spec.mean_accept_len > 1.0"
+
+  # ---------- KV 显存 ----------
+  - id: kv_util_05
+    role: variant
+    title: max_num_seqs 256，gpu_memory_utilization 0.5（KV cache 只剩约四成）
+    params: {max_num_seqs: 256, gpu_memory_utilization: 0.5}
+    profiles: [h20x8]
+    expect:
+      - "summary.engine.max_concurrency_est < 150"
+
+  # ---------- 故障与修复 ----------
+  - id: fault_prefix_tail
+    role: fault
+    title: 故障：3072 token 的打标规范放在内容后面（前缀缓存开着，但每条请求的开头都不同）
+    params: {shared_prefix: 3072, prefix_position: tail}
+    profile_params: {mac-smoke: {shared_prefix: 128}}
+    expect:
+      - "summary.cache.prefix_hit_rate < 0.05"
+      - "summary.throughput.req_per_s < base.summary.throughput.req_per_s * 1.15"
+  - id: fix_prefix_head
+    role: fix
+    title: 修复：同样 3072 token 的规范放回开头
+    params: {shared_prefix: 3072, prefix_position: head}
+    profile_params: {mac-smoke: {shared_prefix: 128}}
+    expect:
+      - "summary.cache.prefix_hit_rate > 0.6"
+      - "summary.throughput.req_per_s > base.summary.throughput.req_per_s * 1.5"

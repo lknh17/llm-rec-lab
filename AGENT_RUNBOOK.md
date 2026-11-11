@@ -16,7 +16,7 @@
 | 档位 | `h20x8`：每张卡跑 1 个运行（各课 `scenarios.yaml` 的 `profiles.h20x8` 写明模型、规模和资产） |
 | 规模 | `uv run python -m labkit scenarios <课程> --profile h20x8` 列出全部运行；L01（数据与分词）24 个，L1（L05 SFT 与 LoRA）34 个，L06（围绕错误迭代）25 个，L07（偏好优化）30 个 |
 | 时间 | L01（tinylm，从零训练 1000 万参数小 GPT）每个运行约 5-15 分钟，第一次要建语料缓存（MinHash 去重约 1 分钟/次）；adextract 项目（7B LoRA）每个训练运行约 15-20 分钟；L07 每个运行 = SFT 约 15 分钟 + 偏好阶段 5-20 分钟（在线采样场景较慢）；预算上限都是 180 分钟 |
-| 需要的资产 | 作业单涉及课程在 `scenarios.yaml` 里声明的 `assets`：公开模型（Qwen2.5）和 L01 用的中文维基一个 parquet 分片（`zhwiki-2311-s2`，127 MB）。agent 执行作业前会自动下载缺的资产（已存在就跳过）；也可以手动 `uv run python -m labkit assets --profile h20x8` |
+| 需要的资产 | 作业单涉及课程在 `scenarios.yaml` 里声明的 `assets`：公开模型（Qwen2.5）和 L01 用的中文维基一个 parquet 分片（`zhwiki-2311-s2`，127 MB）；L09 还要一套独立的 vLLM 环境（`vllm-env`，`LAB_ASSETS_DIR/venvs/` 下，约 8 GB，主环境和 `uv.lock` 不动）和 AWQ 模型（5.6 GB）。agent 执行作业前会自动下载 / 安装缺的资产（已存在就跳过）；也可以手动 `uv run python -m labkit assets --profile h20x8` |
 | 作业单 | `jobs/pending/` 下的作业单按文件名顺序逐张执行（文件名形如 `<日期>-<课程>-h20x8.yaml`） |
 
 **第一次**：按第 1-3 节准备环境、下载模型、预检，再按第 4 节装好常驻 agent。之后什么都不用做，agent 会自动领取、执行、推回。
@@ -77,6 +77,8 @@ uv run python -m labkit probe --compute           # compute.ok 必须为 true，
 ```
 
 模型下载失败：设 `HF_ENDPOINT=https://hf-mirror.com` 重试；仍失败就 `uv pip install modelscope`，设 `LABKIT_MODEL_SOURCE=modelscope` 再试（ModelScope 上同名仓库 `Qwen/Qwen2.5-7B-Instruct`）。
+
+vLLM 环境（L09）：`uv run python -m labkit assets vllm-env` 用 `uv venv` 建独立环境并 `uv pip install vllm==<锁定版本>`，装完 import 一次，成功才算就绪。pip 源不通时设 `UV_INDEX_URL` 指向镜像；已经有装好的 vLLM 环境时，设 `LABKIT_VLLM_PYTHON=<那个环境的 python>` 直接复用；要换版本设 `LABKIT_VLLM_SPEC="vllm==<版本>"`（新版本装到新目录，旧环境不动）。
 
 ## 4. 常驻 agent（推荐，装好后无人值守）
 

@@ -1,0 +1,567 @@
+# 由私有讲义生成（python -m lab publish），不要手改；改私有讲义后重新生成。
+# 这里只有问题、选项、要看的证据，没有答案和解析：每步"实测"折叠块里的结果就是揭晓。
+course: L09
+profiles:
+  h20x8: H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）
+metric:
+  path: summary.throughput.req_per_s
+  label: 吞吐（条/s，越高越好）
+table:
+- path: summary.throughput.req_per_s
+  label: 条/s
+- path: summary.throughput.input_tok_per_s
+  label: 输入 tok/s
+- path: summary.latency.ttft_ms_p50
+  label: TTFT p50 ms
+- path: summary.latency.tpot_ms_p50
+  label: TPOT p50 ms
+- path: summary.latency.itl_ms_p99
+  label: ITL p99 ms
+- path: summary.cache.prefix_hit_rate
+  label: 前缀命中率
+- path: summary.sched.max_decoding
+  label: 同时 decode 最多
+figures:
+  loss: []
+noise_note: 性能测量的种子只换内容文本和到达时间；吞吐差小于 5% 或小于种子间波动，都按“差不多”算。
+stages:
+- id: understand
+  title: 理解任务
+- id: estimate
+  title: 先估算
+- id: single
+  title: 单条请求
+- id: batch
+  title: 并发
+- id: savings
+  title: 省 FLOPs 还是省字节
+- id: fault
+  title: 故障
+- id: takeaway
+  title: 带走
+steps:
+- id: pain
+  file: 01-pain
+  stage: understand
+  title: 场景与痛点
+  question_short: 一张 H20 每秒能打多少条？调哪个旋钮最值？
+  body: '推理服务上线前，常见的做法是"照着默认参数起一个 vLLM，压一压看 QPS"。但不知道瓶颈在哪，就不知道该调什么：
+
+
+    - **max_num_seqs 调大**：吞吐一定涨吗？延迟呢？
+
+    - **量化**：FP8 和 INT4 哪个快？快在 prefill 还是 decode？
+
+    - **前缀缓存、投机解码**：都说能加速，对"长输入短输出"有用吗？
+
+
+    这一课在 H20 上把每个旋钮量一遍，并且每一步都先用屋顶线估一个数。
+
+    '
+- id: flow
+  file: 02-flow
+  stage: understand
+  title: 流程结构
+  body: '一次测量的流程。点击每个节点看代码。
+
+    '
+  nodes:
+  - id: build
+    title: 构造请求
+    shape: 256 条 × 4096 token（规范 + 内容 + 指令）
+    detail: 直接给 token ID，长度精确；共享规范放开头或结尾。
+    code:
+      file: vllmserve/prompts.py
+      region: build
+  - id: roof
+    title: 屋顶线估算
+    shape: prefill 61 TFLOPs / decode 15.5 GB
+    detail: 和讲义 S2 用同一个 roofline.py。
+    code:
+      file: vllmserve/experiment.py
+      region: roofline
+  - id: proc
+    title: 独立环境起测量进程
+    shape: vllm-env 的解释器 + JSON 行协议
+    detail: 每个配置一个进程，取消和超时杀整个进程组。
+    code:
+      file: vllmserve/experiment.py
+      region: subprocess
+  - id: engine
+    title: 建引擎
+    shape: AsyncLLMEngine：max_num_seqs、token 预算、前缀缓存、量化、投机
+    detail: 引擎日志里报 KV cache 能放多少 token。
+    code:
+      file: vllmserve/bench_worker.py
+      region: engine_args
+  - id: client
+    title: 按到达时刻发请求
+    shape: 流式输出：每次收到新 token 记一个时刻
+    detail: 贪心、固定输出 50 token。
+    code:
+      file: vllmserve/bench_worker.py
+      region: client
+  - id: stats
+    title: TTFT / TPOT / ITL
+    shape: 每条请求一个 TTFT、一个 TPOT；ITL 是相邻两次输出的间隔
+    code:
+      file: vllmserve/stats.py
+      region: latency
+  - id: eng
+    title: 命中率、投机接受长度
+    shape: 每条请求的 num_cached_tokens；Prometheus 计数器
+    code:
+      file: vllmserve/stats.py
+      region: engine_metrics
+- id: trace
+  file: 03-trace
+  stage: understand
+  title: 追踪
+  body: '基线运行的真实追踪：第 0 条请求解码回文本的开头和结尾（聊天模板 + 内容 + 指令）、前两条请求开头相同的 token 数；前 5 条请求各自的 TTFT（含排队）、输出 token 数、分几次收到、命中缓存的 token 数。
+
+    '
+  blocks:
+  - trace
+- id: code
+  file: 04-code
+  stage: understand
+  title: 代码导读
+  body: '只看三点：解决什么问题、关键的是哪几行、张量形状。
+
+    '
+  code:
+  - file: vllmserve/prompts.py
+    region: build
+    title: ① 构造请求
+    note: 规范（S 个 token）、内容（C 个 token）、固定的开头和指令拼起来正好 input_len 个。head 时所有请求前 S + 3 个 token 相同；tail 时只有聊天模板的 3 个 token 相同，不到一个 KV 块（16 token）。
+  - file: vllmserve/bench_worker.py
+    region: engine_args
+    title: ② 引擎参数
+    note: max_num_seqs 限制同时在跑的请求数；max_num_batched_tokens 是每步的 token 预算，prefill 按它切块；gpu_memory_utilization 决定权重和激活之外还剩多少给 KV。
+  - file: vllmserve/bench_worker.py
+    region: client
+    title: ③ 流式计时
+    note: 每条请求一个协程，按到达时刻发出；每次收到新 token 记时刻。第一个时刻 − 到达 = TTFT（含排队）。
+  - file: vllmserve/stats.py
+    region: latency
+    title: ④ 口径
+    note: TPOT 按条算再取分位数；ITL 是所有相邻输出间隔放在一起的分位数，被别人的 prefill 卡住的那一步会出现在 ITL 的长尾里。
+  - file: vllmserve/experiment.py
+    region: roofline
+    title: ⑤ 屋顶线
+    note: prefill 用单条 4096 的 FLOPs ÷ 算力；decode 用权重 + KV 字节 ÷ 带宽。FP8 的算力按 2 倍算，AWQ 的权重按 0.5 字节/参数算。
+- id: estimate
+  file: 05-estimate
+  stage: estimate
+  title: 先估算
+  body: '不看结果，先回答四个问题。Qwen2.5-7B：28 层，d = 3584，4 个 KV 头 × 128 维，参与矩阵乘的参数 70.7 亿，总参数 76.2 亿；H20 bf16 148 TFLOPS、HBM 4.0 TB/s、96 GB。
+
+    '
+  questions:
+  - text: 单条 4096 token 的 prefill，理论下限大约多少？
+    options:
+    - 约 40 ms
+    - 约 400 ms
+    - 约 4 秒
+  - text: batch = 1 时 decode 一步（生成 1 个 token），理论下限大约多少？
+    options:
+    - 约 0.4 ms
+    - 约 4 ms
+    - 约 40 ms
+  - text: gpu_memory_utilization = 0.9 时，96 GB 的 H20 最多能同时放下多少条 4K 请求的 KV？
+    options:
+    - 约 30 条
+    - 约 300 条
+    - 约 3000 条
+  - text: 一次只跑一条时，一条请求（4096 进、50 出）的耗时里 prefill 大约占多少？
+    options:
+    - 不到 30%
+    - 一半到七成
+    - 90% 以上
+- id: p_ttft
+  file: 06-ttft
+  stage: single
+  title: 单条 prefill
+  body: '一次只跑一条（max_num_seqs 1，16 条依次处理）。这时 TTFT 就是单条 4096 token 的 prefill（加上一点调度开销），屋顶线下限 414 ms。
+
+    '
+  scenarios:
+  - seqs_1
+  question:
+    text: 实测 TTFT 是屋顶线下限的几倍？
+    options:
+    - 不到 1.2 倍
+    - 1.2 - 1.6 倍
+    - 1.6 - 2.5 倍
+    - 2.5 倍以上
+  columns:
+  - path: summary.latency.ttft_ms_p50
+    label: TTFT p50 ms
+    fmt: .0f
+  - path: summary.roofline.prefill_ms
+    label: 屋顶线 ms
+    fmt: .0f
+  - path: summary.roofline.prefill_mfu
+    label: prefill MFU
+    fmt: .0%
+  charts:
+  - metrics
+- id: p_tpot
+  file: 07-tpot
+  stage: single
+  title: 单条 decode
+  body: '同一组运行，看 decode：一次只有一条请求在生成，每步读一遍 15.2 GB 权重，屋顶线下限约 3.9 ms。
+
+    '
+  scenarios:
+  - seqs_1
+  question:
+    text: 实测 TPOT 是屋顶线下限的几倍？
+    options:
+    - 不到 1.2 倍
+    - 1.2 - 1.6 倍
+    - 1.6 - 2.5 倍
+    - 2.5 倍以上
+  columns:
+  - path: summary.latency.tpot_ms_p50
+    label: TPOT p50 ms
+    fmt: .2f
+  - path: summary.roofline.decode_ms_b1
+    label: 屋顶线 ms
+    fmt: .2f
+  - path: summary.roofline.decode_mbu
+    label: MBU
+    fmt: .0%
+  charts:
+  - metrics
+- id: p_batch
+  file: 08-batch
+  stage: batch
+  title: max_num_seqs 的拐点
+  body: '256 条请求同时到达，只改 max_num_seqs（同时在跑的请求上限）：1、8、32（基线）、128、256。decode 的权重读取会被同一步里的所有请求分摊，batch 越大 decode 越划算。
+
+    '
+  scenarios:
+  - seqs_256
+  - seqs_1
+  - seqs_8
+  - baseline
+  - seqs_128
+  compare_to: seqs_8
+  question:
+    text: max_num_seqs 从 8 加到 256，吞吐（条/s）变成几倍？
+    options:
+    - 不到 1.2 倍（基本不变）
+    - 1.2 - 2 倍
+    - 2 倍以上
+  columns:
+  - path: summary.throughput.req_per_s
+    label: 条/s
+    fmt: .2f
+    delta: true
+  - path: summary.sched.max_decoding
+    label: 同时 decode 最多
+    fmt: .0f
+  - path: summary.roofline.work_mfu
+    label: 等效 MFU
+    fmt: .0%
+  charts:
+  - metrics
+- id: p_latency
+  file: 09-latency
+  stage: batch
+  title: 并发的代价
+  body: '同一组运行，看延迟。max_num_seqs 越大，同时在 decode 的请求越多；而每一步里只要还有请求在等 prefill，就会塞进一块 prefill（每步 token 预算 8192）。
+
+    '
+  scenarios:
+  - seqs_256
+  - seqs_8
+  - baseline
+  - seqs_128
+  compare_to: baseline
+  question:
+    text: max_num_seqs 256 的 TPOT p50 是基线（32）的几倍？
+    options:
+    - 不到 1.5 倍
+    - 1.5 - 4 倍
+    - 4 倍以上
+  columns:
+  - path: summary.latency.tpot_ms_p50
+    label: TPOT p50 ms
+    fmt: .0f
+    delta: true
+  - path: summary.latency.ttft_ms_p50
+    label: TTFT p50 ms
+    fmt: ',.0f'
+  - path: summary.throughput.req_per_s
+    label: 条/s
+    fmt: .2f
+  charts:
+  - metrics
+- id: p_kv
+  file: 10-kv
+  stage: batch
+  title: KV 显存与并发上限
+  body: 'max_num_seqs 256 不变，把 gpu_memory_utilization 从 0.9 降到 0.5：权重 15.2 GB 和激活不变，KV cache 只剩约四成，4K 请求最多只能同时放一百多条。
+
+    '
+  scenarios:
+  - kv_util_05
+  compare_to: seqs_256
+  question:
+    text: 吞吐是 utilization 0.9 时（同样 max_num_seqs 256）的多少？
+    options:
+    - 不到 80%
+    - 80% - 110%（基本不变）
+    - 110% 以上
+  columns:
+  - path: summary.engine.kv_tokens
+    label: KV token 容量
+    fmt: ',.0f'
+  - path: summary.engine.max_concurrency_est
+    label: 并发上限（引擎估）
+    fmt: .0f
+  - path: summary.sched.max_decoding
+    label: 同时 decode 最多
+    fmt: .0f
+  - path: summary.throughput.req_per_s
+    label: 条/s
+    fmt: .2f
+    delta: true
+  charts:
+  - metrics
+- id: p_prefix
+  file: 11-prefix
+  stage: savings
+  title: 前缀缓存
+  body: '现在每条请求的前 2048 token 是所有请求共享的打标规范（后 2048 是各自的内容）。对比前缀缓存关和开。
+
+    '
+  scenarios:
+  - prefix_on
+  compare_to: prefix_off
+  question:
+    text: 开缓存后，吞吐是关缓存的几倍？
+    options:
+    - 不到 1.2 倍
+    - 1.2 - 1.6 倍
+    - 1.6 - 2.5 倍
+    - 2.5 倍以上
+  columns:
+  - path: summary.cache.prefix_hit_rate
+    label: 命中率
+    fmt: .0%
+  - path: summary.throughput.req_per_s
+    label: 条/s
+    fmt: .2f
+    delta: true
+  - path: summary.latency.ttft_ms_p50
+    label: TTFT p50 ms
+    fmt: ',.0f'
+  charts:
+  - metrics
+- id: p_chunk
+  file: 12-chunk
+  stage: savings
+  title: 每步 token 预算（chunked prefill）
+  body: '换成在线场景：请求按每秒 1 条随机到达（200 条），看用户体验。每步 token 预算 16384 时，一条 4096 的 prefill 一步做完，这一步正在 decode 的请求全都要等；预算 2048 时，prefill 被切成 2048 一块，和 decode 拼在一起分几步做。
+
+    '
+  scenarios:
+  - chunk_2k
+  compare_to: chunk_16k
+  question:
+    text: 预算从 16384 降到 2048，ITL p99（相邻两个输出之间最长的那批间隔）变成多少？
+    options:
+    - 不到原来的 40%
+    - 原来的 40% - 80%
+    - 80% 以上（差不多或更差）
+  columns:
+  - path: summary.latency.itl_ms_p99
+    label: ITL p99 ms
+    fmt: .0f
+    delta: true
+  - path: summary.latency.itl_ms_p50
+    label: ITL p50 ms
+    fmt: .1f
+  - path: summary.latency.ttft_ms_p50
+    label: TTFT p50 ms
+    fmt: .0f
+  charts:
+  - metrics
+- id: p_fp8
+  file: 13-fp8
+  stage: savings
+  title: FP8
+  body: '加载 bf16 权重后在线转成 FP8（W8A8：权重按通道、激活按 token 动态量化），矩阵乘走 H20 的 FP8 Tensor Core，标称算力 296 TFLOPS，是 bf16 的 2 倍；权重字节也减半。
+
+    '
+  scenarios:
+  - fp8
+  compare_to: baseline
+  question:
+    text: 吞吐是 bf16 基线的几倍？
+    options:
+    - 不到 1.15 倍
+    - 1.15 - 1.6 倍
+    - 1.6 - 2.2 倍
+    - 2.2 倍以上
+  columns:
+  - path: summary.throughput.req_per_s
+    label: 条/s
+    fmt: .2f
+    delta: true
+  - path: summary.engine.kv_tokens
+    label: KV token 容量
+    fmt: ',.0f'
+  - path: summary.latency.ttft_ms_p50
+    label: TTFT p50 ms
+    fmt: ',.0f'
+  charts:
+  - metrics
+- id: p_awq
+  file: 14-awq
+  stage: savings
+  title: AWQ INT4
+  body: '换成官方的 AWQ 版（权重 INT4，激活仍是 16 位，W4A16），vLLM 用 awq_marlin kernel：矩阵乘时把 INT4 权重在片上解包成 16 位再算。权重从 15.2 GB 降到约 4 GB，但计算仍是 16 位 Tensor Core。
+
+    '
+  scenarios:
+  - awq
+  compare_to: baseline
+  also:
+  - awq_c1
+  - seqs_1
+  question:
+    text: 同样 256 条、max_num_seqs 32，吞吐是 bf16 基线的几倍？
+    options:
+    - 不到 0.9 倍（变慢）
+    - 0.9 - 1.15 倍（差不多）
+    - 1.15 倍以上（变快）
+  columns:
+  - path: summary.throughput.req_per_s
+    label: 条/s
+    fmt: .2f
+    delta: true
+  - path: summary.latency.tpot_ms_p50
+    label: TPOT p50 ms
+    fmt: .2f
+  - path: summary.latency.ttft_ms_p50
+    label: TTFT p50 ms
+    fmt: ',.0f'
+  charts:
+  - metrics
+- id: p_spec
+  file: 15-spec
+  stage: savings
+  title: 投机解码
+  body: 'n-gram 投机（不需要草稿模型）：用最近生成的几个 token 去输入里找相同的片段，把它后面的 4 个 token 当草稿，目标模型一步验证 5 个位置。打标输出的 JSON 大量原文摘录内容里的卖点和优惠，草稿经常能对上。先看一次只跑一条（16 条）。
+
+    '
+  scenarios:
+  - spec_ngram_c1
+  compare_to: seqs_1
+  also:
+  - spec_draft_c1
+  - spec_ngram_c32
+  - baseline
+  question:
+    text: TPOT 变成不投机时的多少？
+    options:
+    - 不到 60%（快很多）
+    - 60% - 90%
+    - 90% - 110%（差不多）
+    - 110% 以上（变慢）
+  columns:
+  - path: summary.latency.tpot_ms_p50
+    label: TPOT p50 ms
+    fmt: .2f
+    delta: true
+  - path: summary.spec.mean_accept_len
+    label: 平均接受长度
+    fmt: .2f
+  - path: summary.throughput.req_per_s
+    label: 条/s
+    fmt: .2f
+  charts:
+  - metrics
+- id: p_fault
+  file: 16-fault
+  stage: fault
+  title: 规范挪到内容后面
+  body: '业务方把 prompt 改了：3072 token 的打标规范从开头挪到了内容后面（理由是"让模型最后看到指令，效果更好"），内容缩到 1000 token 左右，总长还是 4096。前缀缓存开着，配置一个字没动。按理说规范占了四分之三，缓存能省很多。
+
+    '
+  scenarios:
+  - fault_prefix_tail
+  compare_to: baseline
+  question:
+    text: 吞吐是基线（没有共享部分）的几倍？
+    options:
+    - 不到 0.85 倍
+    - 0.85 - 1.15 倍（差不多）
+    - 1.15 - 2 倍
+    - 2 倍以上
+  columns:
+  - path: summary.throughput.req_per_s
+    label: 条/s
+    fmt: .2f
+    delta: true
+  - path: summary.cache.prefix_hit_rate
+    label: 命中率
+    fmt: .1%
+  - path: summary.latency.ttft_ms_p50
+    label: TTFT p50 ms
+    fmt: ',.0f'
+  charts:
+  - metrics
+- id: diagnose
+  file: 17-diagnose
+  stage: fault
+  title: 诊断：缓存为什么没命中
+  body: '引擎配置没变，只改了 prompt 的拼法。按需逐级点开线索，然后点选根因。
+
+    '
+  scenarios:
+  - fault_prefix_tail
+  compare_to: baseline
+  also:
+  - fix_prefix_head
+  question:
+    text: 根因是什么？
+    options:
+    - 前缀缓存没有开
+    - 共享的规范放在内容后面，每条请求的开头都不同，按块哈希的前缀匹配不上
+    - KV cache 太小，缓存的块很快被挤掉
+    - max_num_seqs 太小，请求之间没有重叠
+  clues:
+  - 前缀命中率：{{v:fault_prefix_tail:summary.cache.prefix_hit_rate:.1%}}（引擎配置里 enable_prefix_caching = true）；TTFT p50 {{v:fault_prefix_tail:summary.latency.ttft_ms_p50:,.0f}} ms（基线 {{v:baseline:summary.latency.ttft_ms_p50:,.0f}} ms）。
+  - 追踪：前两条请求开头相同的 token 数 {{v:fault_prefix_tail:summary.load.same_head_tokens}}；KV 块大小 16 token。
+  - KV 容量 {{v:fault_prefix_tail:summary.engine.kv_tokens:,.0f}} token；max_num_seqs {{v:fault_prefix_tail:summary.engine.max_num_seqs}}，和基线相同。
+  columns:
+  - path: summary.cache.prefix_hit_rate
+    label: 命中率
+    fmt: .1%
+  - path: summary.throughput.req_per_s
+    label: 条/s
+    fmt: .2f
+  - path: summary.latency.ttft_ms_p50
+    label: TTFT p50 ms
+    fmt: ',.0f'
+  charts:
+  - metrics
+- id: keycard
+  file: 18-keycard
+  stage: takeaway
+  title: 回顾
+  blocks:
+  - overview
+  selfcheck:
+  - 7B 单条 4K prefill 和 batch=1 decode 一步的屋顶线各是多少？各是什么瓶颈？
+  - 为什么长输入短输出时，max_num_seqs 加大换不来吞吐？代价是什么？
+  - 前缀缓存的命中条件是什么？业务 prompt 应该怎么拼？
+  - chunked prefill 的 token 预算在 TTFT 和 ITL 之间怎么取舍？
+  - FP8 和 AWQ INT4 分别省的是什么？各适合什么场景？
+  - 投机解码什么时候有用、什么时候是纯成本？
+  body: 按场景汇总全部实测（每个场景对应的步骤里有详细的表和图）。网页版这里是 AI 预写的只读要点卡，GitHub 版只给自查清单。
