@@ -166,6 +166,20 @@ def test_vllm_env_asset(monkeypatch, tmp_path):
         assets.ensure(["no-such-asset"])
 
 
+def test_uv_found_outside_path(monkeypatch, tmp_path):
+    """systemd 服务的 PATH 里没有 ~/.local/bin 时，也要找到 uv（`uv run` 设的 UV 变量或默认安装位置）。"""
+    fake = tmp_path / "uv"
+    fake.write_text("")
+    monkeypatch.setenv("PATH", "/nonexistent")
+    monkeypatch.setenv("UV", str(fake))
+    assert assets.uv_executable() == str(fake)
+    monkeypatch.delenv("UV")
+    monkeypatch.setenv("HOME", str(tmp_path))
+    (tmp_path / ".local" / "bin").mkdir(parents=True)
+    (tmp_path / ".local" / "bin" / "uv").write_text("")
+    assert assets.uv_executable() == str(tmp_path / ".local" / "bin" / "uv")
+
+
 def test_scenarios_l09():
     h = scenarios.expand("L09", "h20x8")
     ids = {s.scenario for s in h}

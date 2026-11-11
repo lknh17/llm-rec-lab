@@ -127,6 +127,16 @@ ENVS = {
 }
 
 
+def uv_executable() -> str | None:
+    """uv 的路径。systemd 服务用 ~/.local/bin/uv 启动 agent，但服务的 PATH 里通常没有这个目录，所以依次找：
+    PATH、`uv run` 给子进程设的 UV 环境变量、默认安装位置。"""
+    for c in (shutil.which("uv"), os.environ.get("UV"), str(Path.home() / ".local" / "bin" / "uv"),
+              str(Path.home() / ".cargo" / "bin" / "uv")):
+        if c and Path(c).is_file():
+            return c
+    return None
+
+
 def _env_packages(name: str) -> list[str]:
     spec = ENVS[name]
     extra = os.environ.get(spec.get("spec_override", ""), "").strip()
@@ -166,7 +176,7 @@ def ensure_env(name: str) -> str:
     spec, pkgs, target = ENVS[name], _env_packages(name), env_dir(name)
     print(f"安装 Python 环境 {name}：{' '.join(pkgs)}（{spec['size']}）→ {target}", flush=True)
     target.parent.mkdir(parents=True, exist_ok=True)
-    uv = shutil.which("uv")
+    uv = uv_executable()
     py = target / "bin" / "python"
     if uv:
         subprocess.run([uv, "venv", "--python", spec["python"], "--seed", str(target)], check=True)

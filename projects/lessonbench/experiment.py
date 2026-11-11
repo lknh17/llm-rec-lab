@@ -45,7 +45,7 @@ def probe() -> dict:
     """各验证项需要的环境：cuda（torch 看得到 GPU）、nvcc（编译 CUDA 扩展）、ncu（Nsight Compute）、vllm（vllm-env）。"""
     import torch
 
-    from labkit.assets import resolve_env_python
+    from labkit.assets import resolve_env_python, uv_executable
 
     info: dict = {"python": sys.version.split()[0], "torch": torch.__version__, "torch_cuda": torch.version.cuda,
                   "cuda": torch.cuda.is_available()}
@@ -70,7 +70,7 @@ def probe() -> dict:
     info["ncu"] = ncu
     info["ncu_version"] = (_run_quiet([ncu, "--version"]) or "").splitlines()[-1:] if ncu else None
     info["vllm_python"] = resolve_env_python("vllm-env", must_exist=False)
-    info["uv"] = shutil.which("uv")
+    info["uv"] = uv_executable()       # 没有 uv 就叠加不了 tabulate / matplotlib / ninja，讲义脚本大多会失败
     return info
 
 
