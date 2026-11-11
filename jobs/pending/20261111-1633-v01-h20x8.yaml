@@ -1,0 +1,11 @@
+job_id: 20261111-1633-v01-h20x8
+created_at: '2026-11-11T08:33:37Z'
+profile: h20x8
+courses:
+- V01
+only: []
+seeds: []
+requested_commit: a1a625af5c9b90f5cf8a52f50c1c66883c43f354
+note: W3 V01 讲义验证全量：14 个验证项各 1 次（S2 decode、S3 Triton/CUDA/ncu、S5.5 vLLM 源码、S7 vLLM
+  接入）
+how_to_run: python -m labkit jobs run 20261111-1633-v01-h20x8
