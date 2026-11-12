@@ -1,0 +1,22 @@
+[worker] 等待设备锁 gpu3-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L09/awq_c1/s2-a39ffb/code/vllmserve/experiment.py
+[20:22:38] ===== 阶段：prepare =====
+[20:22:38] 16 条 × 4096 token 输入 / 50 token 输出；共享前缀 0（head），前两条开头相同 4 个 token；到达率 全部同时
+[20:22:38] ===== 阶段：train =====
+[20:22:51] vLLM 0.11.0 · torch 2.8.0+cu128 · CUDA 12.8 · NVIDIA H20
+[20:24:19] [vllm] [1;36m(EngineCore_DP0 pid=873695)[0;0m INFO 11-12 20:24:19 [gpu_model_runner.py:2653] Model loading took 5.2036 GiB and 6.180216 seconds
+[20:24:37] [vllm] [1;36m(EngineCore_DP0 pid=873695)[0;0m INFO 11-12 20:24:37 [monitor.py:34] torch.compile takes 15.75 s in total
+[20:24:40] [vllm] [1;36m(EngineCore_DP0 pid=873695)[0;0m INFO 11-12 20:24:40 [gpu_worker.py:298] Available KV cache memory: 79.08 GiB
+[20:24:41] [vllm] [1;36m(EngineCore_DP0 pid=873695)[0;0m INFO 11-12 20:24:41 [kv_cache_utils.py:1087] GPU KV cache size: 1,480,768 tokens
+[20:24:41] [vllm] [1;36m(EngineCore_DP0 pid=873695)[0;0m INFO 11-12 20:24:41 [kv_cache_utils.py:1091] Maximum concurrency for 4,154 tokens per request: 355.95x
+[20:24:42] [vllm] [1;36m(EngineCore_DP0 pid=873695)[0;0m INFO 11-12 20:24:42 [gpu_model_runner.py:3480] Graph capturing finished in 1 secs, took 0.04 GiB
+[20:24:42] [vllm] [1;36m(EngineCore_DP0 pid=873695)[0;0m INFO 11-12 20:24:42 [core.py:210] init engine (profile, create kv cache, warmup model) took 22.75 seconds
+[20:24:42] 引擎就绪，用时 83.5 秒（加载权重、编译、CUDA graph、分配 KV cache）
+[20:24:43] [vllm] INFO 11-12 20:24:43 [loggers.py:127] Engine 000: Avg prompt throughput: 581.3 tokens/s, Avg generation throughput: 36.3 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+[20:24:53] 已完成 9/16 条（10.0 秒）
+[20:25:00] [vllm] INFO 11-12 20:25:00 [loggers.py:127] Engine 000: Avg prompt throughput: 3863.6 tokens/s, Avg generation throughput: 47.2 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+[20:25:00] ===== 阶段：evaluate =====
+[20:25:00] 0.947 条/s（输入 3,881 tok/s），TTFT p50 8721.09 ms，TPOT p50 5.24 ms，ITL p99 9.04 ms；前缀命中 0.0；同时 decode 最多 1；屋顶线 prefill 414.1 ms / decode 1.011 ms
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

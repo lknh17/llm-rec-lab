@@ -1,0 +1,594 @@
+job_id: 20261112-1843-l09-h20x8
+created_at: '2026-11-12T10:43:16Z'
+profile: h20x8
+courses:
+- L09
+only: []
+seeds: []
+requested_commit: 58fd37e2b895a335fa021ea73a1cd089d9f277f6
+note: W2 重发：L09 全量（19 个场景，大多 3 种子）。上一张 20261111-1631 因 vllm-env 的 transformers 5.x
+  不兼容作废；ec11631 起 vllm-env 锁 transformers==4.57.1，装在新目录 vllm-env--vllm-0.11.0-transformers-4.57.1，旧环境不动
+how_to_run: python -m labkit jobs run 20261112-1843-l09-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-12T11:48:42Z'
+started_at: '2026-11-12T11:57:06Z'
+ran_commit: 59a81953d54e1c4a045e2642f1c749d7a5ab6c9f
+host_summary:
+  torch: 2.15.0+cu132
+  cuda: '13.2'
+  gpu: NVIDIA H20
+  gpu_count: 8
+  gpu_mem_gb: 95.0
+  driver: 535.161.08
+status: partial
+finished_at: '2026-11-12T12:36:02Z'
+hours: 0.65
+runs:
+- course: L09
+  scenario: env_probe
+  seed: 0
+  dir: h20x8/L09/env_probe/s0-cc3c4c
+  status: succeeded
+  minutes: 4.7
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_1
+  seed: 1
+  dir: h20x8/L09/seqs_1/s1-5faa10
+  status: succeeded
+  minutes: 5.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_1
+  seed: 2
+  dir: h20x8/L09/seqs_1/s2-d9c4e9
+  status: succeeded
+  minutes: 5.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_1
+  seed: 0
+  dir: h20x8/L09/seqs_1/s0-c6d0e0
+  status: succeeded
+  minutes: 5.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: baseline
+  seed: 2
+  dir: h20x8/L09/baseline/s2-288be9
+  status: succeeded
+  minutes: 7.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: baseline
+  seed: 1
+  dir: h20x8/L09/baseline/s1-000c30
+  status: succeeded
+  minutes: 7.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: baseline
+  seed: 0
+  dir: h20x8/L09/baseline/s0-627ae3
+  status: succeeded
+  minutes: 7.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: fault_prefix_tail
+  seed: 0
+  dir: h20x8/L09/fault_prefix_tail/s0-7f0d04
+  status: succeeded
+  minutes: 7.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: fix_prefix_head
+  seed: 0
+  dir: h20x8/L09/fix_prefix_head/s0-8bd5be
+  status: succeeded
+  minutes: 3.6
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: fix_prefix_head
+  seed: 1
+  dir: h20x8/L09/fix_prefix_head/s1-e2acc0
+  status: succeeded
+  minutes: 3.6
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: fault_prefix_tail
+  seed: 1
+  dir: h20x8/L09/fault_prefix_tail/s1-137557
+  status: succeeded
+  minutes: 5.0
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: fault_prefix_tail
+  seed: 2
+  dir: h20x8/L09/fault_prefix_tail/s2-1ed01f
+  status: succeeded
+  minutes: 5.1
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: awq_c1
+  seed: 0
+  dir: h20x8/L09/awq_c1/s0-0c810e
+  status: succeeded
+  minutes: 3.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: fix_prefix_head
+  seed: 2
+  dir: h20x8/L09/fix_prefix_head/s2-8facb0
+  status: succeeded
+  minutes: 3.6
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: chunk_16k
+  seed: 0
+  dir: h20x8/L09/chunk_16k/s0-c4deac
+  status: succeeded
+  minutes: 5.9
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: fp8
+  seed: 0
+  dir: h20x8/L09/fp8/s0-48f08d
+  status: succeeded
+  minutes: 4.7
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: awq
+  seed: 0
+  dir: h20x8/L09/awq/s0-b93bf1
+  status: succeeded
+  minutes: 6.7
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: kv_util_05
+  seed: 0
+  dir: h20x8/L09/kv_util_05/s0-8edf96
+  status: succeeded
+  minutes: 4.9
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: chunk_2k
+  seed: 0
+  dir: h20x8/L09/chunk_2k/s0-c75a44
+  status: succeeded
+  minutes: 5.7
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: prefix_on
+  seed: 0
+  dir: h20x8/L09/prefix_on/s0-50552a
+  status: succeeded
+  minutes: 4.0
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: spec_draft_c1
+  seed: 0
+  dir: h20x8/L09/spec_draft_c1/s0-f9cb04
+  status: failed
+  minutes: 1.0
+  end_reason: "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n\
+    \  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\"\
+    , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+    \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+    \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+    , line 118, in run\n    return self._loop.run_until_complete(task)\n         \
+    \  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\"\
+    , line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n\
+    \  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\"\
+    , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+    \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n\
+    \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"\
+    <assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+    , line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n\
+    \                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+    , line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n\
+    \           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\"\
+    , line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args,\
+    \ kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/config/speculative.py\"\
+    , line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError:\
+    \ Speculative decoding with draft model is not supported yet. Please consider\
+    \ using other speculative decoding methods such as ngram, medusa, eagle, or mtp.\n"
+- course: L09
+  scenario: prefix_off
+  seed: 0
+  dir: h20x8/L09/prefix_off/s0-b5cc6e
+  status: succeeded
+  minutes: 4.8
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_128
+  seed: 0
+  dir: h20x8/L09/seqs_128/s0-6ac681
+  status: succeeded
+  minutes: 5.0
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: awq_c1
+  seed: 1
+  dir: h20x8/L09/awq_c1/s1-b550ab
+  status: succeeded
+  minutes: 2.9
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_256
+  seed: 0
+  dir: h20x8/L09/seqs_256/s0-769fd9
+  status: succeeded
+  minutes: 5.0
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: spec_ngram_c1
+  seed: 0
+  dir: h20x8/L09/spec_ngram_c1/s0-b957ed
+  status: succeeded
+  minutes: 3.7
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_8
+  seed: 0
+  dir: h20x8/L09/seqs_8/s0-0a0d90
+  status: succeeded
+  minutes: 4.9
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: spec_ngram_c32
+  seed: 0
+  dir: h20x8/L09/spec_ngram_c32/s0-de219b
+  status: succeeded
+  minutes: 5.7
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: chunk_16k
+  seed: 1
+  dir: h20x8/L09/chunk_16k/s1-4fd653
+  status: succeeded
+  minutes: 5.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: awq
+  seed: 1
+  dir: h20x8/L09/awq/s1-8e4f2e
+  status: succeeded
+  minutes: 6.2
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: chunk_2k
+  seed: 1
+  dir: h20x8/L09/chunk_2k/s1-201f73
+  status: succeeded
+  minutes: 5.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: prefix_on
+  seed: 1
+  dir: h20x8/L09/prefix_on/s1-827fb2
+  status: succeeded
+  minutes: 3.8
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: fp8
+  seed: 1
+  dir: h20x8/L09/fp8/s1-8875ae
+  status: succeeded
+  minutes: 4.3
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: spec_draft_c1
+  seed: 1
+  dir: h20x8/L09/spec_draft_c1/s1-c65eb9
+  status: failed
+  minutes: 1.2
+  end_reason: "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n\
+    \  File \"<data>/batch/h20x8/L09/spec_draft_c1/s1-c65eb9/code/vllmserve/bench_worker.py\"\
+    , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+    \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+    \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+    , line 118, in run\n    return self._loop.run_until_complete(task)\n         \
+    \  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\"\
+    , line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n\
+    \  File \"<data>/batch/h20x8/L09/spec_draft_c1/s1-c65eb9/code/vllmserve/bench_worker.py\"\
+    , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+    \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n\
+    \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"\
+    <assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+    , line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n\
+    \                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+    , line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n\
+    \           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\"\
+    , line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args,\
+    \ kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/config/speculative.py\"\
+    , line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError:\
+    \ Speculative decoding with draft model is not supported yet. Please consider\
+    \ using other speculative decoding methods such as ngram, medusa, eagle, or mtp.\n"
+- course: L09
+  scenario: prefix_off
+  seed: 1
+  dir: h20x8/L09/prefix_off/s1-ad7752
+  status: succeeded
+  minutes: 5.0
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: kv_util_05
+  seed: 1
+  dir: h20x8/L09/kv_util_05/s1-36a07b
+  status: succeeded
+  minutes: 5.1
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_128
+  seed: 1
+  dir: h20x8/L09/seqs_128/s1-e597fb
+  status: succeeded
+  minutes: 4.9
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: spec_ngram_c1
+  seed: 1
+  dir: h20x8/L09/spec_ngram_c1/s1-8fb25a
+  status: succeeded
+  minutes: 3.1
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_256
+  seed: 1
+  dir: h20x8/L09/seqs_256/s1-39c312
+  status: succeeded
+  minutes: 4.9
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_8
+  seed: 1
+  dir: h20x8/L09/seqs_8/s1-f870e0
+  status: succeeded
+  minutes: 4.9
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: awq_c1
+  seed: 2
+  dir: h20x8/L09/awq_c1/s2-a39ffb
+  status: succeeded
+  minutes: 2.8
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: spec_ngram_c32
+  seed: 1
+  dir: h20x8/L09/spec_ngram_c32/s1-24079b
+  status: succeeded
+  minutes: 5.1
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: awq
+  seed: 2
+  dir: h20x8/L09/awq/s2-463705
+  status: succeeded
+  minutes: 6.1
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: chunk_16k
+  seed: 2
+  dir: h20x8/L09/chunk_16k/s2-71640e
+  status: succeeded
+  minutes: 5.5
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: fp8
+  seed: 2
+  dir: h20x8/L09/fp8/s2-376c9a
+  status: succeeded
+  minutes: 4.0
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: prefix_on
+  seed: 2
+  dir: h20x8/L09/prefix_on/s2-bc8614
+  status: succeeded
+  minutes: 3.7
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: spec_draft_c1
+  seed: 2
+  dir: h20x8/L09/spec_draft_c1/s2-23c0ef
+  status: failed
+  minutes: 1.1
+  end_reason: "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n\
+    \  File \"<data>/batch/h20x8/L09/spec_draft_c1/s2-23c0ef/code/vllmserve/bench_worker.py\"\
+    , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+    \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+    \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+    , line 118, in run\n    return self._loop.run_until_complete(task)\n         \
+    \  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\"\
+    , line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n\
+    \  File \"<data>/batch/h20x8/L09/spec_draft_c1/s2-23c0ef/code/vllmserve/bench_worker.py\"\
+    , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+    \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+    , line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n\
+    \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"\
+    <assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+    , line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n\
+    \                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+    , line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n\
+    \           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\"\
+    , line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args,\
+    \ kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/config/speculative.py\"\
+    , line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError:\
+    \ Speculative decoding with draft model is not supported yet. Please consider\
+    \ using other speculative decoding methods such as ngram, medusa, eagle, or mtp.\n"
+- course: L09
+  scenario: kv_util_05
+  seed: 2
+  dir: h20x8/L09/kv_util_05/s2-83950f
+  status: succeeded
+  minutes: 4.9
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: chunk_2k
+  seed: 2
+  dir: h20x8/L09/chunk_2k/s2-85d382
+  status: succeeded
+  minutes: 5.4
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: prefix_off
+  seed: 2
+  dir: h20x8/L09/prefix_off/s2-d3d908
+  status: succeeded
+  minutes: 4.7
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_128
+  seed: 2
+  dir: h20x8/L09/seqs_128/s2-9d1c7f
+  status: succeeded
+  minutes: 4.8
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: spec_ngram_c1
+  seed: 2
+  dir: h20x8/L09/spec_ngram_c1/s2-387650
+  status: succeeded
+  minutes: 2.8
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_256
+  seed: 2
+  dir: h20x8/L09/seqs_256/s2-683846
+  status: succeeded
+  minutes: 5.2
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: seqs_8
+  seed: 2
+  dir: h20x8/L09/seqs_8/s2-0e8630
+  status: succeeded
+  minutes: 5.2
+  expect_ok: true
+  end_reason: 完成
+- course: L09
+  scenario: spec_ngram_c32
+  seed: 2
+  dir: h20x8/L09/spec_ngram_c32/s2-9b256c
+  status: succeeded
+  minutes: 4.9
+  expect_ok: true
+  end_reason: 完成
+n_exported: 55
+problems:
+- "L09/spec_draft_c1 s0: failed expect_ok=None RuntimeError: vLLM 测量进程失败（退出码 1）：\n\
+  Traceback (most recent call last):\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\"\
+  , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+  \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+  , line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n\
+  \    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\"\
+  , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+  \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n\
+  \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+  , line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n\
+  \                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+  , line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n\
+  \           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\"\
+  , line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args,\
+  \ kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/config/speculative.py\"\
+  , line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError:\
+  \ Speculative decoding with draft model is not supported yet. Please consider using\
+  \ other speculative decoding methods such as ngram, medusa, eagle, or mtp."
+- "L09/spec_draft_c1 s1: failed expect_ok=None RuntimeError: vLLM 测量进程失败（退出码 1）：\n\
+  Traceback (most recent call last):\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s1-c65eb9/code/vllmserve/bench_worker.py\"\
+  , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+  \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+  , line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n\
+  \    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s1-c65eb9/code/vllmserve/bench_worker.py\"\
+  , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+  \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n\
+  \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+  , line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n\
+  \                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+  , line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n\
+  \           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\"\
+  , line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args,\
+  \ kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/config/speculative.py\"\
+  , line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError:\
+  \ Speculative decoding with draft model is not supported yet. Please consider using\
+  \ other speculative decoding methods such as ngram, medusa, eagle, or mtp."
+- "L09/spec_draft_c1 s2: failed expect_ok=None RuntimeError: vLLM 测量进程失败（退出码 1）：\n\
+  Traceback (most recent call last):\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s2-23c0ef/code/vllmserve/bench_worker.py\"\
+  , line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return\
+  \ runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\"\
+  , line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+  \  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n\
+  \    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s2-23c0ef/code/vllmserve/bench_worker.py\"\
+  , line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n\
+  \             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\"\
+  , line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n\
+  \                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+  , line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n\
+  \                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\"\
+  , line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n\
+  \           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\"\
+  , line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args,\
+  \ kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/config/speculative.py\"\
+  , line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError:\
+  \ Speculative decoding with draft model is not supported yet. Please consider using\
+  \ other speculative decoding methods such as ngram, medusa, eagle, or mtp."

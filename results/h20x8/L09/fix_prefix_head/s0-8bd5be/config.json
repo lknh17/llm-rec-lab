@@ -1,0 +1,22 @@
+{
+  "backend": "vllm",
+  "model": "qwen2.5-7b",
+  "quantization": "none",
+  "gpu_memory_utilization": 0.9,
+  "max_num_seqs": 32,
+  "max_num_batched_tokens": 8192,
+  "enable_prefix_caching": true,
+  "spec": "none",
+  "num_speculative_tokens": 4,
+  "input_len": 4096,
+  "output_len": 50,
+  "num_prompts": 256,
+  "shared_prefix": 3072,
+  "prefix_position": "head",
+  "request_rate": 0.0,
+  "seed": 0,
+  "peak_tflops": 148.0,
+  "hbm_gbps": 4000.0,
+  "device": "auto",
+  "max_minutes": 30
+}

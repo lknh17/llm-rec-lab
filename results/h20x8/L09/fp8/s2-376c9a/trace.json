@@ -1,0 +1,54 @@
+{
+  "prompt": {
+    "note": "第 0 条请求的开头和结尾（解码回文本）；后两项是构造说明和前两条请求开头相同的 token 数",
+    "head_text": "<|im_start|>user\n【拾小制造】羽绒服。拾小制造这款羽绒服主打续航 36 小时、大容量，还有三档调节。规格：尺码 S/M/L/XL。现在限时直降 50 元，不与其他优惠同享。用户评价：物流很快，包装完好；物流很快，包装完好。拾小制造这款羽绒服主打一键回充、不含酒精，还有人体工学",
+    "tail_text": "请按上面的打标规范，对这条内容输出一个 JSON，字段：品类、品牌、卖点（最多 3 个，原文摘录）、优惠、限制条件。只输出 JSON。<|im_end|>\n<|im_start|>assistant\n",
+    "input_len": 4096,
+    "shared_prefix": 0,
+    "content_len": 4044,
+    "fixed_len": 52,
+    "position": "head",
+    "same_head_tokens": 3,
+    "same_head_tokens_0_vs_1": 4
+  },
+  "requests": {
+    "note": "前 5 条请求：TTFT（含排队）、输出 token 数、分几次收到、命中缓存的输入 token 数",
+    "rows": [
+      {
+        "ttft_ms": 391.1,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.001
+      },
+      {
+        "ttft_ms": 941.4,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.001
+      },
+      {
+        "ttft_ms": 1521.5,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.001
+      },
+      {
+        "ttft_ms": 1521.4,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.001
+      },
+      {
+        "ttft_ms": 2068.1,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.001
+      }
+    ]
+  }
+}

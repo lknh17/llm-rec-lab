@@ -27,9 +27,19 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）（已有 0 / 6 个运行）</summary>
+<details><summary>展开实测：H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）（已有 6 / 6 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | ITL p99 ms | ITL p50 ms | TTFT p50 ms | ITL p99 ms：与 `chunk_16k` 差 | ITL p99 ms：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `chunk_16k` | 候选改动 | 687 ± 269 | 7.0 ± 0.0 | 648 ± 79 | — | s0 530 / s1 997 / s2 534 | 通过 |
+| `chunk_2k` | 候选改动 | 268 ± 1 | 7.1 ± 0.2 | 849 ± 52 | -419 | s0 270 / s1 267 / s2 268 | 通过 |
+
+![ITL p99 ms（均值，误差线为种子间最小到最大）](figures/h20x8-p_chunk-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `chunk_16k` [s0](../../../results/h20x8/L09/chunk_16k/s0-c4deac/) · [s1](../../../results/h20x8/L09/chunk_16k/s1-4fd653/) · [s2](../../../results/h20x8/L09/chunk_16k/s2-71640e/)
+- `chunk_2k` [s0](../../../results/h20x8/L09/chunk_2k/s0-c75a44/) · [s1](../../../results/h20x8/L09/chunk_2k/s1-201f73/) · [s2](../../../results/h20x8/L09/chunk_2k/s2-85d382/)
 
 </details>
 

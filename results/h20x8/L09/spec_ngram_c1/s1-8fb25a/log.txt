@@ -1,0 +1,23 @@
+[worker] 等待设备锁 gpu4-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L09/spec_ngram_c1/s1-8fb25a/code/vllmserve/experiment.py
+[20:21:37] ===== 阶段：prepare =====
+[20:21:38] 16 条 × 4096 token 输入 / 50 token 输出；共享前缀 0（head），前两条开头相同 4 个 token；到达率 全部同时
+[20:21:38] ===== 阶段：train =====
+[20:21:51] vLLM 0.11.0 · torch 2.8.0+cu128 · CUDA 12.8 · NVIDIA H20
+[20:23:34] [vllm] [1;36m(EngineCore_DP0 pid=871163)[0;0m INFO 11-12 20:23:34 [gpu_model_runner.py:2653] Model loading took 14.2488 GiB and 23.198767 seconds
+[20:23:52] [vllm] [1;36m(EngineCore_DP0 pid=871163)[0;0m INFO 11-12 20:23:52 [monitor.py:34] torch.compile takes 15.83 s in total
+[20:23:54] [vllm] [1;36m(EngineCore_DP0 pid=871163)[0;0m INFO 11-12 20:23:54 [gpu_worker.py:298] Available KV cache memory: 69.69 GiB
+[20:23:55] [vllm] [1;36m(EngineCore_DP0 pid=871163)[0;0m INFO 11-12 20:23:55 [kv_cache_utils.py:1087] GPU KV cache size: 1,304,816 tokens
+[20:23:55] [vllm] [1;36m(EngineCore_DP0 pid=871163)[0;0m INFO 11-12 20:23:55 [kv_cache_utils.py:1091] Maximum concurrency for 4,158 tokens per request: 313.66x
+[20:23:55] [vllm] [1;36m(EngineCore_DP0 pid=871163)[0;0m INFO 11-12 20:23:55 [gpu_model_runner.py:3480] Graph capturing finished in 1 secs, took 0.08 GiB
+[20:23:56] [vllm] [1;36m(EngineCore_DP0 pid=871163)[0;0m INFO 11-12 20:23:56 [core.py:210] init engine (profile, create kv cache, warmup model) took 21.39 seconds
+[20:23:56] 引擎就绪，用时 96.9 秒（加载权重、编译、CUDA graph、分配 KV cache）
+[20:23:58] [vllm] INFO 11-12 20:23:58 [loggers.py:127] Engine 000: Avg prompt throughput: 125.7 tokens/s, Avg generation throughput: 7.9 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+[20:24:08] 已完成 12/16 条（10.0 秒）
+[20:24:11] [vllm] INFO 11-12 20:24:11 [loggers.py:127] Engine 000: Avg prompt throughput: 4905.5 tokens/s, Avg generation throughput: 59.9 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+[20:24:11] [vllm] INFO 11-12 20:24:11 [metrics.py:96] SpecDecoding metrics: Mean acceptance length: 1.66, Accepted throughput: 7.99 tokens/s, Drafted throughput: 48.32 tokens/s, Accepted: 123 tokens, Drafted: 744 tokens, Per-position acceptance rate: 0.489, 0.091, 0.048, 0.032, Avg Draft acceptance rate: 16.5%
+[20:24:12] ===== 阶段：evaluate =====
+[20:24:12] 1.201 条/s（输入 4,919 tok/s），TTFT p50 6717.05 ms，TPOT p50 6.75 ms，ITL p99 13.42 ms；前缀命中 0.0；同时 decode 最多 1；屋顶线 prefill 414.1 ms / decode 3.867 ms
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

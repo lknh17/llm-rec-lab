@@ -31,9 +31,24 @@ n-gram 投机（不需要草稿模型）：用最近生成的几个 token 去输
 
 ## 实测
 
-<details><summary>展开实测：H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）（已有 0 / 15 个运行）</summary>
+<details><summary>展开实测：H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）（已有 12 / 15 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | TPOT p50 ms | 平均接受长度 | 条/s | TPOT p50 ms：与 `seqs_1` 差 | TPOT p50 ms：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `seqs_1` | 参照 | 6.73 ± 0.07 | — | 1.17 ± 0.01 | — | s0 6.70 / s1 6.67 / s2 6.81 | 通过 |
+| `spec_draft_c1` | 候选改动 | 〔待 H20 生成〕 | 〔待 H20 生成〕 | 〔待 H20 生成〕 |  | | |
+| `spec_ngram_c32` | 候选改动 | 320.12 ± 2.14 | 2.22 ± 0.04 | 1.89 ± 0.02 | +313.39 | s0 322.54 / s1 318.48 / s2 319.34 | 通过 |
+| `baseline` | 基线 | 310.00 ± 0.62 | — | 1.91 ± 0.00 | +303.27 | s0 310.15 / s1 310.53 / s2 309.31 | 通过 |
+| `spec_ngram_c1` | 候选改动 | 6.81 ± 0.09 | 2.41 ± 0.08 | 1.17 ± 0.04 | +0.08 | s0 6.91 / s1 6.75 / s2 6.76 | 通过 |
+
+![TPOT p50 ms（均值，误差线为种子间最小到最大）](figures/h20x8-p_spec-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `seqs_1` [s0](../../../results/h20x8/L09/seqs_1/s0-c6d0e0/) · [s1](../../../results/h20x8/L09/seqs_1/s1-5faa10/) · [s2](../../../results/h20x8/L09/seqs_1/s2-d9c4e9/)
+- `spec_ngram_c32` [s0](../../../results/h20x8/L09/spec_ngram_c32/s0-de219b/) · [s1](../../../results/h20x8/L09/spec_ngram_c32/s1-24079b/) · [s2](../../../results/h20x8/L09/spec_ngram_c32/s2-9b256c/)
+- `baseline` [s0](../../../results/h20x8/L09/baseline/s0-627ae3/) · [s1](../../../results/h20x8/L09/baseline/s1-000c30/) · [s2](../../../results/h20x8/L09/baseline/s2-288be9/)
+- `spec_ngram_c1` [s0](../../../results/h20x8/L09/spec_ngram_c1/s0-b957ed/) · [s1](../../../results/h20x8/L09/spec_ngram_c1/s1-8fb25a/) · [s2](../../../results/h20x8/L09/spec_ngram_c1/s2-387650/)
 
 </details>
 

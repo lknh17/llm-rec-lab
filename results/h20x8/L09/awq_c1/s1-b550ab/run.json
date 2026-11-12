@@ -1,0 +1,119 @@
+{
+  "run_id": "h20x8.L09.awq_c1.s1-b550ab",
+  "course_id": "L09",
+  "project": "vllmserve",
+  "entry": "vllmserve.experiment",
+  "profile": "h20x8",
+  "scenario": "awq_c1",
+  "role": "variant",
+  "title": "AWQ INT4，一次只跑一条（max_num_seqs 1，16 条）",
+  "seed": 1,
+  "variant": "awq_c1",
+  "config_hash": "b550ab64406f",
+  "code_hash": "83c09903b62e",
+  "git": {
+    "commit": "59a81953d54e1c4a045e2642f1c749d7a5ab6c9f",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "model": "qwen2.5-7b-awq",
+    "max_num_seqs": 1,
+    "num_prompts": 16
+  },
+  "param_affects": {
+    "backend": "runtime",
+    "model": "model",
+    "quantization": "model",
+    "gpu_memory_utilization": "runtime",
+    "max_num_seqs": "runtime",
+    "max_num_batched_tokens": "runtime",
+    "enable_prefix_caching": "runtime",
+    "spec": "runtime",
+    "num_speculative_tokens": "runtime",
+    "input_len": "data",
+    "output_len": "data",
+    "num_prompts": "data",
+    "shared_prefix": "data",
+    "prefix_position": "data",
+    "request_rate": "data",
+    "seed": "data",
+    "peak_tflops": "runtime",
+    "hbm_gbps": "runtime",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794485642.1119897,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794485642.2623065,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794485668.1422822,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794485668.6051116,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794485812.0177436,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794485812.109153,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794485642.1119897,
+  "budget": {
+    "max_minutes": 30
+  },
+  "expect": [
+    "summary.sched.max_decoding == 1"
+  ],
+  "slot": "gpu1-0",
+  "started_at": 1794485642.2623081,
+  "data": {
+    "kind": "合成中文商品内容 + 共享打标规范（token 精确控制长度）",
+    "input_len": 4096,
+    "output_len": 50,
+    "num_prompts": 16,
+    "shared_prefix": 0,
+    "prefix_position": "head",
+    "request_rate": 0.0
+  },
+  "model": {
+    "arch": "Qwen2.5-7B",
+    "repo": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+    "params": {
+      "total": 7615283200,
+      "trainable": 0
+    },
+    "train_mode": "inference",
+    "dtype": "int4 W4A16（AWQ）",
+    "backend": "vllm"
+  },
+  "ended_at": 1794485812.1091557,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.sched.max_decoding == 1",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

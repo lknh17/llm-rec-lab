@@ -1,0 +1,117 @@
+{
+  "run_id": "h20x8.L09.seqs_8.s2-0e8630",
+  "course_id": "L09",
+  "project": "vllmserve",
+  "entry": "vllmserve.experiment",
+  "profile": "h20x8",
+  "scenario": "seqs_8",
+  "role": "variant",
+  "title": "max_num_seqs 8",
+  "seed": 2,
+  "variant": "seqs_8",
+  "config_hash": "0e8630eec48b",
+  "code_hash": "83c09903b62e",
+  "git": {
+    "commit": "59a81953d54e1c4a045e2642f1c749d7a5ab6c9f",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "max_num_seqs": 8
+  },
+  "param_affects": {
+    "backend": "runtime",
+    "model": "model",
+    "quantization": "model",
+    "gpu_memory_utilization": "runtime",
+    "max_num_seqs": "runtime",
+    "max_num_batched_tokens": "runtime",
+    "enable_prefix_caching": "runtime",
+    "spec": "runtime",
+    "num_speculative_tokens": "runtime",
+    "input_len": "data",
+    "output_len": "data",
+    "num_prompts": "data",
+    "shared_prefix": "data",
+    "prefix_position": "data",
+    "request_rate": "data",
+    "seed": "data",
+    "peak_tflops": "runtime",
+    "hbm_gbps": "runtime",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794486463.2715387,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794486463.4134622,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794486487.2871442,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794486488.8788452,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794486775.4135625,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794486775.5251248,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794486463.2715387,
+  "budget": {
+    "max_minutes": 30
+  },
+  "expect": [
+    "summary.sched.max_decoding <= 8"
+  ],
+  "slot": "gpu7-0",
+  "started_at": 1794486463.4134638,
+  "data": {
+    "kind": "合成中文商品内容 + 共享打标规范（token 精确控制长度）",
+    "input_len": 4096,
+    "output_len": 50,
+    "num_prompts": 256,
+    "shared_prefix": 0,
+    "prefix_position": "head",
+    "request_rate": 0.0
+  },
+  "model": {
+    "arch": "Qwen2.5-7B",
+    "repo": "Qwen/Qwen2.5-7B-Instruct",
+    "params": {
+      "total": 7615283200,
+      "trainable": 0
+    },
+    "train_mode": "inference",
+    "dtype": "bf16",
+    "backend": "vllm"
+  },
+  "ended_at": 1794486775.5251267,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.sched.max_decoding <= 8",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

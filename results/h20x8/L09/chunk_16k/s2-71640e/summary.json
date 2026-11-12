@@ -1,0 +1,121 @@
+{
+  "env": {
+    "backend": "vllm",
+    "vllm": "0.11.0",
+    "torch": "2.8.0+cu128",
+    "cuda": "12.8",
+    "python": "3.12.3",
+    "gpu": "NVIDIA H20",
+    "gpu_mem_gb": 102.0,
+    "capability": "9.0"
+  },
+  "load": {
+    "input_len": 4096,
+    "shared_prefix": 0,
+    "content_len": 4044,
+    "fixed_len": 52,
+    "position": "head",
+    "same_head_tokens": 3,
+    "output_len": 50,
+    "num_prompts": 200,
+    "request_rate": 1.0
+  },
+  "engine": {
+    "max_num_seqs": 32,
+    "max_num_batched_tokens": 16384,
+    "enable_prefix_caching": true,
+    "gpu_memory_utilization": 0.9,
+    "quantization": "none",
+    "spec": "none",
+    "num_speculative_tokens": 4,
+    "kv_tokens": 1290480.0,
+    "kv_cache_gib": 68.92,
+    "weights_gib": 14.2488,
+    "max_concurrency_est": 310.21,
+    "block_size": "16",
+    "num_gpu_blocks": "80655",
+    "load_s": 88.8
+  },
+  "throughput": {
+    "req_per_s": 1.168,
+    "input_tok_per_s": 4782.2,
+    "output_tok_per_s": 58.4,
+    "total_tok_per_s": 4840.6,
+    "duration_s": 171.302,
+    "completed": 200,
+    "num_requests": 200
+  },
+  "latency": {
+    "ttft_ms_p50": 670.57,
+    "ttft_ms_p99": 3013.57,
+    "ttft_ms_mean": 992.9,
+    "tpot_ms_p50": 23.83,
+    "tpot_ms_p99": 129.08,
+    "itl_ms_p50": 7.03,
+    "itl_ms_p99": 533.84,
+    "itl_ms_max": 2000.49,
+    "e2e_ms_p50": 2266.28,
+    "e2e_ms_p99": 7243.19
+  },
+  "cache": {
+    "prefix_hit_rate": 0.0,
+    "cached_tokens": 32,
+    "prompt_tokens": 819200,
+    "source": "request.num_cached_tokens"
+  },
+  "sched": {
+    "preemptions": 0.0,
+    "max_decoding": 14,
+    "mean_decoding": 2.01
+  },
+  "spec": {
+    "drafts": null,
+    "draft_tokens": null,
+    "accepted_tokens": null,
+    "mean_accept_len": null,
+    "accept_rate": null
+  },
+  "roofline": {
+    "prefill_ms": 414.1,
+    "prefill_flops": 61287035830272,
+    "prefill_intensity": 3962.8,
+    "prefill_compute_bound": true,
+    "decode_ms_b1": 3.867,
+    "decode_bytes_b1": 15466881024.0,
+    "decode_intensity_b1": 1.02,
+    "decode_ms_at_max_seqs": 5.698,
+    "decode_intensity_at_max_seqs": 22.18,
+    "decode_compute_bound_at_max_seqs": false,
+    "work_flops": 12415354906214400,
+    "peak_tflops_used": 148.0,
+    "w_bytes": 2.0,
+    "kv_bytes_per_token": 57344,
+    "weights_gb": 15.23,
+    "max_batch_est": 322,
+    "ttft_vs_est": 1.619,
+    "prefill_mfu": 0.6175,
+    "tpot_vs_est": 6.162,
+    "decode_mbu": 0.1623,
+    "work_mfu": 0.4897
+  },
+  "headline": {
+    "req_per_s": 1.168,
+    "ttft_ms_p50": 670.57,
+    "tpot_ms_p50": 23.83,
+    "prefix_hit_rate": 0.0
+  },
+  "display": {
+    "条/s": 1.168,
+    "输入 tok/s": 4782.2,
+    "TTFT p50 ms": 670.57,
+    "TPOT p50 ms": 23.83,
+    "ITL p99 ms": 533.84,
+    "前缀命中率": 0.0,
+    "同时 decode 最多": 14,
+    "等效 MFU": 0.4897
+  },
+  "display_pct": [
+    "前缀命中率",
+    "等效 MFU"
+  ]
+}

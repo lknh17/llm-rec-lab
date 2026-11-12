@@ -29,9 +29,23 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）（已有 0 / 12 个运行）</summary>
+<details><summary>展开实测：H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）（已有 12 / 12 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 条/s | TPOT p50 ms | TTFT p50 ms | 条/s：与 `baseline` 差 | 条/s：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 1.91 ± 0.00 | 310.00 ± 0.62 | 66,785 ± 238 | — | s0 1.91 / s1 1.91 / s2 1.92 | 通过 |
+| `awq_c1` | 候选改动 | 0.95 ± 0.00 | 5.22 ± 0.02 | 8,659 ± 54 | -0.96 | s0 0.96 / s1 0.95 / s2 0.95 | 通过 |
+| `seqs_1` | 参照 | 1.17 ± 0.01 | 6.73 ± 0.07 | 6,942 ± 117 | -0.74 | s0 1.18 / s1 1.18 / s2 1.16 | 通过 |
+| `awq` | 候选改动 | 1.23 ± 0.00 | 481.85 ± 0.90 | 103,988 ± 211 | -0.68 | s0 1.23 / s1 1.23 / s2 1.23 | 通过 |
+
+![条/s（均值，误差线为种子间最小到最大）](figures/h20x8-p_awq-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L09/baseline/s0-627ae3/) · [s1](../../../results/h20x8/L09/baseline/s1-000c30/) · [s2](../../../results/h20x8/L09/baseline/s2-288be9/)
+- `awq_c1` [s0](../../../results/h20x8/L09/awq_c1/s0-0c810e/) · [s1](../../../results/h20x8/L09/awq_c1/s1-b550ab/) · [s2](../../../results/h20x8/L09/awq_c1/s2-a39ffb/)
+- `seqs_1` [s0](../../../results/h20x8/L09/seqs_1/s0-c6d0e0/) · [s1](../../../results/h20x8/L09/seqs_1/s1-5faa10/) · [s2](../../../results/h20x8/L09/seqs_1/s2-d9c4e9/)
+- `awq` [s0](../../../results/h20x8/L09/awq/s0-b93bf1/) · [s1](../../../results/h20x8/L09/awq/s1-8e4f2e/) · [s2](../../../results/h20x8/L09/awq/s2-463705/)
 
 </details>
 

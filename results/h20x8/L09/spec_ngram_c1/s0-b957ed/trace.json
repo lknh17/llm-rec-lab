@@ -10,5 +10,45 @@
     "position": "head",
     "same_head_tokens": 3,
     "same_head_tokens_0_vs_1": 4
+  },
+  "requests": {
+    "note": "前 5 条请求：TTFT（含排队）、输出 token 数、分几次收到、命中缓存的输入 token 数",
+    "rows": [
+      {
+        "ttft_ms": 524.1,
+        "n_out": 50,
+        "chunks": 43,
+        "num_cached": 0,
+        "arrival_s": 0.0
+      },
+      {
+        "ttft_ms": 1963.9,
+        "n_out": 50,
+        "chunks": 38,
+        "num_cached": 0,
+        "arrival_s": 0.001
+      },
+      {
+        "ttft_ms": 2773.3,
+        "n_out": 50,
+        "chunks": 43,
+        "num_cached": 0,
+        "arrival_s": 0.001
+      },
+      {
+        "ttft_ms": 3614.4,
+        "n_out": 50,
+        "chunks": 43,
+        "num_cached": 0,
+        "arrival_s": 0.001
+      },
+      {
+        "ttft_ms": 4492.3,
+        "n_out": 50,
+        "chunks": 44,
+        "num_cached": 0,
+        "arrival_s": 0.001
+      }
+    ]
   }
 }

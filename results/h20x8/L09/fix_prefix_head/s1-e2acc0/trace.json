@@ -1,0 +1,54 @@
+{
+  "prompt": {
+    "note": "第 0 条请求的开头和结尾（解码回文本）；后两项是构造说明和前两条请求开头相同的 token 数",
+    "head_text": "<|im_start|>user\n打标规范（内容理解 v3）\n规则 1：「防泼水面料」属于功效描述，涉及卖点时需标注为待审核；\n规则 2：「静音运行」属于功效描述，涉及品牌时需标注为待审核；\n规则 3：若同时出现「仅限新用户」，风险词必须写明，不能省略；\n规则 4：「防泼水面料」属于功效描述，",
+    "tail_text": "请按上面的打标规范，对这条内容输出一个 JSON，字段：品类、品牌、卖点（最多 3 个，原文摘录）、优惠、限制条件。只输出 JSON。<|im_end|>\n<|im_start|>assistant\n",
+    "input_len": 4096,
+    "shared_prefix": 3072,
+    "content_len": 972,
+    "fixed_len": 52,
+    "position": "head",
+    "same_head_tokens": 3075,
+    "same_head_tokens_0_vs_1": 3076
+  },
+  "requests": {
+    "note": "前 5 条请求：TTFT（含排队）、输出 token 数、分几次收到、命中缓存的输入 token 数",
+    "rows": [
+      {
+        "ttft_ms": 627.4,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.002
+      },
+      {
+        "ttft_ms": 1672.1,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 3072,
+        "arrival_s": 0.002
+      },
+      {
+        "ttft_ms": 1671.9,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 3072,
+        "arrival_s": 0.002
+      },
+      {
+        "ttft_ms": 1671.8,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 3072,
+        "arrival_s": 0.002
+      },
+      {
+        "ttft_ms": 1671.6,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 3072,
+        "arrival_s": 0.002
+      }
+    ]
+  }
+}

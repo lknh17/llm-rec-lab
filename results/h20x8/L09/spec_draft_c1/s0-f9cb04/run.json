@@ -12,7 +12,7 @@
   "config_hash": "f9cb04ed16fe",
   "code_hash": "83c09903b62e",
   "git": {
-    "commit": "d72ad59deed484b5069077b897a7bae9589f4e20",
+    "commit": "59a81953d54e1c4a045e2642f1c749d7a5ab6c9f",
     "dirty": false
   },
   "changed_from_baseline": {
@@ -48,39 +48,39 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794390850.8975344,
+      "time": 1794485579.581116,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794390851.091556,
+      "time": 1794485579.7287421,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794390884.6481223,
+      "time": 1794485603.5883148,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794390885.094944,
+      "time": 1794485604.027887,
       "note": "阶段 train"
     },
     {
       "status": "failed",
-      "time": 1794391127.2204142,
-      "note": "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\", line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\", line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\", line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/engine/arg_utils.py\", line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/engine/arg_utils.py\", line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\", line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args, kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/config/speculative.py\", line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError: Speculative decoding with draft model is not supported yet. Please consider using other speculative decoding methods such as ngram, medusa, eagle, or mtp.\n"
+      "time": 1794485639.3364413,
+      "note": "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\", line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\", line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\", line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\", line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\", line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\", line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args, kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/config/speculative.py\", line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError: Speculative decoding with draft model is not supported yet. Please consider using other speculative decoding methods such as ngram, medusa, eagle, or mtp.\n"
     }
   ],
-  "created_at": 1794390850.8975344,
+  "created_at": 1794485579.581116,
   "budget": {
     "max_minutes": 30
   },
   "expect": [
     "summary.spec.mean_accept_len > 1.0"
   ],
-  "slot": "gpu4-0",
-  "started_at": 1794390851.0915577,
+  "slot": "gpu1-0",
+  "started_at": 1794485579.728744,
   "data": {
     "kind": "合成中文商品内容 + 共享打标规范（token 精确控制长度）",
     "input_len": 4096,
@@ -101,7 +101,7 @@
     "dtype": "bf16",
     "backend": "vllm"
   },
-  "ended_at": 1794391127.2204156,
-  "end_reason": "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\", line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\", line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\", line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/engine/arg_utils.py\", line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/engine/arg_utils.py\", line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\", line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args, kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0/lib/python3.12/site-packages/vllm/config/speculative.py\", line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError: Speculative decoding with draft model is not supported yet. Please consider using other speculative decoding methods such as ngram, medusa, eagle, or mtp.\n",
+  "ended_at": 1794485639.3364437,
+  "end_reason": "RuntimeError: vLLM 测量进程失败（退出码 1）：\nTraceback (most recent call last):\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\", line 168, in main\n    res = asyncio.run(main_async(job))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\", line 194, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"<data>/batch/h20x8/L09/spec_draft_c1/s0-f9cb04/code/vllmserve/bench_worker.py\", line 139, in main_async\n    engine = AsyncLLMEngine.from_engine_args(engine_args(job))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py\", line 231, in from_engine_args\n    vllm_config = engine_args.create_engine_config(usage_context)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\", line 1347, in create_engine_config\n    speculative_config = self.create_speculative_config(\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/engine/arg_utils.py\", line 1109, in create_speculative_config\n    return SpeculativeConfig(**self.speculative_config)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py\", line 121, in __init__\n    s.__pydantic_validator__.validate_python(ArgsKwargs(args, kwargs), self_instance=s)\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/config/speculative.py\", line 349, in __post_init__\n    raise NotImplementedError(\nNotImplementedError: Speculative decoding with draft model is not supported yet. Please consider using other speculative decoding methods such as ngram, medusa, eagle, or mtp.\n",
   "exported": true
 }

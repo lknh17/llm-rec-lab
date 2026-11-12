@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 144" width="760" height="144" font-family="-apple-system,'PingFang SC','Noto Sans CJK SC',sans-serif">
+<rect width="760" height="144" rx="12" fill="#FFFFFF" stroke="#E3E6EC"/>
+<text x="20" y="28" font-size="15" font-weight="600" fill="#1D2330">命中率（均值，误差线为种子间最小到最大）</text>
+<text x="740" y="28" font-size="11" fill="#6B7385" text-anchor="end">h20x8 · 前缀缓存</text>
+<line x1="190.0" y1="40" x2="190.0" y2="116" stroke="#E3E6EC"/>
+<text x="190.0" y="132" font-size="10" fill="#6B7385" text-anchor="middle">0</text>
+<line x1="310.0" y1="40" x2="310.0" y2="116" stroke="#E3E6EC"/>
+<text x="310.0" y="132" font-size="10" fill="#6B7385" text-anchor="middle">0.25</text>
+<line x1="430.0" y1="40" x2="430.0" y2="116" stroke="#E3E6EC"/>
+<text x="430.0" y="132" font-size="10" fill="#6B7385" text-anchor="middle">0.5</text>
+<line x1="550.0" y1="40" x2="550.0" y2="116" stroke="#E3E6EC"/>
+<text x="550.0" y="132" font-size="10" fill="#6B7385" text-anchor="middle">0.75</text>
+<line x1="670.0" y1="40" x2="670.0" y2="116" stroke="#E3E6EC"/>
+<text x="670.0" y="132" font-size="10" fill="#6B7385" text-anchor="middle">1</text>
+<text x="180" y="61.0" font-size="12" fill="#1D2330" text-anchor="end">prefix_off</text>
+<rect x="190" y="46" width="0.0" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>prefix_off：0（3 个种子）</title></rect>
+<line x1="190.0" y1="57.0" x2="190.0" y2="57.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="190.0" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="190.0" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="190.0" cy="57.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="198.0" y="61.0" font-size="11" fill="#6B7385">0 ±0.0</text>
+<text x="180" y="93.0" font-size="12" fill="#1D2330" text-anchor="end">prefix_on</text>
+<rect x="190" y="78" width="239.1" height="22" rx="4" fill="#1971C2" fill-opacity="0.82"><title>prefix_on：0.498（3 个种子）</title></rect>
+<line x1="429.0" y1="89.0" x2="429.1" y2="89.0" stroke="#1D2330" stroke-width="1.4"/>
+<circle cx="429.1" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="429.0" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<circle cx="429.1" cy="89.0" r="3" fill="#FFFFFF" stroke="#1D2330" stroke-width="1.2"/>
+<text x="437.1" y="93.0" font-size="11" fill="#6B7385">0.498 ±0.0</text>
+</svg>

@@ -31,9 +31,27 @@
 
 ## 实测
 
-<details><summary>展开实测：H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）（已有 0 / 15 个运行）</summary>
+<details><summary>展开实测：H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）（已有 18 / 15 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 条/s | 同时 decode 最多 | 等效 MFU | 条/s：与 `seqs_8` 差 | 条/s：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `seqs_8` | 候选改动 | 1.80 ± 0.01 | 8 ± 0 | 75% ± 0% | — | s0 1.81 / s1 1.79 / s2 1.79 | 通过 |
+| `seqs_256` | 候选改动 | 1.92 ± 0.01 | 98 ± 0 | 80% ± 0% | +0.12 | s0 1.91 / s1 1.92 / s2 1.93 | 通过 |
+| `seqs_1` | 参照 | 1.17 ± 0.01 | 1 ± 0 | 49% ± 0% | -0.62 | s0 1.18 / s1 1.18 / s2 1.16 | 通过 |
+| `seqs_8` | 候选改动 | 1.80 ± 0.01 | 8 ± 0 | 75% ± 0% | — | s0 1.81 / s1 1.79 / s2 1.79 | 通过 |
+| `baseline` | 基线 | 1.91 ± 0.00 | 32 ± 0 | 80% ± 0% | +0.12 | s0 1.91 / s1 1.91 / s2 1.92 | 通过 |
+| `seqs_128` | 候选改动 | 1.91 ± 0.01 | 98 ± 0 | 80% ± 0% | +0.12 | s0 1.91 / s1 1.90 / s2 1.92 | 通过 |
+
+![条/s（均值，误差线为种子间最小到最大）](figures/h20x8-p_batch-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `seqs_8` [s0](../../../results/h20x8/L09/seqs_8/s0-0a0d90/) · [s1](../../../results/h20x8/L09/seqs_8/s1-f870e0/) · [s2](../../../results/h20x8/L09/seqs_8/s2-0e8630/)
+- `seqs_256` [s0](../../../results/h20x8/L09/seqs_256/s0-769fd9/) · [s1](../../../results/h20x8/L09/seqs_256/s1-39c312/) · [s2](../../../results/h20x8/L09/seqs_256/s2-683846/)
+- `seqs_1` [s0](../../../results/h20x8/L09/seqs_1/s0-c6d0e0/) · [s1](../../../results/h20x8/L09/seqs_1/s1-5faa10/) · [s2](../../../results/h20x8/L09/seqs_1/s2-d9c4e9/)
+- `seqs_8` [s0](../../../results/h20x8/L09/seqs_8/s0-0a0d90/) · [s1](../../../results/h20x8/L09/seqs_8/s1-f870e0/) · [s2](../../../results/h20x8/L09/seqs_8/s2-0e8630/)
+- `baseline` [s0](../../../results/h20x8/L09/baseline/s0-627ae3/) · [s1](../../../results/h20x8/L09/baseline/s1-000c30/) · [s2](../../../results/h20x8/L09/baseline/s2-288be9/)
+- `seqs_128` [s0](../../../results/h20x8/L09/seqs_128/s0-6ac681/) · [s1](../../../results/h20x8/L09/seqs_128/s1-e597fb/) · [s2](../../../results/h20x8/L09/seqs_128/s2-9d1c7f/)
 
 </details>
 

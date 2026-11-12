@@ -22,19 +22,19 @@
 
 <details><summary>线索 1</summary>
 
-前缀命中率：〔待 H20 生成〕（引擎配置里 enable_prefix_caching = true）；TTFT p50 〔待 H20 生成〕 ms（基线 〔待 H20 生成〕 ms）。
+前缀命中率：0.0% ± 0.0%（引擎配置里 enable_prefix_caching = true）；TTFT p50 67,233 ± 221 ms（基线 66,785 ± 238 ms）。
 
 </details>
 
 <details><summary>线索 2</summary>
 
-追踪：前两条请求开头相同的 token 数 〔待 H20 生成〕；KV 块大小 16 token。
+追踪：前两条请求开头相同的 token 数 3 ± 0；KV 块大小 16 token。
 
 </details>
 
 <details><summary>线索 3</summary>
 
-KV 容量 〔待 H20 生成〕 token；max_num_seqs 〔待 H20 生成〕，和基线相同。
+KV 容量 1,310,453 ± 628 token；max_num_seqs 32 ± 0，和基线相同。
 
 </details>
 
@@ -51,9 +51,21 @@ KV 容量 〔待 H20 生成〕 token；max_num_seqs 〔待 H20 生成〕，和�
 
 ## 实测
 
-<details><summary>展开实测：H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）（已有 0 / 9 个运行）</summary>
+<details><summary>展开实测：H20 · vLLM 0.11 · Qwen2.5-7B-Instruct bf16 · 输入 4096 / 输出 50 token · 3 种子（每个运行 1 张卡）（已有 9 / 9 个运行）</summary>
 
-_还没有结果：H20 正在跑或还在排队，进度见 [作业看板](../../../jobs/README.md)。_
+| 场景 | 类型 | 命中率 | 条/s | TTFT p50 ms | 命中率：与 `baseline` 差 | 命中率：各种子 | 断言 |
+| - | - | - | - | - | - | - | - |
+| `baseline` | 基线 | 0.0% ± 0.0% | 1.91 ± 0.00 | 66,785 ± 238 | — | s0 0.0% / s1 0.0% / s2 0.0% | 通过 |
+| `fix_prefix_head` | 修复 | 74.7% ± 0.0% | 6.48 ± 0.03 | 19,688 ± 72 | +74.7% | s0 74.7% / s1 74.7% / s2 74.7% | 通过 |
+| `fault_prefix_tail` | 教学故障 | 0.0% ± 0.0% | 1.90 ± 0.00 | 67,233 ± 221 | +0.0% | s0 0.0% / s1 0.0% / s2 0.0% | 通过 |
+
+![命中率（均值，误差线为种子间最小到最大）](figures/h20x8-diagnose-metrics.svg)
+
+运行目录（每个目录里有 `summary.json` 指标、`evidence.json` 证据摘要、`predictions.jsonl` 逐条预测、`log.txt` 日志）：
+
+- `baseline` [s0](../../../results/h20x8/L09/baseline/s0-627ae3/) · [s1](../../../results/h20x8/L09/baseline/s1-000c30/) · [s2](../../../results/h20x8/L09/baseline/s2-288be9/)
+- `fix_prefix_head` [s0](../../../results/h20x8/L09/fix_prefix_head/s0-8bd5be/) · [s1](../../../results/h20x8/L09/fix_prefix_head/s1-e2acc0/) · [s2](../../../results/h20x8/L09/fix_prefix_head/s2-8facb0/)
+- `fault_prefix_tail` [s0](../../../results/h20x8/L09/fault_prefix_tail/s0-7f0d04/) · [s1](../../../results/h20x8/L09/fault_prefix_tail/s1-137557/) · [s2](../../../results/h20x8/L09/fault_prefix_tail/s2-1ed01f/)
 
 </details>
 

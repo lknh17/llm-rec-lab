@@ -1,0 +1,24 @@
+[worker] 等待设备锁 gpu2-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L09/fix_prefix_head/s2-8facb0/code/vllmserve/experiment.py
+[20:06:45] ===== 阶段：prepare =====
+[20:06:46] 256 条 × 4096 token 输入 / 50 token 输出；共享前缀 3072（head），前两条开头相同 3076 个 token；到达率 全部同时
+[20:06:46] ===== 阶段：train =====
+[20:07:01] vLLM 0.11.0 · torch 2.8.0+cu128 · CUDA 12.8 · NVIDIA H20
+[20:08:46] [vllm] [1;36m(EngineCore_DP0 pid=839432)[0;0m INFO 11-12 20:08:46 [gpu_model_runner.py:2653] Model loading took 14.2488 GiB and 23.048385 seconds
+[20:09:04] [vllm] [1;36m(EngineCore_DP0 pid=839432)[0;0m INFO 11-12 20:09:04 [monitor.py:34] torch.compile takes 15.49 s in total
+[20:09:06] [vllm] [1;36m(EngineCore_DP0 pid=839432)[0;0m INFO 11-12 20:09:06 [gpu_worker.py:298] Available KV cache memory: 70.01 GiB
+[20:09:06] [vllm] [1;36m(EngineCore_DP0 pid=839432)[0;0m INFO 11-12 20:09:06 [kv_cache_utils.py:1087] GPU KV cache size: 1,310,816 tokens
+[20:09:06] [vllm] [1;36m(EngineCore_DP0 pid=839432)[0;0m INFO 11-12 20:09:06 [kv_cache_utils.py:1091] Maximum concurrency for 4,154 tokens per request: 315.10x
+[20:09:07] [vllm] [1;36m(EngineCore_DP0 pid=839432)[0;0m INFO 11-12 20:09:07 [gpu_model_runner.py:3480] Graph capturing finished in 1 secs, took 0.14 GiB
+[20:09:07] [vllm] [1;36m(EngineCore_DP0 pid=839432)[0;0m INFO 11-12 20:09:07 [core.py:210] init engine (profile, create kv cache, warmup model) took 21.57 seconds
+[20:09:08] 引擎就绪，用时 100.0 秒（加载权重、编译、CUDA graph、分配 KV cache）
+[20:09:08] [vllm] INFO 11-12 20:09:08 [loggers.py:127] Engine 000: Avg prompt throughput: 938.5 tokens/s, Avg generation throughput: 58.7 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+[20:09:18] 已完成 32/256 条（10.0 秒）
+[20:09:28] 已完成 97/256 条（20.1 秒）
+[20:09:38] 已完成 168/256 条（30.1 秒）
+[20:09:48] [vllm] INFO 11-12 20:09:48 [loggers.py:127] Engine 000: Avg prompt throughput: 26523.1 tokens/s, Avg generation throughput: 323.8 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 74.7%
+[20:09:49] ===== 阶段：evaluate =====
+[20:09:49] 6.486 条/s（输入 26,566 tok/s），TTFT p50 19679.03 ms，TPOT p50 79.33 ms，ITL p99 1045.62 ms；前缀命中 0.7471；同时 decode 最多 32；屋顶线 prefill 414.1 ms / decode 3.867 ms
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

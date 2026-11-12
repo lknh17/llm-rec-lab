@@ -1,0 +1,54 @@
+{
+  "prompt": {
+    "note": "第 0 条请求的开头和结尾（解码回文本）；后两项是构造说明和前两条请求开头相同的 token 数",
+    "head_text": "<|im_start|>user\n【白知工坊】智能手表。白知工坊这款智能手表主打抗菌内胆、一键回充，还有快充 15 分钟。规格：长宽高 155×65×14 厘米。现在满 300 减 40，赠品数量有限送完即止。用户评价：性价比很高，已经回购；用了一周再来评价，确实好用",
+    "tail_text": "请按上面的打标规范，对这条内容输出一个 JSON，字段：品类、品牌、卖点（最多 3 个，原文摘录）、优惠、限制条件。只输出 JSON。<|im_end|>\n<|im_start|>assistant\n",
+    "input_len": 4096,
+    "shared_prefix": 0,
+    "content_len": 4044,
+    "fixed_len": 52,
+    "position": "head",
+    "same_head_tokens": 3,
+    "same_head_tokens_0_vs_1": 4
+  },
+  "requests": {
+    "note": "前 5 条请求：TTFT（含排队）、输出 token 数、分几次收到、命中缓存的输入 token 数",
+    "rows": [
+      {
+        "ttft_ms": 1070.2,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.002
+      },
+      {
+        "ttft_ms": 1069.9,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.002
+      },
+      {
+        "ttft_ms": 2105.7,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.002
+      },
+      {
+        "ttft_ms": 3112.1,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.002
+      },
+      {
+        "ttft_ms": 3112.0,
+        "n_out": 50,
+        "chunks": 50,
+        "num_cached": 0,
+        "arrival_s": 0.003
+      }
+    ]
+  }
+}

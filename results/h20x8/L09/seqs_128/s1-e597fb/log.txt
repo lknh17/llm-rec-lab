@@ -1,0 +1,34 @@
+[worker] 等待设备锁 gpu6-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/L09/seqs_128/s1-e597fb/code/vllmserve/experiment.py
+[20:19:43] ===== 阶段：prepare =====
+[20:19:45] 256 条 × 4096 token 输入 / 50 token 输出；共享前缀 0（head），前两条开头相同 4 个 token；到达率 全部同时
+[20:19:45] ===== 阶段：train =====
+[20:19:58] vLLM 0.11.0 · torch 2.8.0+cu128 · CUDA 12.8 · NVIDIA H20
+[20:21:26] [vllm] [1;36m(EngineCore_DP0 pid=866702)[0;0m INFO 11-12 20:21:26 [gpu_model_runner.py:2653] Model loading took 14.2488 GiB and 13.462671 seconds
+[20:21:44] [vllm] [1;36m(EngineCore_DP0 pid=866702)[0;0m INFO 11-12 20:21:44 [monitor.py:34] torch.compile takes 15.39 s in total
+[20:21:46] [vllm] [1;36m(EngineCore_DP0 pid=866702)[0;0m INFO 11-12 20:21:46 [gpu_worker.py:298] Available KV cache memory: 70.01 GiB
+[20:21:46] [vllm] [1;36m(EngineCore_DP0 pid=866702)[0;0m INFO 11-12 20:21:46 [kv_cache_utils.py:1087] GPU KV cache size: 1,310,816 tokens
+[20:21:46] [vllm] [1;36m(EngineCore_DP0 pid=866702)[0;0m INFO 11-12 20:21:46 [kv_cache_utils.py:1091] Maximum concurrency for 4,154 tokens per request: 315.10x
+[20:21:49] [vllm] [1;36m(EngineCore_DP0 pid=866702)[0;0m INFO 11-12 20:21:49 [gpu_model_runner.py:3480] Graph capturing finished in 3 secs, took 0.34 GiB
+[20:21:49] [vllm] [1;36m(EngineCore_DP0 pid=866702)[0;0m INFO 11-12 20:21:49 [core.py:210] init engine (profile, create kv cache, warmup model) took 22.79 seconds
+[20:21:49] 引擎就绪，用时 85.4 秒（加载权重、编译、CUDA graph、分配 KV cache）
+[20:21:49] [vllm] INFO 11-12 20:21:49 [loggers.py:127] Engine 000: Avg prompt throughput: 1151.7 tokens/s, Avg generation throughput: 72.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+[20:21:59] 已完成 0/256 条（10.0 秒）
+[20:22:09] 已完成 0/256 条（20.1 秒）
+[20:22:20] 已完成 0/256 条（30.1 秒）
+[20:22:30] 已完成 0/256 条（40.1 秒）
+[20:22:40] 已完成 0/256 条（50.1 秒）
+[20:22:50] 已完成 18/256 条（60.1 秒）
+[20:23:00] 已完成 36/256 条（70.2 秒）
+[20:23:10] 已完成 56/256 条（80.2 秒）
+[20:23:20] 已完成 76/256 条（90.2 秒）
+[20:23:30] 已完成 94/256 条（100.2 秒）
+[20:23:40] 已完成 114/256 条（110.3 秒）
+[20:23:50] 已完成 132/256 条（120.3 秒）
+[20:24:00] 已完成 151/256 条（130.3 秒）
+[20:24:04] [vllm] INFO 11-12 20:24:04 [loggers.py:127] Engine 000: Avg prompt throughput: 7794.0 tokens/s, Avg generation throughput: 95.1 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+[20:24:06] ===== 阶段：evaluate =====
+[20:24:07] 1.904 条/s（输入 7,798 tok/s），TTFT p50 66863.78 ms，TPOT p50 1033.53 ms，ITL p99 1099.91 ms；前缀命中 0.0；同时 decode 最多 98；屋顶线 prefill 414.1 ms / decode 3.867 ms
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

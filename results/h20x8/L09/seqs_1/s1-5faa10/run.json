@@ -1,0 +1,128 @@
+{
+  "run_id": "h20x8.L09.seqs_1.s1-5faa10",
+  "course_id": "L09",
+  "project": "vllmserve",
+  "entry": "vllmserve.experiment",
+  "profile": "h20x8",
+  "scenario": "seqs_1",
+  "role": "reference",
+  "title": "一次只跑一条（max_num_seqs 1，16 条）：TTFT 就是单条 prefill，TPOT 就是 batch=1 的 decode 一步",
+  "seed": 1,
+  "variant": "seqs_1",
+  "config_hash": "5faa1057fd99",
+  "code_hash": "83c09903b62e",
+  "git": {
+    "commit": "59a81953d54e1c4a045e2642f1c749d7a5ab6c9f",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "max_num_seqs": 1,
+    "num_prompts": 16
+  },
+  "param_affects": {
+    "backend": "runtime",
+    "model": "model",
+    "quantization": "model",
+    "gpu_memory_utilization": "runtime",
+    "max_num_seqs": "runtime",
+    "max_num_batched_tokens": "runtime",
+    "enable_prefix_caching": "runtime",
+    "spec": "runtime",
+    "num_speculative_tokens": "runtime",
+    "input_len": "data",
+    "output_len": "data",
+    "num_prompts": "data",
+    "shared_prefix": "data",
+    "prefix_position": "data",
+    "request_rate": "data",
+    "seed": "data",
+    "peak_tflops": "runtime",
+    "hbm_gbps": "runtime",
+    "device": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794484728.5089996,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794484728.6777298,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794484762.6245441,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794484763.0746546,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794485052.8332913,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794485052.9326725,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794484728.5089996,
+  "budget": {
+    "max_minutes": 30
+  },
+  "expect": [
+    "summary.sched.max_decoding == 1",
+    "summary.roofline.ttft_vs_est > 1.0",
+    "summary.roofline.tpot_vs_est > 1.0"
+  ],
+  "slot": "gpu5-0",
+  "started_at": 1794484728.677731,
+  "data": {
+    "kind": "合成中文商品内容 + 共享打标规范（token 精确控制长度）",
+    "input_len": 4096,
+    "output_len": 50,
+    "num_prompts": 16,
+    "shared_prefix": 0,
+    "prefix_position": "head",
+    "request_rate": 0.0
+  },
+  "model": {
+    "arch": "Qwen2.5-7B",
+    "repo": "Qwen/Qwen2.5-7B-Instruct",
+    "params": {
+      "total": 7615283200,
+      "trainable": 0
+    },
+    "train_mode": "inference",
+    "dtype": "bf16",
+    "backend": "vllm"
+  },
+  "ended_at": 1794485052.932674,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.sched.max_decoding == 1",
+      "ok": true
+    },
+    {
+      "expr": "summary.roofline.ttft_vs_est > 1.0",
+      "ok": true
+    },
+    {
+      "expr": "summary.roofline.tpot_vs_est > 1.0",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}
