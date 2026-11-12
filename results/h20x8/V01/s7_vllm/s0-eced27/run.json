@@ -10,10 +10,10 @@
   "seed": 0,
   "variant": "s7_vllm",
   "config_hash": "eced2746b3c0",
-  "code_hash": "e4c4cbb180c3",
+  "code_hash": "134e48db81dc",
   "git": {
-    "commit": "879205e18f8d90a3f15aff67be5386abc3e7fe33",
-    "dirty": false
+    "commit": "0258cf026c6c67374c66808d40cef4f4d9791ffb",
+    "dirty": true
   },
   "changed_from_baseline": {
     "item": "s7_vllm"
@@ -30,44 +30,44 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794482571.4554663,
+      "time": 1794487557.752561,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794482571.6360548,
+      "time": 1794487557.8915536,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794482585.3445718,
+      "time": 1794487565.7784314,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794482588.8773973,
+      "time": 1794487568.9452624,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794483317.3247674,
+      "time": 1794488508.7807486,
       "note": "阶段 evaluate"
     },
     {
       "status": "failed",
-      "time": 1794483317.7756052,
-      "note": "RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 失败（退出码 1）：\nINFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 132, in <module>\n    main()\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 79, in main\n    from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py\", line 22, in <module>\n    from tabulate import tabulate\nModuleNotFoundError: No module named 'tabulate'"
+      "time": 1794488509.2775688,
+      "note": "RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 失败（退出码 1）：\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 56, in vllm_beam_search\n    outs = llm.generate(reqs, sp, use_tqdm=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py\", line 401, in generate\n    outputs = self._run_engine(use_tqdm=use_tqdm)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py\", line 1600, in _run_engine\n    step_outputs = self.llm_engine.step()\n                   ^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py\", line 265, in step\n    outputs = self.engine_core.get_output()\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core_client.py\", line 670, in get_output\n    raise self._format_exception(outputs) from None\nvllm.v1.engine.exceptions.EngineDeadError: EngineCore encountered an issue. See stack trace (above) for the root cause."
     }
   ],
-  "created_at": 1794482571.4554663,
+  "created_at": 1794487557.752561,
   "budget": {
     "max_minutes": 60
   },
   "expect": [
     "summary.ok == True"
   ],
-  "slot": "gpu7-0",
-  "started_at": 1794482571.636057,
+  "slot": "gpu1-0",
+  "started_at": 1794487557.891555,
   "model": {
     "arch": "讲义代码（vendor/ 逐字节拷贝）",
     "params": {
@@ -82,10 +82,10 @@
     {
       "code": "step_failed",
       "message": "[vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 退出码 1",
-      "time": 731.98
+      "time": 942.99
     }
   ],
-  "ended_at": 1794483317.7756073,
-  "end_reason": "RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 失败（退出码 1）：\nINFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 132, in <module>\n    main()\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 79, in main\n    from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py\", line 22, in <module>\n    from tabulate import tabulate\nModuleNotFoundError: No module named 'tabulate'",
+  "ended_at": 1794488509.27757,
+  "end_reason": "RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 失败（退出码 1）：\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 56, in vllm_beam_search\n    outs = llm.generate(reqs, sp, use_tqdm=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py\", line 401, in generate\n    outputs = self._run_engine(use_tqdm=use_tqdm)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py\", line 1600, in _run_engine\n    step_outputs = self.llm_engine.step()\n                   ^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py\", line 265, in step\n    outputs = self.engine_core.get_output()\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core_client.py\", line 670, in get_output\n    raise self._format_exception(outputs) from None\nvllm.v1.engine.exceptions.EngineDeadError: EngineCore encountered an issue. See stack trace (above) for the root cause.",
   "exported": true
 }

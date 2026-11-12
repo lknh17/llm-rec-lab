@@ -10,10 +10,10 @@
   "seed": 0,
   "variant": "gpu_check",
   "config_hash": "bebdb92f3a68",
-  "code_hash": "e4c4cbb180c3",
+  "code_hash": "134e48db81dc",
   "git": {
-    "commit": "d72ad59deed484b5069077b897a7bae9589f4e20",
-    "dirty": false
+    "commit": "0258cf026c6c67374c66808d40cef4f4d9791ffb",
+    "dirty": true
   },
   "changed_from_baseline": {
     "item": "gpu_check"
@@ -30,44 +30,44 @@
   "status_history": [
     {
       "status": "queued",
-      "time": 1794390852.8940609,
+      "time": 1794487557.6161418,
       "note": "批量运行排队"
     },
     {
       "status": "preparing",
-      "time": 1794390853.0727227,
+      "time": 1794487557.7669716,
       "note": "worker 启动"
     },
     {
       "status": "preparing",
-      "time": 1794390864.3217561,
+      "time": 1794487565.7805688,
       "note": "阶段 prepare"
     },
     {
       "status": "running",
-      "time": 1794390869.9135413,
+      "time": 1794487568.9448092,
       "note": "阶段 train"
     },
     {
       "status": "evaluating",
-      "time": 1794390882.2463338,
+      "time": 1794487579.4524722,
       "note": "阶段 evaluate"
     },
     {
       "status": "succeeded",
-      "time": 1794390882.6199338,
+      "time": 1794487579.79383,
       "note": "完成"
     }
   ],
-  "created_at": 1794390852.8940609,
+  "created_at": 1794487557.6161418,
   "budget": {
     "max_minutes": 60
   },
   "expect": [
     "summary.ok == True"
   ],
-  "slot": "gpu6-0",
-  "started_at": 1794390853.0727239,
+  "slot": "gpu0-0",
+  "started_at": 1794487557.7669733,
   "model": {
     "arch": "讲义代码（vendor/ 逐字节拷贝）",
     "params": {
@@ -78,7 +78,7 @@
     "item": "gpu_check",
     "lesson": "S2.1"
   },
-  "ended_at": 1794390882.619936,
+  "ended_at": 1794487579.7938316,
   "end_reason": "完成",
   "expect_results": [
     {

@@ -29,17 +29,17 @@
     {
       "cmd": "[main] python -m stages.s06_recsys.code.train_genrec --only tiger",
       "rc": 0,
-      "seconds": 649.2
+      "seconds": 779.8
     },
     {
       "cmd": "[main] python -m stages.s07_capstone.code.vllm_genrec.export_hf",
       "rc": 0,
-      "seconds": 9.9
+      "seconds": 10.3
     },
     {
       "cmd": "[vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20",
       "rc": 1,
-      "seconds": 69.3
+      "seconds": 149.6
     }
   ],
   "outputs": [
@@ -56,13 +56,13 @@
     "data/ml-1m/ratings.dat（24.6 MB）",
     "data/ml-1m/users.dat（0.1 MB）"
   ],
-  "seconds": 728.4,
+  "seconds": 939.7,
   "headline": {
     "ok": 0,
-    "seconds": 728.4
+    "seconds": 939.7
   },
   "display": {
     "通过": 0,
-    "用时 s": 728.4
+    "用时 s": 939.7
   }
 }

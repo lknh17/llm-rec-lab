@@ -82,6 +82,12 @@ def missing(needs: list[str], env: dict) -> list[str]:
 
 def interpreter(kind: str, env: dict) -> list[str]:
     if kind == "vllm":
+        # vllm 项跑的是讲义代码，同样要 MAIN_WITH（s7_vllm 的 constrained_beam 会 import s06 的 train_genrec，
+        # 那里 from tabulate import tabulate）。vllm-env 是独立环境，不能往里装；有 uv 就叠加一层临时环境，
+        # 底下的 vllm / torch 版本不变。没有 uv 只能用裸解释器（讲义脚本可能因缺包失败）。
+        if env.get("uv"):
+            return [env["uv"], "run", "--no-project", "--python", env["vllm_python"],
+                    *[x for w in MAIN_WITH for x in ("--with", w)], "python"]
         return [env["vllm_python"]]
     if env.get("uv"):
         return [env["uv"], "run", "--project", str(_repo_root()), "--no-sync", *[x for w in MAIN_WITH for x in ("--with", w)], "python"]

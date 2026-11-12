@@ -1,74 +1,845 @@
-[worker] 等待设备锁 gpu7-0
+[worker] 等待设备锁 gpu1-0
 [worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
 [worker] 从快照加载 <data>/batch/h20x8/V01/s7_vllm/s0-eced27/code/lessonbench/experiment.py
-[19:23:05] ===== 阶段：prepare =====
-[19:23:06] 验证项 s7_vllm（S7.3）：S7 第 3 课：TIGER 模型导出到 vLLM，trie 约束 beam search 对照自研引擎
-[19:23:06] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python，uv=/usr/local/bin/uv
-[19:23:08] ===== 阶段：train =====
-[19:23:08] $ [main] python -m stages.s06_recsys.code.train_genrec --only tiger
-[19:30:12] ML-1M：6040 用户，3706 物品，平均序列长度 166
-[19:30:17] [tiger] 语义 ID：3 层 × 64 码 + 去重位，词表 203，碰撞率 40.3%，重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]
-[19:30:42] [tiger] step 1000 loss 1.390 val R@10 0.1488
-[19:31:01] [tiger] step 2000 loss 1.280 val R@10 0.1667
-[19:31:21] [tiger] step 3000 loss 1.276 val R@10 0.1687
-[19:31:40] [tiger] step 4000 loss 1.273 val R@10 0.1885
-[19:31:59] [tiger] step 5000 loss 1.183 val R@10 0.1984
-[19:32:18] [tiger] step 6000 loss 1.048 val R@10 0.1667
-[19:32:38] [tiger] step 7000 loss 1.179 val R@10 0.1746
-[19:32:57] [tiger] step 8000 loss 1.120 val R@10 0.1786
-[19:33:57] # MovieLens-1M 序列推荐（全量排序，leave-one-out，6040 个测试用户，设备 cuda）
-[19:33:57] 
-[19:33:57] | 模型                          | 参数    |   Recall@10 |   NDCG@10 |   训练 s |
-[19:33:57] |-----------------------------|-------|-------------|-----------|--------|
-[19:33:57] | 热门（训练集最常见的 10 部）            | 0.00M |      0.0162 |    0.0079 |      0 |
-[19:33:57] | TIGER 式（语义 ID 3×64，beam 10） | 0.88M |      0.1967 |    0.1098 |    165 |
-[19:33:57] 
-[19:33:57] TIGER 语义 ID：词表 203（对比物品 ID 词表 3707），碰撞率 40.3%，各层之后的相对重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]；beam search 评估 9.9 ms/用户（逐用户、未批处理）。
-[19:33:57] 
-[19:33:58] $ [main] python -m stages.s07_capstone.code.vllm_genrec.export_hf
-[19:34:06] 已导出到 <data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/data/hf/tiger_ml1m（vLLM: LLM(model='<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/data/hf/tiger_ml1m', skip_tokenizer_init=True)）
-[19:34:08] $ [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20
-[19:34:32] INFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.
-[19:35:14] Traceback (most recent call last):
-[19:35:14]   File "<frozen runpy>", line 198, in _run_module_as_main
-[19:35:14]   File "<frozen runpy>", line 88, in _run_code
-[19:35:14]   File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 132, in <module>
-[19:35:14]     main()
-[19:35:14]   File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 79, in main
-[19:35:14]     from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics
-[19:35:14]   File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py", line 22, in <module>
-[19:35:14]     from tabulate import tabulate
-[19:35:14] ModuleNotFoundError: No module named 'tabulate'
-[19:35:17] [WARN step_failed] [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 退出码 1
-[19:35:17] ===== 阶段：evaluate =====
-[19:35:17] 未通过：3 条命令，728.4 秒；报告 ['data/hf/tiger_ml1m/config.json', 'data/hf/tiger_ml1m/generation_config.json', 'stages/s06_recsys/experiments/genrec_results_tiger.md']；缺少 无
+[20:46:05] ===== 阶段：prepare =====
+[20:46:07] 验证项 s7_vllm（S7.3）：S7 第 3 课：TIGER 模型导出到 vLLM，trie 约束 beam search 对照自研引擎
+[20:46:07] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python，uv=/usr/local/bin/uv
+[20:46:08] ===== 阶段：train =====
+[20:46:08] $ [main] python -m stages.s06_recsys.code.train_genrec --only tiger
+[20:55:12] ML-1M：6040 用户，3706 物品，平均序列长度 166
+[20:55:18] [tiger] 语义 ID：3 层 × 64 码 + 去重位，词表 203，碰撞率 40.3%，重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]
+[20:55:44] [tiger] step 1000 loss 1.390 val R@10 0.1488
+[20:56:04] [tiger] step 2000 loss 1.280 val R@10 0.1687
+[20:56:23] [tiger] step 3000 loss 1.273 val R@10 0.1667
+[20:56:43] [tiger] step 4000 loss 1.277 val R@10 0.1706
+[20:57:03] [tiger] step 5000 loss 1.173 val R@10 0.1944
+[20:57:24] [tiger] step 6000 loss 1.053 val R@10 0.1944
+[20:57:44] [tiger] step 7000 loss 1.173 val R@10 0.1726
+[20:58:05] [tiger] step 8000 loss 1.121 val R@10 0.2044
+[20:59:07] # MovieLens-1M 序列推荐（全量排序，leave-one-out，6040 个测试用户，设备 cuda）
+[20:59:07] 
+[20:59:07] | 模型                          | 参数    |   Recall@10 |   NDCG@10 |   训练 s |
+[20:59:07] |-----------------------------|-------|-------------|-----------|--------|
+[20:59:07] | 热门（训练集最常见的 10 部）            | 0.00M |      0.0162 |    0.0079 |      0 |
+[20:59:07] | TIGER 式（语义 ID 3×64，beam 10） | 0.88M |      0.1982 |    0.1108 |    173 |
+[20:59:07] 
+[20:59:07] TIGER 语义 ID：词表 203（对比物品 ID 词表 3707），碰撞率 40.3%，各层之后的相对重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]；beam search 评估 10.3 ms/用户（逐用户、未批处理）。
+[20:59:07] 
+[20:59:08] $ [main] python -m stages.s07_capstone.code.vllm_genrec.export_hf
+[20:59:17] 已导出到 <data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/data/hf/tiger_ml1m（vLLM: LLM(model='<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/data/hf/tiger_ml1m', skip_tokenizer_init=True)）
+[20:59:19] $ [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20
+[20:59:42] INFO 11-12 20:59:42 [__init__.py:216] Automatically detected platform cuda.
+[21:00:02]  'dtype': 'float32', 'enable_prefix_caching': True, 'gpu_memory_utilization': 0.5, 'max_logprobs': 64, 'logprobs_mode': 'processed_logprobs', 'disable_log_stats': True, 'logits_processors': [<class 'stages.s07_capstone.code.vllm_genrec.trie_logits_processor.TrieLogitsProcessor'>], 'model': '<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/data/hf/tiger_ml1m'}
+[21:00:48] INFO 11-12 21:00:48 [model.py:547] Resolved architecture: LlamaForCausalLM
+[21:00:48] `torch_dtype` is deprecated! Use `dtype` instead!
+[21:00:48] INFO 11-12 21:00:48 [model.py:1510] Using max model len 204
+[21:00:49] INFO 11-12 21:00:49 [scheduler.py:205] Chunked prefill is enabled with max_num_batched_tokens=16384.
+[21:00:49] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:00:49 [core.py:644] Waiting for init message from front-end.
+[21:00:49] 504,496,488,480,472,464,456,448,440,432,424,416,408,400,392,384,376,368,360,352,344,336,328,320,312,304,296,288,280,272,264,256,248,240,232,224,216,208,200,192,184,176,168,160,152,144,136,128,120,112,104,96,88,80,72,64,56,48,40,32,24,16,8,4,2,1],"cudagraph_copy_inputs":false,"full_cuda_graph":false,"use_inductor_graph_partition":false,"pass_config":{},"max_capture_size":512,"local_cache_dir":null}
+[21:00:53] [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[21:00:53] [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[21:00:53] [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[21:00:53] [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[21:00:53] [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[21:00:53] [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[21:00:53] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:00:53 [parallel_state.py:1208] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+[21:00:53] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:00:53 [gpu_model_runner.py:2602] Starting to load model <data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/data/hf/tiger_ml1m...
+[21:00:54] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:00:54 [gpu_model_runner.py:2634] Loading model from scratch...
+[21:00:54] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:00:54 [cuda.py:383] Using FlexAttention backend for dtype=torch.float32 on V1 engine.
+[21:00:54] [1;36m(EngineCore_DP0 pid=890630)[0;0m
+[21:00:54] Loading safetensors checkpoint shards:   0% Completed | 0/1 [00:00<?, ?it/s]
+[21:00:54] [1;36m(EngineCore_DP0 pid=890630)[0;0m
+[21:00:54] Loading safetensors checkpoint shards: 100% Completed | 1/1 [00:00<00:00, 71.11it/s]
+[21:00:54] [1;36m(EngineCore_DP0 pid=890630)[0;0m
+[21:00:54] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:00:54 [default_loader.py:267] Loading weights took 0.01 seconds
+[21:00:55] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:00:55 [gpu_model_runner.py:2653] Model loading took 0.0033 GiB and 0.523514 seconds
+[21:01:08] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:01:08 [backends.py:548] Using cache directory: <redacted>/.cache/vllm/torch_compile_cache/0eaa0b812c/rank_0_0/backbone for vLLM's torch.compile
+[21:01:08] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:01:08 [backends.py:559] Dynamo bytecode transform time: 13.50 s
+[21:01:09] [1;36m(EngineCore_DP0 pid=890630)[0;0m <assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:282: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+[21:01:09] [1;36m(EngineCore_DP0 pid=890630)[0;0m   warnings.warn(
+[21:01:11] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:01:11 [backends.py:197] Cache the graph for dynamic shape for later use
+[21:01:15] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:01:15 [backends.py:218] Compiling a graph for dynamic shape takes 6.49 s
+[21:01:15] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:01:15 [monitor.py:34] torch.compile takes 19.99 s in total
+[21:01:16] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:01:16 [gpu_worker.py:298] Available KV cache memory: 47.17 GiB
+[21:01:17] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:01:17 [kv_cache_utils.py:1087] GPU KV cache size: 12,366,608 tokens
+[21:01:17] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:01:17 [kv_cache_utils.py:1091] Maximum concurrency for 204 tokens per request: 59454.85x
+[21:01:17] [1;36m(EngineCore_DP0 pid=890630)[0;0m WARNING 11-12 21:01:17 [gpu_model_runner.py:3663] CUDAGraphMode.FULL_AND_PIECEWISE is not supported with FlexAttentionMetadataBuilder backend (support: AttentionCGSupport.NEVER); setting cudagraph_mode=PIECEWISE because attention is compiled piecewise
+[21:01:17] [1;36m(EngineCore_DP0 pid=890630)[0;0m
+[21:01:17] Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):   0%|          | 0/67 [00:00<?, ?it/s]
+[21:01:17] Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  25%|██▌       | 17/67 [00:00<00:00, 167.27it/s]
+[21:01:17] Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  51%|█████     | 34/67 [00:00<00:00, 163.82it/s]
+[21:01:17] Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  93%|█████████▎| 62/67 [00:00<00:00, 202.16it/s]
+[21:01:17] Capturing CUDA graphs (mixed prefill-decode, PIECEWISE): 100%|██████████| 67/67 [00:00<00:00, 174.01it/s]
+[21:01:18] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:01:18 [gpu_model_runner.py:3480] Graph capturing finished in 1 secs, took 0.13 GiB
+[21:01:18] [1;36m(EngineCore_DP0 pid=890630)[0;0m INFO 11-12 21:01:18 [core.py:210] init engine (profile, create kv cache, warmup model) took 23.08 seconds
+[21:01:19] INFO 11-12 21:01:19 [llm.py:306] Supported_tasks: ['generate']
+[21:01:19] WARNING 11-12 21:01:19 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:19] WARNING 11-12 21:01:19 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:19] WARNING 11-12 21:01:19 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:19] WARNING 11-12 21:01:19 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:19] WARNING 11-12 21:01:19 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:19] WARNING 11-12 21:01:19 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:19] WARNING 11-12 21:01:19 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:19] WARNING 11-12 21:01:19 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:35] WARNING 11-12 21:01:35 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:42] WARNING 11-12 21:01:42 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:43] WARNING 11-12 21:01:43 [preprocess.py:60] Using None for EOS token id because tokenizer is not initialized
+[21:01:46] 76,368,360,352,344,336,328,320,312,304,296,288,280,272,264,256,248,240,232,224,216,208,200,192,184,176,168,160,152,144,136,128,120,112,104,96,88,80,72,64,56,48,40,32,24,16,8,4,2,1],"cudagraph_copy_inputs":false,"full_cuda_graph":false,"use_inductor_graph_partition":false,"pass_config":{},"max_capture_size":512,"local_cache_dir":"<redacted>/.cache/vllm/torch_compile_cache/0eaa0b812c/rank_0_0/backbone"},
+[21:01:46] 2: 11, 459: 11, 397: 3, 412: 11, 399: 3, 337: 11, 446: 11, 333: 11, 449: 11, 339: 11, 355: 11, 465: 11, 410: 11, 475: 11, 454: 11}, total_num_scheduled_tokens=1578, scheduled_spec_decode_tokens={}, scheduled_encoder_inputs={}, num_common_prefix_blocks=[0], finished_req_ids=['329', '328'], free_encoder_mm_hashes=[], structured_output_request_ids={}, grammar_bitmask=null, kv_connector_metadata=null)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710] EngineCore encountered a fatal error.
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710] Traceback (most recent call last):
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 701, in run_engine_core
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     engine_core.run_busy_loop()
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 728, in run_busy_loop
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     self._process_engine_step()
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 754, in _process_engine_step
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     outputs, model_executed = self.step_fn()
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]                               ^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 284, in step
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     model_output = self.execute_model_with_error_logging(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 270, in execute_model_with_error_logging
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     raise err
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 261, in execute_model_with_error_logging
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return model_fn(scheduler_output)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/executor/abstract.py", line 103, in execute_model
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     output = self.collective_rpc("execute_model",
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/executor/uniproc_executor.py", line 83, in collective_rpc
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return [run_method(self.driver_worker, method, args, kwargs)]
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/utils/__init__.py", line 3122, in run_method
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return func(*args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return func(*args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 447, in execute_model
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     output = self.model_runner.execute_model(scheduler_output,
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return func(*args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/worker/gpu_model_runner.py", line 2257, in execute_model
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     ) = self._prepare_inputs(scheduler_output)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/worker/gpu_model_runner.py", line 1252, in _prepare_inputs
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     attn_metadata_i = builder.build(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]                       ^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/attention/backends/flex_attention.py", line 620, in build
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     out = FlexAttentionMetadata(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]           ^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<string>", line 33, in __init__
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/attention/backends/flex_attention.py", line 553, in __post_init__
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     self.block_mask = self.build_block_mask()
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]                       ^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/attention/backends/flex_attention.py", line 527, in build_block_mask
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return create_block_mask_compiled(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 736, in compile_wrapper
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return fn(*args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/nn/attention/flex_attention.py", line 832, in create_block_mask
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     def create_block_mask(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 929, in _fn
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return fn(*args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_functorch/aot_autograd.py", line 1241, in forward
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return compiled_fn(full_args)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 384, in runtime_wrapper
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     all_outs = call_func_at_runtime_with_args(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/utils.py", line 126, in call_func_at_runtime_with_args
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     out = normalize_as_list(f(args))
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]                             ^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 750, in inner_fn
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     outs = compiled_fn(args)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 556, in wrapper
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return compiled_fn(runtime_args)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/output_code.py", line 584, in __call__
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return self.current_callable(inputs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/compile_fx.py", line 1655, in run
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return compiled_fn(new_inputs)  # type: ignore[arg-type]
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 403, in deferred_cudagraphify
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     fn, out = cudagraphify(model, inputs, new_static_input_idxs, *args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 462, in cudagraphify
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return manager.add_function(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2316, in add_function
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return fn, fn(inputs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]                ^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2012, in run
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     out = self._run(new_inputs, function_id)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2116, in _run
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return self.run_eager(new_inputs, function_id)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2277, in run_eager
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     return node.run(new_inputs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 685, in run
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     out = self.wrapped_function.model(new_inputs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]   File "<redacted>/.cache/vllm/torch_compile_cache/0eaa0b812c/rank_0_0/inductor_cache/yq/cyqxogizhpjsnguct6ufpputzjbcoxiapawdo4coc7wpbn2voivv.py", line 541, in call
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]     buf0 = empty_strided_cuda((1, 1, 128*((127 + s12) // 128), 12366720), (1582940160*((127 + s12) // 128), 1582940160*((127 + s12) // 128), 12366720, 1), torch.bool)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m ERROR 11-12 21:01:46 [core.py:710]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] memory 83.62 GiB is allocated by PyTorch, with 35.50 GiB allocated in private pools (e.g., CUDA Graphs), and 1.06 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[21:01:46] Traceback (most recent call last):
+[21:01:46]   File "<frozen runpy>", line 198, in _run_module_as_main
+[21:01:46]   File "<frozen runpy>", line 88, in _run_code
+[21:01:46]   File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 132, in <module>
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m Process EngineCore_DP0:
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m Traceback (most recent call last):
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     self.run()
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     self._target(*self._args, **self._kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 712, in run_engine_core
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     raise e
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 701, in run_engine_core
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     engine_core.run_busy_loop()
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 728, in run_busy_loop
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     self._process_engine_step()
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 754, in _process_engine_step
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     outputs, model_executed = self.step_fn()
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m                               ^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 284, in step
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     model_output = self.execute_model_with_error_logging(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 270, in execute_model_with_error_logging
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     raise err
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 261, in execute_model_with_error_logging
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return model_fn(scheduler_output)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/executor/abstract.py", line 103, in execute_model
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     output = self.collective_rpc("execute_model",
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/executor/uniproc_executor.py", line 83, in collective_rpc
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return [run_method(self.driver_worker, method, args, kwargs)]
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/utils/__init__.py", line 3122, in run_method
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return func(*args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return func(*args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 447, in execute_model
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     output = self.model_runner.execute_model(scheduler_output,
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return func(*args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/worker/gpu_model_runner.py", line 2257, in execute_model
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     ) = self._prepare_inputs(scheduler_output)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/worker/gpu_model_runner.py", line 1252, in _prepare_inputs
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     attn_metadata_i = builder.build(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m                       ^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/attention/backends/flex_attention.py", line 620, in build
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     out = FlexAttentionMetadata(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m           ^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<string>", line 33, in __init__
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/attention/backends/flex_attention.py", line 553, in __post_init__
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     self.block_mask = self.build_block_mask()
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m                       ^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/attention/backends/flex_attention.py", line 527, in build_block_mask
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return create_block_mask_compiled(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 736, in compile_wrapper
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return fn(*args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/nn/attention/flex_attention.py", line 832, in create_block_mask
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     def create_block_mask(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 929, in _fn
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return fn(*args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_functorch/aot_autograd.py", line 1241, in forward
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return compiled_fn(full_args)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 384, in runtime_wrapper
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     all_outs = call_func_at_runtime_with_args(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/utils.py", line 126, in call_func_at_runtime_with_args
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     out = normalize_as_list(f(args))
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m                             ^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 750, in inner_fn
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     outs = compiled_fn(args)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 556, in wrapper
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return compiled_fn(runtime_args)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/output_code.py", line 584, in __call__
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return self.current_callable(inputs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/compile_fx.py", line 1655, in run
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return compiled_fn(new_inputs)  # type: ignore[arg-type]
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 403, in deferred_cudagraphify
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     fn, out = cudagraphify(model, inputs, new_static_input_idxs, *args, **kwargs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 462, in cudagraphify
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return manager.add_function(
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2316, in add_function
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return fn, fn(inputs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m                ^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2012, in run
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     out = self._run(new_inputs, function_id)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2116, in _run
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return self.run_eager(new_inputs, function_id)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2277, in run_eager
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     return node.run(new_inputs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 685, in run
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     out = self.wrapped_function.model(new_inputs)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m   File "<redacted>/.cache/vllm/torch_compile_cache/0eaa0b812c/rank_0_0/inductor_cache/yq/cyqxogizhpjsnguct6ufpputzjbcoxiapawdo4coc7wpbn2voivv.py", line 541, in call
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m     buf0 = empty_strided_cuda((1, 1, 128*((127 + s12) // 128), 12366720), (1582940160*((127 + s12) // 128), 1582940160*((127 + s12) // 128), 12366720, 1), torch.bool)
+[21:01:46] [1;36m(EngineCore_DP0 pid=890630)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46] memory 83.62 GiB is allocated by PyTorch, with 35.50 GiB allocated in private pools (e.g., CUDA Graphs), and 1.06 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[21:01:46]     main()
+[21:01:46]   File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 106, in main
+[21:01:46]     vllm_beam_search(llm, prompts[:8], args.beam, tok.levels)  # warmup
+[21:01:46]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46]   File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 56, in vllm_beam_search
+[21:01:46]     outs = llm.generate(reqs, sp, use_tqdm=False)
+[21:01:46]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 401, in generate
+[21:01:46]     outputs = self._run_engine(use_tqdm=use_tqdm)
+[21:01:46]               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 1600, in _run_engine
+[21:01:46]     step_outputs = self.llm_engine.step()
+[21:01:46]                    ^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 265, in step
+[21:01:46]     outputs = self.engine_core.get_output()
+[21:01:46]               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[21:01:46]   File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 670, in get_output
+[21:01:46]     raise self._format_exception(outputs) from None
+[21:01:46] vllm.v1.engine.exceptions.EngineDeadError: EngineCore encountered an issue. See stack trace (above) for the root cause.
+[21:01:48] [WARN step_failed] [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 退出码 1
+[21:01:48] ===== 阶段：evaluate =====
+[21:01:49] 未通过：3 条命令，939.7 秒；报告 ['data/hf/tiger_ml1m/config.json', 'data/hf/tiger_ml1m/generation_config.json', 'stages/s06_recsys/experiments/genrec_results_tiger.md']；缺少 无
 Traceback (most recent call last):
   File "<repo>/labkit/worker.py", line 99, in execute
     module.run(ctx, cfg)
-  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/code/lessonbench/experiment.py", line 204, in run
+  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/code/lessonbench/experiment.py", line 210, in run
     raise RuntimeError(f"{steps[-1]['cmd']} 失败（退出码 {steps[-1]['rc']}）：\n" + "\n".join(steps[-1]["tail"][-15:]))
 RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 失败（退出码 1）：
-INFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 132, in <module>
-    main()
-  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 79, in main
-    from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics
-  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py", line 22, in <module>
-    from tabulate import tabulate
-ModuleNotFoundError: No module named 'tabulate'
+  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 56, in vllm_beam_search
+    outs = llm.generate(reqs, sp, use_tqdm=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 401, in generate
+    outputs = self._run_engine(use_tqdm=use_tqdm)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 1600, in _run_engine
+    step_outputs = self.llm_engine.step()
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 265, in step
+    outputs = self.engine_core.get_output()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 670, in get_output
+    raise self._format_exception(outputs) from None
+vllm.v1.engine.exceptions.EngineDeadError: EngineCore encountered an issue. See stack trace (above) for the root cause.
 [worker] 结束：failed（RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 失败（退出码 1）：
-INFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 132, in <module>
-    main()
-  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 79, in main
-    from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics
-  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py", line 22, in <module>
-    from tabulate import tabulate
-ModuleNotFoundError: No module named 'tabulate'）
+  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 56, in vllm_beam_search
+    outs = llm.generate(reqs, sp, use_tqdm=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 401, in generate
+    outputs = self._run_engine(use_tqdm=use_tqdm)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 1600, in _run_engine
+    step_outputs = self.llm_engine.step()
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 265, in step
+    outputs = self.engine_core.get_output()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 670, in get_output
+    raise self._format_exception(outputs) from None
+vllm.v1.engine.exceptions.EngineDeadError: EngineCore encountered an issue. See stack trace (above) for the root cause.）
 {"status": "failed"}

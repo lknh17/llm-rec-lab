@@ -2,7 +2,7 @@
   "outputs": {
     "note": "这一项新生成的报告（讲义脚本写在 experiments/ 下的 md / csv），全文",
     "files": {
-      "tools/gpu_calibration.md": "# GPU 校准结果\n\n## 环境\n- torch 2.15.0+cu132，CUDA（torch 编译版本）13.2\n- GPU0: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU1: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU2: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU3: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU4: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU5: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU6: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU7: NVIDIA H20, 97871 MiB, 535.161.08\n- triton: 已安装\n- vllm: 未安装\n- flash_attn: 未安装\n- tensorrt_llm: 未安装\n\n## 实测上限（GPU0）\n- BF16 矩阵乘（8192³）：138 TFLOPS\n- 显存拷贝带宽：1566 GB/s\n- 实测拐点算术强度：88 FLOP/Byte\n\n与 GLOSSARY.md 里的标称值对比：可达值通常是标称算力的 60-80%、标称带宽的 80-90%。\n"
+      "tools/gpu_calibration.md": "# GPU 校准结果\n\n## 环境\n- torch 2.15.0+cu132，CUDA（torch 编译版本）13.2\n- GPU0: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU1: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU2: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU3: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU4: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU5: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU6: NVIDIA H20, 97871 MiB, 535.161.08\n- GPU7: NVIDIA H20, 97871 MiB, 535.161.08\n- triton: 已安装\n- vllm: 未安装\n- flash_attn: 未安装\n- tensorrt_llm: 未安装\n\n## 实测上限（GPU0）\n- BF16 矩阵乘（8192³）：138 TFLOPS\n- 显存拷贝带宽：3315 GB/s\n- 实测拐点算术强度：42 FLOP/Byte\n\n与 GLOSSARY.md 里的标称值对比：可达值通常是标称算力的 60-80%、标称带宽的 80-90%。\n"
     }
   },
   "steps": {
@@ -11,15 +11,8 @@
       {
         "cmd": "[main] python -m tools.gpu_check",
         "rc": 0,
-        "seconds": 12.3,
+        "seconds": 10.5,
         "tail": [
-          "Downloading fonttools (5.2MiB)",
-          "Downloading kiwisolver (1.4MiB)",
-          "Downloading matplotlib (9.4MiB)",
-          " Downloaded kiwisolver",
-          " Downloaded fonttools",
-          " Downloaded matplotlib",
-          "Installed 13 packages in 97ms",
           "# GPU 校准结果",
           "",
           "## 环境",
@@ -39,8 +32,8 @@
           "",
           "## 实测上限（GPU0）",
           "- BF16 矩阵乘（8192³）：138 TFLOPS",
-          "- 显存拷贝带宽：1566 GB/s",
-          "- 实测拐点算术强度：88 FLOP/Byte",
+          "- 显存拷贝带宽：3315 GB/s",
+          "- 实测拐点算术强度：42 FLOP/Byte",
           "",
           "与 GLOSSARY.md 里的标称值对比：可达值通常是标称算力的 60-80%、标称带宽的 80-90%。",
           "",

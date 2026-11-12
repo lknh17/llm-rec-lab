@@ -1,44 +1,37 @@
-[worker] 等待设备锁 gpu6-0
+[worker] 等待设备锁 gpu0-0
 [worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
 [worker] 从快照加载 <data>/batch/h20x8/V01/gpu_check/s0-bebdb9/code/lessonbench/experiment.py
-[17:54:24] ===== 阶段：prepare =====
-[17:54:27] 验证项 gpu_check（S2.1）：实测矩阵乘峰值和 HBM 带宽（GLOSSARY 的“实测可达”）
-[17:54:27] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0/bin/python，uv=/usr/local/bin/uv
-[17:54:29] ===== 阶段：train =====
-[17:54:29] $ [main] python -m tools.gpu_check
-[17:54:31] Downloading fonttools (5.2MiB)
-[17:54:31] Downloading kiwisolver (1.4MiB)
-[17:54:31] Downloading matplotlib (9.4MiB)
-[17:54:31]  Downloaded kiwisolver
-[17:54:32]  Downloaded fonttools
-[17:54:32]  Downloaded matplotlib
-[17:54:32] Installed 13 packages in 97ms
-[17:54:40] # GPU 校准结果
-[17:54:40] 
-[17:54:40] ## 环境
-[17:54:40] - torch 2.15.0+cu132，CUDA（torch 编译版本）13.2
-[17:54:40] - GPU0: NVIDIA H20, 97871 MiB, 535.161.08
-[17:54:40] - GPU1: NVIDIA H20, 97871 MiB, 535.161.08
-[17:54:40] - GPU2: NVIDIA H20, 97871 MiB, 535.161.08
-[17:54:40] - GPU3: NVIDIA H20, 97871 MiB, 535.161.08
-[17:54:40] - GPU4: NVIDIA H20, 97871 MiB, 535.161.08
-[17:54:40] - GPU5: NVIDIA H20, 97871 MiB, 535.161.08
-[17:54:40] - GPU6: NVIDIA H20, 97871 MiB, 535.161.08
-[17:54:40] - GPU7: NVIDIA H20, 97871 MiB, 535.161.08
-[17:54:40] - triton: 已安装
-[17:54:40] - vllm: 未安装
-[17:54:40] - flash_attn: 未安装
-[17:54:40] - tensorrt_llm: 未安装
-[17:54:40] 
-[17:54:40] ## 实测上限（GPU0）
-[17:54:40] - BF16 矩阵乘（8192³）：138 TFLOPS
-[17:54:40] - 显存拷贝带宽：1566 GB/s
-[17:54:40] - 实测拐点算术强度：88 FLOP/Byte
-[17:54:40] 
-[17:54:40] 与 GLOSSARY.md 里的标称值对比：可达值通常是标称算力的 60-80%、标称带宽的 80-90%。
-[17:54:40] 
-[17:54:40] 已保存到 <data>/batch/h20x8/V01/gpu_check/s0-bebdb9/artifacts/work/tools/gpu_calibration.md
-[17:54:42] ===== 阶段：evaluate =====
-[17:54:42] 通过：1 条命令，12.3 秒；报告 ['tools/gpu_calibration.md']；缺少 无
+[20:46:05] ===== 阶段：prepare =====
+[20:46:07] 验证项 gpu_check（S2.1）：实测矩阵乘峰值和 HBM 带宽（GLOSSARY 的“实测可达”）
+[20:46:07] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python，uv=/usr/local/bin/uv
+[20:46:08] ===== 阶段：train =====
+[20:46:08] $ [main] python -m tools.gpu_check
+[20:46:17] # GPU 校准结果
+[20:46:17] 
+[20:46:17] ## 环境
+[20:46:17] - torch 2.15.0+cu132，CUDA（torch 编译版本）13.2
+[20:46:17] - GPU0: NVIDIA H20, 97871 MiB, 535.161.08
+[20:46:17] - GPU1: NVIDIA H20, 97871 MiB, 535.161.08
+[20:46:17] - GPU2: NVIDIA H20, 97871 MiB, 535.161.08
+[20:46:17] - GPU3: NVIDIA H20, 97871 MiB, 535.161.08
+[20:46:17] - GPU4: NVIDIA H20, 97871 MiB, 535.161.08
+[20:46:17] - GPU5: NVIDIA H20, 97871 MiB, 535.161.08
+[20:46:17] - GPU6: NVIDIA H20, 97871 MiB, 535.161.08
+[20:46:17] - GPU7: NVIDIA H20, 97871 MiB, 535.161.08
+[20:46:17] - triton: 已安装
+[20:46:17] - vllm: 未安装
+[20:46:17] - flash_attn: 未安装
+[20:46:17] - tensorrt_llm: 未安装
+[20:46:17] 
+[20:46:17] ## 实测上限（GPU0）
+[20:46:17] - BF16 矩阵乘（8192³）：138 TFLOPS
+[20:46:17] - 显存拷贝带宽：3315 GB/s
+[20:46:17] - 实测拐点算术强度：42 FLOP/Byte
+[20:46:17] 
+[20:46:17] 与 GLOSSARY.md 里的标称值对比：可达值通常是标称算力的 60-80%、标称带宽的 80-90%。
+[20:46:17] 
+[20:46:17] 已保存到 <data>/batch/h20x8/V01/gpu_check/s0-bebdb9/artifacts/work/tools/gpu_calibration.md
+[20:46:19] ===== 阶段：evaluate =====
+[20:46:19] 通过：1 条命令，10.5 秒；报告 ['tools/gpu_calibration.md']；缺少 无
 [worker] 结束：succeeded（完成）
 {"status": "succeeded"}

@@ -4,7 +4,7 @@
     "files": {
       "data/hf/tiger_ml1m/config.json": "{\n  \"architectures\": [\n    \"LlamaForCausalLM\"\n  ],\n  \"model_type\": \"llama\",\n  \"vocab_size\": 203,\n  \"hidden_size\": 128,\n  \"intermediate_size\": 384,\n  \"num_hidden_layers\": 4,\n  \"num_attention_heads\": 4,\n  \"num_key_value_heads\": 4,\n  \"head_dim\": 32,\n  \"max_position_embeddings\": 204,\n  \"rope_theta\": 10000.0,\n  \"rms_norm_eps\": 1e-06,\n  \"hidden_act\": \"silu\",\n  \"tie_word_embeddings\": true,\n  \"attention_bias\": false,\n  \"mlp_bias\": false,\n  \"torch_dtype\": \"float32\",\n  \"bos_token_id\": null,\n  \"eos_token_id\": null,\n  \"pad_token_id\": 0\n}",
       "data/hf/tiger_ml1m/generation_config.json": "{\"do_sample\": false}",
-      "stages/s06_recsys/experiments/genrec_results_tiger.md": "# MovieLens-1M 序列推荐（全量排序，leave-one-out，6040 个测试用户，设备 cuda）\n\n| 模型                          | 参数    |   Recall@10 |   NDCG@10 |   训练 s |\n|-----------------------------|-------|-------------|-----------|--------|\n| 热门（训练集最常见的 10 部）            | 0.00M |      0.0162 |    0.0079 |      0 |\n| TIGER 式（语义 ID 3×64，beam 10） | 0.88M |      0.1967 |    0.1098 |    165 |\n\nTIGER 语义 ID：词表 203（对比物品 ID 词表 3707），碰撞率 40.3%，各层之后的相对重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]；beam search 评估 9.9 ms/用户（逐用户、未批处理）。\n"
+      "stages/s06_recsys/experiments/genrec_results_tiger.md": "# MovieLens-1M 序列推荐（全量排序，leave-one-out，6040 个测试用户，设备 cuda）\n\n| 模型                          | 参数    |   Recall@10 |   NDCG@10 |   训练 s |\n|-----------------------------|-------|-------------|-----------|--------|\n| 热门（训练集最常见的 10 部）            | 0.00M |      0.0162 |    0.0079 |      0 |\n| TIGER 式（语义 ID 3×64，beam 10） | 0.88M |      0.1982 |    0.1108 |    173 |\n\nTIGER 语义 ID：词表 203（对比物品 ID 词表 3707），碰撞率 40.3%，各层之后的相对重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]；beam search 评估 10.3 ms/用户（逐用户、未批处理）。\n"
     }
   },
   "steps": {
@@ -13,33 +13,33 @@
       {
         "cmd": "[main] python -m stages.s06_recsys.code.train_genrec --only tiger",
         "rc": 0,
-        "seconds": 649.2,
+        "seconds": 779.8,
         "tail": [
           "ML-1M：6040 用户，3706 物品，平均序列长度 166",
           "[tiger] 语义 ID：3 层 × 64 码 + 去重位，词表 203，碰撞率 40.3%，重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]",
           "[tiger] step 1000 loss 1.390 val R@10 0.1488",
-          "[tiger] step 2000 loss 1.280 val R@10 0.1667",
-          "[tiger] step 3000 loss 1.276 val R@10 0.1687",
-          "[tiger] step 4000 loss 1.273 val R@10 0.1885",
-          "[tiger] step 5000 loss 1.183 val R@10 0.1984",
-          "[tiger] step 6000 loss 1.048 val R@10 0.1667",
-          "[tiger] step 7000 loss 1.179 val R@10 0.1746",
-          "[tiger] step 8000 loss 1.120 val R@10 0.1786",
+          "[tiger] step 2000 loss 1.280 val R@10 0.1687",
+          "[tiger] step 3000 loss 1.273 val R@10 0.1667",
+          "[tiger] step 4000 loss 1.277 val R@10 0.1706",
+          "[tiger] step 5000 loss 1.173 val R@10 0.1944",
+          "[tiger] step 6000 loss 1.053 val R@10 0.1944",
+          "[tiger] step 7000 loss 1.173 val R@10 0.1726",
+          "[tiger] step 8000 loss 1.121 val R@10 0.2044",
           "# MovieLens-1M 序列推荐（全量排序，leave-one-out，6040 个测试用户，设备 cuda）",
           "",
           "| 模型                          | 参数    |   Recall@10 |   NDCG@10 |   训练 s |",
           "|-----------------------------|-------|-------------|-----------|--------|",
           "| 热门（训练集最常见的 10 部）            | 0.00M |      0.0162 |    0.0079 |      0 |",
-          "| TIGER 式（语义 ID 3×64，beam 10） | 0.88M |      0.1967 |    0.1098 |    165 |",
+          "| TIGER 式（语义 ID 3×64，beam 10） | 0.88M |      0.1982 |    0.1108 |    173 |",
           "",
-          "TIGER 语义 ID：词表 203（对比物品 ID 词表 3707），碰撞率 40.3%，各层之后的相对重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]；beam search 评估 9.9 ms/用户（逐用户、未批处理）。",
+          "TIGER 语义 ID：词表 203（对比物品 ID 词表 3707），碰撞率 40.3%，各层之后的相对重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]；beam search 评估 10.3 ms/用户（逐用户、未批处理）。",
           ""
         ]
       },
       {
         "cmd": "[main] python -m stages.s07_capstone.code.vllm_genrec.export_hf",
         "rc": 0,
-        "seconds": 9.9,
+        "seconds": 10.3,
         "tail": [
           "已导出到 <data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/data/hf/tiger_ml1m（vLLM: LLM(model='<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/data/hf/tiger_ml1m', skip_tokenizer_init=True)）"
         ]
@@ -47,19 +47,48 @@
       {
         "cmd": "[vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20",
         "rc": 1,
-        "seconds": 69.3,
+        "seconds": 149.6,
         "tail": [
-          "INFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.",
-          "Traceback (most recent call last):",
-          "  File \"<frozen runpy>\", line 198, in _run_module_as_main",
-          "  File \"<frozen runpy>\", line 88, in _run_code",
-          "  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 132, in <module>",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m     return manager.add_function(",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m            ^^^^^^^^^^^^^^^^^^^^^",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m   File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py\", line 2316, in add_function",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m     return fn, fn(inputs)",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m                ^^^^^^^^^^",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m   File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py\", line 2012, in run",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m     out = self._run(new_inputs, function_id)",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m   File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py\", line 2116, in _run",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m     return self.run_eager(new_inputs, function_id)",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m   File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py\", line 2277, in run_eager",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m     return node.run(new_inputs)",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m            ^^^^^^^^^^^^^^^^^^^^",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m   File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py\", line 685, in run",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m     out = self.wrapped_function.model(new_inputs)",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m   File \"<redacted>/.cache/vllm/torch_compile_cache/0eaa0b812c/rank_0_0/inductor_cache/yq/cyqxogizhpjsnguct6ufpputzjbcoxiapawdo4coc7wpbn2voivv.py\", line 541, in call",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m     buf0 = empty_strided_cuda((1, 1, 128*((127 + s12) // 128), 12366720), (1582940160*((127 + s12) // 128), 1582940160*((127 + s12) // 128), 12366720, 1), torch.bool)",
+          "\u001b[1;36m(EngineCore_DP0 pid=890630)\u001b[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "hs), and 1.06 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)",
           "    main()",
-          "  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 79, in main",
-          "    from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics",
-          "  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py\", line 22, in <module>",
-          "    from tabulate import tabulate",
-          "ModuleNotFoundError: No module named 'tabulate'"
+          "  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 106, in main",
+          "    vllm_beam_search(llm, prompts[:8], args.beam, tok.levels)  # warmup",
+          "    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 56, in vllm_beam_search",
+          "    outs = llm.generate(reqs, sp, use_tqdm=False)",
+          "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py\", line 401, in generate",
+          "    outputs = self._run_engine(use_tqdm=use_tqdm)",
+          "              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/entrypoints/llm.py\", line 1600, in _run_engine",
+          "    step_outputs = self.llm_engine.step()",
+          "                   ^^^^^^^^^^^^^^^^^^^^^^",
+          "  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py\", line 265, in step",
+          "    outputs = self.engine_core.get_output()",
+          "              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "  File \"<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/lib/python3.12/site-packages/vllm/v1/engine/core_client.py\", line 670, in get_output",
+          "    raise self._format_exception(outputs) from None",
+          "vllm.v1.engine.exceptions.EngineDeadError: EngineCore encountered an issue. See stack trace (above) for the root cause."
         ]
       }
     ]

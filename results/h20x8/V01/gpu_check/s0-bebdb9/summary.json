@@ -22,27 +22,27 @@
     "ncu_version": [
       "Version 2025.3.1.0 (build 36398880) (public-release)"
     ],
-    "vllm_python": "<assets>/venvs/vllm-env--vllm-0.11.0/bin/python",
+    "vllm_python": "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python",
     "uv": "/usr/local/bin/uv"
   },
   "steps": [
     {
       "cmd": "[main] python -m tools.gpu_check",
       "rc": 0,
-      "seconds": 12.3
+      "seconds": 10.5
     }
   ],
   "outputs": [
     "tools/gpu_calibration.md"
   ],
   "binary_outputs": [],
-  "seconds": 12.3,
+  "seconds": 10.5,
   "headline": {
     "ok": 1,
-    "seconds": 12.3
+    "seconds": 10.5
   },
   "display": {
     "通过": 1,
-    "用时 s": 12.3
+    "用时 s": 10.5
   }
 }
