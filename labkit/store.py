@@ -182,6 +182,7 @@ def _run_dirs(root: Path) -> list[Path]:
 
 
 _INDEX: dict = {"t": 0.0, "map": {}}
+MISS_RESCAN_S = 0.5  # 查不到的运行：距上次全量扫描超过这么久才重扫
 
 
 def _index(max_age: float = 2.0) -> dict[str, Path]:
@@ -201,7 +202,10 @@ def get_run(run_id: str) -> Run | None:
         d = root / run_id
         if (d / "run.json").exists():
             return Run(d)
-    d = _index().get(run_id) or _index(max_age=0).get(run_id)
+    # 查不到时重扫，但同一批未命中只扫一次：一门课还没有结果时，展开出的几十个运行全都查不到，
+    # 以前每个都强制全量扫描（读几百个 run.json），课程页要卡几秒；后台调度器同时在扫时会卡到几十秒。
+    # 刚写出的运行最多晚 MISS_RESCAN_S 秒可见；lab sync 之后会主动 _index(max_age=0)。
+    d = _index().get(run_id) or _index(max_age=MISS_RESCAN_S).get(run_id)
     return Run(d) if d else None
 
 

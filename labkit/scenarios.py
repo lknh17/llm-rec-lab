@@ -35,9 +35,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-import yaml
-
-from . import paths
+from . import paths, yamlcache
 from .params import ParamSpace, config_hash
 
 ROLES = ("reference", "baseline", "variant", "fault", "fix", "final")
@@ -47,7 +45,7 @@ ROLES = ("reference", "baseline", "variant", "fault", "fix", "final")
 def course_files() -> dict[str, Path]:
     out = {}
     for p in sorted(paths.COURSES_DIR.glob("*/scenarios.yaml")):
-        data = yaml.safe_load(p.read_text())
+        data = yamlcache.load(p)
         out[data["course"]] = p
     return out
 
@@ -56,7 +54,7 @@ def load_course(course_id: str) -> dict:
     files = course_files()
     if course_id not in files:
         raise KeyError(f"未知课程 {course_id}，可选 {list(files)}")
-    data = yaml.safe_load(files[course_id].read_text())
+    data = yamlcache.load(files[course_id])
     data["_dir"] = str(files[course_id].parent)
     validate(data)
     return data

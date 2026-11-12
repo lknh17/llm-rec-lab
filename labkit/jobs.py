@@ -20,7 +20,7 @@ from pathlib import Path
 
 import yaml
 
-from . import paths
+from . import paths, yamlcache
 
 STATES = ("pending", "running", "done", "cancelled")
 _NEXT = {"pending": {"pending", "running", "done", "cancelled"}, "running": {"running", "done", "cancelled"},
@@ -96,10 +96,11 @@ def load(job_id: str) -> dict:
 
 
 def list_jobs() -> list[dict]:
+    """只读：按文件修改时间缓存解析结果（网页每门课都要查一次作业状态）。"""
     out: dict[str, dict] = {}
     for s in STATES:
         for p in sorted(_dir(s).glob("*.yaml")):
-            d = yaml.safe_load(p.read_text()) or {}
+            d = yamlcache.load(p) or {}
             d["_state"] = s
             out[p.stem] = d  # 同一作业单在多个目录：后面的状态覆盖前面的（与 find 一致）
     return list(out.values())
