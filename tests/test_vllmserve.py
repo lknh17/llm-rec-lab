@@ -155,7 +155,7 @@ def test_vllm_env_asset(monkeypatch, tmp_path):
     monkeypatch.setenv("LAB_ASSETS_DIR", str(tmp_path))
     monkeypatch.delenv("LABKIT_VLLM_PYTHON", raising=False)
     assert assets.resolve_env_python("vllm-env", must_exist=False) is None
-    assert assets.env_dir("vllm-env").name == "vllm-env--vllm-0.11.0"
+    assert assets.env_dir("vllm-env").name == "vllm-env--vllm-0.11.0-transformers-4.57.1"   # 锁了 transformers，不复用 W1 那个坏环境
     monkeypatch.setenv("LABKIT_VLLM_SPEC", "vllm==0.12.0")
     assert assets.env_dir("vllm-env").name == "vllm-env--vllm-0.12.0"      # 改版本 = 新目录，旧环境不动
     monkeypatch.setenv("LABKIT_VLLM_PYTHON", sys.executable)
@@ -164,6 +164,21 @@ def test_vllm_env_asset(monkeypatch, tmp_path):
     assert st["kind"] == "env" and st["ok"]
     with pytest.raises(SystemExit):
         assets.ensure(["no-such-asset"])
+
+
+def test_vllm_env_probe_rejects_incompatible_transformers():
+    """W1 的教训：环境能 import 不代表能用。probe 必须在 transformers 缺 vLLM 要的分词器属性时失败。"""
+    import transformers
+
+    probe = assets.ENVS["vllm-env"]["probe"]
+    assert "all_special_tokens_extended" in probe
+    assert any(p.startswith("transformers==4.") for p in assets.ENVS["vllm-env"]["packages"])
+    check = probe.split("; print(")[0].replace("import vllm, torch, transformers; ", "")
+    if hasattr(transformers.PreTrainedTokenizerBase, "all_special_tokens_extended"):
+        exec(check)  # noqa: S102  兼容的版本：不报错
+    else:
+        with pytest.raises(AssertionError, match="不兼容"):
+            exec(check)  # noqa: S102  主环境是 transformers 5.x：应当被拦下
 
 
 def test_uv_found_outside_path(monkeypatch, tmp_path):

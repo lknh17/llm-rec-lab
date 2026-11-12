@@ -118,11 +118,19 @@ def ensure_dataset(name: str) -> list[str]:
 
 
 # 独立的 Python 环境：和主环境（torch 版本由 uv.lock 锁定）依赖冲突的框架装在这里，项目用子进程调用它的解释器。
-# 放在 LAB_ASSETS_DIR/venvs/<名称>-<版本>/ 下；版本写进目录名，改版本会新建一个环境，旧的不动。
+# 放在 LAB_ASSETS_DIR/venvs/<名称>--<包列表>/ 下；包列表写进目录名，改版本会新建一个环境，旧的不动。
 # 用环境变量 LABKIT_<名称大写>_PYTHON 可以直接指定一个现成环境的解释器（例如 LABKIT_VLLM_PYTHON=/opt/vllm/bin/python）。
+#
+# vllm-env 必须同时锁 transformers：vLLM 0.11.0 只声明 transformers>=4.55.2（没有上限），不锁会装到 5.x，
+# 5.x 去掉了 tokenizer.all_special_tokens_extended，vLLM 0.11 建引擎读分词器时直接报 AttributeError（2026-11-11 W1 实测）。
+# probe 除了 import，还要确认 vLLM 依赖的分词器属性在，免得一个装好但用不了的环境被标成就绪。
+_VLLM_PROBE = ("import vllm, torch, transformers; "
+               "assert hasattr(transformers.PreTrainedTokenizerBase, 'all_special_tokens_extended'), "
+               "'transformers ' + transformers.__version__ + ' 和这个 vLLM 不兼容（缺 all_special_tokens_extended）'; "
+               "print(vllm.__version__, torch.__version__, torch.version.cuda, 'transformers', transformers.__version__)")
 ENVS = {
-    "vllm-env": {"packages": ["vllm==0.11.0"], "python": "3.12", "size": "约 8 GB（vLLM 自带的 torch + CUDA 运行库）",
-                 "license": "Apache-2.0", "probe": "import vllm, torch; print(vllm.__version__, torch.__version__, torch.version.cuda)",
+    "vllm-env": {"packages": ["vllm==0.11.0", "transformers==4.57.1"], "python": "3.12",
+                 "size": "约 8 GB（vLLM 自带的 torch + CUDA 运行库）", "license": "Apache-2.0", "probe": _VLLM_PROBE,
                  "override": "LABKIT_VLLM_PYTHON", "spec_override": "LABKIT_VLLM_SPEC"},
 }
 
