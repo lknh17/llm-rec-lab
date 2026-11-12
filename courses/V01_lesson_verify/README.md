@@ -29,7 +29,7 @@
 | - | - | - | - | - |
 | `env_probe` | 基线 | 1.0000 | 0.0000 | 通过 |
 | `ncu_parse` | 参照 | 1.0000 | 1.0000 | 通过 |
-| `gpu_check` | 候选改动 | 1.0000 | 12.3000 | 通过 |
+| `gpu_check` | 候选改动 | 1.0000 | 10.5000 | 通过 |
 | `decode_bench` | 候选改动 | 1.0000 | 24.4000 | 通过 |
 | `s3_tests` | 候选改动 | 1.0000 | 122.3000 | 通过 |
 | `triton_bench` | 候选改动 | 1.0000 | 20.6000 | 通过 |
@@ -63,7 +63,7 @@
 | 代码段 | 位置 |
 | - | - |
 | `probe` | [projects/lessonbench/experiment.py#L43](../../projects/lessonbench/experiment.py#L43) |
-| `run_step` | [projects/lessonbench/experiment.py#L115](../../projects/lessonbench/experiment.py#L115) |
+| `run_step` | [projects/lessonbench/experiment.py#L121](../../projects/lessonbench/experiment.py#L121) |
 | `items` | [projects/lessonbench/items.py#L14](../../projects/lessonbench/items.py#L14) |
 | `naive` | [projects/lessonbench/vendor/stages/s01_transformer/code/attention.py#L17](../../projects/lessonbench/vendor/stages/s01_transformer/code/attention.py#L17) |
 | `naive_scores` | [projects/lessonbench/vendor/stages/s01_transformer/code/attention.py#L18](../../projects/lessonbench/vendor/stages/s01_transformer/code/attention.py#L18) |
