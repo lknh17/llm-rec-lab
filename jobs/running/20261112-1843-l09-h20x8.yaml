@@ -9,3 +9,5 @@ requested_commit: 58fd37e2b895a335fa021ea73a1cd089d9f277f6
 note: W2 重发：L09 全量（19 个场景，大多 3 种子）。上一张 20261111-1631 因 vllm-env 的 transformers 5.x
   不兼容作废；ec11631 起 vllm-env 锁 transformers==4.57.1，装在新目录 vllm-env--vllm-0.11.0-transformers-4.57.1，旧环境不动
 how_to_run: python -m labkit jobs run 20261112-1843-l09-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-12T11:48:42Z'
