@@ -1,0 +1,68 @@
+{
+  "item": "s7_vllm",
+  "lesson": "S7.3",
+  "title": "S7 第 3 课：TIGER 模型导出到 vLLM，trie 约束 beam search 对照自研引擎",
+  "ok": false,
+  "missing": [],
+  "env": {
+    "python": "3.12.3",
+    "torch": "2.15.0+cu132",
+    "torch_cuda": "13.2",
+    "cuda": true,
+    "gpu": "NVIDIA H20",
+    "gpu_mem_gb": 102.0,
+    "sm_count": 78,
+    "capability": "9.0",
+    "triton": "3.9.0",
+    "nvcc": "/usr/local/cuda/bin/nvcc",
+    "nvcc_version": [
+      "Build cuda_13.0.r13.0/compiler.36424714_0"
+    ],
+    "ncu": "/usr/local/cuda/bin/ncu",
+    "ncu_version": [
+      "Version 2025.3.1.0 (build 36398880) (public-release)"
+    ],
+    "vllm_python": "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python",
+    "uv": "/usr/local/bin/uv"
+  },
+  "steps": [
+    {
+      "cmd": "[main] python -m stages.s06_recsys.code.train_genrec --only tiger",
+      "rc": 0,
+      "seconds": 649.2
+    },
+    {
+      "cmd": "[main] python -m stages.s07_capstone.code.vllm_genrec.export_hf",
+      "rc": 0,
+      "seconds": 9.9
+    },
+    {
+      "cmd": "[vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20",
+      "rc": 1,
+      "seconds": 69.3
+    }
+  ],
+  "outputs": [
+    "data/hf/tiger_ml1m/config.json",
+    "data/hf/tiger_ml1m/generation_config.json",
+    "stages/s06_recsys/experiments/genrec_results_tiger.md"
+  ],
+  "binary_outputs": [
+    "data/checkpoints/tiger_ml1m.pt（3.7 MB）",
+    "data/hf/tiger_ml1m/model.safetensors（3.5 MB）",
+    "data/hf/tiger_ml1m/semantic_ids.pt（0.1 MB）",
+    "data/ml-1m/README（0.0 MB）",
+    "data/ml-1m/movies.dat（0.2 MB）",
+    "data/ml-1m/ratings.dat（24.6 MB）",
+    "data/ml-1m/users.dat（0.1 MB）"
+  ],
+  "seconds": 728.4,
+  "headline": {
+    "ok": 0,
+    "seconds": 728.4
+  },
+  "display": {
+    "通过": 0,
+    "用时 s": 728.4
+  }
+}

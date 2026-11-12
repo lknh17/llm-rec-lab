@@ -1,0 +1,63 @@
+[worker] 等待设备锁 gpu5-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/V01/split_kv/s0-72d6fa/code/lessonbench/experiment.py
+[19:23:24] ===== 阶段：prepare =====
+[19:23:26] 验证项 split_kv（S3.7）：S3 第 7 课：split-KV decode attention，校准 Little 定律模型
+[19:23:26] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python，uv=/usr/local/bin/uv
+[19:23:27] ===== 阶段：train =====
+[19:23:27] $ [main] python -m stages.s03_kernels.triton_kernels.bench_split_kv --hw H20
+[19:23:37] <repo>/.venv/lib/python3.12/site-packages/triton/knobs.py:504: UserWarning: TRITON_DEFAULT_FP_FUSION is unset: defaulting to FP fusion ENABLED for backward compatibility in Triton 3.9. The default will change to DISABLED in Triton 3.10; set TRITON_DEFAULT_FP_FUSION=1 to keep fusion enabled or =0 to adopt the new default early and silence this warning.
+[19:23:37]   warn_once(FP_FUSION_DEFAULT_WARNING)
+[19:23:42] # split-KV decode benchmark（NVIDIA H20，roofline 按 H20）
+[19:23:42] 
+[19:23:42] Qwen2.5-7B 单层：H=28、Hkv=4、D=128、page=16、FP16。有效 GB/s = 必须读的 KV 字节 / 耗时。
+[19:23:42] 
+[19:23:42] |   B |     T | kernel              |     μs |   有效 GB/s | 占 HBM 峰值   | 模型预测 μs   |
+[19:23:42] |-----|-------|---------------------|--------|-----------|------------|-----------|
+[19:23:42] |   1 |  4096 | SDPA (enable_gqa)   |   31   |       270 | 7%         | -         |
+[19:23:42] |   1 |  4096 | triton paged S=1    |  232.9 |        36 | 1%         | 55.4      |
+[19:23:42] |   1 |  4096 | triton paged S=4    |   88.9 |        94 | 2%         | 19.1      |
+[19:23:42] |   1 |  4096 | triton paged S=16   |   56.7 |       148 | 4%         | 9.4       |
+[19:23:42] |   1 |  4096 | triton paged S=32   |   55.4 |       151 | 4%         | 8.3       |
+[19:23:42] |   1 |  4096 | triton paged S=64   |   54.9 |       153 | 4%         | 8.6       |
+[19:23:42] |   1 |  4096 | triton paged S=auto |   59.8 |       140 | 4%         | -         |
+[19:23:42] |   1 | 10240 | SDPA (enable_gqa)   |   36.9 |       569 | 14%        | -         |
+[19:23:42] |   1 | 10240 | triton paged S=1    |  524   |        40 | 1%         | 134.1     |
+[19:23:42] |   1 | 10240 | triton paged S=4    |  166.3 |       126 | 3%         | 38.8      |
+[19:23:42] |   1 | 10240 | triton paged S=16   |   67.9 |       309 | 8%         | 14.3      |
+[19:23:42] |   1 | 10240 | triton paged S=32   |   55.1 |       381 | 10%        | 11.5      |
+[19:23:42] |   1 | 10240 | triton paged S=64   |   53.3 |       394 | 10%        | 11.7      |
+[19:23:42] |   1 | 10240 | triton paged S=auto |   59.1 |       355 | 9%         | -         |
+[19:23:42] |   1 | 32768 | SDPA (enable_gqa)   |   50.9 |      1319 | 33%        | -         |
+[19:23:42] |   1 | 32768 | triton paged S=1    | 2290.1 |        29 | 1%         | 422.4     |
+[19:23:42] |   1 | 32768 | triton paged S=4    |  604.1 |       111 | 3%         | 110.9     |
+[19:23:42] |   1 | 32768 | triton paged S=16   |  180.2 |       373 | 9%         | 32.3      |
+[19:23:42] |   1 | 32768 | triton paged S=32   |  115.4 |       582 | 15%        | 23.0      |
+[19:23:42] |   1 | 32768 | triton paged S=64   |   86.4 |       777 | 19%        | 23.2      |
+[19:23:42] |   1 | 32768 | triton paged S=auto |  119.4 |       562 | 14%        | -         |
+[19:23:42] |   8 | 10240 | SDPA (enable_gqa)   |   80.1 |      2095 | 52%        | -         |
+[19:23:42] |   8 | 10240 | triton paged S=1    |  750.4 |       224 | 6%         | 134.1     |
+[19:23:42] |   8 | 10240 | triton paged S=4    |  235.5 |       713 | 18%        | 48.2      |
+[19:23:42] |   8 | 10240 | triton paged S=16   |  119.1 |      1409 | 35%        | 48.9      |
+[19:23:42] |   8 | 10240 | triton paged S=32   |  123.7 |      1357 | 34%        | 49.8      |
+[19:23:42] |   8 | 10240 | triton paged S=64   |  125.5 |      1336 | 33%        | 51.7      |
+[19:23:42] |   8 | 10240 | triton paged S=auto |  239.1 |       702 | 18%        | -         |
+[19:23:42] |  32 |  4096 | SDPA (enable_gqa)   |  106.4 |      2523 | 63%        | -         |
+[19:23:42] |  32 |  4096 | triton paged S=1    |  345   |       778 | 19%        | 70.1      |
+[19:23:42] |  32 |  4096 | triton paged S=4    |  168   |      1598 | 40%        | 74.1      |
+[19:23:42] |  32 |  4096 | triton paged S=16   |  171.3 |      1567 | 39%        | 76.9      |
+[19:23:42] |  32 |  4096 | triton paged S=32   |  172.8 |      1553 | 39%        | 80.6      |
+[19:23:42] |  32 |  4096 | triton paged S=64   |  194.5 |      1380 | 34%        | 88.0      |
+[19:23:42] |  32 |  4096 | triton paged S=auto |  348.6 |       770 | 19%        | -         |
+[19:23:42] |  32 | 10240 | SDPA (enable_gqa)   |  237.2 |      2830 | 71%        | -         |
+[19:23:42] |  32 | 10240 | triton paged S=1    |  812.9 |       826 | 21%        | 170.8     |
+[19:23:42] |  32 | 10240 | triton paged S=4    |  354.8 |      1891 | 47%        | 174.8     |
+[19:23:42] |  32 | 10240 | triton paged S=16   |  355.5 |      1888 | 47%        | 177.5     |
+[19:23:42] |  32 | 10240 | triton paged S=32   |  347.6 |      1931 | 48%        | 181.2     |
+[19:23:42] |  32 | 10240 | triton paged S=64   |  365.4 |      1837 | 46%        | 188.6     |
+[19:23:42] |  32 | 10240 | triton paged S=auto |  801.6 |       837 | 21%        | -         |
+[19:23:42] 
+[19:23:44] ===== 阶段：evaluate =====
+[19:23:44] 通过：1 条命令，16.3 秒；报告 ['stages/s03_kernels/experiments/split_kv_bench_H20.md']；缺少 无
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

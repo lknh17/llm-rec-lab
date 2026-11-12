@@ -1,0 +1,45 @@
+{
+  "outputs": {
+    "note": "这一项新生成的报告（讲义脚本写在 experiments/ 下的 md / csv），全文",
+    "files": {
+      "stages/s03_kernels/experiments/coalescing_H20.md": "# 合并访存 benchmark（NVIDIA H20，roofline 按 H20 4000 GB/s）\n\n## 跨步拷贝 n = 2^24 FP32\n\n|   步长 |   实测 ms |   有效 GB/s |   sector 模型 MB |   按模型折算 GB/s |   roofline ms |\n|------|---------|-----------|----------------|--------------|---------------|\n|    1 |   0.059 |      2278 |            134 |         2278 |         0.034 |\n|    2 |   0.077 |      1737 |            201 |         2605 |         0.05  |\n|    4 |   0.113 |      1183 |            336 |         2959 |         0.084 |\n|    8 |   0.213 |       631 |            604 |         2839 |         0.151 |\n|   16 |   2.692 |        50 |            604 |          224 |         0.151 |\n|   32 |   0.394 |       341 |            604 |         1533 |         0.151 |\n\n## 随机行 gather，R = 2^20\n\n|   D |   每行字节 |   实测 ms |   有效 GB/s |   按 sector 模型折算 GB/s |\n|-----|--------|---------|-----------|----------------------|\n|   4 |     16 |   0.672 |        62 |                   87 |\n|   8 |     32 |   0.725 |       104 |                  104 |\n|  32 |    128 |   0.808 |       342 |                  342 |\n| 128 |    512 |   0.939 |      1152 |                 1152 |\n| 256 |   1024 |   3.399 |       634 |                  634 |\n"
+    }
+  },
+  "steps": {
+    "note": "每条命令最后 40 行输出",
+    "steps": [
+      {
+        "cmd": "[main] python -m stages.s03_kernels.triton_kernels.coalescing --hw H20",
+        "rc": 0,
+        "seconds": 14.9,
+        "tail": [
+          "s.py:504: UserWarning: TRITON_DEFAULT_FP_FUSION is unset: defaulting to FP fusion ENABLED for backward compatibility in Triton 3.9. The default will change to DISABLED in Triton 3.10; set TRITON_DEFAULT_FP_FUSION=1 to keep fusion enabled or =0 to adopt the new default early and silence this warning.",
+          "  warn_once(FP_FUSION_DEFAULT_WARNING)",
+          "# 合并访存 benchmark（NVIDIA H20，roofline 按 H20 4000 GB/s）",
+          "",
+          "## 跨步拷贝 n = 2^24 FP32",
+          "",
+          "|   步长 |   实测 ms |   有效 GB/s |   sector 模型 MB |   按模型折算 GB/s |   roofline ms |",
+          "|------|---------|-----------|----------------|--------------|---------------|",
+          "|    1 |   0.059 |      2278 |            134 |         2278 |         0.034 |",
+          "|    2 |   0.077 |      1737 |            201 |         2605 |         0.05  |",
+          "|    4 |   0.113 |      1183 |            336 |         2959 |         0.084 |",
+          "|    8 |   0.213 |       631 |            604 |         2839 |         0.151 |",
+          "|   16 |   2.692 |        50 |            604 |          224 |         0.151 |",
+          "|   32 |   0.394 |       341 |            604 |         1533 |         0.151 |",
+          "",
+          "## 随机行 gather，R = 2^20",
+          "",
+          "|   D |   每行字节 |   实测 ms |   有效 GB/s |   按 sector 模型折算 GB/s |",
+          "|-----|--------|---------|-----------|----------------------|",
+          "|   4 |     16 |   0.672 |        62 |                   87 |",
+          "|   8 |     32 |   0.725 |       104 |                  104 |",
+          "|  32 |    128 |   0.808 |       342 |                  342 |",
+          "| 128 |    512 |   0.939 |      1152 |                 1152 |",
+          "| 256 |   1024 |   3.399 |       634 |                  634 |",
+          ""
+        ]
+      }
+    ]
+  }
+}

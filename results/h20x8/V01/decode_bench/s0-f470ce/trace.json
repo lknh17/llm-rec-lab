@@ -1,0 +1,48 @@
+{
+  "outputs": {
+    "note": "这一项新生成的报告（讲义脚本写在 experiments/ 下的 md / csv），全文",
+    "files": {
+      "stages/s02_perf/experiments/decode_bench_llama3_8b_H20.md": "# decode/prefill benchmark：llama3_8b_H20\n\n- 设备：cuda: NVIDIA H20, 102 GB, SM x78，dtype=torch.bfloat16\n- 模型：llama3_8b，8.03B 参数，权重 16.06 GB，KV 128 KB/token\n- roofline 硬件参数：H20，148 TFLOPS，4000 GB/s，拐点 37 FLOP/B\n\n## prefill（batch=1）\n\n|   prompt 长度 |   roofline ms |   实测 ms |   实测 TFLOPS | 占峰值   | 预测瓶颈          |\n|-------------|---------------|---------|-------------|-------|---------------|\n|         128 |         13.01 |   21.44 |       89.8  | 61%   | compute-bound |\n|         512 |         52.39 |   74.34 |      104.3  | 70%   | compute-bound |\n|        2048 |        215.13 |  302.03 |      105.41 | 71%   | compute-bound |\n\n## decode（context=4096）\n\n|   batch |   roofline ms/步 |   实测 ms/步 |   实测 tok/s |   算术强度 | MBU   |\n|---------|-----------------|-----------|------------|--------|-------|\n|       1 |            4.15 |     17.8  |         56 |    1   | 23%   |\n|       4 |            4.55 |     18.26 |        219 |    3.8 | 25%   |\n|      16 |            6.16 |     17.62 |        908 |   11.1 | 35%   |\n|      32 |            8.31 |     17.71 |      1,807 |   16.5 | 47%   |\n|      64 |           12.6  |     26.44 |      2,420 |   21.8 | 48%   |\n|     128 |           21.19 |     41.05 |      3,118 |   25.9 | 52%   |\n\nMBU（Model Bandwidth Utilization）= roofline 认为必须读的字节数 / 实测耗时 / 峰值带宽。decode 优化得好的引擎能到 70-85%。\n"
+    }
+  },
+  "steps": {
+    "note": "每条命令最后 40 行输出",
+    "steps": [
+      {
+        "cmd": "[main] python -m stages.s02_perf.code.decode_bench --preset llama3_8b --hw H20 --context 4096 --batches 1 4 16 32 64 128",
+        "rc": 0,
+        "seconds": 24.4,
+        "tail": [
+          "cuda: NVIDIA H20, 102 GB, SM x78；llama3_8b：8.03B 参数，KV 128 KB/token；roofline 按 H20",
+          "# decode/prefill benchmark：llama3_8b_H20",
+          "",
+          "- 设备：cuda: NVIDIA H20, 102 GB, SM x78，dtype=torch.bfloat16",
+          "- 模型：llama3_8b，8.03B 参数，权重 16.06 GB，KV 128 KB/token",
+          "- roofline 硬件参数：H20，148 TFLOPS，4000 GB/s，拐点 37 FLOP/B",
+          "",
+          "## prefill（batch=1）",
+          "",
+          "|   prompt 长度 |   roofline ms |   实测 ms |   实测 TFLOPS | 占峰值   | 预测瓶颈          |",
+          "|-------------|---------------|---------|-------------|-------|---------------|",
+          "|         128 |         13.01 |   21.44 |       89.8  | 61%   | compute-bound |",
+          "|         512 |         52.39 |   74.34 |      104.3  | 70%   | compute-bound |",
+          "|        2048 |        215.13 |  302.03 |      105.41 | 71%   | compute-bound |",
+          "",
+          "## decode（context=4096）",
+          "",
+          "|   batch |   roofline ms/步 |   实测 ms/步 |   实测 tok/s |   算术强度 | MBU   |",
+          "|---------|-----------------|-----------|------------|--------|-------|",
+          "|       1 |            4.15 |     17.8  |         56 |    1   | 23%   |",
+          "|       4 |            4.55 |     18.26 |        219 |    3.8 | 25%   |",
+          "|      16 |            6.16 |     17.62 |        908 |   11.1 | 35%   |",
+          "|      32 |            8.31 |     17.71 |      1,807 |   16.5 | 47%   |",
+          "|      64 |           12.6  |     26.44 |      2,420 |   21.8 | 48%   |",
+          "|     128 |           21.19 |     41.05 |      3,118 |   25.9 | 52%   |",
+          "",
+          "MBU（Model Bandwidth Utilization）= roofline 认为必须读的字节数 / 实测耗时 / 峰值带宽。decode 优化得好的引擎能到 70-85%。",
+          ""
+        ]
+      }
+    ]
+  }
+}

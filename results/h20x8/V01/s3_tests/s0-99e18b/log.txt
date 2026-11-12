@@ -1,0 +1,23 @@
+[worker] 等待设备锁 gpu6-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/V01/s3_tests/s0-99e18b/code/lessonbench/experiment.py
+[19:23:05] ===== 阶段：prepare =====
+[19:23:06] 验证项 s3_tests（S3.1-S3.9）：S3 全部 Triton / CUDA kernel 的正确性测试
+[19:23:06] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python，uv=/usr/local/bin/uv
+[19:23:08] ===== 阶段：train =====
+[19:23:08] $ [main] python -m pytest -q -p no:cacheprovider stages/s03_kernels/tests
+[19:24:14] ........................................................................ [ 32%]
+[19:24:18] ........................................................................ [ 65%]
+[19:25:10] ........................................................................ [ 97%]
+[19:25:10] .....                                                                    [100%]
+[19:25:10] =============================== warnings summary ===============================
+[19:25:10] stages/s03_kernels/tests/test_coalescing_gpu.py::test_strided_copy[1-1]
+[19:25:10]   <repo>/.venv/lib/python3.12/site-packages/triton/knobs.py:504: UserWarning: TRITON_DEFAULT_FP_FUSION is unset: defaulting to FP fusion ENABLED for backward compatibility in Triton 3.9. The default will change to DISABLED in Triton 3.10; set TRITON_DEFAULT_FP_FUSION=1 to keep fusion enabled or =0 to adopt the new default early and silence this warning.
+[19:25:10]     warn_once(FP_FUSION_DEFAULT_WARNING)
+[19:25:10] 
+[19:25:10] -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+[19:25:10] 221 passed, 1 warning in 119.28s (0:01:59)
+[19:25:11] ===== 阶段：evaluate =====
+[19:25:11] 通过：1 条命令，122.3 秒；报告 无；缺少 无
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

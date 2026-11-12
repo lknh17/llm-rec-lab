@@ -1,0 +1,91 @@
+{
+  "run_id": "h20x8.V01.w4a16.s0-712d9e",
+  "course_id": "V01",
+  "project": "lessonbench",
+  "entry": "lessonbench.experiment",
+  "profile": "h20x8",
+  "scenario": "w4a16",
+  "role": "variant",
+  "title": "S3.8 W4A16 GEMM",
+  "seed": 0,
+  "variant": "w4a16",
+  "config_hash": "712d9e59276f",
+  "code_hash": "e4c4cbb180c3",
+  "git": {
+    "commit": "879205e18f8d90a3f15aff67be5386abc3e7fe33",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item": "w4a16"
+  },
+  "param_affects": {
+    "item": "runtime",
+    "hw": "runtime",
+    "seed": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794482607.6762238,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482607.8278348,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482614.9907563,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794482618.0024722,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794482654.6503358,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794482655.0382438,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794482607.6762238,
+  "budget": {
+    "max_minutes": 60
+  },
+  "expect": [
+    "summary.ok == True"
+  ],
+  "slot": "gpu1-0",
+  "started_at": 1794482607.8278365,
+  "model": {
+    "arch": "讲义代码（vendor/ 逐字节拷贝）",
+    "params": {
+      "total": 0,
+      "trainable": 0
+    },
+    "train_mode": "benchmark",
+    "item": "w4a16",
+    "lesson": "S3.8"
+  },
+  "ended_at": 1794482655.0382452,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.ok == True",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

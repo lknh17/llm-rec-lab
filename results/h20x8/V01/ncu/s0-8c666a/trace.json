@@ -1,0 +1,24 @@
+{
+  "outputs": {
+    "note": "这一项新生成的报告（讲义脚本写在 experiments/ 下的 md / csv），全文",
+    "files": {}
+  },
+  "steps": {
+    "note": "每条命令最后 40 行输出",
+    "steps": [
+      {
+        "cmd": "[main] python -m stages.s03_kernels.cuda.ncu_profile --hw H20",
+        "rc": 0,
+        "seconds": 1.0,
+        "tail": [
+          "找不到 ncu（Nsight Compute），下面是要运行的命令：",
+          "e_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio,smsp__average_warps_issue_stalled_wait_per_issue_active.ratio --csv --page raw --print-units base <redacted>/.cache/uv/builds-v0/.tmpRWX2nE/bin/python -m stages.s03_kernels.cuda.ncu_profile --run v1 --size 4096 --times 3",
+          "e_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio,smsp__average_warps_issue_stalled_wait_per_issue_active.ratio --csv --page raw --print-units base <redacted>/.cache/uv/builds-v0/.tmpRWX2nE/bin/python -m stages.s03_kernels.cuda.ncu_profile --run v2 --size 4096 --times 3",
+          "e_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio,smsp__average_warps_issue_stalled_wait_per_issue_active.ratio --csv --page raw --print-units base <redacted>/.cache/uv/builds-v0/.tmpRWX2nE/bin/python -m stages.s03_kernels.cuda.ncu_profile --run v3 --size 4096 --times 3",
+          "e_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio,smsp__average_warps_issue_stalled_wait_per_issue_active.ratio --csv --page raw --print-units base <redacted>/.cache/uv/builds-v0/.tmpRWX2nE/bin/python -m stages.s03_kernels.cuda.ncu_profile --run v4 --size 4096 --times 3",
+          "e_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio,smsp__average_warps_issue_stalled_wait_per_issue_active.ratio --csv --page raw --print-units base <redacted>/.cache/uv/builds-v0/.tmpRWX2nE/bin/python -m stages.s03_kernels.cuda.ncu_profile --run v5 --size 4096 --times 3"
+        ]
+      }
+    ]
+  }
+}

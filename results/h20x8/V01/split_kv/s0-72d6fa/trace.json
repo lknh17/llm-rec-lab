@@ -1,0 +1,60 @@
+{
+  "outputs": {
+    "note": "这一项新生成的报告（讲义脚本写在 experiments/ 下的 md / csv），全文",
+    "files": {
+      "stages/s03_kernels/experiments/split_kv_bench_H20.md": "# split-KV decode benchmark（NVIDIA H20，roofline 按 H20）\n\nQwen2.5-7B 单层：H=28、Hkv=4、D=128、page=16、FP16。有效 GB/s = 必须读的 KV 字节 / 耗时。\n\n|   B |     T | kernel              |     μs |   有效 GB/s | 占 HBM 峰值   | 模型预测 μs   |\n|-----|-------|---------------------|--------|-----------|------------|-----------|\n|   1 |  4096 | SDPA (enable_gqa)   |   31   |       270 | 7%         | -         |\n|   1 |  4096 | triton paged S=1    |  232.9 |        36 | 1%         | 55.4      |\n|   1 |  4096 | triton paged S=4    |   88.9 |        94 | 2%         | 19.1      |\n|   1 |  4096 | triton paged S=16   |   56.7 |       148 | 4%         | 9.4       |\n|   1 |  4096 | triton paged S=32   |   55.4 |       151 | 4%         | 8.3       |\n|   1 |  4096 | triton paged S=64   |   54.9 |       153 | 4%         | 8.6       |\n|   1 |  4096 | triton paged S=auto |   59.8 |       140 | 4%         | -         |\n|   1 | 10240 | SDPA (enable_gqa)   |   36.9 |       569 | 14%        | -         |\n|   1 | 10240 | triton paged S=1    |  524   |        40 | 1%         | 134.1     |\n|   1 | 10240 | triton paged S=4    |  166.3 |       126 | 3%         | 38.8      |\n|   1 | 10240 | triton paged S=16   |   67.9 |       309 | 8%         | 14.3      |\n|   1 | 10240 | triton paged S=32   |   55.1 |       381 | 10%        | 11.5      |\n|   1 | 10240 | triton paged S=64   |   53.3 |       394 | 10%        | 11.7      |\n|   1 | 10240 | triton paged S=auto |   59.1 |       355 | 9%         | -         |\n|   1 | 32768 | SDPA (enable_gqa)   |   50.9 |      1319 | 33%        | -         |\n|   1 | 32768 | triton paged S=1    | 2290.1 |        29 | 1%         | 422.4     |\n|   1 | 32768 | triton paged S=4    |  604.1 |       111 | 3%         | 110.9     |\n|   1 | 32768 | triton paged S=16   |  180.2 |       373 | 9%         | 32.3      |\n|   1 | 32768 | triton paged S=32   |  115.4 |       582 | 15%        | 23.0      |\n|   1 | 32768 | triton paged S=64   |   86.4 |       777 | 19%        | 23.2      |\n|   1 | 32768 | triton paged S=auto |  119.4 |       562 | 14%        | -         |\n|   8 | 10240 | SDPA (enable_gqa)   |   80.1 |      2095 | 52%        | -         |\n|   8 | 10240 | triton paged S=1    |  750.4 |       224 | 6%         | 134.1     |\n|   8 | 10240 | triton paged S=4    |  235.5 |       713 | 18%        | 48.2      |\n|   8 | 10240 | triton paged S=16   |  119.1 |      1409 | 35%        | 48.9      |\n|   8 | 10240 | triton paged S=32   |  123.7 |      1357 | 34%        | 49.8      |\n|   8 | 10240 | triton paged S=64   |  125.5 |      1336 | 33%        | 51.7      |\n|   8 | 10240 | triton paged S=auto |  239.1 |       702 | 18%        | -         |\n|  32 |  4096 | SDPA (enable_gqa)   |  106.4 |      2523 | 63%        | -         |\n|  32 |  4096 | triton paged S=1    |  345   |       778 | 19%        | 70.1      |\n|  32 |  4096 | triton paged S=4    |  168   |      1598 | 40%        | 74.1      |\n|  32 |  4096 | triton paged S=16   |  171.3 |      1567 | 39%        | 76.9      |\n|  32 |  4096 | triton paged S=32   |  172.8 |      1553 | 39%        | 80.6      |\n|  32 |  4096 | triton paged S=64   |  194.5 |      1380 | 34%        | 88.0      |\n|  32 |  4096 | triton paged S=auto |  348.6 |       770 | 19%        | -         |\n|  32 | 10240 | SDPA (enable_gqa)   |  237.2 |      2830 | 71%        | -         |\n|  32 | 10240 | triton paged S=1    |  812.9 |       826 | 21%        | 170.8     |\n|  32 | 10240 | triton paged S=4    |  354.8 |      1891 | 47%        | 174.8     |\n|  32 | 10240 | triton paged S=16   |  355.5 |      1888 | 47%        | 177.5     |\n|  32 | 10240 | triton paged S=32   |  347.6 |      1931 | 48%        | 181.2     |\n|  32 | 10240 | triton paged S=64   |  365.4 |      1837 | 46%        | 188.6     |\n|  32 | 10240 | triton paged S=auto |  801.6 |       837 | 21%        | -         |\n"
+    }
+  },
+  "steps": {
+    "note": "每条命令最后 40 行输出",
+    "steps": [
+      {
+        "cmd": "[main] python -m stages.s03_kernels.triton_kernels.bench_split_kv --hw H20",
+        "rc": 0,
+        "seconds": 16.3,
+        "tail": [
+          "|   1 |  4096 | triton paged S=16   |   56.7 |       148 | 4%         | 9.4       |",
+          "|   1 |  4096 | triton paged S=32   |   55.4 |       151 | 4%         | 8.3       |",
+          "|   1 |  4096 | triton paged S=64   |   54.9 |       153 | 4%         | 8.6       |",
+          "|   1 |  4096 | triton paged S=auto |   59.8 |       140 | 4%         | -         |",
+          "|   1 | 10240 | SDPA (enable_gqa)   |   36.9 |       569 | 14%        | -         |",
+          "|   1 | 10240 | triton paged S=1    |  524   |        40 | 1%         | 134.1     |",
+          "|   1 | 10240 | triton paged S=4    |  166.3 |       126 | 3%         | 38.8      |",
+          "|   1 | 10240 | triton paged S=16   |   67.9 |       309 | 8%         | 14.3      |",
+          "|   1 | 10240 | triton paged S=32   |   55.1 |       381 | 10%        | 11.5      |",
+          "|   1 | 10240 | triton paged S=64   |   53.3 |       394 | 10%        | 11.7      |",
+          "|   1 | 10240 | triton paged S=auto |   59.1 |       355 | 9%         | -         |",
+          "|   1 | 32768 | SDPA (enable_gqa)   |   50.9 |      1319 | 33%        | -         |",
+          "|   1 | 32768 | triton paged S=1    | 2290.1 |        29 | 1%         | 422.4     |",
+          "|   1 | 32768 | triton paged S=4    |  604.1 |       111 | 3%         | 110.9     |",
+          "|   1 | 32768 | triton paged S=16   |  180.2 |       373 | 9%         | 32.3      |",
+          "|   1 | 32768 | triton paged S=32   |  115.4 |       582 | 15%        | 23.0      |",
+          "|   1 | 32768 | triton paged S=64   |   86.4 |       777 | 19%        | 23.2      |",
+          "|   1 | 32768 | triton paged S=auto |  119.4 |       562 | 14%        | -         |",
+          "|   8 | 10240 | SDPA (enable_gqa)   |   80.1 |      2095 | 52%        | -         |",
+          "|   8 | 10240 | triton paged S=1    |  750.4 |       224 | 6%         | 134.1     |",
+          "|   8 | 10240 | triton paged S=4    |  235.5 |       713 | 18%        | 48.2      |",
+          "|   8 | 10240 | triton paged S=16   |  119.1 |      1409 | 35%        | 48.9      |",
+          "|   8 | 10240 | triton paged S=32   |  123.7 |      1357 | 34%        | 49.8      |",
+          "|   8 | 10240 | triton paged S=64   |  125.5 |      1336 | 33%        | 51.7      |",
+          "|   8 | 10240 | triton paged S=auto |  239.1 |       702 | 18%        | -         |",
+          "|  32 |  4096 | SDPA (enable_gqa)   |  106.4 |      2523 | 63%        | -         |",
+          "|  32 |  4096 | triton paged S=1    |  345   |       778 | 19%        | 70.1      |",
+          "|  32 |  4096 | triton paged S=4    |  168   |      1598 | 40%        | 74.1      |",
+          "|  32 |  4096 | triton paged S=16   |  171.3 |      1567 | 39%        | 76.9      |",
+          "|  32 |  4096 | triton paged S=32   |  172.8 |      1553 | 39%        | 80.6      |",
+          "|  32 |  4096 | triton paged S=64   |  194.5 |      1380 | 34%        | 88.0      |",
+          "|  32 |  4096 | triton paged S=auto |  348.6 |       770 | 19%        | -         |",
+          "|  32 | 10240 | SDPA (enable_gqa)   |  237.2 |      2830 | 71%        | -         |",
+          "|  32 | 10240 | triton paged S=1    |  812.9 |       826 | 21%        | 170.8     |",
+          "|  32 | 10240 | triton paged S=4    |  354.8 |      1891 | 47%        | 174.8     |",
+          "|  32 | 10240 | triton paged S=16   |  355.5 |      1888 | 47%        | 177.5     |",
+          "|  32 | 10240 | triton paged S=32   |  347.6 |      1931 | 48%        | 181.2     |",
+          "|  32 | 10240 | triton paged S=64   |  365.4 |      1837 | 46%        | 188.6     |",
+          "|  32 | 10240 | triton paged S=auto |  801.6 |       837 | 21%        | -         |",
+          ""
+        ]
+      }
+    ]
+  }
+}

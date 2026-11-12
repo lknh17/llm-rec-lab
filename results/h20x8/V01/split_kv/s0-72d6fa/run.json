@@ -1,0 +1,91 @@
+{
+  "run_id": "h20x8.V01.split_kv.s0-72d6fa",
+  "course_id": "V01",
+  "project": "lessonbench",
+  "entry": "lessonbench.experiment",
+  "profile": "h20x8",
+  "scenario": "split_kv",
+  "role": "variant",
+  "title": "S3.7 split-KV decode attention",
+  "seed": 0,
+  "variant": "split_kv",
+  "config_hash": "72d6fa8bb70b",
+  "code_hash": "e4c4cbb180c3",
+  "git": {
+    "commit": "879205e18f8d90a3f15aff67be5386abc3e7fe33",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item": "split_kv"
+  },
+  "param_affects": {
+    "item": "runtime",
+    "hw": "runtime",
+    "seed": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794482595.8684652,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482596.0231764,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482604.8322842,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794482607.8822935,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794482624.1900973,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794482624.5488324,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794482595.8684652,
+  "budget": {
+    "max_minutes": 60
+  },
+  "expect": [
+    "summary.ok == True"
+  ],
+  "slot": "gpu5-0",
+  "started_at": 1794482596.0231776,
+  "model": {
+    "arch": "讲义代码（vendor/ 逐字节拷贝）",
+    "params": {
+      "total": 0,
+      "trainable": 0
+    },
+    "train_mode": "benchmark",
+    "item": "split_kv",
+    "lesson": "S3.7"
+  },
+  "ended_at": 1794482624.5488338,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.ok == True",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

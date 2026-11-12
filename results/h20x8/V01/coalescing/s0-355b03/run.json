@@ -1,0 +1,91 @@
+{
+  "run_id": "h20x8.V01.coalescing.s0-355b03",
+  "course_id": "V01",
+  "project": "lessonbench",
+  "entry": "lessonbench.experiment",
+  "profile": "h20x8",
+  "scenario": "coalescing",
+  "role": "variant",
+  "title": "S3.4 访存合并",
+  "seed": 0,
+  "variant": "coalescing",
+  "config_hash": "355b037b46fa",
+  "code_hash": "e4c4cbb180c3",
+  "git": {
+    "commit": "879205e18f8d90a3f15aff67be5386abc3e7fe33",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item": "coalescing"
+  },
+  "param_affects": {
+    "item": "runtime",
+    "hw": "runtime",
+    "seed": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794482571.493573,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482571.6453416,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482585.119626,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794482588.8749478,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794482603.7837934,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794482604.1611252,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794482571.493573,
+  "budget": {
+    "max_minutes": 60
+  },
+  "expect": [
+    "summary.ok == True"
+  ],
+  "slot": "gpu1-0",
+  "started_at": 1794482571.6453435,
+  "model": {
+    "arch": "讲义代码（vendor/ 逐字节拷贝）",
+    "params": {
+      "total": 0,
+      "trainable": 0
+    },
+    "train_mode": "benchmark",
+    "item": "coalescing",
+    "lesson": "S3.4"
+  },
+  "ended_at": 1794482604.1611264,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.ok == True",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

@@ -1,0 +1,91 @@
+{
+  "run_id": "h20x8.V01.ncu_parse.s0-b89de6",
+  "course_id": "V01",
+  "project": "lessonbench",
+  "entry": "lessonbench.experiment",
+  "profile": "h20x8",
+  "scenario": "ncu_parse",
+  "role": "reference",
+  "title": "解析讲义附带的 ncu 典型值 CSV（冒烟，不需要 GPU）",
+  "seed": 0,
+  "variant": "ncu_parse",
+  "config_hash": "b89de6aab91b",
+  "code_hash": "e4c4cbb180c3",
+  "git": {
+    "commit": "879205e18f8d90a3f15aff67be5386abc3e7fe33",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item": "ncu_parse"
+  },
+  "param_affects": {
+    "item": "runtime",
+    "hw": "runtime",
+    "seed": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794482571.488704,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482571.6449142,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482585.255634,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794482588.8821878,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794482589.8583364,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794482590.1699677,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794482571.488704,
+  "budget": {
+    "max_minutes": 60
+  },
+  "expect": [
+    "summary.ok == True"
+  ],
+  "slot": "gpu0-0",
+  "started_at": 1794482571.6449163,
+  "model": {
+    "arch": "讲义代码（vendor/ 逐字节拷贝）",
+    "params": {
+      "total": 0,
+      "trainable": 0
+    },
+    "train_mode": "benchmark",
+    "item": "ncu_parse",
+    "lesson": "S3.6"
+  },
+  "ended_at": 1794482590.169969,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.ok == True",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

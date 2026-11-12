@@ -1,0 +1,158 @@
+job_id: 20261111-1633-v01-h20x8
+created_at: '2026-11-11T08:33:37Z'
+profile: h20x8
+courses:
+- V01
+only: []
+seeds: []
+requested_commit: a1a625af5c9b90f5cf8a52f50c1c66883c43f354
+note: W3 V01 讲义验证全量：14 个验证项各 1 次（S2 decode、S3 Triton/CUDA/ncu、S5.5 vLLM 源码、S7 vLLM
+  接入）
+how_to_run: python -m labkit jobs run 20261111-1633-v01-h20x8
+claimed_by: agent-f80beb
+claimed_at: '2026-11-12T11:04:08Z'
+started_at: '2026-11-12T11:12:03Z'
+ran_commit: 879205e18f8d90a3f15aff67be5386abc3e7fe33
+host_summary:
+  torch: 2.15.0+cu132
+  cuda: '13.2'
+  gpu: NVIDIA H20
+  gpu_count: 8
+  gpu_mem_gb: 95.0
+  driver: 535.161.08
+status: partial
+finished_at: '2026-11-12T11:37:07Z'
+hours: 0.42
+runs:
+- course: V01
+  scenario: env_probe
+  seed: 0
+  dir: h20x8/V01/env_probe/s0-a45ed8
+  status: skipped
+  minutes: 0
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: V01
+  scenario: gpu_check
+  seed: 0
+  dir: h20x8/V01/gpu_check/s0-bebdb9
+  status: skipped
+  minutes: 0
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: V01
+  scenario: vllm_facts
+  seed: 0
+  dir: h20x8/V01/vllm_facts/s0-364d83
+  status: skipped
+  minutes: 0
+  expect_ok: true
+  note: 已有结果（同配置、同代码）
+- course: V01
+  scenario: ncu
+  seed: 0
+  dir: h20x8/V01/ncu/s0-8c666a
+  status: succeeded
+  minutes: 0.4
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: ncu_parse
+  seed: 0
+  dir: h20x8/V01/ncu_parse/s0-b89de6
+  status: succeeded
+  minutes: 0.4
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: coalescing
+  seed: 0
+  dir: h20x8/V01/coalescing/s0-355b03
+  status: succeeded
+  minutes: 0.6
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: moe
+  seed: 0
+  dir: h20x8/V01/moe/s0-aa7ac3
+  status: succeeded
+  minutes: 0.7
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: decode_bench
+  seed: 0
+  dir: h20x8/V01/decode_bench/s0-f470ce
+  status: succeeded
+  minutes: 0.8
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: split_kv
+  seed: 0
+  dir: h20x8/V01/split_kv/s0-72d6fa
+  status: succeeded
+  minutes: 0.5
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: triton_bench
+  seed: 0
+  dir: h20x8/V01/triton_bench/s0-6b80cc
+  status: succeeded
+  minutes: 0.6
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: w4a16
+  seed: 0
+  dir: h20x8/V01/w4a16/s0-712d9e
+  status: succeeded
+  minutes: 0.8
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: cuda_matmul
+  seed: 0
+  dir: h20x8/V01/cuda_matmul/s0-fb2906
+  status: succeeded
+  minutes: 1.5
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: s3_tests
+  seed: 0
+  dir: h20x8/V01/s3_tests/s0-99e18b
+  status: succeeded
+  minutes: 2.4
+  expect_ok: true
+  end_reason: 完成
+- course: V01
+  scenario: s7_vllm
+  seed: 0
+  dir: h20x8/V01/s7_vllm/s0-eced27
+  status: failed
+  minutes: 12.5
+  end_reason: "RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam\
+    \ --users 512 --beam 20 失败（退出码 1）：\nINFO 11-12 19:34:32 [__init__.py:216] Automatically\
+    \ detected platform cuda.\nTraceback (most recent call last):\n  File \"<frozen\
+    \ runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line\
+    \ 88, in _run_code\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\"\
+    , line 132, in <module>\n    main()\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\"\
+    , line 79, in main\n    from stages.s06_recsys.code.train_genrec import CKPT,\
+    \ MAX_ITEMS, metrics\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py\"\
+    , line 22, in <module>\n    from tabulate import tabulate\nModuleNotFoundError:\
+    \ No module named 'tabulate'"
+n_exported: 14
+problems:
+- "V01/s7_vllm s0: failed expect_ok=None RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam\
+  \ --users 512 --beam 20 失败（退出码 1）：\nINFO 11-12 19:34:32 [__init__.py:216] Automatically\
+  \ detected platform cuda.\nTraceback (most recent call last):\n  File \"<frozen\
+  \ runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88,\
+  \ in _run_code\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\"\
+  , line 132, in <module>\n    main()\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\"\
+  , line 79, in main\n    from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS,\
+  \ metrics\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py\"\
+  , line 22, in <module>\n    from tabulate import tabulate\nModuleNotFoundError:\
+  \ No module named 'tabulate'"

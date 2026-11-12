@@ -1,0 +1,91 @@
+{
+  "run_id": "h20x8.V01.cuda_matmul.s0-fb2906",
+  "course_id": "V01",
+  "project": "lessonbench",
+  "entry": "lessonbench.experiment",
+  "profile": "h20x8",
+  "scenario": "cuda_matmul",
+  "role": "variant",
+  "title": "S3.5 手写 CUDA matmul v1-v5 对照 cuBLAS",
+  "seed": 0,
+  "variant": "cuda_matmul",
+  "config_hash": "fb29067822ed",
+  "code_hash": "e4c4cbb180c3",
+  "git": {
+    "commit": "879205e18f8d90a3f15aff67be5386abc3e7fe33",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item": "cuda_matmul"
+  },
+  "param_affects": {
+    "item": "runtime",
+    "hw": "runtime",
+    "seed": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794482571.4987876,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482571.6493404,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482585.2994487,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794482588.873769,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794482656.7741983,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794482657.1824963,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794482571.4987876,
+  "budget": {
+    "max_minutes": 60
+  },
+  "expect": [
+    "summary.ok == True"
+  ],
+  "slot": "gpu2-0",
+  "started_at": 1794482571.6493425,
+  "model": {
+    "arch": "讲义代码（vendor/ 逐字节拷贝）",
+    "params": {
+      "total": 0,
+      "trainable": 0
+    },
+    "train_mode": "benchmark",
+    "item": "cuda_matmul",
+    "lesson": "S3.5"
+  },
+  "ended_at": 1794482657.182498,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.ok == True",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

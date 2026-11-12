@@ -1,0 +1,91 @@
+{
+  "run_id": "h20x8.V01.s7_vllm.s0-eced27",
+  "course_id": "V01",
+  "project": "lessonbench",
+  "entry": "lessonbench.experiment",
+  "profile": "h20x8",
+  "scenario": "s7_vllm",
+  "role": "variant",
+  "title": "S7.3 TIGER 导出到 vLLM，trie 约束 beam search 对照自研引擎",
+  "seed": 0,
+  "variant": "s7_vllm",
+  "config_hash": "eced2746b3c0",
+  "code_hash": "e4c4cbb180c3",
+  "git": {
+    "commit": "879205e18f8d90a3f15aff67be5386abc3e7fe33",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item": "s7_vllm"
+  },
+  "param_affects": {
+    "item": "runtime",
+    "hw": "runtime",
+    "seed": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "failed",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794482571.4554663,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482571.6360548,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482585.3445718,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794482588.8773973,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794483317.3247674,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "failed",
+      "time": 1794483317.7756052,
+      "note": "RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 失败（退出码 1）：\nINFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 132, in <module>\n    main()\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 79, in main\n    from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py\", line 22, in <module>\n    from tabulate import tabulate\nModuleNotFoundError: No module named 'tabulate'"
+    }
+  ],
+  "created_at": 1794482571.4554663,
+  "budget": {
+    "max_minutes": 60
+  },
+  "expect": [
+    "summary.ok == True"
+  ],
+  "slot": "gpu7-0",
+  "started_at": 1794482571.636057,
+  "model": {
+    "arch": "讲义代码（vendor/ 逐字节拷贝）",
+    "params": {
+      "total": 0,
+      "trainable": 0
+    },
+    "train_mode": "benchmark",
+    "item": "s7_vllm",
+    "lesson": "S7.3"
+  },
+  "warnings": [
+    {
+      "code": "step_failed",
+      "message": "[vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 退出码 1",
+      "time": 731.98
+    }
+  ],
+  "ended_at": 1794483317.7756073,
+  "end_reason": "RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 失败（退出码 1）：\nINFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 132, in <module>\n    main()\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py\", line 79, in main\n    from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics\n  File \"<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py\", line 22, in <module>\n    from tabulate import tabulate\nModuleNotFoundError: No module named 'tabulate'",
+  "exported": true
+}

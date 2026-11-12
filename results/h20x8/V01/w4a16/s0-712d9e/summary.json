@@ -1,0 +1,48 @@
+{
+  "item": "w4a16",
+  "lesson": "S3.8",
+  "title": "S3 第 8 课：W4A16 GEMM，提速消失的 M",
+  "ok": true,
+  "missing": [],
+  "env": {
+    "python": "3.12.3",
+    "torch": "2.15.0+cu132",
+    "torch_cuda": "13.2",
+    "cuda": true,
+    "gpu": "NVIDIA H20",
+    "gpu_mem_gb": 102.0,
+    "sm_count": 78,
+    "capability": "9.0",
+    "triton": "3.9.0",
+    "nvcc": "/usr/local/cuda/bin/nvcc",
+    "nvcc_version": [
+      "Build cuda_13.0.r13.0/compiler.36424714_0"
+    ],
+    "ncu": "/usr/local/cuda/bin/ncu",
+    "ncu_version": [
+      "Version 2025.3.1.0 (build 36398880) (public-release)"
+    ],
+    "vllm_python": "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python",
+    "uv": "/usr/local/bin/uv"
+  },
+  "steps": [
+    {
+      "cmd": "[main] python -m stages.s03_kernels.triton_kernels.bench_w4a16 --hw H20",
+      "rc": 0,
+      "seconds": 36.6
+    }
+  ],
+  "outputs": [
+    "stages/s03_kernels/experiments/w4a16_bench_H20.md"
+  ],
+  "binary_outputs": [],
+  "seconds": 36.6,
+  "headline": {
+    "ok": 1,
+    "seconds": 36.6
+  },
+  "display": {
+    "通过": 1,
+    "用时 s": 36.6
+  }
+}

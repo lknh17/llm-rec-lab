@@ -1,0 +1,40 @@
+[worker] 等待设备锁 gpu3-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/V01/decode_bench/s0-f470ce/code/lessonbench/experiment.py
+[19:23:05] ===== 阶段：prepare =====
+[19:23:06] 验证项 decode_bench（S2.2）：S2 decode 的 MBU 和 batch 拐点（自写 GPT，llama3_8b 形状）
+[19:23:06] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python，uv=/usr/local/bin/uv
+[19:23:08] ===== 阶段：train =====
+[19:23:08] $ [main] python -m stages.s02_perf.code.decode_bench --preset llama3_8b --hw H20 --context 4096 --batches 1 4 16 32 64 128
+[19:23:19] cuda: NVIDIA H20, 102 GB, SM x78；llama3_8b：8.03B 参数，KV 128 KB/token；roofline 按 H20
+[19:23:30] # decode/prefill benchmark：llama3_8b_H20
+[19:23:30] 
+[19:23:30] - 设备：cuda: NVIDIA H20, 102 GB, SM x78，dtype=torch.bfloat16
+[19:23:30] - 模型：llama3_8b，8.03B 参数，权重 16.06 GB，KV 128 KB/token
+[19:23:30] - roofline 硬件参数：H20，148 TFLOPS，4000 GB/s，拐点 37 FLOP/B
+[19:23:30] 
+[19:23:30] ## prefill（batch=1）
+[19:23:30] 
+[19:23:30] |   prompt 长度 |   roofline ms |   实测 ms |   实测 TFLOPS | 占峰值   | 预测瓶颈          |
+[19:23:30] |-------------|---------------|---------|-------------|-------|---------------|
+[19:23:30] |         128 |         13.01 |   21.44 |       89.8  | 61%   | compute-bound |
+[19:23:30] |         512 |         52.39 |   74.34 |      104.3  | 70%   | compute-bound |
+[19:23:30] |        2048 |        215.13 |  302.03 |      105.41 | 71%   | compute-bound |
+[19:23:30] 
+[19:23:30] ## decode（context=4096）
+[19:23:30] 
+[19:23:30] |   batch |   roofline ms/步 |   实测 ms/步 |   实测 tok/s |   算术强度 | MBU   |
+[19:23:30] |---------|-----------------|-----------|------------|--------|-------|
+[19:23:30] |       1 |            4.15 |     17.8  |         56 |    1   | 23%   |
+[19:23:30] |       4 |            4.55 |     18.26 |        219 |    3.8 | 25%   |
+[19:23:30] |      16 |            6.16 |     17.62 |        908 |   11.1 | 35%   |
+[19:23:30] |      32 |            8.31 |     17.71 |      1,807 |   16.5 | 47%   |
+[19:23:30] |      64 |           12.6  |     26.44 |      2,420 |   21.8 | 48%   |
+[19:23:30] |     128 |           21.19 |     41.05 |      3,118 |   25.9 | 52%   |
+[19:23:30] 
+[19:23:30] MBU（Model Bandwidth Utilization）= roofline 认为必须读的字节数 / 实测耗时 / 峰值带宽。decode 优化得好的引擎能到 70-85%。
+[19:23:30] 
+[19:23:33] ===== 阶段：evaluate =====
+[19:23:33] 通过：1 条命令，24.4 秒；报告 ['stages/s02_perf/experiments/decode_bench_llama3_8b_H20.md']；缺少 无
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

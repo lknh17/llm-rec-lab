@@ -1,0 +1,39 @@
+[worker] 等待设备锁 gpu1-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/V01/w4a16/s0-712d9e/code/lessonbench/experiment.py
+[19:23:35] ===== 阶段：prepare =====
+[19:23:36] 验证项 w4a16（S3.8）：S3 第 8 课：W4A16 GEMM，提速消失的 M
+[19:23:36] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python，uv=/usr/local/bin/uv
+[19:23:38] ===== 阶段：train =====
+[19:23:38] $ [main] python -m stages.s03_kernels.triton_kernels.bench_w4a16 --hw H20
+[19:23:46] <repo>/.venv/lib/python3.12/site-packages/triton/knobs.py:504: UserWarning: TRITON_DEFAULT_FP_FUSION is unset: defaulting to FP fusion ENABLED for backward compatibility in Triton 3.9. The default will change to DISABLED in Triton 3.10; set TRITON_DEFAULT_FP_FUSION=1 to keep fusion enabled or =0 to adopt the new default early and silence this warning.
+[19:23:46]   warn_once(FP_FUSION_DEFAULT_WARNING)
+[19:24:13] # W4A16 GEMM benchmark（NVIDIA H20，模型按 H20，g=128）
+[19:24:13] 
+[19:24:13] 权重 GB/s = 必须读的权重字节 / 耗时；HBM 标称 4000 GB/s。
+[19:24:13] 
+[19:24:13] | N×K        |   M |   FP16 μs |   FP16 权重 GB/s |   W4A16 μs |   W4 权重 GB/s | 实测提速   | 模型提速   |
+[19:24:13] |------------|-----|-----------|----------------|------------|--------------|--------|--------|
+[19:24:13] | 4096x4096  |   1 |      25.2 |           1330 |       80.4 |          108 | 0.31x  | 3.87x  |
+[19:24:13] | 4096x4096  |   2 |      24.3 |           1381 |       80.7 |          107 | 0.30x  | 3.87x  |
+[19:24:13] | 4096x4096  |   4 |      24.6 |           1364 |       79.6 |          109 | 0.31x  | 3.46x  |
+[19:24:13] | 4096x4096  |   8 |      22.9 |           1466 |       79.6 |          109 | 0.29x  | 2.52x  |
+[19:24:13] | 4096x4096  |  16 |      23.8 |           1408 |       80.8 |          107 | 0.29x  | 1.64x  |
+[19:24:13] | 4096x4096  |  32 |      26.6 |           1263 |       86.7 |          100 | 0.31x  | 0.97x  |
+[19:24:13] | 4096x4096  |  64 |      35.9 |            934 |       94.1 |           92 | 0.38x  | 0.90x  |
+[19:24:13] | 4096x4096  | 128 |      56.4 |            595 |      113.5 |           76 | 0.50x  | 0.95x  |
+[19:24:13] | 4096x4096  | 256 |      92   |            365 |      130.1 |           67 | 0.71x  | 0.95x  |
+[19:24:13] | 37888x3584 |   1 |      92.6 |           2934 |      254.4 |          275 | 0.36x  | 3.88x  |
+[19:24:13] | 37888x3584 |   2 |      93   |           2922 |      251.7 |          278 | 0.37x  | 3.87x  |
+[19:24:13] | 37888x3584 |   4 |      92.6 |           2934 |      253.7 |          276 | 0.36x  | 3.45x  |
+[19:24:13] | 37888x3584 |   8 |      92.9 |           2923 |      253.1 |          277 | 0.37x  | 2.52x  |
+[19:24:13] | 37888x3584 |  16 |      93.7 |           2899 |      254.6 |          275 | 0.37x  | 1.64x  |
+[19:24:13] | 37888x3584 |  32 |      96.1 |           2827 |      277   |          253 | 0.35x  | 0.96x  |
+[19:24:13] | 37888x3584 |  64 |     174.6 |           1555 |      308.8 |          227 | 0.57x  | 0.90x  |
+[19:24:13] | 37888x3584 | 128 |     280.2 |            969 |      339.8 |          206 | 0.82x  | 0.95x  |
+[19:24:13] | 37888x3584 | 256 |     539.5 |            503 |      644.6 |          109 | 0.84x  | 0.95x  |
+[19:24:13] 
+[19:24:14] ===== 阶段：evaluate =====
+[19:24:15] 通过：1 条命令，36.6 秒；报告 ['stages/s03_kernels/experiments/w4a16_bench_H20.md']；缺少 无
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

@@ -1,0 +1,91 @@
+{
+  "run_id": "h20x8.V01.decode_bench.s0-f470ce",
+  "course_id": "V01",
+  "project": "lessonbench",
+  "entry": "lessonbench.experiment",
+  "profile": "h20x8",
+  "scenario": "decode_bench",
+  "role": "variant",
+  "title": "S2.2 decode 的 MBU 和 batch 拐点（自写 GPT，llama3_8b 形状，context 4096）",
+  "seed": 0,
+  "variant": "decode_bench",
+  "config_hash": "f470ce8349a6",
+  "code_hash": "e4c4cbb180c3",
+  "git": {
+    "commit": "879205e18f8d90a3f15aff67be5386abc3e7fe33",
+    "dirty": false
+  },
+  "changed_from_baseline": {
+    "item": "decode_bench"
+  },
+  "param_affects": {
+    "item": "runtime",
+    "hw": "runtime",
+    "seed": "runtime",
+    "max_minutes": "runtime"
+  },
+  "env_id": "h20x8",
+  "source": "batch",
+  "status": "succeeded",
+  "status_history": [
+    {
+      "status": "queued",
+      "time": 1794482571.4880185,
+      "note": "批量运行排队"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482571.6466086,
+      "note": "worker 启动"
+    },
+    {
+      "status": "preparing",
+      "time": 1794482585.1479578,
+      "note": "阶段 prepare"
+    },
+    {
+      "status": "running",
+      "time": 1794482588.8789525,
+      "note": "阶段 train"
+    },
+    {
+      "status": "evaluating",
+      "time": 1794482613.2511723,
+      "note": "阶段 evaluate"
+    },
+    {
+      "status": "succeeded",
+      "time": 1794482613.643776,
+      "note": "完成"
+    }
+  ],
+  "created_at": 1794482571.4880185,
+  "budget": {
+    "max_minutes": 60
+  },
+  "expect": [
+    "summary.ok == True"
+  ],
+  "slot": "gpu3-0",
+  "started_at": 1794482571.6466103,
+  "model": {
+    "arch": "讲义代码（vendor/ 逐字节拷贝）",
+    "params": {
+      "total": 0,
+      "trainable": 0
+    },
+    "train_mode": "benchmark",
+    "item": "decode_bench",
+    "lesson": "S2.2"
+  },
+  "ended_at": 1794482613.6437776,
+  "end_reason": "完成",
+  "expect_results": [
+    {
+      "expr": "summary.ok == True",
+      "ok": true
+    }
+  ],
+  "expect_ok": true,
+  "exported": true
+}

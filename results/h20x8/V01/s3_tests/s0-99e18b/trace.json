@@ -1,0 +1,29 @@
+{
+  "outputs": {
+    "note": "这一项新生成的报告（讲义脚本写在 experiments/ 下的 md / csv），全文",
+    "files": {}
+  },
+  "steps": {
+    "note": "每条命令最后 40 行输出",
+    "steps": [
+      {
+        "cmd": "[main] python -m pytest -q -p no:cacheprovider stages/s03_kernels/tests",
+        "rc": 0,
+        "seconds": 122.3,
+        "tail": [
+          "........................................................................ [ 32%]",
+          "........................................................................ [ 65%]",
+          "........................................................................ [ 97%]",
+          ".....                                                                    [100%]",
+          "=============================== warnings summary ===============================",
+          "stages/s03_kernels/tests/test_coalescing_gpu.py::test_strided_copy[1-1]",
+          "s.py:504: UserWarning: TRITON_DEFAULT_FP_FUSION is unset: defaulting to FP fusion ENABLED for backward compatibility in Triton 3.9. The default will change to DISABLED in Triton 3.10; set TRITON_DEFAULT_FP_FUSION=1 to keep fusion enabled or =0 to adopt the new default early and silence this warning.",
+          "    warn_once(FP_FUSION_DEFAULT_WARNING)",
+          "",
+          "-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html",
+          "221 passed, 1 warning in 119.28s (0:01:59)"
+        ]
+      }
+    ]
+  }
+}

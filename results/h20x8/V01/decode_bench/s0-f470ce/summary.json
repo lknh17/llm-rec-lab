@@ -1,0 +1,50 @@
+{
+  "item": "decode_bench",
+  "lesson": "S2.2",
+  "title": "S2 decode 的 MBU 和 batch 拐点（自写 GPT，llama3_8b 形状）",
+  "ok": true,
+  "missing": [],
+  "env": {
+    "python": "3.12.3",
+    "torch": "2.15.0+cu132",
+    "torch_cuda": "13.2",
+    "cuda": true,
+    "gpu": "NVIDIA H20",
+    "gpu_mem_gb": 102.0,
+    "sm_count": 78,
+    "capability": "9.0",
+    "triton": "3.9.0",
+    "nvcc": "/usr/local/cuda/bin/nvcc",
+    "nvcc_version": [
+      "Build cuda_13.0.r13.0/compiler.36424714_0"
+    ],
+    "ncu": "/usr/local/cuda/bin/ncu",
+    "ncu_version": [
+      "Version 2025.3.1.0 (build 36398880) (public-release)"
+    ],
+    "vllm_python": "<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python",
+    "uv": "/usr/local/bin/uv"
+  },
+  "steps": [
+    {
+      "cmd": "[main] python -m stages.s02_perf.code.decode_bench --preset llama3_8b --hw H20 --context 4096 --batches 1 4 16 32 64 128",
+      "rc": 0,
+      "seconds": 24.4
+    }
+  ],
+  "outputs": [
+    "stages/s02_perf/experiments/decode_bench_llama3_8b_H20.md"
+  ],
+  "binary_outputs": [
+    "stages/s02_perf/experiments/decode_bench_llama3_8b_H20.png（0.0 MB）"
+  ],
+  "seconds": 24.4,
+  "headline": {
+    "ok": 1,
+    "seconds": 24.4
+  },
+  "display": {
+    "通过": 1,
+    "用时 s": 24.4
+  }
+}

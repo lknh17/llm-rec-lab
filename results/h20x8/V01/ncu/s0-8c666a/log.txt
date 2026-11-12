@@ -1,0 +1,18 @@
+[worker] 等待设备锁 gpu5-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/V01/ncu/s0-8c666a/code/lessonbench/experiment.py
+[19:23:05] ===== 阶段：prepare =====
+[19:23:06] 验证项 ncu（S3.6）：S3 第 6 课：Nsight Compute 采集 v1-v5 的关键指标并自动诊断
+[19:23:06] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python，uv=/usr/local/bin/uv
+[19:23:08] ===== 阶段：train =====
+[19:23:08] $ [main] python -m stages.s03_kernels.cuda.ncu_profile --hw H20
+[19:23:09] 找不到 ncu（Nsight Compute），下面是要运行的命令：
+[19:23:09] led_lg_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio,smsp__average_warps_issue_stalled_wait_per_issue_active.ratio --csv --page raw --print-units base <redacted>/.cache/uv/builds-v0/.tmpRWX2nE/bin/python -m stages.s03_kernels.cuda.ncu_profile --run v1 --size 4096 --times 3
+[19:23:09] led_lg_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio,smsp__average_warps_issue_stalled_wait_per_issue_active.ratio --csv --page raw --print-units base <redacted>/.cache/uv/builds-v0/.tmpRWX2nE/bin/python -m stages.s03_kernels.cuda.ncu_profile --run v2 --size 4096 --times 3
+[19:23:09] led_lg_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio,smsp__average_warps_issue_stalled_wait_per_issue_active.ratio --csv --page raw --print-units base <redacted>/.cache/uv/builds-v0/.tmpRWX2nE/bin/python -m stages.s03_kernels.cuda.ncu_profile --run v3 --size 4096 --times 3
+[19:23:09] led_lg_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio,smsp__average_warps_issue_stalled_wait_per_issue_active.ratio --csv --page raw --print-units base <redacted>/.cache/uv/builds-v0/.tmpRWX2nE/bin/python -m stages.s03_kernels.cuda.ncu_profile --run v4 --size 4096 --times 3
+[19:23:09] led_lg_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio,smsp__average_warps_issue_stalled_wait_per_issue_active.ratio --csv --page raw --print-units base <redacted>/.cache/uv/builds-v0/.tmpRWX2nE/bin/python -m stages.s03_kernels.cuda.ncu_profile --run v5 --size 4096 --times 3
+[19:23:09] ===== 阶段：evaluate =====
+[19:23:10] 通过：1 条命令，1.0 秒；报告 无；缺少 无
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

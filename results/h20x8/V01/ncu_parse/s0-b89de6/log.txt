@@ -1,0 +1,49 @@
+[worker] 等待设备锁 gpu0-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/V01/ncu_parse/s0-b89de6/code/lessonbench/experiment.py
+[19:23:05] ===== 阶段：prepare =====
+[19:23:06] 验证项 ncu_parse（S3.6）：S3 第 6 课：解析讲义附带的典型值 CSV（不需要 GPU，冒烟用）
+[19:23:06] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python，uv=/usr/local/bin/uv
+[19:23:08] ===== 阶段：train =====
+[19:23:08] $ [main] python -m stages.s03_kernels.cuda.ncu_profile --parse stages/s03_kernels/experiments/ncu_typical_values.csv
+[19:23:09] # ncu 指标解析：ncu_typical_values.csv
+[19:23:09] 
+[19:23:09] | 指标                       |   v1_naive |   v2_coalesced |      v3_smem |   v4_regtile |   v5_wmma |
+[19:23:09] |--------------------------|------------|----------------|--------------|--------------|-----------|
+[19:23:09] | 耗时 us                    |   250000   |        40000   | 26000        |   3600       |    2900   |
+[19:23:09] | SOL 计算 %                 |       22   |           48   |    55        |     78       |      35   |
+[19:23:09] | SOL 访存 %                 |       94   |           91   |    86        |     52       |      78   |
+[19:23:09] | DRAM 吞吐 %                |        6   |            9   |    12        |     22       |      28   |
+[19:23:09] | L1 命中 %                  |       96   |           93   |    50        |      5       |      55   |
+[19:23:09] | L2 命中 %                  |       99   |           99   |    98        |     85       |      90   |
+[19:23:09] | 理论 occupancy %           |      100   |          100   |   100        |     25       |      50   |
+[19:23:09] | 实际 occupancy %           |       97   |           97   |    96        |     24       |      46   |
+[19:23:09] | 寄存器/线程                   |       30   |           30   |    32        |    128       |      64   |
+[19:23:09] | 全局读 sector/请求            |       16.5 |            2.5 |     4        |      4       |       8   |
+[19:23:09] | 全局读效率 %                  |       25   |           75   |   100        |    100       |     100   |
+[19:23:09] | smem 读 bank conflict     |        0   |            0   |     0        |      6.4e+08 |       0   |
+[19:23:09] | smem 读指令                 |        0   |            0   |     4.29e+09 |      5.4e+08 |       0   |
+[19:23:09] | Tensor Core 活跃 %         |        0   |            0   |     0        |      0       |       9   |
+[19:23:09] | FMA 管线 %                 |        4   |           20   |    30        |     72       |       1   |
+[19:23:09] | stall long_scoreboard    |        6   |           14   |     2.5      |      0.8     |       9   |
+[19:23:09] | stall barrier            |        0   |            0   |     4        |      0.6     |       0   |
+[19:23:09] | stall mio_throttle       |        0.2 |            0.3 |     6        |      1.2     |       0.6 |
+[19:23:09] | stall short_scoreboard   |        0   |            0   |     3        |      0.5     |       0.2 |
+[19:23:09] | stall lg_throttle        |       18   |            3   |     0.5      |      0.1     |       1.5 |
+[19:23:09] | stall math_pipe_throttle |        0.1 |            0.3 |     0.4      |      1.6     |       0.3 |
+[19:23:09] | stall not_selected       |        0.3 |            0.5 |     0.6      |      0.7     |       0.2 |
+[19:23:09] | stall wait               |        0.8 |            1   |     1        |      0.9     |       0.8 |
+[19:23:09] 
+[19:23:09] ## 自动诊断
+[19:23:09] 
+[19:23:09] - **v1_naive**：片上访存瓶颈（L1/shared/L2 忙，DRAM 不忙）：查合并访存和 bank conflict，用寄存器分块减少 smem 读；全局读未合并：效率 25%，每请求 16.5 个 sector，调整线程到元素的映射（相邻线程读相邻地址）；主要停顿 lg_throttle（全局访存指令队列满，18.0）：全局 load 指令太多：向量化（float4 / 128 位 load）、先搬进 smem 再复用
+[19:23:09] - **v2_coalesced**：片上访存瓶颈（L1/shared/L2 忙，DRAM 不忙）：查合并访存和 bank conflict，用寄存器分块减少 smem 读；主要停顿 long_scoreboard（等 L1TEX（全局/local memory）返回，14.0）：预取 / 多级流水（cp.async、TMA）、提高 occupancy 让别的 warp 顶上
+[19:23:09] - **v3_smem**：片上访存瓶颈（L1/shared/L2 忙，DRAM 不忙）：查合并访存和 bank conflict，用寄存器分块减少 smem 读；主要停顿 mio_throttle（shared memory / 特殊指令队列满，6.0）：减少 smem 访问次数（寄存器分块、向量化 LDS.128）、消除 bank conflict
+[19:23:09] - **v4_regtile**：计算瓶颈但没用 Tensor Core：矩阵乘改用 Tensor Core（FP16/BF16/TF32），峰值高 15 倍；shared memory bank conflict：平均每条读指令多 1.2 轮，用 padding 或 swizzle；主要停顿 math_pipe_throttle（计算管线忙，1.6）：计算管线已满：接近算力上限；换 Tensor Core 或低精度
+[19:23:09] - **v5_wmma**：片上访存瓶颈（L1/shared/L2 忙，DRAM 不忙）：查合并访存和 bank conflict，用寄存器分块减少 smem 读；主要停顿 long_scoreboard（等 L1TEX（全局/local memory）返回，9.0）：预取 / 多级流水（cp.async、TMA）、提高 occupancy 让别的 warp 顶上
+[19:23:09] 
+[19:23:09] 已保存到 <data>/batch/h20x8/V01/ncu_parse/s0-b89de6/artifacts/work/stages/s03_kernels/experiments/ncu_typical_values_diagnosis.md
+[19:23:09] ===== 阶段：evaluate =====
+[19:23:10] 通过：1 条命令，1.0 秒；报告 ['stages/s03_kernels/experiments/ncu_typical_values_diagnosis.md']；缺少 无
+[worker] 结束：succeeded（完成）
+{"status": "succeeded"}

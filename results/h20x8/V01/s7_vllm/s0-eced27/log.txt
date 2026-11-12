@@ -1,0 +1,74 @@
+[worker] 等待设备锁 gpu7-0
+[worker] 环境：<redacted> Linux 5.4.241-1-tlinux4-0017.7 device=cuda torch=2.15.0
+[worker] 从快照加载 <data>/batch/h20x8/V01/s7_vllm/s0-eced27/code/lessonbench/experiment.py
+[19:23:05] ===== 阶段：prepare =====
+[19:23:06] 验证项 s7_vllm（S7.3）：S7 第 3 课：TIGER 模型导出到 vLLM，trie 约束 beam search 对照自研引擎
+[19:23:06] 环境：python=3.12.3，torch=2.15.0+cu132，torch_cuda=13.2，cuda=True，gpu=NVIDIA H20，gpu_mem_gb=102.0，sm_count=78，capability=9.0，triton=3.9.0，nvcc=/usr/local/cuda/bin/nvcc，nvcc_version=['Build cuda_13.0.r13.0/compiler.36424714_0']，ncu=/usr/local/cuda/bin/ncu，ncu_version=['Version 2025.3.1.0 (build 36398880) (public-release)']，vllm_python=<assets>/venvs/vllm-env--vllm-0.11.0-transformers-4.57.1/bin/python，uv=/usr/local/bin/uv
+[19:23:08] ===== 阶段：train =====
+[19:23:08] $ [main] python -m stages.s06_recsys.code.train_genrec --only tiger
+[19:30:12] ML-1M：6040 用户，3706 物品，平均序列长度 166
+[19:30:17] [tiger] 语义 ID：3 层 × 64 码 + 去重位，词表 203，碰撞率 40.3%，重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]
+[19:30:42] [tiger] step 1000 loss 1.390 val R@10 0.1488
+[19:31:01] [tiger] step 2000 loss 1.280 val R@10 0.1667
+[19:31:21] [tiger] step 3000 loss 1.276 val R@10 0.1687
+[19:31:40] [tiger] step 4000 loss 1.273 val R@10 0.1885
+[19:31:59] [tiger] step 5000 loss 1.183 val R@10 0.1984
+[19:32:18] [tiger] step 6000 loss 1.048 val R@10 0.1667
+[19:32:38] [tiger] step 7000 loss 1.179 val R@10 0.1746
+[19:32:57] [tiger] step 8000 loss 1.120 val R@10 0.1786
+[19:33:57] # MovieLens-1M 序列推荐（全量排序，leave-one-out，6040 个测试用户，设备 cuda）
+[19:33:57] 
+[19:33:57] | 模型                          | 参数    |   Recall@10 |   NDCG@10 |   训练 s |
+[19:33:57] |-----------------------------|-------|-------------|-----------|--------|
+[19:33:57] | 热门（训练集最常见的 10 部）            | 0.00M |      0.0162 |    0.0079 |      0 |
+[19:33:57] | TIGER 式（语义 ID 3×64，beam 10） | 0.88M |      0.1967 |    0.1098 |    165 |
+[19:33:57] 
+[19:33:57] TIGER 语义 ID：词表 203（对比物品 ID 词表 3707），碰撞率 40.3%，各层之后的相对重建误差 [0.629, 0.511, 0.455]，码利用率 [1.0, 1.0, 1.0]；beam search 评估 9.9 ms/用户（逐用户、未批处理）。
+[19:33:57] 
+[19:33:58] $ [main] python -m stages.s07_capstone.code.vllm_genrec.export_hf
+[19:34:06] 已导出到 <data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/data/hf/tiger_ml1m（vLLM: LLM(model='<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/data/hf/tiger_ml1m', skip_tokenizer_init=True)）
+[19:34:08] $ [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20
+[19:34:32] INFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.
+[19:35:14] Traceback (most recent call last):
+[19:35:14]   File "<frozen runpy>", line 198, in _run_module_as_main
+[19:35:14]   File "<frozen runpy>", line 88, in _run_code
+[19:35:14]   File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 132, in <module>
+[19:35:14]     main()
+[19:35:14]   File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 79, in main
+[19:35:14]     from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics
+[19:35:14]   File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py", line 22, in <module>
+[19:35:14]     from tabulate import tabulate
+[19:35:14] ModuleNotFoundError: No module named 'tabulate'
+[19:35:17] [WARN step_failed] [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 退出码 1
+[19:35:17] ===== 阶段：evaluate =====
+[19:35:17] 未通过：3 条命令，728.4 秒；报告 ['data/hf/tiger_ml1m/config.json', 'data/hf/tiger_ml1m/generation_config.json', 'stages/s06_recsys/experiments/genrec_results_tiger.md']；缺少 无
+Traceback (most recent call last):
+  File "<repo>/labkit/worker.py", line 99, in execute
+    module.run(ctx, cfg)
+  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/code/lessonbench/experiment.py", line 204, in run
+    raise RuntimeError(f"{steps[-1]['cmd']} 失败（退出码 {steps[-1]['rc']}）：\n" + "\n".join(steps[-1]["tail"][-15:]))
+RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 失败（退出码 1）：
+INFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 132, in <module>
+    main()
+  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 79, in main
+    from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics
+  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py", line 22, in <module>
+    from tabulate import tabulate
+ModuleNotFoundError: No module named 'tabulate'
+[worker] 结束：failed（RuntimeError: [vllm] python -m stages.s07_capstone.code.vllm_genrec.constrained_beam --users 512 --beam 20 失败（退出码 1）：
+INFO 11-12 19:34:32 [__init__.py:216] Automatically detected platform cuda.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 132, in <module>
+    main()
+  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s07_capstone/code/vllm_genrec/constrained_beam.py", line 79, in main
+    from stages.s06_recsys.code.train_genrec import CKPT, MAX_ITEMS, metrics
+  File "<data>/batch/h20x8/V01/s7_vllm/s0-eced27/artifacts/work/stages/s06_recsys/code/train_genrec.py", line 22, in <module>
+    from tabulate import tabulate
+ModuleNotFoundError: No module named 'tabulate'）
+{"status": "failed"}
