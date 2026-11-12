@@ -10,3 +10,6 @@ note: W2 L09 全量：19 个场景 × 3 种子（env_probe 1 种子），每个�
 how_to_run: python -m labkit jobs run 20261111-1631-l09-h20x8
 claimed_by: agent-f80beb
 claimed_at: '2026-11-11T10:15:04Z'
+cancelled_at: '2026-11-12T10:42:48Z'
+cancel_reason: vllm-env 装到了 transformers 5.22.1，vLLM 0.11 建引擎时报 Qwen2Tokenizer 缺 all_special_tokens_extended，L09
+  运行全部失败；ec11631 已锁 transformers==4.57.1，改由新作业单重跑
