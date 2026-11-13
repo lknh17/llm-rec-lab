@@ -5,9 +5,13 @@
   "gpu": "NVIDIA H20",
   "gpu_count": 8,
   "gpu_mem_gb": 95.0,
-  "last_pull_at": 1794533061.5725486,
-  "state": "idle",
-  "queue": 0,
-  "beat_every_s": 10800,
-  "updated_at": 1794533075.156251
+  "last_pull_at": 1794538018.9533494,
+  "state": "running",
+  "queue": 1,
+  "job_id": "20261113-1046-l09-h20x8",
+  "progress": "52/52",
+  "started_at": 1794538289.980137,
+  "last_error": null,
+  "beat_every_s": 900,
+  "updated_at": 1794538289.9801588
 }
