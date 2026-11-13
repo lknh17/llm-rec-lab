@@ -1,0 +1,14 @@
+job_id: 20261113-1047-v01-h20x8
+created_at: '2026-11-13T02:47:36Z'
+profile: h20x8
+courses:
+- V01
+only:
+- ncu
+- s7_vllm
+seeds: []
+requested_commit: 85f702c234aaa0019fe4b8635205b586efaf3f02
+note: V01 补跑两项（80a7ab4）：ncu——子进程 PATH 补上 /usr/local/cuda/bin，必须产出 ncu_matmul_H20.md
+  才算通过；没有性能计数器权限（ERR_NVGPUCTRPERM）会如实失败。s7_vllm——讲义代码限定 KV 块数，避免 FlexAttention block
+  mask OOM
+how_to_run: python -m labkit jobs run 20261113-1047-v01-h20x8
