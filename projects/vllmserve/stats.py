@@ -63,9 +63,13 @@ def prom_delta(before: dict, after: dict) -> dict:
     return {k: v - before.get(k, 0.0) for k, v in after.items() if isinstance(v, (int, float))}
 
 
-def _pick(d: dict, *needles: str) -> float | None:
-    """按名字片段找计数器（vLLM 版本之间名字后缀会变，例如 _total），多个匹配时求和。"""
-    vals = [v for k, v in d.items() if all(n in k for n in needles) and not k.endswith(("_created", "_bucket"))]
+def _pick(d: dict, name: str) -> float | None:
+    """按计数器的名字精确取值：`vllm:<name>` 或 `vllm:<name>_total`（不同 vLLM 版本有没有 _total 后缀不一样）。
+
+    不能按子串匹配：vLLM 0.11 同时有 spec_decode_num_accepted_tokens_total 和按草稿位置拆开的
+    spec_decode_num_accepted_tokens_per_pos_total，子串匹配会把两者相加，接受数翻倍（H20 第一版的
+    n-gram 平均接受长度算成 2.41，vLLM 日志是 1.72）。"""
+    vals = [v for k, v in d.items() if k in (f"vllm:{name}", f"vllm:{name}_total")]
     return sum(vals) if vals else None
 
 
@@ -108,7 +112,8 @@ def engine_metrics(prom: dict, log: dict, records: list[dict]) -> dict:
     spec = {"drafts": drafts, "draft_tokens": draft_tok, "accepted_tokens": acc,
             # 每次"验证"平均产出的 token 数 = 1（目标模型自己的那个）+ 平均接受的草稿数
             "mean_accept_len": _r(1 + acc / drafts, 3) if drafts and acc is not None else _r(log.get("mean_accept_len_log"), 3),
-            "accept_rate": _r(acc / draft_tok, 4) if draft_tok and acc is not None else None}
+            "accept_rate": _r(acc / draft_tok, 4) if draft_tok and acc is not None else None,
+            "mean_accept_len_log": _r(log.get("mean_accept_len_log"), 3)}   # vLLM 自己打的日志，交叉核对用
     return {"cache": {"prefix_hit_rate": _r(hit, 4), "cached_tokens": sum(c for c in cached if c) if any(cached) else None,
                       "prompt_tokens": in_tok, "source": src},
             "sched": {"preemptions": _pick(prom, "num_preemptions")},

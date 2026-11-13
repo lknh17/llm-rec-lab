@@ -65,11 +65,15 @@ def engine_args(job: dict):
 
 每条请求一个协程，按到达时刻发出；每次收到新 token 记时刻。第一个时刻 − 到达 = TTFT（含排队）。
 
-[`vllmserve/bench_worker.py#L83-L130`](../../../projects/vllmserve/bench_worker.py#L83-L130)
+[`vllmserve/bench_worker.py#L83-L138`](../../../projects/vllmserve/bench_worker.py#L83-L138)
 
 ```python
-async def bench(engine, prompts: list[list[int]], arrivals: list[float], output_len: int) -> dict:
-    """按到达时刻发请求（流式），记录每次收到新 token 的时刻。时间都相对第一条请求的发出时刻。"""
+async def bench(engine, prompts: list[list[int]], arrivals: list[float], output_len: int, closed_loop: bool = False) -> dict:
+    """按到达时刻发请求（流式），记录每次收到新 token 的时刻。时间都相对第一条请求的发出时刻。
+
+    closed_loop：上一条请求完成后才发下一条（忽略 arrivals）。一次只跑一条（max_num_seqs = 1）时用它：
+    如果 16 条同时到达，后面的请求都在排队，TTFT 量到的是排队时间而不是 prefill（2026-11-12 H20 第一版就是这样，
+    TTFT 中位数约 7 秒，其实单条 prefill 只有 0.5 秒左右）。"""
     from vllm import SamplingParams
     from vllm.inputs import TokensPrompt
 
@@ -80,7 +84,7 @@ async def bench(engine, prompts: list[list[int]], arrivals: list[float], output_
 
     async def one(i: int) -> None:
         delay = arrivals[i] - (time.perf_counter() - t0)
-        if delay > 0:
+        if delay > 0 and not closed_loop:
             await asyncio.sleep(delay)
         arrival = time.perf_counter() - t0
         chunks, n, cached = [], 0, None
@@ -111,7 +115,11 @@ async def bench(engine, prompts: list[list[int]], arrivals: list[float], output_
         return samples
 
     sampling = asyncio.create_task(sampler())
-    await asyncio.gather(*(one(i) for i in range(len(prompts))))
+    if closed_loop:
+        for i in range(len(prompts)):                             # 一条接一条：TTFT 就是这条请求自己的 prefill
+            await one(i)
+    else:
+        await asyncio.gather(*(one(i) for i in range(len(prompts))))
     duration = time.perf_counter() - t0
     samples = await sampling
     return {"records": recs, "duration_s": duration, "max_decoding": state["max_decoding"],
@@ -158,11 +166,14 @@ def latency(records: list[dict], duration_s: float, output_len: int) -> dict:
 
 prefill 用单条 4096 的 FLOPs ÷ 算力；decode 用权重 + KV 字节 ÷ 带宽。FP8 的算力按 2 倍算，AWQ 的权重按 0.5 字节/参数算。
 
-[`vllmserve/experiment.py#L39-L57`](../../../projects/vllmserve/experiment.py#L39-L57)
+[`vllmserve/experiment.py#L39-L61`](../../../projects/vllmserve/experiment.py#L39-L61)
 
 ```python
 def roofline_est(cfg: dict, gpu_mem_gb: float = 96.0) -> dict:
-    """讲义 S2 的屋顶线公式（roofline.py 是 tools/roofline.py 的拷贝）：单条 prefill、batch=1 和 batch=max_num_seqs 的 decode 一步。"""
+    """讲义 S2 的屋顶线公式（roofline.py 是 tools/roofline.py 的拷贝）：单条 prefill、batch=1 和 batch=max_num_seqs 的 decode 一步。
+
+    prefill_ms 沿用讲义口径（lm_head 按全部 T 个位置算，61 TFLOPs、414 ms），和讲义数字一致；
+    推理引擎只对最后一个位置算 logits，所以"实际要做的 FLOPs"（prefill_flops_served，用来算 MFU）扣掉 (T − 1) 个位置的 lm_head。"""
     m, wb = SHAPES[cfg["model"]], weight_bytes(cfg)
     T, O = cfg["input_len"], cfg["output_len"]
     ctx_len = T + O // 2                                              # decode 时的平均上下文长度
@@ -171,13 +182,14 @@ def roofline_est(cfg: dict, gpu_mem_gb: float = 96.0) -> dict:
     pf = RL.prefill(m, 1, T, hw, w_bytes=wb)                          # 61 TFLOPs（7B、4096）：算力瓶颈
     d1 = RL.decode(m, 1, ctx_len, hw, w_bytes=wb)                     # 读一遍 15.2 GB 权重 + 0.23 GB KV：带宽瓶颈
     db = RL.decode(m, cfg["max_num_seqs"], ctx_len, hw, w_bytes=wb)
-    work = cfg["num_prompts"] * (pf.flops + O * d1.flops)             # 整批的模型 FLOPs（每条从头 prefill，不扣缓存省下的）
-    return {"prefill_ms": round(pf.time_s * 1e3, 2), "prefill_flops": pf.flops, "prefill_intensity": round(pf.intensity, 1),
-            "prefill_compute_bound": pf.compute_time_s >= pf.memory_time_s,
+    lm_head = 2 * m.vocab_size * m.d_model                            # 每个位置的 lm_head FLOPs（7B：1.09 GFLOPs）
+    served = pf.flops - (T - 1) * lm_head                             # 只算最后一个位置的 logits：57 TFLOPs
+    return {"prefill_ms": round(pf.time_s * 1e3, 2), "prefill_flops": pf.flops, "prefill_flops_served": served,
+            "prefill_intensity": round(pf.intensity, 1), "prefill_compute_bound": pf.compute_time_s >= pf.memory_time_s,
             "decode_ms_b1": round(d1.time_s * 1e3, 3), "decode_bytes_b1": d1.bytes, "decode_intensity_b1": round(d1.intensity, 2),
             "decode_ms_at_max_seqs": round(db.time_s * 1e3, 3), "decode_intensity_at_max_seqs": round(db.intensity, 2),
             "decode_compute_bound_at_max_seqs": db.compute_time_s >= db.memory_time_s,
-            "work_flops": work, "peak_tflops_used": peak, "w_bytes": wb,
+            "decode_flops_per_token": d1.flops, "peak_tflops_used": peak, "w_bytes": wb,
             "kv_bytes_per_token": m.kv_bytes_per_token(), "weights_gb": round(m.total_params * wb / 1e9, 2),
             "max_batch_est": RL.max_batch(m, T + O, hw, w_bytes=wb, mem_util=cfg["gpu_memory_utilization"])}
 ```

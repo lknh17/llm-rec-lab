@@ -14,7 +14,7 @@
 | - | - | - | - | - |
 | `baseline` | 对照 | 基线：7B bf16，256 条同时到达，max_num_seqs 32，每步 token 预算 8192，前缀缓存开（没有共享前缀） | — | 3 |
 | `awq_c1` | 参照 | AWQ INT4，一次只跑一条（max_num_seqs 1，16 条） | `model=qwen2.5-7b-awq`, `max_num_seqs=1`, `num_prompts=16` | 3 |
-| `seqs_1` | 参照 | 一次只跑一条（max_num_seqs 1，16 条）：TTFT 就是单条 prefill，TPOT 就是 batch=1 的 decode 一步 | `max_num_seqs=1`, `num_prompts=16` | 3 |
+| `seqs_1` | 参照 | 一次只跑一条（max_num_seqs 1，16 条依次发送，前一条完成再发下一条）：TTFT 就是单条 prefill，TPOT 就是 batch=1 的 decode 一步 | `max_num_seqs=1`, `num_prompts=16` | 3 |
 | `awq` | 本步 | AWQ INT4 权重（W4A16，awq_marlin） | `model=qwen2.5-7b-awq` | 3 |
 
 ## 先预测

@@ -14,7 +14,7 @@
 | - | - | - | - | - |
 | `seqs_8` | 对照 | max_num_seqs 8 | `max_num_seqs=8` | 3 |
 | `seqs_256` | 本步 | max_num_seqs 256 | `max_num_seqs=256` | 3 |
-| `seqs_1` | 本步 | 一次只跑一条（max_num_seqs 1，16 条）：TTFT 就是单条 prefill，TPOT 就是 batch=1 的 decode 一步 | `max_num_seqs=1`, `num_prompts=16` | 3 |
+| `seqs_1` | 本步 | 一次只跑一条（max_num_seqs 1，16 条依次发送，前一条完成再发下一条）：TTFT 就是单条 prefill，TPOT 就是 batch=1 的 decode 一步 | `max_num_seqs=1`, `num_prompts=16` | 3 |
 | `seqs_8` | 本步 | max_num_seqs 8 | `max_num_seqs=8` | 3 |
 | `baseline` | 本步 | 基线：7B bf16，256 条同时到达，max_num_seqs 32，每步 token 预算 8192，前缀缓存开（没有共享前缀） | — | 3 |
 | `seqs_128` | 本步 | max_num_seqs 128 | `max_num_seqs=128` | 3 |

@@ -37,7 +37,10 @@ def weight_bytes(cfg: dict) -> float:
 
 # --8<-- [start:roofline]
 def roofline_est(cfg: dict, gpu_mem_gb: float = 96.0) -> dict:
-    """讲义 S2 的屋顶线公式（roofline.py 是 tools/roofline.py 的拷贝）：单条 prefill、batch=1 和 batch=max_num_seqs 的 decode 一步。"""
+    """讲义 S2 的屋顶线公式（roofline.py 是 tools/roofline.py 的拷贝）：单条 prefill、batch=1 和 batch=max_num_seqs 的 decode 一步。
+
+    prefill_ms 沿用讲义口径（lm_head 按全部 T 个位置算，61 TFLOPs、414 ms），和讲义数字一致；
+    推理引擎只对最后一个位置算 logits，所以"实际要做的 FLOPs"（prefill_flops_served，用来算 MFU）扣掉 (T − 1) 个位置的 lm_head。"""
     m, wb = SHAPES[cfg["model"]], weight_bytes(cfg)
     T, O = cfg["input_len"], cfg["output_len"]
     ctx_len = T + O // 2                                              # decode 时的平均上下文长度
@@ -46,31 +49,39 @@ def roofline_est(cfg: dict, gpu_mem_gb: float = 96.0) -> dict:
     pf = RL.prefill(m, 1, T, hw, w_bytes=wb)                          # 61 TFLOPs（7B、4096）：算力瓶颈
     d1 = RL.decode(m, 1, ctx_len, hw, w_bytes=wb)                     # 读一遍 15.2 GB 权重 + 0.23 GB KV：带宽瓶颈
     db = RL.decode(m, cfg["max_num_seqs"], ctx_len, hw, w_bytes=wb)
-    work = cfg["num_prompts"] * (pf.flops + O * d1.flops)             # 整批的模型 FLOPs（每条从头 prefill，不扣缓存省下的）
-    return {"prefill_ms": round(pf.time_s * 1e3, 2), "prefill_flops": pf.flops, "prefill_intensity": round(pf.intensity, 1),
-            "prefill_compute_bound": pf.compute_time_s >= pf.memory_time_s,
+    lm_head = 2 * m.vocab_size * m.d_model                            # 每个位置的 lm_head FLOPs（7B：1.09 GFLOPs）
+    served = pf.flops - (T - 1) * lm_head                             # 只算最后一个位置的 logits：57 TFLOPs
+    return {"prefill_ms": round(pf.time_s * 1e3, 2), "prefill_flops": pf.flops, "prefill_flops_served": served,
+            "prefill_intensity": round(pf.intensity, 1), "prefill_compute_bound": pf.compute_time_s >= pf.memory_time_s,
             "decode_ms_b1": round(d1.time_s * 1e3, 3), "decode_bytes_b1": d1.bytes, "decode_intensity_b1": round(d1.intensity, 2),
             "decode_ms_at_max_seqs": round(db.time_s * 1e3, 3), "decode_intensity_at_max_seqs": round(db.intensity, 2),
             "decode_compute_bound_at_max_seqs": db.compute_time_s >= db.memory_time_s,
-            "work_flops": work, "peak_tflops_used": peak, "w_bytes": wb,
+            "decode_flops_per_token": d1.flops, "peak_tflops_used": peak, "w_bytes": wb,
             "kv_bytes_per_token": m.kv_bytes_per_token(), "weights_gb": round(m.total_params * wb / 1e9, 2),
             "max_batch_est": RL.max_batch(m, T + O, hw, w_bytes=wb, mem_util=cfg["gpu_memory_utilization"])}
 # --8<-- [end:roofline]
 
 
-def compare_roofline(est: dict, lat: dict, thr: dict, cfg: dict) -> dict:
-    """实测 ÷ 估算。单条请求（max_num_seqs = 1）时 TTFT 就是 prefill、TPOT 就是 batch=1 的 decode 一步，比值最有意义。"""
+def compare_roofline(est: dict, lat: dict, thr: dict, cfg: dict, cached_tokens: int = 0) -> dict:
+    """实测 ÷ 估算。单条请求（max_num_seqs = 1，闭环发送）时 TTFT 就是 prefill、TPOT 就是 batch=1 的 decode 一步。
+
+    work_mfu：整批实际做的模型 FLOPs ÷ 时长 ÷ bf16 标称。命中前缀缓存的 token 不做 prefill，按比例扣掉
+    （命中的是开头的 token，它们的 attention 本来就便宜，这样扣略多，偏保守）。"""
     out: dict = {}
     ttft, tpot = lat.get("ttft_ms_p50"), lat.get("tpot_ms_p50")
     peak_bf16 = cfg["peak_tflops"] * 1e12
     if ttft:
         out["ttft_vs_est"] = round(ttft / est["prefill_ms"], 3)
-        out["prefill_mfu"] = round(est["prefill_flops"] / (ttft / 1e3) / peak_bf16, 4)       # 按 bf16 标称
+        out["prefill_mfu"] = round(est["prefill_flops_served"] / (ttft / 1e3) / peak_bf16, 4)   # 按 bf16 标称
     if tpot:
         out["tpot_vs_est"] = round(tpot / est["decode_ms_b1"], 3)
         out["decode_mbu"] = round(est["decode_bytes_b1"] / (tpot / 1e3) / (cfg["hbm_gbps"] * 1e9), 4)
     if thr.get("duration_s"):
-        out["work_mfu"] = round(est["work_flops"] / thr["duration_s"] / peak_bf16, 4)      # 整批等效 MFU（不扣前缀缓存）
+        n, T, O = cfg["num_prompts"], cfg["input_len"], cfg["output_len"]
+        uncached = max(0.0, 1 - cached_tokens / (n * T)) if n * T else 1.0
+        work = n * (est["prefill_flops_served"] * uncached + (O - 1) * est["decode_flops_per_token"])
+        out["work_flops"] = work
+        out["work_mfu"] = round(work / thr["duration_s"] / peak_bf16, 4)
     return out
 
 
@@ -179,6 +190,8 @@ def run(ctx, cfg: dict) -> None:
         job = {k: cfg[k] for k in ("seed", "max_num_seqs", "max_num_batched_tokens", "enable_prefix_caching", "gpu_memory_utilization",
                                    "quantization", "spec", "num_speculative_tokens", "output_len")}
         job.update({"model_path": path, "prompts": prompts, "arrivals": arrivals,
+                    # 一次只跑一条时闭环发送：上一条完成再发下一条，TTFT 才是单条 prefill（否则是排队时间）
+                    "closed_loop": cfg["max_num_seqs"] == 1,
                     "max_model_len": cfg["input_len"] + cfg["output_len"] + (cfg["num_speculative_tokens"] + 8 if cfg["spec"] != "none" else 8),
                     "draft_path": resolve_model_path(REPOS[DRAFT_MODEL]) if cfg["spec"] == "draft" else None})
         res = run_vllm(ctx, job)
@@ -194,7 +207,7 @@ def run(ctx, cfg: dict) -> None:
     eng = S.engine_metrics(S.prom_delta(res["prom_before"], res["prom_after"]), log, recs)
     cache_cfg = res["prom_after"].get("cache_config") or {}
     est = roofline_est(cfg, res["env"].get("gpu_mem_gb") or 96.0)
-    roof = {**est, **compare_roofline(est, base["latency"], base["throughput"], cfg)}
+    roof = {**est, **compare_roofline(est, base["latency"], base["throughput"], cfg, eng["cache"].get("cached_tokens") or 0)}
     engine = {"max_num_seqs": cfg["max_num_seqs"], "max_num_batched_tokens": cfg["max_num_batched_tokens"],
               "enable_prefix_caching": cfg["enable_prefix_caching"], "gpu_memory_utilization": cfg["gpu_memory_utilization"],
               "quantization": cfg["quantization"], "spec": cfg["spec"], "num_speculative_tokens": cfg["num_speculative_tokens"],
@@ -206,7 +219,8 @@ def run(ctx, cfg: dict) -> None:
     lat, thr = base["latency"], base["throughput"]
     first = [{"ttft_ms": round((r["chunk_times"][0] - r["arrival"]) * 1e3, 1), "n_out": r["n_out"], "chunks": len(r["chunk_times"]),
               "num_cached": r["num_cached"], "arrival_s": round(r["arrival"], 3)} for r in recs[:5] if r["chunk_times"]]
-    ctx.trace("requests", {"note": "前 5 条请求：TTFT（含排队）、输出 token 数、分几次收到、命中缓存的输入 token 数", "rows": first})
+    ctx.trace("requests", {"note": "前 5 条请求：TTFT（同时到达时含排队；一次只跑一条时闭环发送，不含排队）、输出 token 数、分几次收到、"
+                                   "命中缓存的输入 token 数", "closed_loop": cfg["max_num_seqs"] == 1, "rows": first})
     disp = {"条/s": thr["req_per_s"], "输入 tok/s": thr["input_tok_per_s"], "TTFT p50 ms": lat["ttft_ms_p50"],
             "TPOT p50 ms": lat["tpot_ms_p50"], "ITL p99 ms": lat["itl_ms_p99"], "前缀命中率": eng["cache"]["prefix_hit_rate"],
             "同时 decode 最多": sched["max_decoding"], "等效 MFU": roof.get("work_mfu")}

@@ -182,7 +182,7 @@ steps:
   file: 06-ttft
   stage: single
   title: 单条 prefill
-  body: '一次只跑一条（max_num_seqs 1，16 条依次处理）。这时 TTFT 就是单条 4096 token 的 prefill（加上一点调度开销），屋顶线下限 414 ms。
+  body: '一次只跑一条（max_num_seqs 1）：16 条请求依次发送，前一条完成后才发下一条。这时 TTFT 就是单条 4096 token 的 prefill（加上一点调度开销），屋顶线下限 414 ms。
 
     '
   scenarios:
@@ -190,9 +190,9 @@ steps:
   question:
     text: 实测 TTFT 是屋顶线下限的几倍？
     options:
-    - 不到 1.2 倍
-    - 1.2 - 1.6 倍
-    - 1.6 - 2.5 倍
+    - 不到 1.1 倍
+    - 1.1 - 1.5 倍
+    - 1.5 - 2.5 倍
     - 2.5 倍以上
   columns:
   - path: summary.latency.ttft_ms_p50
@@ -374,9 +374,9 @@ steps:
   question:
     text: 预算从 16384 降到 2048，ITL p99（相邻两个输出之间最长的那批间隔）变成多少？
     options:
-    - 不到原来的 40%
-    - 原来的 40% - 80%
-    - 80% 以上（差不多或更差）
+    - 不到原来的 60%
+    - 原来的 60% - 90%
+    - 90% 以上（差不多或更差）
   columns:
   - path: summary.latency.itl_ms_p99
     label: ITL p99 ms
@@ -456,14 +456,13 @@ steps:
   file: 15-spec
   stage: savings
   title: 投机解码
-  body: 'n-gram 投机（不需要草稿模型）：用最近生成的几个 token 去输入里找相同的片段，把它后面的 4 个 token 当草稿，目标模型一步验证 5 个位置。打标输出的 JSON 大量原文摘录内容里的卖点和优惠，草稿经常能对上。先看一次只跑一条（16 条）。
+  body: 'n-gram 投机（不需要草稿模型）：用最近生成的几个 token 去输入里找相同的片段，把它后面的 4 个 token 当草稿，目标模型一步验证 5 个位置。打标输出的 JSON 会原文摘录内容里的卖点和优惠，看起来草稿应该常能对上。先看一次只跑一条（16 条）。
 
     '
   scenarios:
   - spec_ngram_c1
   compare_to: seqs_1
   also:
-  - spec_draft_c1
   - spec_ngram_c32
   - baseline
   question:

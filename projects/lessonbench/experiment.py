@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import fnmatch
 import os
 import queue
 import shutil
@@ -94,13 +95,17 @@ def interpreter(kind: str, env: dict) -> list[str]:
     return [sys.executable]
 
 
-def _child_env(kind: str, work: Path, extra: dict) -> dict:
+def _child_env(kind: str, work: Path, extra: dict, env: dict | None = None) -> dict:
     e = dict(os.environ)
     if kind == "vllm":                                   # 不让主环境的 torch 混进 vllm-env
         for k in ("PYTHONPATH", "VIRTUAL_ENV", "PYTHONHOME"):
             e.pop(k, None)
+    # 讲义脚本按 PATH 找 nvcc / ncu（ncu_profile.py 用 shutil.which("ncu")）。probe 能在 /usr/local/cuda/bin 找到它们，
+    # 但 agent 的 PATH 里通常没有这个目录：W3 的 ncu 项因此只打印了命令就"成功"退出。把它们所在目录补进 PATH。
+    tool_dirs = [str(Path(p).parent) for p in ((env or {}).get("nvcc"), (env or {}).get("ncu")) if p]
+    path = os.pathsep.join(dict.fromkeys(tool_dirs + e.get("PATH", "").split(os.pathsep)))
     e.update({"PYTHONPATH": str(work), "PYTHONUNBUFFERED": "1", "MPLBACKEND": "Agg", "VLLM_NO_USAGE_STATS": "1",
-              "TOKENIZERS_PARALLELISM": "false", **extra})
+              "TOKENIZERS_PARALLELISM": "false", "PATH": path, **extra})
     return e
 
 
@@ -190,19 +195,26 @@ def run(ctx, cfg: dict) -> None:
             cmd = interpreter(kind, env) + args
             shown = f"[{kind}] python " + " ".join(args).replace(str(HERE) + "/", "")
             ctx.log(f"$ {shown}")
-            r = run_step(ctx, cmd, work, _child_env(kind, work, {}))
+            r = run_step(ctx, cmd, work, _child_env(kind, work, {}, env))
             steps.append({"cmd": shown, **r})
             if r["rc"] != 0:
                 ctx.warn("step_failed", f"{shown} 退出码 {r['rc']}")
                 break
     ctx.stage("evaluate")
     texts, others = collect(work, before)
-    ok = not lack and bool(steps or not item["steps"]) and all(s["rc"] == 0 for s in steps)
+    ran = not lack and bool(steps or not item["steps"]) and all(s["rc"] == 0 for s in steps)
+    # 讲义脚本在环境不全时常常"打印提示后正常退出"（例如找不到 ncu 只打印命令）：声明了 expects 的项，
+    # 退出码 0 还不够，必须真的产出了对应报告才算通过
+    absent = [pat for pat in item.get("expects", []) if not any(fnmatch.fnmatch(rel, pat) for rel in texts)]
+    if ran and absent:
+        ctx.warn("no_report", f"命令都成功退出，但没有生成 {absent}（脚本可能缺环境后只打印了提示）")
+    ok = ran and not absent
     ctx.trace("outputs", {"note": "这一项新生成的报告（讲义脚本写在 experiments/ 下的 md / csv），全文", "files": texts})
     ctx.trace("steps", {"note": "每条命令最后 40 行输出", "steps": steps})
     seconds = round(sum(s["seconds"] for s in steps), 1)
     ctx.summary({"item": cfg["item"], "lesson": item["lesson"], "title": item["title"], "ok": ok, "missing": lack, "env": env,
                  "steps": [{k: s[k] for k in ("cmd", "rc", "seconds")} for s in steps], "outputs": sorted(texts), "binary_outputs": others,
+                 "missing_reports": absent,
                  "seconds": seconds, "headline": {"ok": int(ok), "seconds": seconds},
                  "display": {"通过": int(ok), "用时 s": seconds}})
     ctx.log(f"{'通过' if ok else '未通过'}：{len(steps)} 条命令，{seconds} 秒；报告 {sorted(texts) or '无'}；缺少 {lack or '无'}")

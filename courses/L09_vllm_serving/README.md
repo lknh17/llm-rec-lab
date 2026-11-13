@@ -56,7 +56,7 @@ decode ：每步每条请求 1 个 token，矩阵乘 [B, 3584] × [3584, N]，�
 <!-- labkit:results -->
 <details><summary>展开结果（先自己预测，再看）</summary>
 
-**h20x8**：8 × NVIDIA H20（96 GB，bf16 稠密标称 148 TFLOPS，HBM 标称 4.0 TB/s），每个运行独占 1 张卡。vLLM 0.11 装在独立环境 vllm-env 里；Qwen2.5-7B-Instruct bf16，每条输入 4096 token、输出 50 token（忽略 EOS），贪心解码（已有 52 / 55 个运行）
+**h20x8**：8 × NVIDIA H20（96 GB，bf16 稠密标称 148 TFLOPS，HBM 标称 4.0 TB/s），每个运行独占 1 张卡。vLLM 0.11 装在独立环境 vllm-env 里；Qwen2.5-7B-Instruct bf16，每条输入 4096 token、输出 50 token（忽略 EOS），贪心解码（已有 52 / 52 个运行）
 
 | 场景 | 类型 | 条/s | 输入 tok/s | TTFT p50 ms | TPOT p50 ms | ITL p99 ms | 前缀命中率 | 同时 decode 最多 | 断言 |
 | - | - | - | - | - | - | - | - | - | - |
@@ -75,7 +75,6 @@ decode ：每步每条请求 1 个 token，矩阵乘 [B, 3584] × [3584, N]，�
 | `awq_c1` | 候选改动 | 0.9527 ± 0.0049 (n=3) | 3902.8667 ± 19.2115 (n=3) | 8659.0533 ± 53.7718 (n=3) | 5.2233 ± 0.0153 (n=3) | 8.9067 ± 0.1193 (n=3) | 0.0000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) | 通过 |
 | `spec_ngram_c1` | 候选改动 | 1.1737 ± 0.0423 (n=3) | 4806.8667 ± 172.9937 (n=3) | 6983.8700 ± 422.6079 (n=3) | 6.8067 ± 0.0896 (n=3) | 13.8100 ± 0.6842 (n=3) | 0.0000 ± 0.0000 (n=3) | 1.0000 ± 0.0000 (n=3) | 通过 |
 | `spec_ngram_c32` | 候选改动 | 1.8887 ± 0.0186 (n=3) | 7736.6333 ± 76.1903 (n=3) | 67569.7700 ± 687.2131 (n=3) | 320.1200 ± 2.1394 (n=3) | 1014.3367 ± 7.6305 (n=3) | 0.0000 ± 0.0000 (n=3) | 32.0000 ± 0.0000 (n=3) | 通过 |
-| `spec_draft_c1` | 候选改动 | 待生成 | 待生成 | 待生成 | 待生成 | 待生成 | 待生成 | 待生成 | |
 | `kv_util_05` | 候选改动 | 1.9123 ± 0.0106 (n=3) | 7832.9333 ± 43.1919 (n=3) | 66512.8933 ± 342.5845 (n=3) | 1025.9700 ± 5.4259 (n=3) | 1066.3833 ± 36.1353 (n=3) | 0.0000 ± 0.0000 (n=3) | 98.0000 ± 0.0000 (n=3) | 通过 |
 | `fault_prefix_tail` | 教学故障 | 1.9037 ± 0.0025 (n=3) | 7797.7333 ± 10.0201 (n=3) | 67232.9567 ± 221.0325 (n=3) | 311.5500 ± 0.6180 (n=3) | 1033.4533 ± 14.6878 (n=3) | 0.0000 ± 0.0000 (n=3) | 32.0000 ± 0.0000 (n=3) | 通过 |
 | `fix_prefix_head` | 修复 | 6.4793 ± 0.0296 (n=3) | 26539.6667 ± 122.0825 (n=3) | 19688.2067 ± 71.5776 (n=3) | 79.7367 ± 0.5036 (n=3) | 1047.2900 ± 3.4798 (n=3) | 0.7471 ± 0.0000 (n=3) | 32.0000 ± 0.0000 (n=3) | 通过 |
@@ -103,7 +102,7 @@ decode ：每步每条请求 1 个 token，矩阵乘 [B, 3584] × [3584, N]，�
 | `engine_args` | [projects/vllmserve/bench_worker.py#L39](../../projects/vllmserve/bench_worker.py#L39) |
 | `client` | [projects/vllmserve/bench_worker.py#L82](../../projects/vllmserve/bench_worker.py#L82) |
 | `roofline` | [projects/vllmserve/experiment.py#L38](../../projects/vllmserve/experiment.py#L38) |
-| `subprocess` | [projects/vllmserve/experiment.py#L99](../../projects/vllmserve/experiment.py#L99) |
+| `subprocess` | [projects/vllmserve/experiment.py#L110](../../projects/vllmserve/experiment.py#L110) |
 | `build` | [projects/vllmserve/prompts.py#L82](../../projects/vllmserve/prompts.py#L82) |
 | `hardware` | [projects/vllmserve/roofline.py#L16](../../projects/vllmserve/roofline.py#L16) |
 | `hardware_class` | [projects/vllmserve/roofline.py#L17](../../projects/vllmserve/roofline.py#L17) |
@@ -118,5 +117,5 @@ decode ：每步每条请求 1 个 token，矩阵乘 [B, 3584] × [3584, N]，�
 | `decode_fn` | [projects/vllmserve/roofline.py#L218](../../projects/vllmserve/roofline.py#L218) |
 | `max_batch` | [projects/vllmserve/roofline.py#L234](../../projects/vllmserve/roofline.py#L234) |
 | `latency` | [projects/vllmserve/stats.py#L30](../../projects/vllmserve/stats.py#L30) |
-| `engine_metrics` | [projects/vllmserve/stats.py#L93](../../projects/vllmserve/stats.py#L93) |
+| `engine_metrics` | [projects/vllmserve/stats.py#L97](../../projects/vllmserve/stats.py#L97) |
 <!-- /labkit:code -->

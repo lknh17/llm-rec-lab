@@ -72,10 +72,13 @@ def test_log_and_counter_parsing():
     prom = S.prom_delta({"vllm:prefix_cache_queries_total": 100.0, "vllm:spec_decode_num_drafts_total": 0.0},
                         {"vllm:prefix_cache_queries_total": 300.0, "vllm:prefix_cache_hits_total": 50.0,
                          "vllm:spec_decode_num_drafts_total": 40.0, "vllm:spec_decode_num_draft_tokens_total": 160.0,
-                         "vllm:spec_decode_num_accepted_tokens_total": 60.0, "vllm:num_preemptions_total": 3.0})
+                         "vllm:spec_decode_num_accepted_tokens_total": 60.0, "vllm:num_preemptions_total": 3.0,
+                         # vLLM 0.11 还有按草稿位置拆开的接受数（各位置之和 = 总数），不能再加一遍（H20 第一版就算成了 2 倍）
+                         "vllm:spec_decode_num_accepted_tokens_per_pos_total": 60.0})
     m = S.engine_metrics(prom, p, recs)
     assert m["cache"]["prefix_hit_rate"] == 0.25 and m["cache"]["source"].startswith("prometheus")
     assert m["spec"]["mean_accept_len"] == 2.5 and m["spec"]["accept_rate"] == 0.375 and m["sched"]["preemptions"] == 3.0
+    assert m["spec"]["mean_accept_len_log"] == 2.31
     recs[0]["num_cached"] = 40                                              # 每条请求自报的优先
     assert S.engine_metrics(prom, p, recs)["cache"]["prefix_hit_rate"] == 0.4
     assert S.engine_metrics({}, p, [dict(recs[0], num_cached=None)])["cache"]["prefix_hit_rate"] == 0.475
@@ -95,6 +98,63 @@ def test_roofline_matches_lesson_numbers():
     cmp = X.compare_roofline(e, {"ttft_ms_p50": 600.0, "tpot_ms_p50": 6.0}, {"duration_s": 100.0}, cfg)
     assert cmp["ttft_vs_est"] == pytest.approx(600 / e["prefill_ms"], rel=1e-3) and 0.6 < cmp["prefill_mfu"] < 0.7
     assert 0.6 < cmp["decode_mbu"] < 0.7
+
+
+def test_work_mfu_counts_only_done_work():
+    """等效 MFU 只算实际做了的 FLOPs：lm_head 只算最后一个位置（vLLM 的做法）、命中前缀缓存的 token 不算 prefill。
+    H20 第一版没扣这两项，前缀缓存场景的"MFU"算到了 149% / 272%。"""
+    cfg = PARAMS.resolve({})
+    e = X.roofline_est(cfg)
+    assert e["prefill_flops_served"] == pytest.approx(e["prefill_flops"] - 4095 * 2 * 152064 * 3584, rel=1e-9)
+    assert 56e12 < e["prefill_flops_served"] < 58e12 and e["prefill_ms"] == pytest.approx(414, abs=3)   # 讲义口径的 414 ms 不变
+    full = X.compare_roofline(e, {}, {"duration_s": 256 / 1.913}, cfg)["work_mfu"]
+    hit = X.compare_roofline(e, {}, {"duration_s": 256 / 3.556}, PARAMS.resolve({"shared_prefix": 2048}),
+                             cached_tokens=int(0.498 * 256 * 4096))["work_mfu"]
+    assert 0.7 < full < 0.8 and abs(hit - full) < 0.06, "扣掉缓存命中后，前缀缓存场景和基线的 MFU 应当同量级"
+
+
+def test_closed_loop_sends_one_after_another():
+    """一次只跑一条时闭环发送：后一条在前一条完成后才发，TTFT 不含排队。"""
+    import asyncio
+
+    from vllmserve import bench_worker as W
+
+    class Out:
+        def __init__(self, k):
+            self.outputs = [type("O", (), {"token_ids": list(range(k))})()]
+            self.num_cached_tokens = 0
+
+    class Engine:
+        def __init__(self):
+            self.active, self.peak = 0, 0
+
+        async def generate(self, prompt, sp, request_id):
+            self.active += 1
+            self.peak = max(self.peak, self.active)
+            for k in range(1, sp.max_tokens + 1):
+                await asyncio.sleep(0.01)
+                yield Out(k)
+            self.active -= 1
+
+    import types
+
+    fake_vllm = types.ModuleType("vllm")
+    fake_vllm.SamplingParams = lambda **kw: types.SimpleNamespace(**kw)
+    fake_inputs = types.ModuleType("vllm.inputs")
+    fake_inputs.TokensPrompt = lambda **kw: kw
+    sys.modules.setdefault("vllm", fake_vllm)
+    sys.modules.setdefault("vllm.inputs", fake_inputs)
+    try:
+        for closed, want_peak in ((True, 1), (False, 4)):
+            eng = Engine()
+            res = asyncio.run(W.bench(eng, [[1, 2]] * 4, [0.0] * 4, 3, closed_loop=closed))
+            assert eng.peak == want_peak
+            ttft = [r["chunk_times"][0] - r["arrival"] for r in res["records"]]
+            if closed:
+                assert max(ttft) < 0.05, "闭环发送时每条的 TTFT 都只有自己的第一步"
+    finally:
+        if sys.modules.get("vllm") is fake_vllm:
+            del sys.modules["vllm"], sys.modules["vllm.inputs"]
 
 
 def test_roofline_copy_is_byte_identical_to_lesson_tool():
@@ -205,7 +265,7 @@ def test_scenarios_l09():
     for s in h:
         assert s.cfg["shared_prefix"] < s.cfg["input_len"]
     m = scenarios.expand("L09", "mac-smoke")
-    assert {s.scenario for s in m}.isdisjoint({"env_probe", "fp8", "awq", "awq_c1", "spec_ngram_c1", "spec_draft_c1", "kv_util_05"})
+    assert {s.scenario for s in m}.isdisjoint({"env_probe", "fp8", "awq", "awq_c1", "spec_ngram_c1", "kv_util_05"})
     for s in m:
         assert s.cfg["backend"] == "hf" and s.cfg["shared_prefix"] < s.cfg["input_len"] and not s.expect
     for s in scenarios.load_course("L09")["scenarios"]:

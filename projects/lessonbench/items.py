@@ -28,7 +28,9 @@ ITEMS: dict[str, dict] = {
     "cuda_matmul": {"title": "S3 第 5 课：手写 CUDA matmul v1-v5 对照 cuBLAS", "lesson": "S3.5",
                     "steps": [("main", ["-m", f"{S3}.cuda.bench_matmul", "--hw", "{hw}"])], "needs": ["cuda", "nvcc"]},
     "ncu": {"title": "S3 第 6 课：Nsight Compute 采集 v1-v5 的关键指标并自动诊断", "lesson": "S3.6",
-            "steps": [("main", ["-m", f"{S3}.cuda.ncu_profile", "--hw", "{hw}"])], "needs": ["cuda", "nvcc", "ncu"]},
+            "steps": [("main", ["-m", f"{S3}.cuda.ncu_profile", "--hw", "{hw}"])], "needs": ["cuda", "nvcc", "ncu"],
+            # 找不到 ncu 时脚本只打印命令、退出码 0：必须真的写出报告才算通过
+            "expects": ["stages/s03_kernels/experiments/ncu_matmul_*.md"]},
     "ncu_parse": {"title": "S3 第 6 课：解析讲义附带的典型值 CSV（不需要 GPU，冒烟用）", "lesson": "S3.6",
                   "steps": [("main", ["-m", f"{S3}.cuda.ncu_profile", "--parse", "stages/s03_kernels/experiments/ncu_typical_values.csv"])],
                   "needs": []},

@@ -46,11 +46,12 @@ scenarios:
   # ---------- 单条请求：屋顶线 ----------
   - id: seqs_1
     role: reference
-    title: 一次只跑一条（max_num_seqs 1，16 条）：TTFT 就是单条 prefill，TPOT 就是 batch=1 的 decode 一步
+    title: 一次只跑一条（max_num_seqs 1，16 条依次发送，前一条完成再发下一条）：TTFT 就是单条 prefill，TPOT 就是 batch=1 的 decode 一步
     params: {max_num_seqs: 1, num_prompts: 16}
     expect:
       - "summary.sched.max_decoding == 1"
       - "summary.roofline.ttft_vs_est > 1.0"
+      - "summary.roofline.ttft_vs_est < 3.0"
       - "summary.roofline.tpot_vs_est > 1.0"
 
   # ---------- batch 拐点 ----------
@@ -73,6 +74,7 @@ scenarios:
     expect:
       - "summary.latency.tpot_ms_p50 > base.summary.latency.tpot_ms_p50"
       - "summary.sched.max_decoding > 32"
+      # 每步 token 预算 8192 也限制并发：同时 decode 最多约 100 条（H20 第一版实测 98），不会到 256
 
   # ---------- 前缀缓存 ----------
   - id: prefix_off
@@ -145,13 +147,8 @@ scenarios:
     profiles: [h20x8]
     expect:
       - "summary.spec.mean_accept_len > 1.0"
-  - id: spec_draft_c1
-    role: variant
-    title: Qwen2.5-0.5B 草稿模型（k=4），一次只跑一条（16 条）
-    params: {spec: draft, max_num_seqs: 1, num_prompts: 16}
-    profiles: [h20x8]
-    expect:
-      - "summary.spec.mean_accept_len > 1.0"
+  # 草稿模型投机（spec: draft）在 vLLM 0.11 的 V1 引擎里还不支持（NotImplementedError，2026-11-12 H20 实测），
+  # 场景 spec_draft_c1 已删除；参数 spec=draft 保留，换到支持的 vLLM 版本后可以加回来。
 
   # ---------- KV 显存 ----------
   - id: kv_util_05

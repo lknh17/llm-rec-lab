@@ -1,6 +1,7 @@
 """lessonbench（V01）：每个验证项的入口都在 vendor/ 里、环境缺失的判定、执行与报告收集（用当前解释器跑一个假入口）、场景清单。"""
 
 import json
+import os
 import sys
 
 import pytest
@@ -84,10 +85,34 @@ def test_failed_step_and_missing_env(monkeypatch, tmp_path):
 
 def test_interpreter_choice(monkeypatch):
     env = {"uv": "/bin/uv", "vllm_python": "/venvs/vllm/bin/python"}
-    assert X.interpreter("vllm", env) == ["/venvs/vllm/bin/python"]
+    vl = X.interpreter("vllm", env)
+    assert vl[:2] == ["/bin/uv", "run"] and "/venvs/vllm/bin/python" in vl and "--no-project" in vl
+    assert X.interpreter("vllm", {"uv": None, "vllm_python": "/venvs/vllm/bin/python"}) == ["/venvs/vllm/bin/python"]
     main = X.interpreter("main", env)
     assert main[:2] == ["/bin/uv", "run"] and "--no-sync" in main and main.count("--with") == 3 and main[-1] == "python"
     assert X.interpreter("main", {"uv": None}) == [sys.executable]
+
+
+def test_child_env_puts_cuda_tools_on_path(tmp_path, monkeypatch):
+    """讲义脚本用 shutil.which 找 ncu / nvcc；probe 在 /usr/local/cuda/bin 找到了，子进程的 PATH 里也要有（W3 的 ncu 项就栽在这）。"""
+    monkeypatch.setenv("PATH", "/usr/bin:/bin")
+    e = X._child_env("main", tmp_path, {}, {"nvcc": "/usr/local/cuda/bin/nvcc", "ncu": "/opt/nsight/ncu"})
+    parts = e["PATH"].split(os.pathsep)
+    assert parts[:2] == ["/usr/local/cuda/bin", "/opt/nsight"] and "/usr/bin" in parts
+    assert X._child_env("main", tmp_path, {})["PATH"].split(os.pathsep) == ["/usr/bin", "/bin"]
+
+
+def test_expected_report_missing_fails(monkeypatch, tmp_path):
+    """退出码 0 但没写出声明的报告（例如找不到 ncu 只打印命令）：判未通过，不能当成功。"""
+    ctx = _fake(monkeypatch, tmp_path, "print('找不到 ncu，下面是要运行的命令')\n")
+    monkeypatch.setitem(ITEMS["fake"], "expects", ["stages/*/experiments/ncu_matmul_*.md"])
+    X.run(ctx, {"item": "fake", "hw": "H20"})
+    assert ctx.s["ok"] is False and ctx.s["missing_reports"] == ["stages/*/experiments/ncu_matmul_*.md"] and "no_report" in ctx.w
+    ctx2 = _fake(monkeypatch, tmp_path / "b", "import pathlib\np = pathlib.Path('stages/s03/experiments')\np.mkdir(parents=True)\n"
+                 "(p / 'ncu_matmul_H20.md').write_text('# 报告')\n")
+    monkeypatch.setitem(ITEMS["fake"], "expects", ["stages/*/experiments/ncu_matmul_*.md"])
+    X.run(ctx2, {"item": "fake", "hw": "H20"})
+    assert ctx2.s["ok"] is True and ctx2.s["missing_reports"] == []
 
 
 def test_scenarios_v01():

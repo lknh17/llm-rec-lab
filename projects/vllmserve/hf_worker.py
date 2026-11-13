@@ -36,9 +36,12 @@ def run(ctx, cfg: dict, model_path: str, prompts: list[list[int]], arrivals: lis
         for i, ids in enumerate(prompts):
             ctx.check()
             wait = arrivals[i] - (time.perf_counter() - t0)
-            if wait > 0:
+            if wait > 0 and cfg["max_num_seqs"] > 1:
                 time.sleep(wait)
-            arrival = max(arrivals[i], time.perf_counter() - t0) if cfg["request_rate"] > 0 else 0.0
+            # 逐条处理：一次只跑一条（max_num_seqs = 1）时按闭环口径，到达 = 真正开始处理的时刻（TTFT 不含排队），
+            # 和 vLLM 测量进程的 closed_loop 一致；否则按到达时刻（全部同时到达时，后面的请求含排队）
+            now = time.perf_counter() - t0
+            arrival = now if cfg["max_num_seqs"] == 1 else (max(arrivals[i], now) if cfg["request_rate"] > 0 else 0.0)
             x = torch.tensor([ids], device=dev)                       # [1, T]
             out = model(input_ids=x, use_cache=True)                  # prefill：logits [1, T, V]
             nxt = out.logits[:, -1].argmax(-1, keepdim=True)          # [1, 1]

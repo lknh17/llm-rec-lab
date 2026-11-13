@@ -12,7 +12,7 @@
 
 | 场景 | 作用 | 说明 | 相对基线改了什么 | 种子（H20） |
 | - | - | - | - | - |
-| `seqs_1` | 本步 | 一次只跑一条（max_num_seqs 1，16 条）：TTFT 就是单条 prefill，TPOT 就是 batch=1 的 decode 一步 | `max_num_seqs=1`, `num_prompts=16` | 3 |
+| `seqs_1` | 本步 | 一次只跑一条（max_num_seqs 1，16 条依次发送，前一条完成再发下一条）：TTFT 就是单条 prefill，TPOT 就是 batch=1 的 decode 一步 | `max_num_seqs=1`, `num_prompts=16` | 3 |
 
 ## 先预测
 

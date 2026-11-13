@@ -62,8 +62,8 @@
 <!-- labkit:code -->
 | 代码段 | 位置 |
 | - | - |
-| `probe` | [projects/lessonbench/experiment.py#L43](../../projects/lessonbench/experiment.py#L43) |
-| `run_step` | [projects/lessonbench/experiment.py#L121](../../projects/lessonbench/experiment.py#L121) |
+| `probe` | [projects/lessonbench/experiment.py#L44](../../projects/lessonbench/experiment.py#L44) |
+| `run_step` | [projects/lessonbench/experiment.py#L126](../../projects/lessonbench/experiment.py#L126) |
 | `items` | [projects/lessonbench/items.py#L14](../../projects/lessonbench/items.py#L14) |
 | `naive` | [projects/lessonbench/vendor/stages/s01_transformer/code/attention.py#L17](../../projects/lessonbench/vendor/stages/s01_transformer/code/attention.py#L17) |
 | `naive_scores` | [projects/lessonbench/vendor/stages/s01_transformer/code/attention.py#L18](../../projects/lessonbench/vendor/stages/s01_transformer/code/attention.py#L18) |

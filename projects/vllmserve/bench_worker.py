@@ -80,8 +80,12 @@ def prom_snapshot() -> dict:
 
 
 # --8<-- [start:client]
-async def bench(engine, prompts: list[list[int]], arrivals: list[float], output_len: int) -> dict:
-    """按到达时刻发请求（流式），记录每次收到新 token 的时刻。时间都相对第一条请求的发出时刻。"""
+async def bench(engine, prompts: list[list[int]], arrivals: list[float], output_len: int, closed_loop: bool = False) -> dict:
+    """按到达时刻发请求（流式），记录每次收到新 token 的时刻。时间都相对第一条请求的发出时刻。
+
+    closed_loop：上一条请求完成后才发下一条（忽略 arrivals）。一次只跑一条（max_num_seqs = 1）时用它：
+    如果 16 条同时到达，后面的请求都在排队，TTFT 量到的是排队时间而不是 prefill（2026-11-12 H20 第一版就是这样，
+    TTFT 中位数约 7 秒，其实单条 prefill 只有 0.5 秒左右）。"""
     from vllm import SamplingParams
     from vllm.inputs import TokensPrompt
 
@@ -92,7 +96,7 @@ async def bench(engine, prompts: list[list[int]], arrivals: list[float], output_
 
     async def one(i: int) -> None:
         delay = arrivals[i] - (time.perf_counter() - t0)
-        if delay > 0:
+        if delay > 0 and not closed_loop:
             await asyncio.sleep(delay)
         arrival = time.perf_counter() - t0
         chunks, n, cached = [], 0, None
@@ -123,7 +127,11 @@ async def bench(engine, prompts: list[list[int]], arrivals: list[float], output_
         return samples
 
     sampling = asyncio.create_task(sampler())
-    await asyncio.gather(*(one(i) for i in range(len(prompts))))
+    if closed_loop:
+        for i in range(len(prompts)):                             # 一条接一条：TTFT 就是这条请求自己的 prefill
+            await one(i)
+    else:
+        await asyncio.gather(*(one(i) for i in range(len(prompts))))
     duration = time.perf_counter() - t0
     samples = await sampling
     return {"records": recs, "duration_s": duration, "max_decoding": state["max_decoding"],
@@ -152,7 +160,7 @@ async def main_async(job: dict) -> dict:
         await asyncio.gather(*(w(i) for i in range(len(warm))))
         await engine.do_log_stats()
         before = prom_snapshot()
-        res = await bench(engine, job["prompts"], job["arrivals"], job["output_len"])
+        res = await bench(engine, job["prompts"], job["arrivals"], job["output_len"], closed_loop=job.get("closed_loop", False))
         await engine.do_log_stats()                               # 让引擎把缓存命中率、投机接受长度打进日志（备用口径）
         res.update({"prom_before": before, "prom_after": prom_snapshot(), "load_s": load_s})
         return res

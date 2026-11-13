@@ -99,9 +99,13 @@ def main() -> None:
     # LLM(...) 会启动 EngineCore（V1 默认是单独的进程），加载 export_hf.py 导出的 HF 目录
     # logits_processors 传的是类不是实例：引擎在 EngineCore 进程里自己构造它，trie 只能靠环境变量传路径
     # gpu_memory_utilization=0.5：vLLM 只预占一半显存，另一半留给同进程里做对比的教学版引擎
+    # num_gpu_blocks_override：KV 块数直接给定，不按"显存剩多少分多少"。这个模型只有 0.003 GB，0.5 的显存
+    #   在 H20 上能分出 1237 万 token 的 KV；float32 只能走 FlexAttention 后端，它按 [Q, KV 总 token 数] 建 block mask，
+    #   第一批请求就要再申请几十 GB，直接 OOM（2026-11-12 H20 实测）。这里每步约 1 万个请求、每个不到 210 token，
+    #   APC 让同一用户的 20 个 beam 共享历史块，2^16 块 × 16 = 105 万 token 足够
     llm = LLM(model=args.model_dir, skip_tokenizer_init=True, enable_prefix_caching=True, dtype="float32",
               logits_processors=[TrieLogitsProcessor], logprobs_mode="processed_logprobs",
-              max_logprobs=max(64, args.beam), gpu_memory_utilization=0.5)
+              max_logprobs=max(64, args.beam), gpu_memory_utilization=0.5, num_gpu_blocks_override=1 << 16)
     # --8<-- [end:llm_init]
     vllm_beam_search(llm, prompts[:8], args.beam, tok.levels)  # warmup
     t0 = time.perf_counter()
